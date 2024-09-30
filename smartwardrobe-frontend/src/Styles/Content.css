@@ -1,0 +1,375 @@
+.layout-content {
+  width: 100%;
+}
+
+.content-mobile {
+  display: none;
+}
+
+.content-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  /* cursor: pointer; */
+}
+
+.ant-space-item{
+  cursor: pointer !important;
+}
+
+.ant-modal-close{
+  background-color: #969087 !important;
+  border-radius: 1rem !important;
+  color: white !important;
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.header-buttons {
+  color: #27374d !important;
+  font-weight: bold !important;
+  border-radius: 8px !important;
+  margin: 10px;
+  border-radius: 10px;
+  &:hover {
+    border-radius: 10px;
+    background-color: #ebe7e1;
+  }
+}
+
+.ant-dropdown-trigger {
+  &:hover {
+    border-radius: 10px;
+    background-color: #ebe7e1;
+  }
+  &:focus {
+    border-radius: 10px;
+    background-color: #ebe7e1 !important;
+  }
+}
+
+.content-mobile-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+  .layout-content {
+    width: 100%;
+    height: 100%;
+  }
+  .content-header {
+    display: none;
+  }
+
+  .content-mobile {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .Mid-Search-Section {
+    /* width: 82% !important; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    /* margin-right: 10%; */
+  }
+  .layout-content-mid {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: none !important;
+    align-items: center !important;
+    width: 100% !important;
+    /* height: 100vh !important; */
+    overflow-y: hidden !important;
+    overflow-x: hidden !important;
+    gap: 1rem !important;
+    margin-top: 100px;
+  }
+}
+
+.ant-drawer .ant-drawer-content {
+  background-color: #fffbf5;
+}
+
+.css-1hskriy {
+  width: 100% !important;
+}
+
+.content-header .css-1apkmlw-MuiButtonBase-root-MuiButton-root {
+  text-transform: none !important;
+}
+
+/* content mid section */
+
+.Mid-Heading {
+  text-align: center;
+}
+
+.layout-content-mid {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 1rem;
+  background-color: #fefaf4;
+}
+
+.Mid-Search-Section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.Mid-Search-Input {
+  width: 100%;
+  max-width: 677px;
+  height: 20px;
+  border-style: solid;
+  border-radius: 0.75rem;
+  padding: 24px 12px;
+  font-size: 17px;
+  border-color: #d68f6f;
+  flex: 1;
+}
+
+.Mid-Search-Input:focus {
+  border-color: #d68f6f; /* Change this color as desired */
+  outline: none; /* Remove the default outline for a cleaner look */
+}
+
+/* .Search-btn{
+    position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+} */
+
+.Mid-Search-Button {
+  margin: -10%;
+  padding: 1rem 0.5rem;
+  border-radius: 0.75rem;
+  gap: 0.25rem;
+  width: 7%;
+  height: 50px;
+  padding-top: 13px;
+  background-color: #5e5546;
+  border-color: transparent;
+}
+
+.Mid-Search-Button-Focus {
+  margin: -10%;
+  padding: 1rem 0.5rem;
+  border-radius: 0.75rem;
+  gap: 0.25rem;
+  cursor: pointer;
+  width: 7%;
+  height: 50px;
+  padding-top: 13px;
+  background-color: #d68f6f;
+  border-color: transparent;
+}
+
+@media only screen and (min-width: 1300px) {
+  .Mid-Search-Button {
+    margin: -7%;
+    width: 6%;
+  }
+  .Mid-Search-Button-Focusn {
+    margin: -7%;
+    width: 6%;
+  }
+}
+@media (min-width: 1192px) and (max-width: 1299px) {
+  .Mid-Search-Button {
+    margin: -8%;
+  }
+  .Mid-Search-Button-Focus {
+    margin: -8%;
+  }
+}
+@media (min-width: 1130px) and (max-width: 1192px) {
+  .Mid-Search-Button {
+    margin: -8%;
+    width: 7%;
+  }
+  .Mid-Search-Button-Focus {
+    margin: -8%;
+    width: 7%;
+  }
+}
+
+@media (min-width: 1045px) and (max-width: 1129px) {
+  .Mid-Search-Input {
+    max-width: 650px;
+  }
+}
+@media (min-width: 900px) and (max-width: 1044px) {
+  .Mid-Search-Input {
+    max-width: 83%;
+  }
+  .Mid-Search-Button {
+    margin: -8%;
+  }
+  .Mid-Search-Button-Focus {
+    margin: -8%;
+  }
+}
+@media (min-width: 769px) and (max-width: 907px) {
+  .Mid-Search-Input {
+    max-width: 88%;
+  }
+  .Mid-Search-Button {
+    margin: -8%;
+    width: 7%;
+  }
+  .Mid-Search-Button-Focus {
+    margin: -8%;
+    width: 7%;
+  }
+  .Mid-Search-Section {
+    margin-right: 9%;
+  }
+}
+@media (min-width: 716px) and (max-width: 768px) {
+  .Mid-Search-Button {
+    margin: -10%;
+    width: 8%;
+    /* padding: 1rem 0.2rem; */
+  }
+  .Mid-Search-Button-Focus {
+    margin: -10%;
+    width: 8%;
+    /* padding: 1rem 0.2rem; */
+  }
+}
+@media (min-width: 658px) and (max-width: 715px) {
+  .Mid-Search-Button {
+    margin: -10%;
+    width: 9%;
+    /* padding: 1rem 0.2rem; */
+  }
+  .Mid-Search-Button-Focus {
+    margin: -10%;
+    width: 9%;
+    /* padding: 1rem 0.2rem; */
+  }
+}
+@media (min-width: 597px) and (max-width: 657px) {
+  .Mid-Search-Button {
+    margin: -13%;
+    width: 11%;
+    /* padding: 1rem 0.2rem; */
+  }
+  .Mid-Search-Button-Focus {
+    margin: -13%;
+    width: 11%;
+    /* padding: 1rem 0.2rem; */
+  }
+}
+@media (min-width: 500px) and (max-width: 596px) {
+  .Mid-Search-Button {
+    margin: -14%;
+    width: 12%;
+    /* padding: 1rem 0.2rem; */
+  }
+  .Mid-Search-Button-Focus {
+    margin: -14%;
+    width: 12%;
+    /* padding: 1rem 0.2rem; */
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .Mid-Search-Button {
+    margin: -17%;
+    width: 16%;
+  }
+  .Mid-Search-Button-Focus {
+    margin: -17%;
+    width: 16%;
+  }
+}
+
+@media screen and (min-width: 1131px) {
+  .Mid-Search-Section {
+    margin-right: 8%;
+  }
+}
+
+@media (min-width: 1045px) and (max-width: 1130px) {
+  .Mid-Search-Section {
+    margin-right: 12%;
+  }
+}
+
+@media (min-width: 908px) and (max-width: 1044px) {
+  .Mid-Search-Section {
+    margin-right: 10%;
+  }
+}
+@media (min-width: 501px) and (max-width: 768px) {
+    .Mid-Search-Section {
+        width: 84% !important;
+        margin-right: 13%;
+      }
+}
+@media screen and (max-width: 500px) {
+    .Mid-Search-Section {
+        width: 84% !important;
+        margin-right: 15%;
+    }
+  }
+
+/* Predefined cards */
+
+.predefined-card {
+  width: 200px;
+  height: 200px;
+}
+
+@media screen and (min-width: 731px) {
+    .All-Dresses-Section{
+        /* width: 100%; */
+    }
+    .AllDresses-Btn{
+        width: 700px;
+        /* max-width: 700; */
+        height: 40px;
+        border-radius: 0.75rem;
+        background-color: #F6F1E9;
+        border-style: none;
+        font-weight: 600;
+        font-size: 16px;
+        color: #2D261A;
+    }
+    
+  }
+
+  @media screen and (max-width: 730px) {
+    .All-Dresses-Section{
+        width: 100%;
+    }
+    .AllDresses-Btn{
+        width: 100%;
+        /* max-width: 700; */
+        height: 40px;
+        border-radius: 0.75rem;
+        background-color: #F6F1E9;
+        border-style: none;
+        font-weight: 600;
+        font-size: 16px;
+        color: #2D261A;
+    }
+    
+  }
+
+

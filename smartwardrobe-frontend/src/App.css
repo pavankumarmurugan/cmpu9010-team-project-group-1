@@ -1,0 +1,25 @@
+.layout{
+    display: flex;
+    gap: 25px;
+}
+
+.layout--content{
+    background: #fffbf5;
+    flex: 1;
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+    .layout--content{
+        border-radius: 0;
+        width: 100%;
+        height: 100%;
+        padding: 1rem;
+        overflow-y: hidden !important;
+        overflow-x: hidden !important;
+    }
+  }
