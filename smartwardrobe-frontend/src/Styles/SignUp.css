@@ -1,0 +1,112 @@
+.modal-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background-color: #FFFBF5;
+}
+
+.Signup-form-section{
+    display: flex;
+    flex-direction: column;
+    max-width: 360px;
+    width: 100%;
+}
+
+.google-section{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 1rem;
+}
+
+.Signup-form-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 42px;
+    color: #000000;
+    background-color: white;
+    border-radius: 0.5rem;
+    border: 1px solid #E0E1E3;
+    cursor: pointer !important;
+    font-size: 16px;
+    font-weight: 600;
+    &:hover{
+        background-color: #F3F4F6;
+    }
+}
+
+.inputfields-section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+}
+
+.Signup-Inputs{
+    gap: 2rem;
+}
+
+.Signup-Inputs .Signup-Inputfield {
+    margin-bottom: 1rem;
+  }
+.Signup-Inputfield{
+    height: 42px;
+    background-color: white;
+    border-radius: 0.5rem;
+    border: 1px solid #E0E1E3;
+    font-weight: 500;
+    gap: 2rem;
+    &:hover{
+        cursor: text !important;
+        border: 1px solid #E0E1E3;
+    }
+    &:focus{
+        
+        border: 2px solid #D7622F; 
+        box-shadow: 0px 0px 5px 0px rgba(243, 212, 195, 0.50); 
+        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
+    }
+}
+
+.ant-modal-content{
+    background-color: #FFFBF5 !important;
+}
+
+.Signup-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 42px;
+    color: white;
+    background-color: #D7622F;
+    border-radius: 0.5rem;
+    border: 1px solid #D7622F;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.already-account-section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    
+}
+
+.signup-text{
+    font-weight: bold;
+}
+
+.LoginLink-text{
+    font-weight: bold;
+    color: #D7622F;
+    margin-left: 10px;
+    cursor: pointer;
+}

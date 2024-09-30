@@ -1,0 +1,20 @@
+*{
+    /* margin: 0; */
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+}
+
+body{
+    background-color: #f6f1e9;
+    padding: 10px;
+}
+
+@media screen and (max-width: 768px) {
+    body{
+        padding: 0;
+        background-color: #FEFAF4;
+    }
+}
