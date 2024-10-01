@@ -1,6 +1,6 @@
 # compiled output
 /dist
-smartwardrobe-backend/node_modules
+/node_modules
 # Logs
 logs
 *.log

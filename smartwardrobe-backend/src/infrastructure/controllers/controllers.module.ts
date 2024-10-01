@@ -9,6 +9,8 @@ import { BcryptModule } from '../frameworks/bcrypt/bcrypt.module';
 import { ConvertorsModule } from '../../core/convertors/convertors.module';
 import { UserUsecaseModule } from '../../use-cases/user/user.module';
 import { UserController } from './user/user.controller';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from 'src/use-cases/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,8 +24,9 @@ import { UserController } from './user/user.controller';
     JWTModule,
     BcryptModule,
     ConvertorsModule,
+    AuthModule,
   ],
-  controllers: [UserController, HealthController],
+  controllers: [UserController, HealthController, AuthController],
   providers: [
     {
       provide: APP_GUARD,
