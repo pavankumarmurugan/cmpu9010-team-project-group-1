@@ -1,0 +1,10 @@
+export const MESSAGES = {
+  USER: {
+    GET_ALL: {
+      SUCCESS: 'SUCCESSFULLY FETCHED ALL USERS',
+    },
+  },
+  ROLE: {
+    FORBIDDEN_RESOURCE: 'FORBIDDEN RESOURCE',
+  },
+};
