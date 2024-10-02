@@ -14,6 +14,8 @@ import {
 import { Collapse } from "@mui/material";
 import { CiBookmark } from "react-icons/ci";
 import { FaRegCircleUser } from "react-icons/fa6";
+import { MdOutlineShoppingBag } from "react-icons/md";
+
 
 function ContentHeader() {
   
@@ -185,6 +187,7 @@ function ContentHeader() {
       </div>
     </div>
     <div className="content-header">
+    <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
       <Space direction="vertical">
         <Space wrap>
           <Dropdown
@@ -250,6 +253,10 @@ function ContentHeader() {
           </Dropdown>
         </Space>
       </Space>
+      </div>
+      <div style={{ marginLeft: 'auto' }}>
+      <Button className="Cart-button"><MdOutlineShoppingBag  style={{width:"30px", height:"30px", color:"#2D261A"}}/></Button>
+    </div>
     </div>
     </>
   );

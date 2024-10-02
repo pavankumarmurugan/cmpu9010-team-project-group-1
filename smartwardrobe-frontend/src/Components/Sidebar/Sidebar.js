@@ -7,6 +7,7 @@ import { Button, Drawer, Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { FaRegCircleUser } from "react-icons/fa6";
 import SignupModal from "../Signup/Signup";
+import logo from "../../Assets/logo.png";
 
 function Sidebar() {
   const [user, setUser] = useState(true);
@@ -64,9 +65,15 @@ function Sidebar() {
       <div className="menu">
         <div className="logo">
           <Link to="/" className="logodesign">
-            {/* <CiBookmark className="logo-icon" /> */}
             <h2>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h2>
           </Link>
+           {/* <img src={logo} alt="Logo" className="logo-icon"
+           style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+          /> */}
         </div>
 
         <div className="menu-item">
@@ -228,7 +235,7 @@ function Sidebar() {
           </div>
         ) : (
           <div className="Login-Signup-Btns">
-            <Button type="text" className="signup-buttons" onClick={(e) => OpenLoginForm('Login')}>
+            <Button type="text" className="signup-buttons" onClick={(e) => OpenLoginForm('Login')} style={{backgroundColor:"#DCEEF2"}}>
               Log in
             </Button>
             <Button color="default" variant="solid" className="signup-buttons" onClick={(e) => OpenLoginForm('Signup')}>

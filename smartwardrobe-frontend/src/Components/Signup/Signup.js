@@ -96,6 +96,13 @@ function SignupModal(props) {
             </div>
             <div className="inputfields-section">
               <div className="Signup-Inputs">
+                { props?.checkingLoginOrSignup === "Signup" &&
+                <>
+                  <Typography.Title level={5}>First Name</Typography.Title>
+                <Input placeholder="Email" className="Signup-Inputfield"/>
+                <Typography.Title level={5}>Last Name</Typography.Title>
+                <Input placeholder="Email" className="Signup-Inputfield"/>
+                </>}
                 <Typography.Title level={5}>Email</Typography.Title>
                 <Input placeholder="Email" className="Signup-Inputfield"/>
                 <Typography.Title level={5}>Password</Typography.Title>
