@@ -5,30 +5,21 @@ import Typography from '@mui/joy/Typography';
 
 const data = [
   {
-    src: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236',
-    title: 'Night view',
-    // description: 'A beautiful night scenery.',
+    src: 'https://media.boohoo.com/i/boohoo/gzz41350_light%20wash_xl?w=450&qlt=default&fmt.jp2.qlt=70&fmt=auto&sm=fit',
+    title: 'Summer Dresses',
   },
   {
-    src: 'https://images.unsplash.com/photo-1527549993586-dff825b37782',
-    title: 'Lake view',
-    // description: 'Serenity by the lake.',
+    src: 'https://media.boohooman.com/i/boohooman/bmm90607_black_xl?$product_image_category_page$&fmt=webp',
+    title: 'Printed Shirts for Men',
   },
   {
-    src: 'https://images.unsplash.com/photo-1532614338840-ab30cf10ed36',
-    title: 'Mountain view',
-    // description: 'Majestic mountain ranges.',
+    src: 'https://cdn.shopify.com/s/files/1/0610/4567/0052/files/WB_HR_CL134725004__0-Jul17_1_19_43_x1200.jpg',
+    title: 'Date Night Dresses',
   },
   {
-    src: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236',
-    title: 'Night view',
-    // description: 'A beautiful night scenery.',
+    src: 'https://content.moss.co.uk/images/extraextralarge/966835209_02.jpg',
+    title: 'Men Suits',
   },
-  {
-    src: 'https://images.unsplash.com/photo-1527549993586-dff825b37782',
-    title: 'Lake view',
-    // description: 'Serenity by the lake.',
-  }
 ];
 
 export default function Carousel() {
@@ -55,6 +46,7 @@ export default function Carousel() {
             width: '100%',
             minWidth: 210,
             height: 150,
+            cursor: 'pointer',
             borderRadius: '15px', // Adding border radius to the Box
             overflow: 'hidden', // Ensures the image fits within the rounded corners
           }}

@@ -8,13 +8,13 @@
 }
 
 body{
-    background-color: #f6f1e9;
+    background-color: #BDD7DE;
     padding: 10px;
 }
 
 @media screen and (max-width: 768px) {
     body{
         padding: 0;
-        background-color: #FEFAF4;
+        background-color: #dceef2;
     }
 }

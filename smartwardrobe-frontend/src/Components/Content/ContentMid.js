@@ -3,9 +3,15 @@ import { FaSearch } from "react-icons/fa";
 import "../../Styles/Content.css";
 import Carousel from "../Carousel/Carousel";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const ContentMid = () => {
+    const navigate = useNavigate();
     const [searchValue, setSearchValue] = useState("");
+
+    const handleSearch = () => {
+      navigate("/ConversationalSearch", { state: { searchValue } });
+    }
 
   return (
     <div className="layout-content-mid container">
@@ -21,8 +27,8 @@ const ContentMid = () => {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         ></input>
-        <button class={searchValue === ""? "Mid-Search-Button" : "Mid-Search-Button-Focus"}>
-        <FaSearch style={{width:"20px", height:"20px", color:"white"}}/>
+        <button class={searchValue === ""? "Mid-Search-Button" : "Mid-Search-Button-Focus"} style={{cursor:"pointer"}}>
+        <FaSearch style={{width:"20px", height:"20px", color:"white"}} onClick={handleSearch}/>
         </button>
       </div>
 
