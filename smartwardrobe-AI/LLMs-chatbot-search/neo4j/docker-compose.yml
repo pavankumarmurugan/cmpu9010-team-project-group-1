@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  neo4j:
+    build: ./neo4j
+    image: neo4j:latest # The Neo4j image version to be used
+    container_name: neo4j-db # The container name for the Neo4j service
+    environment:
+      NEO4J_AUTH: "neo4j/test_password" # Set Neo4j username and password
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes" # Automatically accept Neo4j license agreement
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+      NEO4J_apoc_import_file_use__neo4j__config: "true"
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+    ports:
+      - "7474:7474" # Port mapping for Neo4j browser (web interface)
+      - "7687:7687" # Port mapping for Neo4j Bolt protocol (database access)
+    volumes:
+      - neo4j_data:/data # Volume for persisting Neo4j data
+      - neo4j_logs:/logs # Volume for storing Neo4j logs
+      - neo4j_import:/import # Volume for importing files into the database
+      - neo4j_plugins:/plugins # Volume for Neo4j plugins
+    networks:
+      - neo4j_network # Define the network where Neo4j service is connected
+
+# Define persistent storage volumes for Neo4j
+volumes:
+  neo4j_data: # Volume for database data
+  neo4j_logs: # Volume for database logs
+  neo4j_import: # Volume for importing CSV or other files
+  neo4j_plugins: # Volume for adding Neo4j plugins
+
+# Define a custom network for services to communicate
+networks:
+  neo4j_network:
+    driver: bridge # Use a bridge network to allow isolated communication between services
