@@ -1,0 +1,65 @@
+# compiled output
+/dist
+/node_modules
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+/.idea
+/.awcache
+/.vscode
+./.vscode
+/.devcontainer
+*.code-workspace
+
+# misc
+.DS_Store
+/**/npm-debug.log
+/packages/**/.npmignore
+/packages/**/LICENSE
+*.tsbuildinfo
+
+# tests
+/benchmarks/memory
+/coverage
+/.nyc_output
+/packages/graphql
+/benchmarks/memory
+build/config\.gypi
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+/dist
+env/dev.env
+env/localhost.env
+package-lock.json
