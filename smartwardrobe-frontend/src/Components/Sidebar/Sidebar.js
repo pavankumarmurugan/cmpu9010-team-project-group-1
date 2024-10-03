@@ -3,11 +3,10 @@ import { CiBookmark } from "react-icons/ci";
 import { MdFavoriteBorder } from "react-icons/md";
 import "../../Styles/Sidebar.css";
 import { Link } from "react-router-dom";
-import { Button, Drawer, Dropdown, Space } from "antd";
+import { Button, Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { FaRegCircleUser } from "react-icons/fa6";
 import SignupModal from "../Signup/Signup";
-import logo from "../../Assets/logo.png";
 
 function Sidebar() {
   const [user, setUser] = useState(true);
@@ -31,7 +30,6 @@ function Sidebar() {
   /** Login button function */
 
   const OpenLoginForm = (e) => {
-    debugger
     setCheckingLoginOrSignup(e);
     setOpenLoginModal(true);
   }
@@ -42,7 +40,6 @@ function Sidebar() {
   }
 
   const accountCreate =(e) => {
-    debugger
     if(e === 'Signup'){
       setCheckingLoginOrSignup("login");
     }else{
@@ -55,12 +52,12 @@ function Sidebar() {
   return (
     <>
 
-      <SignupModal
+      {/* <SignupModal
       isShowModel={OpenLoginModal} 
       closeModal={CloseLoginForm}
       checkingLoginOrSignup={checkingLoginOrSignup}
       accountCreate={accountCreate}
-      />
+      /> */}
 
       <div className="menu">
         <div className="logo">
@@ -213,7 +210,7 @@ function Sidebar() {
           </ul>
         </div>
 
-        {!user ? (
+        {/* {!user ? (
           <div className="Login-Signup-Btns">
             <FaRegCircleUser style={{ width: "30px", height: "30px" }} />
             <Dropdown
@@ -242,7 +239,7 @@ function Sidebar() {
               Sign up
             </Button>
           </div>
-        )}
+        )} */}
       </div>
     </>
   );

@@ -2,6 +2,8 @@ import * as React from 'react';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const data = [
   {
@@ -23,6 +25,15 @@ const data = [
 ];
 
 export default function Carousel() {
+
+  const navigate = useNavigate();
+  
+  const handleCarousel = (searchValue) => {
+    debugger
+    navigate("/ConversationalSearch", { state: { searchValue } });
+  }
+  
+
   return (
     <Box
       sx={{
@@ -50,6 +61,7 @@ export default function Carousel() {
             borderRadius: '15px', // Adding border radius to the Box
             overflow: 'hidden', // Ensures the image fits within the rounded corners
           }}
+          onClick={() => handleCarousel(item.title)}
         >
           <AspectRatio ratio="1">
             <img
@@ -62,6 +74,7 @@ export default function Carousel() {
                 objectFit: 'cover',
                 borderRadius: '15px', // Optional: add border radius to the image itself
               }}
+              onClick={() => handleCarousel(item.title)}
             />
           </AspectRatio>
           <Box
@@ -77,6 +90,7 @@ export default function Carousel() {
               // background: 'rgba(0, 0, 0, 0.5)', // Optional: semi-transparent background
               p: 2,
             }}
+            onClick={() => handleCarousel(item.title)}
           >
             <Typography level="title-md" sx={{ color: 'white' }}>
               {item.title}
