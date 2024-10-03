@@ -99,14 +99,17 @@ function SignupModal(props) {
                 { props?.checkingLoginOrSignup === "Signup" &&
                 <>
                   <Typography.Title level={5}>First Name</Typography.Title>
-                <Input placeholder="Email" className="Signup-Inputfield"/>
+                <Input placeholder="First Name" className="Signup-Inputfield"/>
                 <Typography.Title level={5}>Last Name</Typography.Title>
-                <Input placeholder="Email" className="Signup-Inputfield"/>
+                <Input placeholder="Last Name" className="Signup-Inputfield"/>
                 </>}
                 <Typography.Title level={5}>Email</Typography.Title>
                 <Input placeholder="Email" className="Signup-Inputfield"/>
                 <Typography.Title level={5}>Password</Typography.Title>
                 <Input placeholder="Password" className="Signup-Inputfield"/>
+                { props?.checkingLoginOrSignup !== "Signup" &&
+                <Typography.Title level={5} style={{float:"right", cursor:"pointer"}}>Forget Password?</Typography.Title>
+                }
               </div>
               <div class="text-xs text-text-neutral font-brittiSans">&nbsp;</div>
               <div class="text-xs text-text-neutral font-brittiSans">&nbsp;</div>

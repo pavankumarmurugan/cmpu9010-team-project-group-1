@@ -8,9 +8,11 @@
     flex: 1;
     border-radius: 20px;
     /* padding: 2rem; */
-    padding-top: 2rem;
-    padding-left: 2rem;
     padding-right: 2rem;
+    padding-left: 2rem;
+    padding-top: 2rem;
+    /* padding-left: 2rem;
+    padding-right: 2rem; */
     display: flex;
     gap: 1.5rem;
     justify-content: space-between;
