@@ -11,9 +11,11 @@ import { UserUsecaseModule } from '../../use-cases/user/user.module';
 import { UserController } from './user/user.controller';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from 'src/use-cases/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({}),
     TerminusModule,
     ThrottlerModule.forRoot({
       ttl: +process.env.THROTTLER_TTL,
