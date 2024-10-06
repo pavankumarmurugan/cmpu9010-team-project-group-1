@@ -17,7 +17,6 @@ import { ConfigModule } from '@nestjs/config';
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
-      // synchronize: true,
     }),
     TypeOrmModule.forFeature([UserModel]),
   ],
