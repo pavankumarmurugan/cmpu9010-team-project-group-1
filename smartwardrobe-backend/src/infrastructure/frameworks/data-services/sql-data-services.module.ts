@@ -4,6 +4,7 @@ import { SQLDataService } from './sql-data-services.service';
 import { IDataServices } from 'src/core/abstracts';
 import { UserModel } from './model/user.model';
 import { ConfigModule } from '@nestjs/config';
+import { ProductCategoryModel } from './model/product-category.model';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { ConfigModule } from '@nestjs/config';
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
     }),
-    TypeOrmModule.forFeature([UserModel]),
+    TypeOrmModule.forFeature([UserModel, ProductCategoryModel]),
   ],
   providers: [
     {
