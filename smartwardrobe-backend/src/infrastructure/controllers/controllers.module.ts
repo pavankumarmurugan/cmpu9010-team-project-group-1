@@ -12,6 +12,8 @@ import { UserController } from './user/user.controller';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from 'src/use-cases/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ProductCategoryController } from './product-category/product-category.controller';
+import { ProductCategoryUsecaseModule } from 'src/use-cases/product-category/product-category.module';
 
 @Module({
   imports: [
@@ -22,13 +24,19 @@ import { ConfigModule } from '@nestjs/config';
       limit: +process.env.THROTTLER_LIMIT,
     }),
     UserUsecaseModule,
+    ProductCategoryUsecaseModule,
     DataServicesModule,
     JWTModule,
     BcryptModule,
     ConvertorsModule,
     AuthModule,
   ],
-  controllers: [UserController, HealthController, AuthController],
+  controllers: [
+    UserController,
+    HealthController,
+    AuthController,
+    ProductCategoryController,
+  ],
   providers: [
     {
       provide: APP_GUARD,
