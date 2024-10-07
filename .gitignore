@@ -2,6 +2,9 @@
 /dist
 /node_modules
 
+/smartwardrobe-backend/node_modules
+/smartwardrobe-backend/.env
+
 # Log
 logs
 *.log

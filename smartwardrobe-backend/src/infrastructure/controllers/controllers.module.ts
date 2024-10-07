@@ -7,26 +7,36 @@ import { DataServicesModule } from '../services/data-services/data-service.modul
 import { JWTModule } from '../frameworks/jwt/jwt.module';
 import { BcryptModule } from '../frameworks/bcrypt/bcrypt.module';
 import { ConvertorsModule } from '../../core/convertors/convertors.module';
-import { UserUsecaseModule } from '../../use-cases/user/user.module';
 import { UserController } from './user/user.controller';
 import { AuthController } from './auth/auth.controller';
-import { AuthModule } from 'src/use-cases/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { ProductCategoryController } from './product-category/product-category.controller';
+import { ProductInventoryController } from './product-inventory/product-inventory.controller';
+import { UseCasesModule } from 'src/use-cases/use-cases.module';
+import { ProductController } from './product/product.controller';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({}),
     TerminusModule,
     ThrottlerModule.forRoot({
       ttl: +process.env.THROTTLER_TTL,
       limit: +process.env.THROTTLER_LIMIT,
     }),
-    UserUsecaseModule,
     DataServicesModule,
     JWTModule,
     BcryptModule,
     ConvertorsModule,
-    AuthModule,
+    UseCasesModule,
   ],
-  controllers: [UserController, HealthController, AuthController],
+  controllers: [
+    UserController,
+    HealthController,
+    AuthController,
+    ProductController,
+    ProductCategoryController,
+    ProductInventoryController,
+  ],
   providers: [
     {
       provide: APP_GUARD,
