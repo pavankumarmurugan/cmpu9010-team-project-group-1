@@ -10,29 +10,28 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ProductCategoryReqDto } from 'src/core/dto/product-category/product-category-req-dto';
-import { UpdateProductCategoryReqDto } from 'src/core/dto/product-category/product-category-req-update-dto';
-import { ProductCategoryResDto } from 'src/core/dto/product-category/product-category-res-dto';
-
+import { ProductReqDto } from 'src/core/dto/product/product-req-dto';
+import { ProductReqUpdateDto } from 'src/core/dto/product/product-req-update-dto';
+import { ProductResDto } from 'src/core/dto/product/product-res-dto';
 import { IResponse } from 'src/core/interface/response.interface';
+import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { Roles } from 'src/infrastructure/decorators/roles.decorator';
 import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
 import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
-import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
-import { ProductCategoryUsecase } from 'src/use-cases/product-category/product-category.usecase';
+import { ProductUsecase } from 'src/use-cases/product/product.usecase';
 
-@Controller('product-category')
-@ApiTags('Product-Category')
+@Controller('product')
+@ApiTags('Product')
 @UseGuards(AccessTokenGuard, RolesGuard)
-export class ProductCategoryController {
-  constructor(private usecase: ProductCategoryUsecase) {}
+export class ProductController {
+  constructor(private productUsecase: ProductUsecase) {}
 
   @Get('get-all')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
-  async getAll(): Promise<IResponse<ProductCategoryResDto[]>> {
+  async getProductById(): Promise<IResponse<ProductResDto[]>> {
     try {
-      return await this.usecase.getAll();
+      return await this.productUsecase.getAllProduct();
     } catch (error) {
       throw error;
     }
@@ -42,10 +41,10 @@ export class ProductCategoryController {
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN)
   async create(
-    @Body() dto: ProductCategoryReqDto,
-  ): Promise<IResponse<ProductCategoryResDto>> {
+    @Body() productReqDto: ProductReqDto,
+  ): Promise<IResponse<ProductResDto>> {
     try {
-      return await this.usecase.create(dto);
+      return await this.productUsecase.create(productReqDto);
     } catch (error) {
       throw error;
     }
@@ -55,10 +54,10 @@ export class ProductCategoryController {
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN)
   async update(
-    @Body() dto: UpdateProductCategoryReqDto,
-  ): Promise<IResponse<ProductCategoryResDto>> {
+    @Body() productReqUpdateDto: ProductReqUpdateDto,
+  ): Promise<IResponse<ProductResDto>> {
     try {
-      return await this.usecase.update(dto);
+      return await this.productUsecase.update(productReqUpdateDto);
     } catch (error) {
       throw error;
     }
@@ -69,9 +68,9 @@ export class ProductCategoryController {
   @Roles(ROLES.ADMIN)
   async delete(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<IResponse<ProductCategoryResDto>> {
+  ): Promise<IResponse<ProductResDto>> {
     try {
-      return await this.usecase.delete(id);
+      return await this.productUsecase.delete(id);
     } catch (error) {
       throw error;
     }
@@ -79,12 +78,12 @@ export class ProductCategoryController {
 
   @Get('get-one/:id')
   @ApiBearerAuth()
-  @Roles(ROLES.ADMIN, ROLES.USER)
-  async getOne(
+  @Roles(ROLES.USER)
+  async getOneAddress(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<IResponse<ProductCategoryResDto>> {
+  ): Promise<IResponse<ProductResDto>> {
     try {
-      return await this.usecase.getOne(id);
+      return await this.productUsecase.getOneAddress(id);
     } catch (error) {
       throw error;
     }
