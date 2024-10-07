@@ -5,6 +5,8 @@ import { IDataServices } from 'src/core/abstracts';
 import { UserModel } from './model/user.model';
 import { ConfigModule } from '@nestjs/config';
 import { ProductCategoryModel } from './model/product-category.model';
+import { ProductInventoryModel } from './model/product-inventory.model';
+import { ProductModel } from './model/product.model';
 
 @Module({
   imports: [
@@ -19,7 +21,12 @@ import { ProductCategoryModel } from './model/product-category.model';
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
     }),
-    TypeOrmModule.forFeature([UserModel, ProductCategoryModel]),
+    TypeOrmModule.forFeature([
+      UserModel,
+      ProductCategoryModel,
+      ProductInventoryModel,
+      ProductModel,
+    ]),
   ],
   providers: [
     {

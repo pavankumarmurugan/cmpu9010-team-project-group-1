@@ -28,3 +28,17 @@ CREATE TABLE `product_inventory` (
   `updated_at` TIMESTAMP NULL,
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`id`));
+
+  CREATE TABLE `product` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NULL,
+    `desc` TEXT NULL,
+    `SKU` VARCHAR(255) NULL,
+    `category_id` INT NULL,
+    `inventory_id` INT NULL,
+    `price` DECIMAL NULL,
+    `discount_id` INT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL,
+    `deleted_at` TIMESTAMP NULL,
+    PRIMARY KEY (`id`));
