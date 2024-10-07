@@ -76,7 +76,7 @@ function SignupModal(props) {
       >
         <div className="modal-container">
           <div>
-            <h2>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h2>
+            <h1>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
           </div>
           <div>
             {props?.checkingLoginOrSignup === "Signup" ?

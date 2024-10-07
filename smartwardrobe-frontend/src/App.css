@@ -1,4 +1,4 @@
-.layout{
+/* .layout{
     display: flex;
     gap: 25px;
 }
@@ -7,18 +7,18 @@
     background: #dceef2;
     flex: 1;
     border-radius: 20px;
-    /* padding: 2rem; */
     padding-right: 2rem;
     padding-left: 2rem;
     padding-top: 2rem;
-    /* padding-left: 2rem;
-    padding-right: 2rem; */
     display: flex;
     gap: 1.5rem;
     justify-content: space-between;
-}
+} */
+/* padding: 2rem; */
+/* padding-left: 2rem;
+padding-right: 2rem; */
 
-@media screen and (max-width: 768px) {
+/* @media screen and (max-width: 768px) {
     .layout--content{
         border-radius: 0;
         width: 100%;
@@ -27,7 +27,4 @@
         overflow-y: hidden !important;
         overflow-x: hidden !important;
     }
-  }
-
-  /* #BDD7DE */
-  /* dceef2 */
+  } */
