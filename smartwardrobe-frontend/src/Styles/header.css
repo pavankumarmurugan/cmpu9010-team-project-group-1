@@ -1,0 +1,201 @@
+
+.header-main{
+    padding: 36px 16px;
+    background-color: #014d4e;
+    display: 'flex';
+    flex-direction: 'column'; 
+    height: '100vh';
+    margin: 0;
+    /* background-color: #FAD0C4; */
+}
+
+.header-conatiner{
+    padding: 0px 10px;
+}
+
+.search-box{
+    padding-left: 5px;
+    border: 1px solid #fff;
+}
+
+.search-div-laptop{
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr 1fr;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.search-div-mobile{
+    display: grid;
+    grid-template-columns: 0.5fr 2.5fr 1fr;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.header-logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+@media (min-width: 300px) and (max-width: 500px) {
+    .header-logo{
+        font-size: 24px;
+    }
+    .header-icons{
+        gap: 0.5rem !important;
+    }
+  }
+
+.header-icons{
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    cursor: pointer;
+       
+}
+
+.page-width {
+    max-width: 160rem;
+    margin: 0 auto;
+    padding: 0 10% 0 5%;
+}
+
+@media screen and (max-width: 767px){
+    .page-width {
+        max-width: 160rem;
+        margin: 0 auto;
+        padding: 0;
+    }
+    
+}
+
+@media screen and (max-width: 900px){
+    .search-input-above-900px{
+        display: none;
+    }
+    
+}
+
+@media screen and (min-width: 901px){
+    .search-input-below-900px{
+        display: none;
+    }
+}
+
+.mobile-search-input{
+    margin-top: 10px;
+    width: 100%;
+}
+
+.mobile-search-input .MuiFormControl-root{
+    /* margin-left: 0 !important; */
+    width: 100%;
+}
+
+/* .header-menus{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    margin-left: 8px;
+} */
+
+@media screen and (max-width: 900px){
+    .header-dropdowns-div{
+        display: none;
+    }
+}
+
+@media screen and (min-width: 901px){
+    .header-dropdowns-div{
+        display: block;
+    }    
+}
+
+.Dropdown-Maintext{
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+}
+/* Increase specificity to override Ant Design's default styles  for header menu dropdowns*/
+.custom-menu .ant-menu-item:hover::after,
+.custom-menu .ant-menu-submenu:hover::after,
+.custom-menu .ant-menu-item-active::after,
+.custom-menu .ant-menu-submenu-active::after,
+.custom-menu .ant-menu-item-open::after,
+.custom-menu .ant-menu-submenu-open::after {
+    border-bottom-width: 2px;
+    border-bottom-color: white !important;
+}
+
+.mobile-menu-main{
+    padding: 20px;
+}
+
+.HomeShoppingCollection-main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.HomeShoppingCollection-heading{
+    margin-top: 30px;
+    margin-bottom: 50px;
+    font-size: 24px;
+    letter-spacing: 0.5rem;
+}
+
+@media screen and (max-width: 559px){
+    .HomeShoppingCollection-heading{
+        font-size: 18px !important;
+        letter-spacing: 0.2rem !important;
+    }
+}
+
+
+.HomeShoppingCollectioncollection-buttons {
+    display: flex;
+    gap: 2rem;
+    justify-content: center; 
+    margin-bottom: 50px;
+}
+
+.collection-buttons {
+    flex: 1 1 200px; /* Allow buttons to grow/shrink with a minimum width */
+    max-width: 212px; /* Keep a max width to maintain button size */
+    height: 40px;
+    text-transform: uppercase;
+    letter-spacing: 0.3rem;
+    background-color: #E8E4E0 !important;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition on hover */
+}
+
+.collection-buttons:hover {
+    background-color: #014d4e !important;
+    color: #fff;
+}
+
+@media screen and (max-width: 469px){
+        .collection-buttons {
+            max-width: 150px;
+            letter-spacing: 0.2rem;
+    }
+}
+@media screen and (max-width: 919px){
+    .HomeShoppingCollectioncollection-buttons{
+        flex-wrap: wrap; 
+    }
+}
+
+.splitter-div{
+    margin-top: 30px;
+    width: 100%;
+    height: 100%;
+}
