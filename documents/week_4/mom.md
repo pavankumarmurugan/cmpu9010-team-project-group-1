@@ -1,5 +1,5 @@
 Group Meeting(online)
-Date and Time: 18:00, 8 Oct (Tuesday)
+Date and Time: 18:00, 7 Oct (Tuesday)
 Participants: All group members
 Agenda: Preparation for Friday’s presentation
 Discussion Summary:
@@ -14,7 +14,7 @@ For all members:
 ---
 
 Group Meeting(online)
-Date and Time: 18:00, 9 Oct (Wednesday)
+Date and Time: 18:00, 8 Oct (Wednesday)
 Participants: All group members
 Agenda: Preparation for Friday’s presentation
 Discussion Summary:
