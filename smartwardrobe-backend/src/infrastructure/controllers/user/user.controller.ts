@@ -17,9 +17,9 @@ import { UpdatePasswordUserReqDTO } from 'src/core/dto/user/user-req-update-prof
 import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profile.dto';
 import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
 import { RequestWithUser } from 'src/core/interface/request.interface';
-import { Roles } from 'src/domain/decorators/roles.decorator';
-import { AccessTokenGuard } from 'src/domain/guards/auth/accessToken.guard';
-import { RolesGuard } from 'src/domain/guards/roles/roles.guard';
+import { Roles } from 'src/infrastructure/decorators/roles.decorator';
+import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
+import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
 import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { UserUsecase } from 'src/use-cases/user/user.usecase';

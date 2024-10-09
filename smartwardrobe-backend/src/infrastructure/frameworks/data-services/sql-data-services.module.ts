@@ -3,9 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SQLDataService } from './sql-data-services.service';
 import { IDataServices } from 'src/core/abstracts';
 import { UserModel } from './model/user.model';
+import { ConfigModule } from '@nestjs/config';
+import { ProductCategoryModel } from './model/product-category.model';
+import { ProductInventoryModel } from './model/product-inventory.model';
+import { ProductModel } from './model/product.model';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({}),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
@@ -15,9 +20,13 @@ import { UserModel } from './model/user.model';
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
-      // synchronize: true,
     }),
-    TypeOrmModule.forFeature([UserModel]),
+    TypeOrmModule.forFeature([
+      UserModel,
+      ProductCategoryModel,
+      ProductInventoryModel,
+      ProductModel,
+    ]),
   ],
   providers: [
     {

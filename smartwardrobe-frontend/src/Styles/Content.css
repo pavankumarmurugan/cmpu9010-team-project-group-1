@@ -14,6 +14,10 @@
   /* cursor: pointer; */
 }
 
+/* .footwear-submenu .css-1edfpdg-MuiTypography-root {
+  font-size: 600 !important;
+} */
+
 .ant-space-item{
   cursor: pointer !important;
 }
@@ -34,18 +38,22 @@
   border-radius: 10px;
   &:hover {
     border-radius: 10px;
-    background-color: #ebe7e1;
+    background-color: #BDD7DE;
   }
+}
+
+.Cart-button{
+  background-color: #BDD7DE;
 }
 
 .ant-dropdown-trigger {
   &:hover {
     border-radius: 10px;
-    background-color: #ebe7e1;
+    /* background-color: #BDD7DE; */
   }
   &:focus {
     border-radius: 10px;
-    background-color: #ebe7e1 !important;
+    background-color: #BDD7DE !important;
   }
 }
 
@@ -88,11 +96,16 @@
     overflow-x: hidden !important;
     gap: 1rem !important;
     margin-top: 100px;
+    height: auto !important;
   }
 }
 
 .ant-drawer .ant-drawer-content {
-  background-color: #fffbf5;
+  background-color: #DCEEF2;
+}
+
+.content-mobile .ant-space-align-center{
+  align-items: flex-start !important;
 }
 
 .css-1hskriy {
@@ -100,13 +113,22 @@
 }
 
 .content-header .css-1apkmlw-MuiButtonBase-root-MuiButton-root {
-  text-transform: none !important;
+  /* text-transform: none !important; */
 }
 
 /* content mid section */
 
 .Mid-Heading {
   text-align: center;
+  font-size: 23px;
+}
+
+@media screen and (max-width: 604px) {
+  .Mid-Heading {
+    text-align: center;
+    font-size: 20px;
+  }
+  
 }
 
 .layout-content-mid {
@@ -115,9 +137,9 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 89vh; /* scroll because of this */
   gap: 1rem;
-  background-color: #fefaf4;
+  background-color: #dceef2;
 }
 
 .Mid-Search-Section {
@@ -136,13 +158,28 @@
   border-radius: 0.75rem;
   padding: 24px 12px;
   font-size: 17px;
-  border-color: #d68f6f;
+  border-color: #BDD7DE;
   flex: 1;
 }
 
 .Mid-Search-Input:focus {
-  border-color: #d68f6f; /* Change this color as desired */
-  outline: none; /* Remove the default outline for a cleaner look */
+  border-color: #BDD7DE; 
+  outline: none; 
+}
+
+.Cart-section{
+  display: flex;
+}
+
+
+.Login-Signup-Btns{
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.signup-buttons{
+  font-weight: bold;
 }
 
 /* .Search-btn{
@@ -174,7 +211,7 @@
   width: 7%;
   height: 50px;
   padding-top: 13px;
-  background-color: #d68f6f;
+  background-color: #BDD7DE;
   border-color: transparent;
 }
 
@@ -183,7 +220,7 @@
     margin: -7%;
     width: 6%;
   }
-  .Mid-Search-Button-Focusn {
+  .Mid-Search-Button-Focus {
     margin: -7%;
     width: 6%;
   }
@@ -345,11 +382,12 @@
         /* max-width: 700; */
         height: 40px;
         border-radius: 0.75rem;
-        background-color: #F6F1E9;
+        background-color: #BDD7DE;
         border-style: none;
         font-weight: 600;
         font-size: 16px;
         color: #2D261A;
+        cursor: pointer;
     }
     
   }
@@ -363,11 +401,12 @@
         /* max-width: 700; */
         height: 40px;
         border-radius: 0.75rem;
-        background-color: #F6F1E9;
+        background-color: #BDD7DE;
         border-style: none;
         font-weight: 600;
         font-size: 16px;
         color: #2D261A;
+        cursor: pointer;
     }
     
   }

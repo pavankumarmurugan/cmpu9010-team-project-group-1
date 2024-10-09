@@ -3,7 +3,7 @@ import { CiBookmark } from "react-icons/ci";
 import { MdFavoriteBorder } from "react-icons/md";
 import "../../Styles/Sidebar.css";
 import { Link } from "react-router-dom";
-import { Button, Drawer, Dropdown, Space } from "antd";
+import { Button, Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { FaRegCircleUser } from "react-icons/fa6";
 import SignupModal from "../Signup/Signup";
@@ -30,7 +30,6 @@ function Sidebar() {
   /** Login button function */
 
   const OpenLoginForm = (e) => {
-    debugger
     setCheckingLoginOrSignup(e);
     setOpenLoginModal(true);
   }
@@ -41,7 +40,6 @@ function Sidebar() {
   }
 
   const accountCreate =(e) => {
-    debugger
     if(e === 'Signup'){
       setCheckingLoginOrSignup("login");
     }else{
@@ -54,19 +52,25 @@ function Sidebar() {
   return (
     <>
 
-      <SignupModal
+      {/* <SignupModal
       isShowModel={OpenLoginModal} 
       closeModal={CloseLoginForm}
       checkingLoginOrSignup={checkingLoginOrSignup}
       accountCreate={accountCreate}
-      />
+      /> */}
 
       <div className="menu">
         <div className="logo">
           <Link to="/" className="logodesign">
-            {/* <CiBookmark className="logo-icon" /> */}
             <h2>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h2>
           </Link>
+           {/* <img src={logo} alt="Logo" className="logo-icon"
+           style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+          /> */}
         </div>
 
         <div className="menu-item">
@@ -206,7 +210,7 @@ function Sidebar() {
           </ul>
         </div>
 
-        {!user ? (
+        {/* {!user ? (
           <div className="Login-Signup-Btns">
             <FaRegCircleUser style={{ width: "30px", height: "30px" }} />
             <Dropdown
@@ -228,14 +232,14 @@ function Sidebar() {
           </div>
         ) : (
           <div className="Login-Signup-Btns">
-            <Button type="text" className="signup-buttons" onClick={(e) => OpenLoginForm('Login')}>
+            <Button type="text" className="signup-buttons" onClick={(e) => OpenLoginForm('Login')} style={{backgroundColor:"#DCEEF2"}}>
               Log in
             </Button>
             <Button color="default" variant="solid" className="signup-buttons" onClick={(e) => OpenLoginForm('Signup')}>
               Sign up
             </Button>
           </div>
-        )}
+        )} */}
       </div>
     </>
   );

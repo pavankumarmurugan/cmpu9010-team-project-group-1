@@ -14,8 +14,8 @@ import { AuthLoginResDto } from 'src/core/dto/auth/auth-res-dto.class';
 import { RefreshTokenResDto } from 'src/core/dto/auth/refresh-token-dto.class';
 import { RequestWithUser } from 'src/core/interface/request.interface';
 import { IResponse } from 'src/core/interface/response.interface';
-import { AccessTokenGuard } from 'src/domain/guards/auth/accessToken.guard';
-import { RefreshTokenGuard } from 'src/domain/guards/auth/refreshToken.guard';
+import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
+import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.guard';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { LoginUsecase } from 'src/use-cases/auth/login.usecase';
@@ -32,6 +32,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @UseInterceptors(RefreshTokenUpdateInterceptor)
   async login(
     @Body() authLoginReqDto: AuthLoginReqDto,
   ): Promise<IResponse<AuthLoginResDto>> {
