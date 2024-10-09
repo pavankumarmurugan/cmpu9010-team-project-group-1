@@ -163,8 +163,8 @@
 }
 
 .Mid-Search-Input:focus {
-  border-color: #BDD7DE; /* Change this color as desired */
-  outline: none; /* Remove the default outline for a cleaner look */
+  border-color: #BDD7DE; 
+  outline: none; 
 }
 
 .Cart-section{

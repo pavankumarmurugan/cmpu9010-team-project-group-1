@@ -29,11 +29,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Dropdown } from "antd";
 import { GenericDropdownMenu } from "../GenericCode/GenericCode";
 import SignupModal from "../Signup/Signup";
+import { useNavigate } from "react-router-dom";
 
 function Headermenu() {
   {
     /*  Use State*/
   }
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
   const [openTop, setOpenTop] = useState(false);
@@ -43,6 +45,7 @@ function Headermenu() {
   const [openAccessories, setOpenAccessories] = useState(false);
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   {
     /*  Use State*/
   }
@@ -428,6 +431,22 @@ function Headermenu() {
 
     /*  login work*/
 
+    /*  search work*/
+
+    const onChangeSearchValue = (e) => {
+      debugger
+      setSearchValue(e.target.value);
+    }
+
+    const handleSearch = () => {
+      debugger
+      if(searchValue.trim() !== ""){
+      navigate("/products", { state: { searchValue } });
+      }
+    }
+
+    /*  search work*/
+
 
   return (
     <>
@@ -469,11 +488,13 @@ function Headermenu() {
                 type={"text"}
                 style={{ color: "white" }}
                 placeholder="What do you want?"
+                value={searchValue}
+                onChange={onChangeSearchValue}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      //   onClick={handleClickShowPassword}
+                        onClick={handleSearch}
                       edge="end"
                     >
                       <SearchIcon style={{color:"white"}}/>
@@ -487,21 +508,23 @@ function Headermenu() {
                   },
                   "& .MuiOutlinedInput-notchedOutline": {
                     borderColor: "white",
-                    borderWidth: 5,
+                    borderWidth: 2,
                   },
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: "white",
-                    borderWidth: 5,
+                    borderWidth: 2,
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "white",
-                    borderWidth: 5,
+                    borderWidth: 2,
                   },
                   // color: 'white',
                 }}
               />
             </FormControl>
-            <h1 className="header-logo">𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
+            <a href="/" className="anchor-tag">
+            <h1 className="header-logo">SMARTWARDROBE</h1>
+            </a>
             <div className="header-icons">
               <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
               <Dropdown         /* this is for logout*/
@@ -524,7 +547,7 @@ function Headermenu() {
               onClick={toggleDrawer(true)}
               sx={{ color: "white", fontSize: "30px" }}
             />
-            <h1 className="header-logo">𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
+            <h1 className="header-logo">SMARTWARDROBE</h1>
             <div className="header-icons">
               <FavoriteBorderIcon
                 className=""
