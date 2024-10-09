@@ -16,7 +16,7 @@ const ContentMid = () => {
   return (
     <div className="layout-content-mid container">
       <div className="Mid-Heading">
-        <h1>Members get up to 50% off everything, every day</h1>
+        <h1>𝐒𝐞𝐚𝐫𝐜𝐡 𝐁𝐞𝐲𝐨𝐧𝐝 𝐊𝐞𝐲𝐰𝐨𝐫𝐝𝐬 <br /> 𝐃𝐢𝐬𝐜𝐨𝐯𝐞𝐫 𝐓𝐡𝐫𝐨𝐮𝐠𝐡 𝐂𝐨𝐧𝐯𝐞𝐫𝐬𝐚𝐭𝐢𝐨𝐧</h1>
       </div>
 
       <div className="Mid-Search-Section">

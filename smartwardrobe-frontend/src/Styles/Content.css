@@ -14,6 +14,10 @@
   /* cursor: pointer; */
 }
 
+/* .footwear-submenu .css-1edfpdg-MuiTypography-root {
+  font-size: 600 !important;
+} */
+
 .ant-space-item{
   cursor: pointer !important;
 }
@@ -45,7 +49,7 @@
 .ant-dropdown-trigger {
   &:hover {
     border-radius: 10px;
-    background-color: #BDD7DE;
+    /* background-color: #BDD7DE; */
   }
   &:focus {
     border-radius: 10px;
@@ -97,7 +101,11 @@
 }
 
 .ant-drawer .ant-drawer-content {
-  background-color: #fffbf5;
+  background-color: #DCEEF2;
+}
+
+.content-mobile .ant-space-align-center{
+  align-items: flex-start !important;
 }
 
 .css-1hskriy {
@@ -112,6 +120,15 @@
 
 .Mid-Heading {
   text-align: center;
+  font-size: 23px;
+}
+
+@media screen and (max-width: 604px) {
+  .Mid-Heading {
+    text-align: center;
+    font-size: 20px;
+  }
+  
 }
 
 .layout-content-mid {
@@ -146,8 +163,23 @@
 }
 
 .Mid-Search-Input:focus {
-  border-color: #BDD7DE; /* Change this color as desired */
-  outline: none; /* Remove the default outline for a cleaner look */
+  border-color: #BDD7DE; 
+  outline: none; 
+}
+
+.Cart-section{
+  display: flex;
+}
+
+
+.Login-Signup-Btns{
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.signup-buttons{
+  font-weight: bold;
 }
 
 /* .Search-btn{
