@@ -1,7 +1,6 @@
 import React from "react";
 import "../../Styles/header.css";
 import { Button } from "antd";
-import CarouselComponent from "../Carousel/Carousel";
 import { Carousel } from "antd";
 import carousel_image1 from "../../Assets/carousel_image1.jpg";
 import carousel_image2 from "../../Assets/carousel_image2.jpg";
@@ -9,6 +8,16 @@ import carousel_image3 from "../../Assets/carousel_image3.jpg";
 import carousel_image4 from "../../Assets/carousel_image4.jpg";
 import carousel_image5 from "../../Assets/carousel_image5.jpg";
 import { Flex, Splitter, Typography } from "antd";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+// import { HomeProductSection } from "../GenericCode/GenericCode"; /** will uncomment when data comes */
+import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
+import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
+import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
+import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
+import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
+import HomeProductSection from "../HomeProductsSection/HomeProductSection";
 
 function HomeShoppingCollection() {
   //   const carouseldata = [
@@ -29,6 +38,51 @@ function HomeShoppingCollection() {
   //       title: "Dress 4",
   //     },
   //   ];
+
+  /* Home page product section dummy data for now */
+
+const dummyData = [
+  {
+    image: Homeproductimage_1,
+    name: "Zapara",
+    description: "Wedding Suit",
+    price: "$1200",
+  },
+  {
+    image: Homeproductimage_2,
+    name: "Harper",
+    description: "Long Sleeves T-Shirt",
+    price: "$130",
+  },
+  {
+    image: Homeproductimage_3,
+    name: "Zara",
+    description: "Urban Style Hoodeis",
+    price: "$250",
+  },
+  {
+    image: Homeproductimage_4,
+    name: "H&M",
+    description: "Printed Dress for Summer",
+    price: "$120",
+  },
+  {
+    image: Homeproductimage_5,
+    name: "Next Direct",
+    description: "Leopard Printed Shoes For Women",
+    price: "$1200",
+  },
+  {
+    image: Homeproductimage_6,
+    name: "Converse",
+    description: "Black Converse Shoes",
+    price: "$230",
+  },
+];
+
+/* Home page product section dummy data for now */
+
+
   const contentStyle = {
     height: "200px",
     color: "#fff",
@@ -41,6 +95,39 @@ function HomeShoppingCollection() {
     border: "2px solid #fff", // Add border to each slide
     boxSizing: "border-box",
   };
+
+    const carouselSettings = {
+      autoplay: true,
+      autoplaySpeed: 1500,
+      dots: true,
+      arrows: false,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      style: { height: "300px" },
+      responsive: [
+        {
+          breakpoint: 1024, // For tablets and large screens
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1,
+          },
+        },
+        {
+          breakpoint: 768, // For medium-sized screens
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 1,
+          },
+        },
+        {
+          breakpoint: 480, // For small screens (mobile devices)
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1,
+          },
+        },
+      ],
+    };
   
   const Desc = (props) => (
     <Flex
@@ -81,7 +168,7 @@ function HomeShoppingCollection() {
     <>
       <div className="HomeShoppingCollection-main">
         <div className="HomeShoppingCollection-heading">
-          <h2>SHOP BY COLLECTION</h2>
+          <h3>SHOP BY COLLECTION</h3>
         </div>
         <div className="HomeShoppingCollectioncollection-buttons">
           <Button
@@ -117,15 +204,7 @@ function HomeShoppingCollection() {
           className="carousel-container"
           style={{ width: "80%", height: "100%", margin: "30px auto" }}
         >
-          <Carousel
-            autoplay
-            autoplaySpeed={1500}
-            dots={true}
-            arrows={false}
-            draggable
-            slidesToShow={3}
-            slidesToScroll={1}
-            style={{ height: "300px" }}
+          <Carousel {...carouselSettings}
           >
             <div style={contentStyle}>
               <img
@@ -193,10 +272,13 @@ function HomeShoppingCollection() {
               />
             </div>
           </Carousel>
+
+          {/* <HomeProductSection data={dummyData} /> */}  {/** will uncomment when data comes */}
+          <HomeProductSection />
         </div>
         <div className="splitter-div">
-            <div className="bestselling-div" style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "20px auto", fontSize:"20px", fontFamily:"bold", textTransform:"uppercase"}}>
-                <h2>Best Selling Categories</h2>
+            <div className="bestselling-div" style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "20px auto", fontSize:"20px", fontFamily:"bold", textTransform:"uppercase", letterSpacing:"0.3rem"}}>
+                <h3>Best Selling Collections</h3>
             </div>
         <Splitter
             style={{
@@ -207,7 +289,7 @@ function HomeShoppingCollection() {
           >
             <Splitter.Panel
               style={{
-                border: '5px solid #ccc',
+                border: '5px solid white',
                 display: 'flex',
                 flexDirection: 'column',
               }}
@@ -223,7 +305,7 @@ function HomeShoppingCollection() {
             </Splitter.Panel>
             <Splitter.Panel
               style={{
-                border: '5px solid #ccc',
+                border: '5px solid white',
                 flex: '1',
                 overflow: 'hidden',
               }}
@@ -232,7 +314,7 @@ function HomeShoppingCollection() {
             </Splitter.Panel>
             <Splitter.Panel
               style={{
-                border: '5px solid #ccc',
+                border: '5px solid white',
                 display: 'flex',
                 flexDirection: 'column',
               }}

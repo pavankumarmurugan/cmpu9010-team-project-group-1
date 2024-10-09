@@ -1,6 +1,4 @@
 import React from "react";
-import Sidebar from "../Sidebar/Sidebar";
-import Content from "../Content/Content";
 import "../../App.css";
 import Headermenu from "../Headermenu/Headermenu";
 import ImageWithTextOverlay from "../Homepage_ImageTextOverlay/Homepage_ImageTextOverlay";
