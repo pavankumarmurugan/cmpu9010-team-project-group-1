@@ -1,0 +1,10 @@
+import { Provider } from '@nestjs/common';
+import { ThrottlerModuleOptions } from './throttler-module-options.interface';
+export declare function createThrottlerProviders(options: ThrottlerModuleOptions): Provider[];
+export declare const ThrottlerStorageProvider: {
+    provide: symbol;
+    useFactory: (options: ThrottlerModuleOptions) => any;
+    inject: string[];
+};
+export declare const getOptionsToken: () => string;
+export declare const getStorageToken: () => symbol;
