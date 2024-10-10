@@ -214,3 +214,34 @@
 .anchor-tag{
     text-decoration: none;
 }
+
+/* drawer work */
+.menu-item{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.menu-item .item{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 10px;
+    transition: 0.3 ease-in-out;
+    color: #5E5546;
+    &:hover{
+        background-color: white;
+        
+    }
+}
+
+.icons{
+    width: 20px;
+    height: 20px;
+    color: #5E5546;
+}

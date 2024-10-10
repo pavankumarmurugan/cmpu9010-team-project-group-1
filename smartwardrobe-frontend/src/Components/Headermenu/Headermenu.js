@@ -18,6 +18,7 @@ import ListItem from "@mui/material/ListItem";
 import { ListItemText } from "@mui/material";
 import { Collapse } from "@mui/material";
 import { CiBookmark } from "react-icons/ci";
+import { IoMdClose } from "react-icons/io";
 import {
   MdExpandLess,
   MdExpandMore,
@@ -29,12 +30,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Dropdown } from "antd";
 import { GenericDropdownMenu } from "../GenericCode/GenericCode";
 import SignupModal from "../Signup/Signup";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Headermenu() {
   {
     /*  Use State*/
   }
+  const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
@@ -90,8 +92,11 @@ function Headermenu() {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 300}} className="mobile-menu-main" role="presentation">
+    <Box sx={{ width: 300 }} className="mobile-menu-main" role="presentation" onClick={toggleDrawer(false)}>
       <List>
+        <div style={{display:"flex", justifyContent:"flex-end", marginBottom:"10px"}}>
+        <IoMdClose />
+        </div>
         <div className="menu-item">
           <a href="/" className="item">
             <IoSearch className="icons" />
@@ -295,158 +300,158 @@ function Headermenu() {
   );
   {
     /*  drawer work*/
-}
+  }
 
+  /*  login work*/
+  const items = [
+    {
+      key: "1",
+      label: "User Name",
+    },
+    {
+      key: "2",
+      label: "Logout",
+    },
+  ];
+  /*  login work*/
 
-    /*  login work*/
-    const items = [
+  /*  header dropdown menu lists work*/
+  const menuData = [
+    {
+      label: "Women",
+      key: "Women",
+      children: [
+        { label: "Dress", key: "Women Dress" },
+        { label: "Tops", key: "Women Tops" },
+        { label: "Bottoms", key: "Women Bottoms" },
+        { label: "Skirts", key: "Women Skirts" },
+        { label: "Pants", key: "Women Pants" },
+        { label: "Trousers", key: "Women Trousers" },
+        { label: "Outwear", key: "Women Outwear" },
+      ],
+    },
+    {
+      label: "Men",
+      key: "Men",
+      children: [
+        { label: "T-Shirts", key: "Men T-Shirts" },
+        { label: "Shirts", key: "Men Shirts" },
+        { label: "Jeans", key: "Men Jeans" },
+        { label: "Chinos", key: "Men Chinos" },
+        { label: "Trousers", key: "Men Trousers" },
+        { label: "Cargo", key: "Men Cargo" },
+        { label: "Shorts", key: "Men Shorts" },
+        { label: "Suits & Blazers", key: "Men Suits & Blazers" },
+      ],
+    },
+    {
+      label: "Footwear",
+      key: "Footwear",
+      children: [
+        // Define children for the Footwear category
         {
-            key: "1",
-            label: "User Name",
-        },
-        {
-            key: "2",
-            label: "Logout",
-        },
-    ];
-    /*  login work*/
-    
-    /*  header dropdown menu lists work*/
-    const menuData = [
-        {
-          label: "Women",
-          key: "Women",
+          label: "Men Footwear",
+          key: "Men Footwear submenu",
           children: [
-            { label: "Dress", key: "Women Dress" },
-            { label: "Tops", key: "Women Tops" },
-            { label: "Bottoms", key: "Women Bottoms" },
-            { label: "Skirts", key: "Women Skirts" },
-            { label: "Pants", key: "Women Pants" },
-            { label: "Trousers", key: "Women Trousers" },
-            { label: "Outwear", key: "Women Outwear" },
+            { label: "Casual Shoes", key: "Men Casual Shoes" },
+            { label: "Formal Shoes", key: "Men Formal Shoes" },
+            { label: "Sneakers", key: "Men Sneakers" },
+            { label: "Boots", key: "Men Boots" },
           ],
         },
         {
-          label: "Men",
-          key: "Men",
+          label: "Women Footwear",
+          key: "Women Footwear submenu",
           children: [
-            { label: "T-Shirts", key: "Men T-Shirts" },
-            { label: "Shirts", key: "Men Shirts" },
-            { label: "Jeans", key: "Men Jeans" },
-            { label: "Chinos", key: "Men Chinos" },
-            { label: "Trousers", key: "Men Trousers" },
-            { label: "Cargo", key: "Men Cargo" },
-            { label: "Shorts", key: "Men Shorts" },
-            { label: "Suits & Blazers", key: "Men Suits & Blazers" },
+            { label: "Heals", key: "Men Heals" },
+            { label: "Flats", key: "Men Flats" },
+            { label: "Sneakers", key: "Men Sneakers" },
+            { label: "Boots", key: "Men Boots" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Accessories",
+      key: "Accessories",
+      children: [
+        // Define children for the Footwear category
+        {
+          label: "Men Accessories",
+          key: "Men Accessories submenu",
+          children: [
+            { label: "Bags", key: "Men Bags" },
+            { label: "Belts", key: "Men Belts" },
+            { label: "Wallets", key: "Men Wallets" },
+            { label: "Sunglasses", key: "Men Sunglasses" },
+            { label: "Watches", key: "Men Watches" },
+            { label: "Caps", key: "Men Caps" },
           ],
         },
         {
-            label: "Footwear",
-            key: "Footwear",
-            children: [ // Define children for the Footwear category
-              {
-                label: "Men Footwear",
-                key: "Men Footwear submenu",
-                children: [
-                  { label: "Casual Shoes", key: "Men Casual Shoes" },
-                  { label: "Formal Shoes", key: "Men Formal Shoes" },
-                  { label: "Sneakers", key: "Men Sneakers" },
-                  { label: "Boots", key: "Men Boots" },
-                ],
-              },
-              {
-                label: "Women Footwear",
-                key: "Women Footwear submenu",
-                children: [
-                  { label: "Heals", key: "Men Heals" },
-                  { label: "Flats", key: "Men Flats" },
-                  { label: "Sneakers", key: "Men Sneakers" },
-                  { label: "Boots", key: "Men Boots" },
-                ],
-              },
-            ],
-          },
-        {
-            label: "Accessories",
-            key: "Accessories",
-            children: [ // Define children for the Footwear category
-              {
-                label: "Men Accessories",
-                key: "Men Accessories submenu",
-                children: [
-                  { label: "Bags", key: "Men Bags" },
-                  { label: "Belts", key: "Men Belts" },
-                  { label: "Wallets", key: "Men Wallets" },
-                  { label: "Sunglasses", key: "Men Sunglasses" },
-                  { label: "Watches", key: "Men Watches" },
-                  { label: "Caps", key: "Men Caps" },
-                ],
-              },
-              {
-                label: "Women Footwear",
-                key: "Women Footwear submenu",
-                children: [
-                    { label: "Bags", key: "Women Bags" },
-                    { label: "Wallets", key: "Women Wallets" },
-                    { label: "Sunglasses", key: "Women Sunglasses" },
-                    { label: "Watches", key: "Women Watches" },
-                    { label: "Rings", key: "Women Rings" },
-                    { label: "Caps", key: "Women Caps" },
-                ],
-              },
-            ],
-          },
-      ];
-    /*  header dropdown menu lists work*/
-    
-    /*  user dropdown work*/
+          label: "Women Footwear",
+          key: "Women Footwear submenu",
+          children: [
+            { label: "Bags", key: "Women Bags" },
+            { label: "Wallets", key: "Women Wallets" },
+            { label: "Sunglasses", key: "Women Sunglasses" },
+            { label: "Watches", key: "Women Watches" },
+            { label: "Rings", key: "Women Rings" },
+            { label: "Caps", key: "Women Caps" },
+          ],
+        },
+      ],
+    },
+  ];
+  /*  header dropdown menu lists work*/
 
-    const userDropdown = (e) => {
-      debugger
-      console.log(e);
-      if(e.key === "2"){
-        console.log("User Name Clicked");
-      }else{
-        setCheckingLoginOrSignup("Login");
-        setOpenLoginModal(true);
-      }
+  /*  user dropdown work*/
+
+  const userDropdown = (e) => {
+    debugger;
+    console.log(e);
+    if (e.key === "2") {
+      console.log("User Name Clicked");
+    } else {
+      setCheckingLoginOrSignup("Login");
+      setOpenLoginModal(true);
     }
+  };
 
-    /*  user dropdown work*/
+  /*  user dropdown work*/
 
-    /*  login work*/
-  
-    const CloseLoginForm = () => {
-      setCheckingLoginOrSignup("");
-      setOpenLoginModal(false);
-    };
-  
-    const accountCreate = (e) => {
-      if (e === "Signup") {
-        setCheckingLoginOrSignup("login");
-      } else {
-        setCheckingLoginOrSignup("Signup");
-      }
-    };
+  /*  login work*/
 
-    /*  login work*/
+  const CloseLoginForm = () => {
+    setCheckingLoginOrSignup("");
+    setOpenLoginModal(false);
+  };
 
-    /*  search work*/
-
-    const onChangeSearchValue = (e) => {
-      debugger
-      setSearchValue(e.target.value);
+  const accountCreate = (e) => {
+    if (e === "Signup") {
+      setCheckingLoginOrSignup("login");
+    } else {
+      setCheckingLoginOrSignup("Signup");
     }
+  };
 
-    const handleSearch = () => {
-      debugger
-      if(searchValue.trim() !== ""){
+  /*  login work*/
+
+  /*  search work*/
+
+  const onChangeSearchValue = (e) => {
+    debugger;
+    setSearchValue(e.target.value);
+  };
+
+  const handleSearch = () => {
+    debugger;
+    if (searchValue.trim() !== "") {
       navigate("/products", { state: { searchValue } });
-      }
     }
+  };
 
-    /*  search work*/
-
+  /*  search work*/
 
   return (
     <>
@@ -470,73 +475,83 @@ function Headermenu() {
       <div className="header-main">
         <div className="header-conatiner page-width">
           <div className="search-div-laptop search-input-above-900px">
-            <FormControl sx={{ m: 1 }} variant="outlined">
-              <InputLabel
-                sx={{
-                  color: "white",
-                  "&.Mui-focused": {
+            {location?.pathname === "/products" ? (
+              <></>
+            ) : (
+              <FormControl sx={{ m: 1 }} variant="outlined">
+                <InputLabel
+                  sx={{
                     color: "white",
-                    fontSize: "18px",
-                  },
-                }}
-                htmlFor="outlined-adornment-password"
-              >
-                Search
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={"text"}
-                style={{ color: "white" }}
-                placeholder="What do you want?"
-                value={searchValue}
-                onChange={onChangeSearchValue}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
+                    "&.Mui-focused": {
+                      color: "white",
+                      fontSize: "18px",
+                    },
+                  }}
+                  htmlFor="outlined-adornment-password"
+                >
+                  Search
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={"text"}
+                  style={{ color: "white" }}
+                  placeholder="What do you want?"
+                  value={searchValue}
+                  onChange={onChangeSearchValue}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
                         onClick={handleSearch}
-                      edge="end"
-                    >
-                      <SearchIcon style={{color:"white"}}/>
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                sx={{
-                  "& label": {
-                    color: "white",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                    borderWidth: 2,
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                    borderWidth: 2,
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                    borderWidth: 2,
-                  },
-                  // color: 'white',
-                }}
-              />
-            </FormControl>
+                        edge="end"
+                      >
+                        <SearchIcon style={{ color: "white" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                  sx={{
+                    "& label": {
+                      color: "white",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    // color: 'white',
+                  }}
+                />
+              </FormControl>
+            )}
             <a href="/" className="anchor-tag">
-            <h1 className="header-logo">SMARTWARDROBE</h1>
+              <h1 className="header-logo">SMARTWARDROBE</h1>
             </a>
             <div className="header-icons">
               <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
-              <Dropdown         /* this is for logout*/
+              {/* this is for logout*/}
+              {/* <Dropdown 
                 menu={{
                   items,
-                  onClick: userDropdown
+                  onClick: userDropdown,
                 }}
                 placement="bottom"
               >
                 <PersonOutlineIcon sx={{ color: "white", fontSize: "30px" }} />
-              </Dropdown>
-                <PersonOutlineIcon onClick={userDropdown} sx={{ color: "white", fontSize: "30px" }} /> {/* will use later for login signup form open only*/}
+              </Dropdown> */}
+              {/* this is for logout*/}
+              <PersonOutlineIcon
+                onClick={userDropdown}
+                sx={{ color: "white", fontSize: "30px" }}
+              />{" "}
+              {/* will use later for login signup form open only*/}
               <ShoppingBagOutlinedIcon
                 sx={{ color: "white", fontSize: "30px" }}
               />
@@ -557,7 +572,7 @@ function Headermenu() {
                 className="profile-icon"
                 menu={{
                   items,
-                  onClick: userDropdown
+                  onClick: userDropdown,
                 }}
                 placement="bottom"
               >
@@ -568,60 +583,63 @@ function Headermenu() {
               />
             </div>
           </div>
-          <div className="mobile-search-input search-input-below-900px">
-            <FormControl sx={{ m: 1 }} variant="outlined">
-              <InputLabel
-                sx={{
-                  color: "white",
-                  "&.Mui-focused": {
+          {location?.pathname === "/products" ? (
+            <></>
+          ) : (
+            <div className="mobile-search-input search-input-below-900px">
+              <FormControl sx={{ m: 1 }} variant="outlined">
+                <InputLabel
+                  sx={{
                     color: "white",
-                    fontSize: "18px",
-                  },
-                }}
-                htmlFor="outlined-adornment-password"
-              >
-                Search
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={"text"}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      //   onClick={handleClickShowPassword}
-                      edge="end"
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                sx={{
-                  "& label": {
-                    color: "white",
-                  },
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                    borderWidth: 5,
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                    borderWidth: 5,
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                    borderWidth: 5,
-                  },
-                  // color: 'white',
-                }}
-              />
-            </FormControl>
-          </div>
-
+                    "&.Mui-focused": {
+                      color: "white",
+                      fontSize: "18px",
+                    },
+                  }}
+                  htmlFor="outlined-adornment-password"
+                >
+                  Search
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={"text"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        //   onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                  sx={{
+                    "& label": {
+                      color: "white",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 5,
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 5,
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 5,
+                    },
+                    // color: 'white',
+                  }}
+                />
+              </FormControl>
+            </div>
+          )}
           {/* Header Dropdowns */}
           <div className="search-input-above-900px">
-          <GenericDropdownMenu menuData={menuData} />
+            <GenericDropdownMenu menuData={menuData} />
           </div>
           {/* Header Dropdowns */}
         </div>
