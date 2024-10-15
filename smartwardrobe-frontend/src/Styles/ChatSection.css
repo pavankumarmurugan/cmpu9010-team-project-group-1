@@ -1,0 +1,39 @@
+.chats_list {
+    height: 75vh;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+.chat_sender {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row
+}
+
+.chat_sender p {
+    padding: 10px;
+    background-color: lightgray;
+    border-radius: 10px;
+    max-width: 60%;
+    font-size: 17px;
+    text-transform: capitalize;
+    letter-spacing: normal;
+}
+
+.chat_receiver {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+.chat_receiver p {
+    padding: 10px;
+    background-color: lightblue;
+    border-radius: 10px;
+    max-width: 80%;
+    font-size: 17px;
+    text-transform: capitalize;
+    letter-spacing: normal;
+}
