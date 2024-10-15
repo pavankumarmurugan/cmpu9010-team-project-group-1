@@ -1,53 +1,49 @@
-.ProductClick-div {
-  width: 100%;
-  height: 90px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f4f1ef;
-}
-
-.searchedData {
-  font-size: 35px;
-  letter-spacing: 0.3rem;
-  text-transform: uppercase;
-}
-
 .SearchedContent-div {
   width: 100%;
-  height: 100%;
-  /* margin-top: 20px; */
-  /* margin-bottom: 20px; */
-  display: flex; /* Use flexbox for layout */
+  height: 100vh;
+  display: flex;
   font-size: 20px;
-  letter-spacing: 0.3rem;
+  letter-spacing: 0.2rem;
   text-transform: uppercase;
 }
 
-.searched-result-bar-div {
+.searched-result-bar-div{
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40px;
+  margin-top: 50px;
 }
 
-/* Left side for products */
 .products {
   flex: 3.2;
-  /* padding: 20px; */
   padding-left: 5rem;
   padding-right: 5rem;
   height: 100%;
   overflow-y: auto;
+  scrollbar-width: none;
+  /* scrollbar-width: thin; */
 }
 
-/* Right side for chat */
 .chat {
   flex: 0.8;
-  padding: 20px;
+  /* padding: 20px; */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 5px;
+  padding-right: 20px;
   background-color: #ffffff;
   border-left: 2px solid #e9ecef;
-  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100vh;
+}
+
+.chat-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 20px;
+  scrollbar-width: none;
 }
 
 .productsearch-input-div {
@@ -95,9 +91,6 @@
 
 .filterdropdowns .ant-select-selector {
   background-color: #e9ecef !important;
-  &:hover {
-    border-color: #e9ecef !important;
-  }
 }
 
 .filterdropdowns .ant-select-selection-placeholder {
@@ -106,8 +99,6 @@
 
 .products-cards {
   margin-top: 50px;
-  /* padding-left: 5rem; */
-  /* padding-right: 5rem; */
   display: flex;
   justify-content: center;
 }
@@ -121,7 +112,6 @@
 @media (min-width: 1025px) {
   .productsearch-input {
     width: 800px;
-    /* min-width: 800px; */
   }
 }
 
@@ -137,7 +127,6 @@
   }
   .productsearch-input {
     width: 100%;
-    /* min-width: 600px !important;  */
   }
   .products {
     padding-left: 0;
@@ -147,16 +136,21 @@
 
 @media (max-width: 600px) {
   .productpagecards {
-    /* grid-template-columns: 1fr; */
+    grid-template-columns: 1fr;
   }
   .productsearch-input {
     width: 100%;
-    /* min-width: 200px;  */
   }
 }
 
-.reset-btn{
-    cursor: pointer;
+/* Make the search input sticky at the bottom of the chat section */
+.chat .search-input-container {
+  width: 100%;
+  background-color: #ffffff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  position: sticky;
+  bottom: 0;
 }
 
 .card {
@@ -168,6 +162,15 @@
   height: 100%;
 }
 
+.image-container {
+  position: relative;
+  display: inline-block;
+  transition: transform 0.3s ease;
+  &:hover{
+    transform: scale(1.02);
+  }
+}
+
 .product--image {
   width: 100%;
   height: 500px;
@@ -176,7 +179,8 @@
 }
 
 .product--image:hover {
-  transform: scale(1.05);
+  /* transform: scale(1.05); */
+  cursor: pointer;
 }
 
 .description {
@@ -190,113 +194,22 @@
   letter-spacing: 0.1rem;
 }
 
-.View-Product-Button {
-  height: 40px;
-  margin-top: 10px !important;
-  border: none !important;
-  outline: 0 !important;
-  padding: 10px 8px !important;
+.TryOn-Button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: white;
+  color: black;
+  border: 1px solid #cbcbcb;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+.TryOn-Button:hover {
+  background-color: black;
   color: black !important;
-  background-color: white !important;
-  border: 1px solid #cbcbcb !important;
-  text-align: center !important;
-  cursor: pointer !important;
-  width: 100% !important;
-  font-size: 18px !important;
-}
-
-.View-Product-Button:hover {
-  color: white !important;
-  background-color: #000000 !important;
-  opacity: 0.7 !important;
-}
-
-.card h4 {
-  padding-top: 20px;
-  padding-bottom: 10px;
-}
-
-.image-container {
-  position: relative;
-  display: inline-block;
-  transition: transform 0.3s ease;
-  &:hover{
-    transform: scale(1.02);
-  }
-}
-
-.TryOn-Button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 5px 10px;
-  background-color: white;
-  color: black;
-  border: 1px solid #cbcbcb;
-  cursor: pointer;
-  z-index: 10;
-  transition: background-color 0.3s ease;
-}
-
-.TryOn-Button:hover {
-  background-color: black;
-  color: white;
   transform: scale(1.05);
+  border: 1px solid #cbcbcb !important;
 }
-
-/* .image-container {
-  position: relative;
-  display: inline-block;
-} */
-
-/* Styling for Color Selector */
-.color-select {
-  position: absolute;
-  bottom: 10px; /* Position it 10px above the bottom of the image */
-  left: 50%; /* Center the div horizontally */
-  transform: translateX(-50%); /* Translate to center */
-  width: 50%; /* Set width to 50% of the image */
-  background-color: white; /* Background white */
-  padding: 10px; /* Padding for spacing */
-  display: flex;
-  justify-content: space-evenly; /* Space between color options */
-  align-items: center;
-  border-radius: 8px; /* Optional: Add rounded corners */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
-  z-index: 10;
-}
-
-/* Individual Color Option Styling */
-.color-option {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid #ffffff; /* White border to separate colors */
-  cursor: pointer;
-  outline: none;
-  transition: transform 0.3s ease;
-}
-
-.color-option:hover {
-  transform: scale(1.1); /* Scale effect on hover */
-}
-
-/* Try On Button Styling */
-.TryOn-Button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 5px 10px;
-  background-color: white;
-  color: black;
-  border: 1px solid #cbcbcb;
-  cursor: pointer;
-  z-index: 10;
-  transition: background-color 0.3s ease;
-}
-
-.TryOn-Button:hover {
-  background-color: black;
-  color: white;
-}
-

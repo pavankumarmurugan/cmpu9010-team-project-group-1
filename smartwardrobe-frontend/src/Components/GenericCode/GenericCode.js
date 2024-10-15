@@ -4,6 +4,8 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import "../../Styles/Homeproductsection.css";
 import "../../Styles/ProductPage.css";
+import { useState } from "react";
+import { FaArrowUp } from "react-icons/fa6";
 
 const renderMenuItems = (items) => {
   return items.map((item) => {
@@ -15,16 +17,16 @@ const renderMenuItems = (items) => {
           >
             {item.label}{" "}
             {!item?.key?.includes("submenu") && (
-              <DownOutlined style={{ marginLeft: "8px" }} />
+              <DownOutlined style={{ marginLeft: "3px" }} />
             )}
           </span>
         ),
         key: item.key,
-        children: renderMenuItems(item.children), // Recursively render children
+        children: renderMenuItems(item.children),
       };
     }
 
-    // Check if the item has a custom component to render
+    
     return {
       label: item.component ? <item.component /> : item.label,
       key: item.key,
@@ -61,7 +63,6 @@ export const HomeProductSection = (props) => {
   debugger;
   const responsive = {
     superLargeDesktop: {
-      // the naming can be any, depends on you.
       breakpoint: { max: 4000, min: 3000 },
       items: 5,
     },
@@ -152,13 +153,12 @@ export const Productfilterdropdowns = (props) => {
     <Select
       mode="multiple"
       className="filterdropdowns"
-      style={{ width: '100%' }} // Ensure the select component takes full width
+      style={{ width: '100%', letterSpacing: "0.1rem", textTransform: "capitalize" }}
       placeholder={props?.name}
       options={props?.options}
       popupMatchSelectWidth={true}
       dropdownRender={(menu) => (
         <div>
-          {/* Header Section inside Dropdown */}
           <div
             style={{
               display: "flex",
@@ -179,5 +179,32 @@ export const Productfilterdropdowns = (props) => {
         </div>
       )}
     />
+  );
+};
+
+
+export const ScrollButton = () => {
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleScroll = () => {
+    if (window.pageYOffset > 200) {
+      setShowScrollButton(true);
+    } else {
+      setShowScrollButton(false);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return (
+    <div>
+      {showScrollButton && (
+      <Button className="scroll-to-top" onClick={scrollToTop}>
+        <FaArrowUp className="scroll-to-top-icons"/>
+      </Button>
+    )}
+    </div>  
   );
 };

@@ -474,7 +474,7 @@ function Headermenu() {
 
       <div className="header-main">
         <div className="header-conatiner page-width">
-          <div className="search-div-laptop search-input-above-900px">
+          <div className={location?.pathname === "/products" ? "search-div-laptop-productspage search-input-above-900px" : "search-div-laptop search-input-above-900px"} >
             {location?.pathname === "/products" ? (
               <></>
             ) : (
@@ -498,6 +498,7 @@ function Headermenu() {
                   placeholder="What do you want?"
                   value={searchValue}
                   onChange={onChangeSearchValue}
+                  autoComplete="off"
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton

@@ -29,6 +29,14 @@
     padding-bottom: 10px;
 }
 
+.search-div-laptop-productspage{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 .search-div-mobile{
     display: grid;
     grid-template-columns: 0.5fr 2.5fr 1fr;

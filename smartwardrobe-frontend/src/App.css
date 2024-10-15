@@ -28,3 +28,23 @@ padding-right: 2rem; */
         overflow-x: hidden !important;
     }
   } */
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px; 
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 53%;
+    height: 50px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 1000;
+    transition: 0.3s ease-in-out;
+    &:hover {
+        background-color: black !important;
+        color: white !important;
+        transform: scale(1.1);
+    }
+}
