@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17 # Replace it with the image name
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: imageSearch # Replace it with database name
+      POSTGRES_USER: postgres # Replace with database user
+      POSTGRES_PASSWORD: test-postgres # Replace it with database password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - postgres_network
+
+volumes:
+  postgres_data:
+
+networks:
+  postgres_network:
