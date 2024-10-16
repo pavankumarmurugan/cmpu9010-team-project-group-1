@@ -14,6 +14,8 @@ import { ProductCategoryController } from './product-category/product-category.c
 import { ProductInventoryController } from './product-inventory/product-inventory.controller';
 import { UseCasesModule } from 'src/use-cases/use-cases.module';
 import { ProductController } from './product/product.controller';
+import { CartItemUsecase } from 'src/use-cases/cart-item/cart-item.usecase';
+import { CartItemController } from './cart-item/cart-item.controller';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { ProductController } from './product/product.controller';
     ProductController,
     ProductCategoryController,
     ProductInventoryController,
+    CartItemController,
   ],
   providers: [
     {
