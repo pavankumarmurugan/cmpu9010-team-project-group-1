@@ -4,6 +4,7 @@ import { AuthDtoConvertor } from './auth/auth-dto.convertor';
 import { ProductCategoryConvertor } from './product-category/product-category.convertor';
 import { ProductInventoryConvertor } from './product-inventory/product-inventory.convertor';
 import { ProductConvertor } from './product/product.convertor';
+import { CartItemConvertor } from './cart-item/cart-item.convertor';
 
 @Module({
   providers: [
@@ -12,6 +13,7 @@ import { ProductConvertor } from './product/product.convertor';
     ProductCategoryConvertor,
     ProductInventoryConvertor,
     ProductConvertor,
+    CartItemConvertor,
   ],
   exports: [
     UserDtoConvertor,
@@ -19,6 +21,7 @@ import { ProductConvertor } from './product/product.convertor';
     ProductCategoryConvertor,
     ProductInventoryConvertor,
     ProductConvertor,
+    CartItemConvertor,
   ],
 })
 export class ConvertorsModule {}

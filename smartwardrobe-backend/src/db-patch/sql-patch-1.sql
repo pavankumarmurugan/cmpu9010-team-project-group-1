@@ -42,3 +42,18 @@ CREATE TABLE `product_inventory` (
     `updated_at` TIMESTAMP NULL,
     `deleted_at` TIMESTAMP NULL,
     PRIMARY KEY (`id`));
+
+CREATE TABLE `smartwardrobe`.`cart_item` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `session_id` INT NULL,
+  `product_id` INT NULL,
+  `quantity` INT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_product_id`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `smartwardrobe`.`product` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);

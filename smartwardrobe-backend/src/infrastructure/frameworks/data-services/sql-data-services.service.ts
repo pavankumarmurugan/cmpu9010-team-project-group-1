@@ -11,6 +11,8 @@ import { ProductInventoryEntity } from 'src/core/entities/product-inventory/prod
 import { ProductInventoryModel } from './model/product-inventory.model';
 import { ProductModel } from './model/product.model';
 import { ProductEntity } from 'src/core/entities/product/product.entity';
+import { CartItemModel } from './model/cart-items.model';
+import { CartItemEntity } from 'src/core/entities/cart-item/cart-item.entity';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -18,6 +20,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   productCategory: IGenericRepository<ProductCategoryEntity>;
   productInventory: IGenericRepository<ProductInventoryEntity>;
   product: IGenericRepository<ProductEntity>;
+  cartItem: IGenericRepository<CartItemEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -28,6 +31,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private productInventoryRepository: Repository<ProductInventoryEntity>,
     @InjectRepository(ProductModel)
     private productRepository: Repository<ProductEntity>,
+    @InjectRepository(CartItemModel)
+    private cartItemRepository: Repository<CartItemEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -40,6 +45,9 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     );
     this.product = new SQLGenericRepository<ProductModel>(
       this.productRepository,
+    );
+    this.cartItem = new SQLGenericRepository<CartItemEntity>(
+      this.cartItemRepository,
     );
   }
 }

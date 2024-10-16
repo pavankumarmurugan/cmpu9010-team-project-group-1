@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductCategoryModel } from './model/product-category.model';
 import { ProductInventoryModel } from './model/product-inventory.model';
 import { ProductModel } from './model/product.model';
+import { CartItemModel } from './model/cart-items.model';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ProductModel } from './model/product.model';
       ProductCategoryModel,
       ProductInventoryModel,
       ProductModel,
+      CartItemModel,
     ]),
   ],
   providers: [
