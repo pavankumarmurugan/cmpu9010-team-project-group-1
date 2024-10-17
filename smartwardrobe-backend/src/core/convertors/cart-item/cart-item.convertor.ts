@@ -3,6 +3,7 @@ import { CartItemReqDto } from 'src/core/dto/cart-item/cart-item-req-dto';
 import { UpdateCartItemReqDto } from 'src/core/dto/cart-item/cart-item-req-update-dto';
 import { CartItemResDto } from 'src/core/dto/cart-item/cart-item-res-dto';
 import { CartItemEntity } from 'src/core/entities/cart-item/cart-item.entity';
+import { ProductEntity } from 'src/core/entities/product/product.entity';
 
 @Injectable()
 export class CartItemConvertor {
@@ -14,9 +15,10 @@ export class CartItemConvertor {
     return entity.map((item) => ({ ...item }));
   }
 
-  toModelFromDto(dto: CartItemReqDto): CartItemEntity {
+  toModelFromDto(cartId: number, dto: CartItemReqDto): CartItemEntity {
     return {
       ...dto,
+      cartId,
     };
   }
 
@@ -25,6 +27,17 @@ export class CartItemConvertor {
       ...dto,
       id: undefined,
       updatedAt: new Date(),
+      cartId: undefined,
     };
+  }
+
+  toResDtoFromEntitiesWithProductDetails(
+    entity: CartItemEntity[],
+    productEntity: ProductEntity[],
+  ): CartItemResDto[] {
+    return entity.map((item) => ({
+      ...item,
+      product: productEntity.find((product) => product.id === item.productId),
+    }));
   }
 }

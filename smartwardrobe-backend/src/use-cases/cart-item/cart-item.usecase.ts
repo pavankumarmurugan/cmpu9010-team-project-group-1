@@ -5,6 +5,7 @@ import { CartItemReqDto } from 'src/core/dto/cart-item/cart-item-req-dto';
 import { UpdateCartItemReqDto } from 'src/core/dto/cart-item/cart-item-req-update-dto';
 import { CartItemResDto } from 'src/core/dto/cart-item/cart-item-res-dto';
 import { CartItemEntity } from 'src/core/entities/cart-item/cart-item.entity';
+import { CartEntity } from 'src/core/entities/cart/cart.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 
@@ -15,9 +16,17 @@ export class CartItemUsecase {
     private convertor: CartItemConvertor,
   ) {}
 
-  async create(dto: CartItemReqDto): Promise<IResponse<CartItemResDto>> {
+  async create(
+    userId: number,
+    dto: CartItemReqDto,
+  ): Promise<IResponse<CartItemResDto>> {
     try {
-      const cartItemEntity: CartItemEntity = this.convertor.toModelFromDto(dto);
+      const { id }: CartEntity =
+        await this.databaseService.cart.get<CartEntity>({ userId });
+      const cartItemEntity: CartItemEntity = this.convertor.toModelFromDto(
+        id,
+        dto,
+      );
       const entity: CartItemEntity = await this.databaseService.cartItem.create(
         cartItemEntity,
       );
@@ -31,10 +40,12 @@ export class CartItemUsecase {
     }
   }
 
-  async getAll(): Promise<IResponse<CartItemResDto[]>> {
+  async getAll(userId: number): Promise<IResponse<CartItemResDto[]>> {
     try {
+      const { id }: CartEntity =
+        await this.databaseService.cart.get<CartEntity>({ userId });
       const entities: CartItemEntity[] =
-        await this.databaseService.cartItem.getAll();
+        await this.databaseService.cartItem.getAllByProperties({ cartId: id });
 
       const data: CartItemResDto[] =
         this.convertor.toResDtoFromEntities(entities);

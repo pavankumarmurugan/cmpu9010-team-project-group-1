@@ -89,4 +89,18 @@ export const MESSAGES = {
       SUCCESS: 'DELETED ITEMS FROM CART',
     },
   },
+  CART: {
+    CREATE: {
+      SUCCESS: 'SUCCESSFULLY CREATED CART',
+    },
+    GET: {
+      SUCCESS: 'SUCCESSFULLY FETCHED CART',
+    },
+    UPDATE: {
+      SUCCESS: 'SUCCESSFULLY UPDATED CART',
+    },
+    DELETE: {
+      SUCCESS: 'DELETED CART',
+    },
+  },
 };
