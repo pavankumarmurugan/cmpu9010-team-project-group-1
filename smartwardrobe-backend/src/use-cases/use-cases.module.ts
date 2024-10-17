@@ -10,6 +10,8 @@ import { LoginUsecase } from './auth/login.usecase';
 import { LogoutUsecase } from './auth/logout.usecase';
 import { RefreshTokenUsecase } from './auth/refresh-token.usecase';
 import { ProductUsecase } from './product/product.usecase';
+import { CartItemUsecase } from './cart-item/cart-item.usecase';
+import { CartUsecase } from './cart/cart.usecase';
 
 @Module({
   imports: [DataServicesModule, ConvertorsModule, JWTModule, BcryptModule],
@@ -21,6 +23,8 @@ import { ProductUsecase } from './product/product.usecase';
     LogoutUsecase,
     RefreshTokenUsecase,
     ProductUsecase,
+    CartItemUsecase,
+    CartUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -30,6 +34,8 @@ import { ProductUsecase } from './product/product.usecase';
     LogoutUsecase,
     RefreshTokenUsecase,
     ProductUsecase,
+    CartItemUsecase,
+    CartUsecase,
   ],
 })
 export class UseCasesModule {}
