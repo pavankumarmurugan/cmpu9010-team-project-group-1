@@ -8,6 +8,7 @@ import { ProductCategoryModel } from './model/product-category.model';
 import { ProductInventoryModel } from './model/product-inventory.model';
 import { ProductModel } from './model/product.model';
 import { CartItemModel } from './model/cart-items.model';
+import { CartModel } from './model/cart.model';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CartItemModel } from './model/cart-items.model';
       ProductInventoryModel,
       ProductModel,
       CartItemModel,
+      CartModel,
     ]),
   ],
   providers: [

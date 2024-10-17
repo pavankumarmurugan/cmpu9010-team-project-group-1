@@ -21,9 +21,8 @@ export class RefreshTokenUpdateInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    const { user, url } = context.switchToHttp().getRequest();
-    const userId =
-      url === ('/auth/refresh' || '/auth/login') ? user.userId : null;
+    const { user } = context.switchToHttp().getRequest();
+    const userId = user ? user.userId : null;
     return next.handle().pipe(
       tap(async (response) => {
         const refreshToken = response['data']['refreshToken'];

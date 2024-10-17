@@ -23,6 +23,7 @@ import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
 import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { UserUsecase } from 'src/use-cases/user/user.usecase';
+import { CartCreateInterceptor } from 'src/infrastructure/interceptors/cart-add.interceptor';
 
 @Controller('users')
 @ApiTags('User')
@@ -45,6 +46,7 @@ export class UserController {
   @Post('create')
   @ApiBearerAuth()
   @UseInterceptors(RefreshTokenUpdateInterceptor)
+  @UseInterceptors(CartCreateInterceptor)
   async saveUser(@Body() dto: UserReqDTO) {
     try {
       return await this.userUsecase.create(dto);

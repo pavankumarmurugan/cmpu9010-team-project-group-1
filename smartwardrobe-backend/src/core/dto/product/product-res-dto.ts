@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { BaseDto } from '../base-dto/base.dto';
 
 export class ProductResDto extends BaseDto {
