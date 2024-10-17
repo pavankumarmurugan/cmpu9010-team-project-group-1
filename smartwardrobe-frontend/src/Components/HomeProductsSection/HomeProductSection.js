@@ -9,9 +9,10 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import "../../Styles/Homeproductsection.css"
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
-const HomeProductSection = () => { /** will remove this component when data comes */
-
+const HomeProductSection = (props) => { /** will remove this component when data comes */
+  const navigate = useNavigate();
     const responsive = {
         superLargeDesktop: {
           // the naming can be any, depends on you.
@@ -32,13 +33,39 @@ const HomeProductSection = () => { /** will remove this component when data come
         }
       };
 
+      const handleImgaeClick = () => {
+        navigate("/productdetails");
+      }
+
+      const handleAllProducts = () => {
+        navigate("/products");
+      }
+
   return (
     <div className="homeproductsection-main">
     <Carousel responsive={responsive}
         // autoPlay={true}
         autoPlaySpeed={1500}
     >
-    <div className="card">
+      {props?.data?.map((items, index) => (
+        <div className="card">
+        <img className="product--image" src={items?.image} alt="product image" onClick={handleImgaeClick}/>
+        <h4>{items?.name}</h4>
+        <p className="description">{items?.description}</p>
+        <p className="price">&eur;{items?.description}</p>
+        <p>
+          <Button
+              className="View-Product-Button"
+              color="default"
+              // variant="filled"
+              onClick={handleAllProducts}
+            >
+              More Like this
+            </Button>
+        </p>
+      </div>
+      ))}
+    {/* <div className="card">
       <img className="product--image" src={Homeproductimage_1} alt="product image" />
       <h4>Zapara</h4>
       <p className="description">Wedding Suit</p>
@@ -127,7 +154,7 @@ const HomeProductSection = () => { /** will remove this component when data come
             More Like this
           </Button>
       </p>
-    </div>
+    </div> */}
 </Carousel>;
 </div>
      /* <div className="homeproductsection-main">

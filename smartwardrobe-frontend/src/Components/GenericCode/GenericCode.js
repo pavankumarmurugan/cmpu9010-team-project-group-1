@@ -128,16 +128,16 @@ export const ProductPageCards = (props) => {
               ))}
             </div> */}
 
-            <Button className="TryOn-Button" color="default">
+            {/* <Button className="TryOn-Button" color="default">
               Try On
-            </Button>
+            </Button> */}
           </div>
           <h4>{item?.name}</h4>
           <p className="description">{item?.description}</p>
           <p className="price">{item?.price}</p>
           <p className="button-container">
             <Button className="View-Product-Button" color="default">
-              More Like this
+              View
             </Button>
           </p>
         </div>
@@ -208,3 +208,8 @@ export const ScrollButton = () => {
     </div>  
   );
 };
+
+export const handleImageUplaod = (e) => {
+  debugger
+  console.log(e.target.files[0]);
+}
