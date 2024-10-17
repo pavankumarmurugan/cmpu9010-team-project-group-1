@@ -69,6 +69,11 @@
        
 }
 
+.header-icons .css-2kk4p4-MuiBadge-badge{
+    background-color: white !important;
+    color: black !important;
+}
+
 .page-width {
     max-width: 160rem;
     margin: 0 auto;

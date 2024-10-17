@@ -19,6 +19,7 @@ import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
 import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import {
+  handleImageUplaod,
   Productfilterdropdowns,
   ProductPageCards,
   ScrollButton,
@@ -138,11 +139,6 @@ const ProductPage = () => {
   width: 1px;
 `;
 
-  const handleImageUplaod = (e) => {
-    debugger
-    console.log(e.target.files[0]);
-  }
-
   return (
     <div className="productpage-container">
       <ScrollButton />
@@ -156,57 +152,6 @@ const ProductPage = () => {
             <h3>Search Results</h3>
           </div>
           {/* <div className="productsearch-input-div"> */}
-          {/* <FormControl
-              sx={{ m: 1, width: "100%", maxWidth: "800px" }}
-              variant="outlined"
-            >
-              <InputLabel
-                sx={{
-                  color: "black",
-                  "&.Mui-focused": {
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
-                htmlFor="outlined-adornment-password"
-              >
-                Search
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={"text"}
-                style={{ width: "100%", backgroundColor: "#e9ecef" }}
-                // placeholder="What do you want?"
-                // value={searchValue}
-                // onChange={onChangeSearchValue}
-                className="productsearch-input"
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      // onClick={handleSearch}
-                      edge="end"
-                    >
-                      <SearchIcon style={{ color: "black" }} />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                sx={{
-                  height: "50px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "transparent",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.5)",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "black",
-                    borderWidth: "2px",
-                  },
-                }}
-              />
-            </FormControl> */}
           {/* </div> */}
           <div
             style={{
@@ -287,6 +232,8 @@ const ProductPage = () => {
               <InputLabel
                 sx={{
                   color: "black",
+                  letterSpacing: "normal",
+                  textTransform: "capitalize",
                   "&.Mui-focused": {
                     color: "black",
                     fontSize: "18px",

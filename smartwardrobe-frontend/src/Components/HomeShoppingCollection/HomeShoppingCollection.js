@@ -274,7 +274,7 @@ const dummyData = [
           </Carousel>
 
           {/* <HomeProductSection data={dummyData} /> */}  {/** will uncomment when data comes */}
-          <HomeProductSection />
+          <HomeProductSection data={dummyData}/>
         </div>
         <div className="splitter-div">
             <div className="bestselling-div" style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "20px auto", fontSize:"20px", fontFamily:"bold", textTransform:"uppercase", letterSpacing:"0.3rem"}}>

@@ -1,6 +1,7 @@
 import React, { Children, useState } from "react";
 import "../../Styles/header.css";
 import {
+  Badge,
   Box,
   Drawer,
   FormControl,
@@ -536,7 +537,13 @@ function Headermenu() {
               <h1 className="header-logo">SMARTWARDROBE</h1>
             </a>
             <div className="header-icons">
+            <Badge badgeContent={2} color="error"
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}>
               <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
+              </Badge>
               {/* this is for logout*/}
               {/* <Dropdown 
                 menu={{
@@ -551,11 +558,17 @@ function Headermenu() {
               <PersonOutlineIcon
                 onClick={userDropdown}
                 sx={{ color: "white", fontSize: "30px" }}
-              />{" "}
+              />
               {/* will use later for login signup form open only*/}
+              <Badge badgeContent={2} color="error"
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}>
               <ShoppingBagOutlinedIcon
                 sx={{ color: "white", fontSize: "30px" }}
               />
+              </Badge>
             </div>
           </div>
           <div className="search-div-mobile search-input-below-900px">
@@ -565,10 +578,13 @@ function Headermenu() {
             />
             <h1 className="header-logo">SMARTWARDROBE</h1>
             <div className="header-icons">
-              <FavoriteBorderIcon
-                className=""
-                sx={{ color: "white", fontSize: "30px" }}
-              />
+            <Badge badgeContent={2} color="error"
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}>
+              <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
+              </Badge>
               <Dropdown
                 className="profile-icon"
                 menu={{
@@ -579,9 +595,15 @@ function Headermenu() {
               >
                 <PersonOutlineIcon sx={{ color: "white", fontSize: "30px" }} />
               </Dropdown>
+              <Badge badgeContent={2} color="error"
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}>
               <ShoppingBagOutlinedIcon
                 sx={{ color: "white", fontSize: "30px" }}
               />
+              </Badge>
             </div>
           </div>
           {location?.pathname === "/products" ? (
