@@ -1,0 +1,6 @@
+flask~=3.0.3
+numpy~=1.26.4
+pillow~=10.1.0
+psycopg2~=2.9.9
+torch~=2.6.0.dev20241003
+torchvision~=0.20.0.dev20241003
