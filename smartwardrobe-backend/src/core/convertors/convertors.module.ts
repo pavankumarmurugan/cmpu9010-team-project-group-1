@@ -6,6 +6,7 @@ import { ProductInventoryConvertor } from './product-inventory/product-inventory
 import { ProductConvertor } from './product/product.convertor';
 import { CartItemConvertor } from './cart-item/cart-item.convertor';
 import { CartConvertor } from './cart/cart.convertor';
+import { SearchImageSimilarProductsConvertor } from './search/search-image-similar-products.convertor';
 
 @Module({
   providers: [
@@ -16,6 +17,7 @@ import { CartConvertor } from './cart/cart.convertor';
     ProductConvertor,
     CartItemConvertor,
     CartConvertor,
+    SearchImageSimilarProductsConvertor,
   ],
   exports: [
     UserDtoConvertor,
@@ -25,6 +27,7 @@ import { CartConvertor } from './cart/cart.convertor';
     ProductConvertor,
     CartItemConvertor,
     CartConvertor,
+    SearchImageSimilarProductsConvertor,
   ],
 })
 export class ConvertorsModule {}

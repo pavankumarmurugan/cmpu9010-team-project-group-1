@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { ProductInventoryUsecase } from './product-inventory/product-inventory.usecase';
 import { ConvertorsModule } from 'src/core/convertors/convertors.module';
 import { DataServicesModule } from 'src/infrastructure/services/data-services/data-service.module';
@@ -12,9 +13,20 @@ import { RefreshTokenUsecase } from './auth/refresh-token.usecase';
 import { ProductUsecase } from './product/product.usecase';
 import { CartItemUsecase } from './cart-item/cart-item.usecase';
 import { CartUsecase } from './cart/cart.usecase';
+import { ServicesModule } from 'src/infrastructure/services/services.module';
+import { SearchService } from 'src/infrastructure/services/search/search';
+import { SearchProductUsecase } from './search/search.usecase';
 
 @Module({
-  imports: [DataServicesModule, ConvertorsModule, JWTModule, BcryptModule],
+  imports: [
+    HttpModule.register({}),
+
+    DataServicesModule,
+    ConvertorsModule,
+    JWTModule,
+    BcryptModule,
+    ServicesModule,
+  ],
   providers: [
     ProductInventoryUsecase,
     ProductCategoryUsecase,
@@ -25,6 +37,8 @@ import { CartUsecase } from './cart/cart.usecase';
     ProductUsecase,
     CartItemUsecase,
     CartUsecase,
+    SearchService,
+    SearchProductUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -36,6 +50,7 @@ import { CartUsecase } from './cart/cart.usecase';
     ProductUsecase,
     CartItemUsecase,
     CartUsecase,
+    SearchProductUsecase,
   ],
 })
 export class UseCasesModule {}
