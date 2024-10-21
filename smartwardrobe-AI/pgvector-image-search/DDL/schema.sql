@@ -1,21 +1,30 @@
--- DDL: createTable.sql
-------------------------------------------------
--- create database image_search
-CREATE DATABASE image_search;
 
--- connect to image_search
-\c image_search
+-- create database image-search
+CREATE DATABASE image-search;
+
+-- connect to image-search
+\c image-search
 
 ------------------------------------------------
 -- drop table !!!!!!!!!!!!!!!!
 DROP TABLE IF EXISTS <table_name> CASCADE;
 ------------------------------------------------
 
--- Create table image_info
-CREATE TABLE image_info (
-    image_id SERIAL PRIMARY KEY,               
-    product_code INTEGER NOT NULL,               
-    image_name VARCHAR(255) NOT NULL,          
-    image_path VARCHAR(255),                   
-    vector VECTOR(2048)
+-- image_info table
+create table if not exists image_info
+(
+    image_id   serial primary key,
+    article_id varchar(255) not null
+        constraint unique_image_name
+            unique,
+    image_path varchar(255),
+    vector     vector(2048)
+);
+
+-- product_info table
+create table if not exists product_info
+(
+    product_id   serial primary key,
+    article_id   varchar(255) not null,
+    product_code integer      not null
 );

@@ -3,7 +3,7 @@ import psycopg2
 # Connecting to a PostgreSQL Database
 def connect_db():
     connection = psycopg2.connect(
-        dbname='imageSearch',  # database name
+        dbname='image-search',  # database name
         user='postgres',  # user ID
         password='test-postgres',  # cryptographic
         host='localhost',  # RDSTerminal node of the instance
@@ -25,8 +25,9 @@ def search_similar_images(input_vector, top_k):
 
     # cosine distance (<=>)
     query = """
-    SELECT image_name, vector <=> %s AS distance
-    FROM image_info
+    SELECT i.article_id, p.product_code, i.vector <=> %s AS distance
+    FROM image_info i
+    JOIN product_info p ON i.article_id = p.article_id
     ORDER BY distance
     LIMIT %s;
     """

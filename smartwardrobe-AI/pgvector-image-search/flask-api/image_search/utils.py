@@ -93,3 +93,25 @@ def process_image(original_image):
 
     image_tensor = transform(original_image).unsqueeze(0)  # Add Batch Dimension
     return image_tensor
+
+def format_search_results(search_results):
+    """
+    Format the search results into a list of dictionaries.
+
+    Parameters:
+        search_results (list): List of tuples containing article_id, product_code, and distance.
+
+    Returns:
+        dict: JSON-compatible dictionary with the formatted results.
+    """
+    print("original search_results: ", search_results)
+
+    # Format the results to match the required JSON structure
+    formatted_results = [
+        {"article_id": result[0], "product_code": result[1]}
+        for result in search_results
+    ]
+    print("formatted json_response: ", formatted_results)
+
+    # Return the formatted results
+    return formatted_results
