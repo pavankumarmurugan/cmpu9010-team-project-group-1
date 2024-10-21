@@ -14,6 +14,20 @@ CREATE TABLE `user` (
     UNIQUE (`username`)
 );
 
+-- CREATE TABLE "user" (
+--     "user_id" SERIAL PRIMARY KEY,
+--     "username" VARCHAR(255) NOT NULL UNIQUE,
+--     "firstname" VARCHAR(255) NOT NULL,
+--     "lastname" VARCHAR(255) NOT NULL,
+--     "password" VARCHAR(255) NOT NULL,
+--     "refresh_token" VARCHAR(255) DEFAULT NULL,
+--     "email" VARCHAR(255) DEFAULT NULL,
+--     "dob" VARCHAR(255) DEFAULT NULL,
+--     "updated_at" DATE DEFAULT NULL,
+--     "created_at" DATE DEFAULT NULL,
+--     "role" VARCHAR(255) NOT NULL
+-- );
+
   CREATE TABLE `product_category` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NULL,
@@ -23,6 +37,17 @@ CREATE TABLE `user` (
   `deleted_at` TIMESTAMP NULL,
   PRIMARY KEY (`id`)
   );
+
+  --   CREATE TABLE "product_category" (
+  --   "id" SERIAL PRIMARY KEY,
+  --   "name" VARCHAR(255) NULL,
+  --   "desc" TEXT NULL,
+  --   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  --   "updated_at" TIMESTAMP NULL,
+  --   "deleted_at" TIMESTAMP NULL
+  -- );
+  
+  
 
 CREATE TABLE `product_inventory` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -38,6 +63,20 @@ CREATE TABLE `product_inventory` (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+-- CREATE TABLE "product_inventory" (
+--     "id" SERIAL PRIMARY KEY,
+--     "quantity" INT NULL,
+--     "product_id" INT NULL,
+--     "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+--     "updated_at" TIMESTAMP NULL,
+--     "deleted_at" TIMESTAMP NULL,  
+--     CONSTRAINT "fk_product_inventory_on_product_id"
+--       FOREIGN KEY ("product_id")
+--       REFERENCES "smartwardrobe"."product" ("id")
+--       ON DELETE CASCADE
+--       ON UPDATE CASCADE
+--   );
 
    CREATE TABLE `product` (
     `id` INT NOT NULL AUTO_INCREMENT,
@@ -58,6 +97,24 @@ CREATE TABLE `product_inventory` (
       ON UPDATE CASCADE
     );
 
+    --     CREATE TABLE "product" (
+    --     "id" SERIAL PRIMARY KEY,
+    --     "name" VARCHAR(255) NULL,
+    --     "desc" TEXT NULL,
+    --     "SKU" VARCHAR(255) NULL,
+    --     "category_id" INT NULL,
+    --     "inventory_id" INT NULL,
+    --     "price" DECIMAL NULL,
+    --     "discount_id" INT NULL,
+    --     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    --     "updated_at" TIMESTAMP NULL,
+    --     "deleted_at" TIMESTAMP NULL,
+    --     CONSTRAINT "fk_product_on_category_id"
+    --       FOREIGN KEY ("category_id")
+    --       REFERENCES "smartwardrobe"."product_category" ("id")
+    --       ON UPDATE CASCADE
+    -- );
+
 CREATE TABLE `smartwardrobe`.`cart` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_id` INT NULL,
@@ -72,6 +129,19 @@ CREATE TABLE `smartwardrobe`.`cart` (
     ON UPDATE CASCADE
 );
 
+-- CREATE TABLE public."cart" (
+--   "id" SERIAL PRIMARY KEY,
+--   "user_id" INT NULL,
+--   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+--   "updated_at" TIMESTAMP NULL,
+--   "deleted_at" TIMESTAMP NULL,
+--   CONSTRAINT "fk_user_id"
+--     FOREIGN KEY ("user_id")
+--     REFERENCES "public"."user" ("user_id")
+--     ON DELETE CASCADE
+--     ON UPDATE CASCADE
+-- );
+
 DELIMITER //
 
 CREATE TRIGGER `create_cart_after_user_insert`
@@ -83,6 +153,20 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- CREATE OR REPLACE FUNCTION create_cart_after_user_insert()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--   INSERT INTO "smartwardrobe"."cart" ("user_id", "created_at", "updated_at")
+--   VALUES (NEW."user_id", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+--   RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+-- CREATE TRIGGER create_cart_after_user_insert
+-- AFTER INSERT ON "smartwardrobe"."user"
+-- FOR EACH ROW
+-- EXECUTE FUNCTION create_cart_after_user_insert();
 
 CREATE TABLE `smartwardrobe`.`cart_item` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -104,3 +188,21 @@ CREATE TABLE `smartwardrobe`.`cart_item` (
     ON UPDATE CASCADE
 );
 
+-- CREATE TABLE "smartwardrobe"."cart_item" (
+--   "id" SERIAL PRIMARY KEY,
+--   "cart_id" INT NULL,
+--   "product_id" INT NULL,
+--   "quantity" INT NULL,
+--   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+--   "updated_at" TIMESTAMP NULL,
+--   CONSTRAINT "fk_product_id"
+--     FOREIGN KEY ("product_id")
+--     REFERENCES "smartwardrobe"."product" ("id")
+--     ON DELETE CASCADE
+--     ON UPDATE CASCADE,
+--   CONSTRAINT "fk_cart_item_on_cart_id"
+--     FOREIGN KEY ("cart_id")
+--     REFERENCES "smartwardrobe"."cart" ("id")
+--     ON DELETE CASCADE
+--     ON UPDATE CASCADE
+-- );
