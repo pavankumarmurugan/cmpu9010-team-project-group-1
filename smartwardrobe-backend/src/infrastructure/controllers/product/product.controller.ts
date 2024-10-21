@@ -27,7 +27,6 @@ export class ProductController {
   constructor(private productUsecase: ProductUsecase) {}
 
   @Get('get-all')
-  @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
   async getProductById(): Promise<IResponse<ProductResDto[]>> {
     try {
@@ -77,7 +76,6 @@ export class ProductController {
   }
 
   @Get('get-one/:id')
-  @ApiBearerAuth()
   @Roles(ROLES.USER)
   async getOneAddress(
     @Param('id', ParseIntPipe) id: number,

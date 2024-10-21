@@ -103,4 +103,9 @@ export const MESSAGES = {
       SUCCESS: 'DELETED CART',
     },
   },
+  SEARCH: {
+    GET: {
+      SUCCESS: 'SUCCESSFULLY FETCHED ITEMS',
+    },
+  },
 };

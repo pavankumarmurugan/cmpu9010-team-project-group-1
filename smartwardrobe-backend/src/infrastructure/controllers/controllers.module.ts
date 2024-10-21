@@ -16,6 +16,8 @@ import { UseCasesModule } from 'src/use-cases/use-cases.module';
 import { ProductController } from './product/product.controller';
 import { CartItemController } from './cart-item/cart-item.controller';
 import { CartController } from './cart/cart.controller';
+import { SearchSimilarProductsController } from './search/search-products.controller';
+import { ServicesModule } from '../services/services.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { CartController } from './cart/cart.controller';
     BcryptModule,
     ConvertorsModule,
     UseCasesModule,
+    ServicesModule,
   ],
   controllers: [
     UserController,
@@ -40,6 +43,7 @@ import { CartController } from './cart/cart.controller';
     ProductInventoryController,
     CartItemController,
     CartController,
+    SearchSimilarProductsController,
   ],
   providers: [
     {
