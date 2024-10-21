@@ -1,0 +1,6 @@
+Flask
+psycopg2
+transformers
+torch
+pandas
+numpy
