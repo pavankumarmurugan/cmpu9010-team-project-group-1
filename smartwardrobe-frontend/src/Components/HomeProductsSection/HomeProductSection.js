@@ -1,10 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
-import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
-import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
-import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
-import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import "../../Styles/Homeproductsection.css"
@@ -15,7 +9,6 @@ const HomeProductSection = (props) => { /** will remove this component when data
   const navigate = useNavigate();
     const responsive = {
         superLargeDesktop: {
-          // the naming can be any, depends on you.
           breakpoint: { max: 4000, min: 3000 },
           items: 5
         },
@@ -49,10 +42,10 @@ const HomeProductSection = (props) => { /** will remove this component when data
     >
       {props?.data?.map((items, index) => (
         <div className="card">
-        <img className="product--image" src={items?.image} alt="product image" onClick={handleImgaeClick}/>
+        <img className="product--image" loading="lazy" src={items?.image} alt="product image" onClick={handleImgaeClick}/>
         <h4>{items?.name}</h4>
         <p className="description">{items?.description}</p>
-        <p className="price">&eur;{items?.description}</p>
+        <p className="price">{items?.price}</p>
         <p>
           <Button
               className="View-Product-Button"

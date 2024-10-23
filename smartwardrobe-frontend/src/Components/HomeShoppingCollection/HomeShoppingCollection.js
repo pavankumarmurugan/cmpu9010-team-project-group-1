@@ -142,6 +142,7 @@ const dummyData = [
       <img 
         src={props.imageSrc} 
         alt={props.altText} 
+        loading="lazy"
         style={{
           width: '100%',
           height: '100%',
@@ -210,6 +211,7 @@ const dummyData = [
               <img
                 src={carousel_image1}
                 alt=""
+                loading="lazy"
                 style={{
                   height: "300px",
                   width: "100%",
@@ -223,6 +225,7 @@ const dummyData = [
               <img
                 src={carousel_image2}
                 alt=""
+                loading="lazy"
                 style={{
                   height: "300px",
                   width: "100%",
@@ -236,6 +239,7 @@ const dummyData = [
               <img
                 src={carousel_image3}
                 alt=""
+                loading="lazy"
                 style={{
                   height: "300px",
                   width: "100%",
@@ -249,6 +253,7 @@ const dummyData = [
               <img
                 src={carousel_image4}
                 alt=""
+                loading="lazy"
                 style={{
                   height: "300px",
                   width: "100%",
@@ -262,6 +267,7 @@ const dummyData = [
               <img
                 src={carousel_image5}
                 alt=""
+                loading="lazy"
                 style={{
                   height: "300px",
                   width: "100%",

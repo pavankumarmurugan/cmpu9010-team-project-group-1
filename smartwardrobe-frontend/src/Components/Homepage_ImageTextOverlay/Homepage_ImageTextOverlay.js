@@ -6,7 +6,7 @@ function ImageWithTextOverlay() {
   const styles = getStyles();
   return (
     <div style={styles.container}>
-      <img src={carousel_image6} alt="Sample" style={styles.image} />
+      <img src={carousel_image6} loading='lazy' alt="Sample" style={styles.image} />
       <div style={styles.textOverlay}>
         <h1 style={styles.text}>Don’t just shop, shop smarter! Explore our enhanced platform now</h1>
       </div>

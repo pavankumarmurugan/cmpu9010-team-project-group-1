@@ -9,14 +9,17 @@ function Footer() {
           <h1>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
         </div>
         <div>
-          <a href="/">
+          <a href="/" aria-label="Visit our Facebook page">
             <i className="fab fa-facebook-square"></i>
+            <span class="visually-hidden" style={{color: "#ffffff"}}>Facebook</span>
           </a>
-          <a href="/">
+          <a href="/" aria-label="Visit our Instagram page">
             <i className="fab fa-instagram-square"></i>
+            <span class="visually-hidden" style={{color: "#ffffff"}}>Instagram</span>
           </a>
-          <a href="/">
+          <a href="/" aria-label="Visit our Twitter page">
             <i className="fab fa-twitter-square"></i>
+            <span class="visually-hidden" style={{color: "#ffffff"}}>Twitter</span>
           </a>
         </div>
       </div>
