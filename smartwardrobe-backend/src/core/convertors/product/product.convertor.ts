@@ -17,9 +17,9 @@ export class ProductConvertor {
   toProductModelFromDto(productReqDto: ProductReqDto): ProductEntity {
     return {
       ...productReqDto,
-      inventory: {
-        quantity: 100,
-      },
+      // inventory: {
+      //   quantity: 100,
+      // },
     };
   }
 

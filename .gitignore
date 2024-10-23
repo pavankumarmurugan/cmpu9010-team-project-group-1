@@ -4,6 +4,8 @@
 
 /smartwardrobe-backend/node_modules
 /smartwardrobe-backend/.env
+/smartwardrobe-backend/images
+/smartwardrobe-backend/csv
 
 # Log
 logs

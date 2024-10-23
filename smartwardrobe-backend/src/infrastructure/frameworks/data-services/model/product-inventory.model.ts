@@ -19,7 +19,7 @@ export class ProductInventoryModel extends BaseModel {
   @Column({ type: 'int', name: 'product_id' })
   readonly productId?: number;
 
-  @OneToOne(() => ProductModel, (product) => product.inventory)
-  @JoinColumn({ name: 'product_id' })
-  product?: ProductModel;
+  // @OneToOne(() => ProductModel, (product) => product.inventory)
+  // @JoinColumn({ name: 'product_id' })
+  // product?: ProductModel;
 }
