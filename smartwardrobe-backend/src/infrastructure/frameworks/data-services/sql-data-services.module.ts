@@ -14,7 +14,7 @@ import { CartModel } from './model/cart.model';
   imports: [
     ConfigModule.forRoot({}),
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: process.env.DATABASE_HOST,
       port: +process.env.DATABASE_PORT,
       username: process.env.DATABASE_USERNAME,
@@ -22,6 +22,12 @@ import { CartModel } from './model/cart.model';
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
     TypeOrmModule.forFeature([
       UserModel,
