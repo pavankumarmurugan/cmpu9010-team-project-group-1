@@ -8,7 +8,7 @@ function Footer() {
         <div>
           <h1>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
         </div>
-        <div>
+        {/* <div>
           <a href="/" aria-label="Visit our Facebook page">
             <i className="fab fa-facebook-square"></i>
             <span class="visually-hidden" style={{color: "#ffffff"}}>Facebook</span>
@@ -21,7 +21,7 @@ function Footer() {
             <i className="fab fa-twitter-square"></i>
             <span class="visually-hidden" style={{color: "#ffffff"}}>Twitter</span>
           </a>
-        </div>
+        </div> */}
       </div>
       <div className="bottom">
         <div>
