@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
   postgres:
-    image: pgvector/pgvector:pg17 # Replace it with the image name
+    # docker pull pgvector/pgvector:pg17 # Pull the latest pgvector image
+    image: pgvector/pgvector:pg17 # Replace the image with the latest pgvector image
     container_name: postgres_db
     environment:
       POSTGRES_DB: imageSearch # Replace it with database name
