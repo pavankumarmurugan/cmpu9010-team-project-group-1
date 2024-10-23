@@ -22,12 +22,10 @@ import { ProductUsecase } from 'src/use-cases/product/product.usecase';
 
 @Controller('product')
 @ApiTags('Product')
-@UseGuards(AccessTokenGuard, RolesGuard)
 export class ProductController {
   constructor(private productUsecase: ProductUsecase) {}
 
   @Get('get-all')
-  @Roles(ROLES.ADMIN, ROLES.USER)
   async getProductById(): Promise<IResponse<ProductResDto[]>> {
     try {
       return await this.productUsecase.getAllProduct();
@@ -39,6 +37,7 @@ export class ProductController {
   @Post('create')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   async create(
     @Body() productReqDto: ProductReqDto,
   ): Promise<IResponse<ProductResDto>> {
@@ -52,6 +51,7 @@ export class ProductController {
   @Patch('update')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   async update(
     @Body() productReqUpdateDto: ProductReqUpdateDto,
   ): Promise<IResponse<ProductResDto>> {
@@ -65,6 +65,7 @@ export class ProductController {
   @Delete('delete/:id')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<IResponse<ProductResDto>> {
