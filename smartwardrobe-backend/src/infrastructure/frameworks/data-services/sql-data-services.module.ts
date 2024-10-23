@@ -22,7 +22,7 @@ import { CartModel } from './model/cart.model';
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
-      ssl: true, // <--- this enables SSL
+      ssl: true,
       extra: {
         ssl: {
           rejectUnauthorized: false,

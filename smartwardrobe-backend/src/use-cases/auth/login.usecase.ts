@@ -13,7 +13,7 @@ import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { BcryptService } from 'src/infrastructure/frameworks/bcrypt/bcrypt.service';
-import { JWTDataService } from 'src/infrastructure/frameworks/jwt/jwt.dataservice';
+import { JWTDataService } from 'src/infrastructure/frameworks/jwt/jwt.data-service';
 
 @Injectable()
 export class LoginUsecase {
