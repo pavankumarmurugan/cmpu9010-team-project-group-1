@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/a3ec3847-38d7-4697-abdc-1277ad977b14/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/smartwardrobe--frontend",
+    "appService.deploySubpath": "."
+}

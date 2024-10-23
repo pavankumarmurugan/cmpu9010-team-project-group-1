@@ -24,13 +24,13 @@
 }
 
 .description {
-  color: grey;
+  color: #333333 !important;
   font-size: 22px;
   padding-bottom: 10px;
 }
 
 .price {
-  color: grey;
+  color: #333333 !important;
 }
 
 .View-Product-Button {
@@ -54,7 +54,7 @@
 }
 
 
-.react-multi-carousel-item {
+.homeproductsection-main .react-multi-carousel-item {
   max-width: 354px !important;
   margin-right: 40px;
 }

@@ -576,7 +576,9 @@ function Headermenu() {
               onClick={toggleDrawer(true)}
               sx={{ color: "white", fontSize: "30px" }}
             />
+            <a href="/" className="anchor-tag">
             <h1 className="header-logo">SMARTWARDROBE</h1>
+            </a>
             <div className="header-icons">
             <Badge badgeContent={2} color="error"
               anchorOrigin={{

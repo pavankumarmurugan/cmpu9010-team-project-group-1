@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
-import { handleImageUplaod } from "../GenericCode/GenericCode";
+import { handleImageUpload } from "../GenericCode/GenericCode";
 import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
 import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
 import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
@@ -75,6 +75,14 @@ const ProductDetails = () => {
     }
   };
 
+  
+const imageUpload = async (e) => {
+  debugger;
+  let imageData = await handleImageUpload(e);
+
+  console.log(imageData)
+}
+
   return (
     <div>
       <Headermenu />
@@ -86,6 +94,7 @@ const ProductDetails = () => {
                 {productimages.map((image, index) => (
                   <img
                     src={image}
+                    loading="lazy"
                     alt="Product Imgae"
                     className="product-details-side-images"
                     key={index}
@@ -98,6 +107,7 @@ const ProductDetails = () => {
               <div className="product-details-main-image-div">
                 <img
                   src={productimages[currentImage]}
+                  loading="lazy"
                   alt="Product Image"
                   className="product-details-main-image"
                 />
@@ -263,7 +273,7 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
-        <div className="chat">
+        {/* <div className="chat">
           <div className="chat-content">
             <ChatSection />
           </div>
@@ -326,7 +336,7 @@ const ProductDetails = () => {
                     >
                       <VisuallyHiddenInput
                         type="file"
-                        onChange={handleImageUplaod}
+                        onChange={imageUpload}
                       />
                     </Button>
                     <IconButton
@@ -354,7 +364,7 @@ const ProductDetails = () => {
               />
             </FormControl>
           </div>
-        </div>
+        </div> */}
       </div>
       <Footer />
     </div>

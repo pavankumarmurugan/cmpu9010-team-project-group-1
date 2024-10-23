@@ -15,7 +15,7 @@
 }
 
 .products {
-  flex: 3.2;
+  /* flex: 3.2; */
   padding-left: 5rem;
   padding-right: 5rem;
   height: 100%;
@@ -25,12 +25,12 @@
 }
 
 @media screen and (max-width: 1024px) {
-  .products {
+  /* .products {
     flex: 2.8 !important;
   }
   .chat {
     flex: 1.2 !important;
-  }
+  } */
 }
 
 .chat {

@@ -6,6 +6,7 @@ import "../../Styles/Homeproductsection.css";
 import "../../Styles/ProductPage.css";
 import { useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
+import imageCompression from 'browser-image-compression';
 
 const renderMenuItems = (items) => {
   return items.map((item) => {
@@ -91,6 +92,7 @@ export const HomeProductSection = (props) => {
             <img
               className="product--image"
               src={item?.image}
+              loading="lazy"
               alt="product image"
             />
             <h4>{item?.name}</h4>
@@ -109,14 +111,21 @@ export const HomeProductSection = (props) => {
 };
 
 const colorsArray = ["#ff0000", "#00ff00", "#0000ff", "#ffa500", "#800080", "#008080"];
-export const ProductPageCards = (props) => {
+export const ProductPageCards = ({data}) => {
   return (
     <div className="productpagecards">
-      {props?.data.map((item, index) => (
+      {data.map((item, index) => (
         <div className="card" key={index}>
           <div className="image-container">
-            <img className="product--image" src={item?.image} alt="product image" />
-            
+            <img className="product--image" loading="lazy" src={item?.image} alt="product image" />
+            {/** this si for interm demo only */}
+            {/* <img
+              className="product--image"
+              loading="lazy"
+              src={`/images/${item?.image}.jpg`}  // Point to public/images/{imageNumber}.jpg
+              alt={`Product image ${item?.image}`}
+            /> */}
+            {/** this si for interm demo only */}
             {/* <div className="color-select">
               {colorsArray.map((color, idx) => (
                 <button
@@ -154,9 +163,12 @@ export const Productfilterdropdowns = (props) => {
       mode="multiple"
       className="filterdropdowns"
       style={{ width: '100%', letterSpacing: "0.1rem", textTransform: "capitalize" }}
-      placeholder={props?.name}
+      placeholder={props?.placeholder}
+      name={props?.name}
       options={props?.options}
       popupMatchSelectWidth={true}
+      onChange={(selectedValues) => props.onChange(props.name, selectedValues)}
+      onBlur={props.onBlur}
       dropdownRender={(menu) => (
         <div>
           <div
@@ -201,7 +213,7 @@ export const ScrollButton = () => {
   return (
     <div>
       {showScrollButton && (
-      <Button className="scroll-to-top" onClick={scrollToTop}>
+      <Button className="scroll-to-top" aria-label="Scroll to top" onClick={scrollToTop}>
         <FaArrowUp className="scroll-to-top-icons"/>
       </Button>
     )}
@@ -209,7 +221,41 @@ export const ScrollButton = () => {
   );
 };
 
-export const handleImageUplaod = (e) => {
+export const handleImageUpload = async (e) => {
   debugger
-  console.log(e.target.files[0]);
-}
+  return new Promise(async (resolve, reject) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1280,
+        useWebWorker: true 
+      });
+
+      const reader = new FileReader();
+      reader.readAsDataURL(compressedFile);
+      reader.onload = () => {
+        try {
+          const base64Data = reader.result;
+          const data = {
+            image: {
+              mime: file.type,
+              data: base64Data
+
+            }
+          };
+          resolve(data);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    } else {
+      reject(new Error('No file selected'));
+    }
+  });
+};
