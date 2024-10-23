@@ -4,7 +4,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import "../../Styles/Homeproductsection.css";
 import "../../Styles/ProductPage.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 import imageCompression from 'browser-image-compression';
 
@@ -16,7 +16,7 @@ const renderMenuItems = (items) => {
           <span
             className={!item?.key?.includes("submenu") && "Dropdown-Maintext"}
           >
-            {item.label}{" "}
+            {item.label}
             {!item?.key?.includes("submenu") && (
               <DownOutlined style={{ marginLeft: "3px" }} />
             )}
@@ -35,7 +35,7 @@ const renderMenuItems = (items) => {
   });
 };
 
-export const GenericDropdownMenu = ({ menuData }) => {
+export const GenericDropdownMenu = ({ menuData, handleChange }) => {
   const menuItems = renderMenuItems(menuData);
   return (
     <>
@@ -53,6 +53,7 @@ export const GenericDropdownMenu = ({ menuData }) => {
         mode="horizontal"
         items={menuItems}
         className="custom-menu"
+        onClick={(e) => handleChange(e.key)}
       />
       {/* </div> */}
     </>
@@ -110,6 +111,50 @@ export const HomeProductSection = (props) => {
   );
 };
 
+// export const LazyImage = ({ src, alt, className }) => {
+//   debugger
+//   const [isVisible, setIsVisible] = useState(false);
+//   const imgRef = useRef(null);
+
+//   useEffect(() => {
+//     const imgObserver = new IntersectionObserver(
+//       (entries) => {
+//         entries.forEach((entry) => {
+//           if (entry.isIntersecting) {
+//             setIsVisible(true);
+//             imgObserver.unobserve(entry.target);
+//           }
+//         });
+//       },
+//       {
+//         root: null,
+//         rootMargin: '0px',
+//         threshold: 0.1,
+//       }
+//     );
+
+//     if (imgRef.current) {
+//       imgObserver.observe(imgRef.current);
+//     }
+
+//     return () => {
+//       if (imgRef.current) {
+//         imgObserver.unobserve(imgRef.current);
+//       }
+//     };
+//   }, []);
+
+//   return (
+//     <img 
+//       ref={imgRef}
+//       className={className}
+//       src={isVisible ? src : ''} // Set src only if the image is visible
+//       alt={alt}
+//       style={{ display: isVisible ? 'block' : 'none' }} // Show only if visible
+//     />
+//   );
+// };
+
 const colorsArray = ["#ff0000", "#00ff00", "#0000ff", "#ffa500", "#800080", "#008080"];
 export const ProductPageCards = ({data}) => {
   return (
@@ -118,6 +163,10 @@ export const ProductPageCards = ({data}) => {
         <div className="card" key={index}>
           <div className="image-container">
             <img className="product--image" loading="lazy" src={item?.image} alt="product image" />
+            {/* <LazyImage 
+            src={item?.image} 
+            alt={`Product image ${item?.name}`}
+            className="product--image" /> */}
             {/** this si for interm demo only */}
             {/* <img
               className="product--image"

@@ -55,10 +55,10 @@
 
 @media (min-width: 300px) and (max-width: 500px) {
     .header-logo{
-        font-size: 24px;
+        font-size: 20px;
     }
     .header-icons{
-        gap: 0.5rem !important;
+        gap: 0.3rem !important;
     }
   }
 

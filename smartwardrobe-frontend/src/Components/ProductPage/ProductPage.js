@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Headermenu from "../Headermenu/Headermenu";
 import "../../Styles/ProductPage.css";
@@ -32,11 +32,14 @@ import ChatSection from "../ChatSection/ChatSection";
 import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 
 const ProductPage = () => {
   const location = useLocation();
   let { state } = location;
   const [openLoader, setOpenLoader] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     searchValue: "",
     Category: [],
@@ -152,6 +155,14 @@ const ProductPage = () => {
     width: 1px;
   `;
 
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setProducts(dummyData);
+            setLoading(false);
+    }, 2000);
+  }, []);
+
   const imageUpload = async (e) => {
     debugger;
     let imageData = await handleImageUpload(e);
@@ -205,8 +216,8 @@ const ProductPage = () => {
             <h3 className='searchedData'>{state?.searchValue}</h3>
             </div> */}
         <div className="SearchedContent-div">
-          <div className="products">
-            <div className="searched-result-bar-div">
+        <div className="search-filter-div">
+        <div className="searched-result-bar-div">
               <h3>Search Results</h3>
             </div>
              <div className="productsearch-input-div">
@@ -408,10 +419,12 @@ const ProductPage = () => {
                 </div>
               </div>
             </div>
-            <div className="products-cards">
-              <ProductPageCards data={dummyData} />
-            </div>
-          </div>
+        </div>  
+        </div>
+        <div className={`${loading ? "cards-div skeleton-products" : "cards-div"}`}>
+        {loading
+                ? <div className="skeleton-product-cards"><ProductPageSkeletonLoader /></div>
+                : <div className="products-cards"><ProductPageCards data={products} /></div>}
         </div>
         <Footer />
       </div>

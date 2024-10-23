@@ -391,7 +391,7 @@ function Headermenu() {
         },
         {
           label: "Women Footwear",
-          key: "Women Footwear submenu",
+          key: "Women Accessories submenu",
           children: [
             { label: "Bags", key: "Women Bags" },
             { label: "Wallets", key: "Women Wallets" },
@@ -453,6 +453,15 @@ function Headermenu() {
   };
 
   /*  search work*/
+
+  /** handle dropdown click */
+
+  const handleDropdownClick = (value) => {
+    debugger
+    console.log("Selected value:", value);
+  };
+
+  /** handle dropdown click */
 
   return (
     <>
@@ -664,7 +673,7 @@ function Headermenu() {
           )}
           {/* Header Dropdowns */}
           <div className="search-input-above-900px">
-            <GenericDropdownMenu menuData={menuData} />
+            <GenericDropdownMenu menuData={menuData} handleChange={handleDropdownClick} />
           </div>
           {/* Header Dropdowns */}
         </div>
