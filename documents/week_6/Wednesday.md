@@ -1,4 +1,4 @@
-# Minutes of the Meeting (MoM) - Week 6 - Day 1
+# Minutes of the Meeting (MoM) - Week 6 - Day 3
 
 **Project Title:** Smartwardrobe
 
