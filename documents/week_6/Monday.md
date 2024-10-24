@@ -26,7 +26,7 @@
 
 ### **3. Discussion and Taks**
 
-- **Pavan:** Working on the virtual try-on feature.
+- **Pavan:** Working on the virtual try-on feature, implementing models to generate OpenPose data.
 
 - **Osama:** Working on the UI, there is an reponsiveness issues in the pages for small screens, working on this to solve these by tomorrow.
 
