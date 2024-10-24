@@ -283,7 +283,7 @@ const dummyData = [
           <HomeProductSection data={dummyData}/>
         </div>
         <div className="splitter-div">
-            <div className="bestselling-div" style={{display: "flex", justifyContent: "center", alignItems: "center", margin: "20px auto", fontSize:"20px", fontFamily:"bold", textTransform:"uppercase", letterSpacing:"0.3rem"}}>
+            <div className="bestselling-div" style={{display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center", margin: "20px auto", fontSize:"20px", fontFamily:"bold", textTransform:"uppercase", letterSpacing:"0.3rem"}}>
                 <h3>Best Selling Collections</h3>
             </div>
         <Splitter

@@ -155,7 +155,6 @@ export const HomeProductSection = (props) => {
 //   );
 // };
 
-const colorsArray = ["#ff0000", "#00ff00", "#0000ff", "#ffa500", "#800080", "#008080"];
 export const ProductPageCards = ({data}) => {
   return (
     <div className="productpagecards">
@@ -163,32 +162,6 @@ export const ProductPageCards = ({data}) => {
         <div className="card" key={index}>
           <div className="image-container">
             <img className="product--image" loading="lazy" src={item?.image} alt="product image" />
-            {/* <LazyImage 
-            src={item?.image} 
-            alt={`Product image ${item?.name}`}
-            className="product--image" /> */}
-            {/** this si for interm demo only */}
-            {/* <img
-              className="product--image"
-              loading="lazy"
-              src={`/images/${item?.image}.jpg`}  // Point to public/images/{imageNumber}.jpg
-              alt={`Product image ${item?.image}`}
-            /> */}
-            {/** this si for interm demo only */}
-            {/* <div className="color-select">
-              {colorsArray.map((color, idx) => (
-                <button
-                  key={idx}
-                  className="color-option"
-                  style={{ backgroundColor: color }}
-                  title={color}
-                />
-              ))}
-            </div> */}
-
-            {/* <Button className="TryOn-Button" color="default">
-              Try On
-            </Button> */}
           </div>
           <h4>{item?.name}</h4>
           <p className="description">{item?.description}</p>

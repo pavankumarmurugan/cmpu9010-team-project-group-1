@@ -4,21 +4,30 @@ import Draggable from "react-draggable";
 import { FcGoogle } from "react-icons/fc";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
+import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import { Backdrop, CircularProgress } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { showToastSuccess } from "../GenericToasters/GenericToasters";
 
 function SignupModal(props) {
+  const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
+  const [openLoader, setOpenLoader] = useState(false);
   const [formData, setFormData] = useState({
-    userFirstName: "",
-    userLastName: "",
-    userEmail: "",
-    userPassword: "",
+    username: "",
+    firstname: "",
+    lastname: "",
+    // userEmail: "",
+    password: "",
+    role: "user",
   });
 
   const [validationField, setValidationField] = useState({
-    signUpFName: false,
-    signUpLName: false,
-    signUpEmail: false,
-    signUpPassword: false,
+    username: false,
+    firstname: false,
+    lastname: false,
+    // signUpEmail: false,
+    password: false,
   });
 
   const [bounds, setBounds] = useState({
@@ -59,84 +68,130 @@ function SignupModal(props) {
         ...prevState,
         [name]: value,
       }));
-      // setValidationField((prev) => ({
-      //   ...prev,
-      //   signUpFName: false,
-      //   signUpLName: false,
-      // }));
+      setValidationField((prev) => ({
+        ...prev,
+        [name]: false,
+      }));
     }
   };
 
   const handleSignUp = async () => {
     debugger;
     if (props?.checkingLoginOrSignup === "Signup") {
-      // if (formData.userFirstName.trim() === "") {
-      //   setValidationField((prev) => ({
-      //     ...prev,
-      //     userFirstName: true,
-      //   }));
-      //   // showToastError("First Name can not be empty.");
-      //   return;
-      // } else if (formData.userLastName.trim() === "") {
-      //   setValidationField((prev) => ({
-      //     ...prev,
-      //     userLastName: true,
-      //   }));
-      //   // showToastError("Last Name can not be empty.");
-      //   return;
-      // } else if (formData.userEmail.trim() === "") {
-      //   setValidationField((prev) => ({
-      //     ...prev,
-      //     userEmail: true,
-      //   }));
-      //   // showToastError("Last Name can not be empty.");
-      //   return;
-      // } else if (formData.userPassword.trim() === "") {
-      //   setValidationField((prev) => ({
-      //     ...prev,
-      //     userPassword: true,
-      //   }));
-      //   // showToastError("Last Name can not be empty.");
-      //   return;
-      // }
-      // delete formData["loginEmail"];
-      // delete formData["loginPassword"];
-      const aa = {
-        username: "string",
-  firstname: "string",
-  lastname: "string",
-  password: "string",
-  role: "user"
+      let showerror = false;
+      if (formData.firstname.trim() === "") {
+        setValidationField((prev) => ({
+          ...prev,
+          firstname: true,
+        }));
+        showerror = true;
+      } 
+      if (formData.lastname.trim() === "") {
+        setValidationField((prev) => ({
+          ...prev,
+          lastname: true,
+        }));
+        showerror = true;
       }
-      const response = await fetch(
-        "https://smartwardrobe-backend.azurewebsites.net/users/create",
-        {
-          method: "POST",
-          headers: {
-            "Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(aa),
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data?.message === "User registered successfully!") {
-            // showToastSuccess(data?.message);
-          } else {
-            // showToastError(data?.message);
-          }
-        })
-        .catch((err) => {
-          // showToastError(err);
-          console.log(err);
-        });
+      if (formData.username.trim() === "") {
+        setValidationField((prev) => ({
+          ...prev,
+          username: true,
+        }));
+        showerror = true;
+      }
+      if (formData.password.trim() === "") {
+        setValidationField((prev) => ({
+          ...prev,
+          password: true,
+        }));
+        showerror = true;
+      }
+
+      if(showerror){
+        return;
+      }
+      setOpenLoader(true);
+      const response = await apiCall("POST", "https://sw-backend-afhxerfcftakduhk.northeurope-01.azurewebsites.net/users/create", formData);
+      debugger
+      setOpenLoader(false)
+      handleloginOrSignupChange()
+      if (response?.statusCode?.text === 'Success') {
+        showToastSuccess(response?.data?.message);
+        handleCancel();
+        const data = response?.data;
+        setTimeout(() => {
+          navigate("/", { state: { data } });
+          
+        }, 1000);
+      }
     } else {
+      let showerror = false;
+      if (formData.username.trim() === "") {
+        setValidationField((prev) => ({
+          ...prev,
+          username: true,
+        }));
+        showerror = true;
+      }
+      if (formData.password.trim() === "") {
+        setValidationField((prev) => ({
+          ...prev,
+          password: true,
+        }));
+        showerror = true;
+      }
+      if(showerror){
+        return;
+      }
+      
+      delete formData["firstname"];
+      delete formData["lastname"];
+      delete formData["role"];
+      setOpenLoader(true);
+      const response = await apiCall("POST", "https://sw-backend-afhxerfcftakduhk.northeurope-01.azurewebsites.net/auth/login", formData);
+      debugger
+      console.log(response)
+      setOpenLoader(false)
+      handleloginOrSignupChange()
+      if (response?.statusCode?.text === 'Success') {
+        showToastSuccess(response?.data?.message);
+        handleCancel();
+        const data = response?.data;
+        setTimeout(() => {
+          navigate("/", { state: { data } });
+          
+        }, 1000);
+      }
+      
     }
   };
 
+  const handleloginOrSignupChange = () => {
+    setFormData({
+      username: "",
+      firstname: "",
+      lastname: "",
+      password: "",
+      role: "user",
+    })
+    setValidationField({
+      username: false,
+      firstname: false,
+      lastname: false,
+      password: false,
+    })
+    props?.accountCreate(props?.checkingLoginOrSignup);
+  }
+
   return (
     <>
+    <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Modal
         title={
           <div
@@ -199,71 +254,105 @@ function SignupModal(props) {
             </div>
             <div className="inputfields-section">
               <div className="Signup-Inputs">
-                {props?.checkingLoginOrSignup === "Signup" && (
+                {props?.checkingLoginOrSignup === "Signup" ? (
                   <>
+                  <Typography.Title
+                      level={5}
+                      className={`${
+                        validationField.username && "Error-FieldName"
+                      }`}
+                    >
+                      User Name
+                    </Typography.Title>
+                    <Input
+                      placeholder="First Name"
+                      name="username"
+                      autoComplete="off"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className={`${
+                        validationField.username
+                          ? "errorSignup-Inputfield"
+                          : "Signup-Inputfield"
+                      }`}
+                    />
                     <Typography.Title
                       level={5}
                       className={`${
-                        validationField.signUpFName && "Error-FieldName"
+                        validationField.firstname && "Error-FieldName"
                       }`}
                     >
                       First Name
                     </Typography.Title>
                     <Input
                       placeholder="First Name"
-                      name="userFirstName"
-                      value={formData.userFirstName}
+                      name="firstname"
+                      value={formData.firstname}
+                      autoComplete="off"
                       onChange={handleChange}
                       className={`${
-                        validationField.signUpFName
+                        validationField.firstname
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
                     />
                     <Typography.Title level={5}
                     className={`${
-                      validationField.signUpLName && "Error-FieldName"
+                      validationField.lastname && "Error-FieldName"
                     }`}>Last Name</Typography.Title>
                     <Input
                       placeholder="Last Name"
-                      name="userLastName"
-                      value={formData.userLastName}
+                      name="lastname"
+                      value={formData.lastname}
+                      autoComplete="off"
                       onChange={handleChange}
                       className={`${
-                        validationField.signUpLName
+                        validationField.lastname
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
                     />
                   </>
-                )}
+                )
+              :
+              (
+                <>
+                <Typography.Title
+                      level={5}
+                      className={`${
+                        validationField.username && "Error-FieldName"
+                      }`}
+                    >
+                      User Name
+                    </Typography.Title>
+                    <Input
+                      placeholder="First Name"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      autoComplete="off"
+                      className={`${
+                        validationField.username
+                          ? "errorSignup-Inputfield"
+                          : "Signup-Inputfield"
+                      }`}
+                    />
+                </>
+              )}
+                
                 <Typography.Title level={5}
                 className={`${
-                  validationField.signUpEmail && "Error-FieldName"
-                }`}>Email</Typography.Title>
-                <Input
-                  placeholder="Email"
-                  name="userEmail"
-                  value={formData.userEmail}
-                  onChange={handleChange}
-                  className={`${
-                    validationField.signUpEmail
-                      ? "errorSignup-Inputfield"
-                      : "Signup-Inputfield"
-                  }`}
-                />
-                <Typography.Title level={5}
-                className={`${
-                  validationField.signUpPassword && "Error-FieldName"
+                  validationField.password && "Error-FieldName"
                 }`}>Password</Typography.Title>
                 <Input
                   placeholder="Password"
                   type="password"
-                  name="userPassword"
-                  value={formData.userPassword}
+                  name="password"
+                  value={formData.password}
+                  autocomplete="new-password"
                   onChange={handleChange}
                   className={`${
-                    validationField.signUpPassword
+                    validationField.password
                       ? "errorSignup-Inputfield"
                       : "Signup-Inputfield"
                   }`}
@@ -294,9 +383,7 @@ function SignupModal(props) {
                 </span>
                 <span
                   className="LoginLink-text"
-                  onClick={(e) =>
-                    props?.accountCreate(props?.checkingLoginOrSignup)
-                  }
+                  onClick={handleloginOrSignupChange}
                 >
                   {props?.checkingLoginOrSignup === "Signup"
                     ? "Login"
