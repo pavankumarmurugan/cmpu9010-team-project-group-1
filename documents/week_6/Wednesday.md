@@ -22,7 +22,6 @@
 
 - Update on the yesterday's meeting discussed tasks.
 - Discussion on the Interm Report & Presentation.
-- Discussion on the feedback from Breandan.
 
 ### **3. Discussion and Taks**
 
