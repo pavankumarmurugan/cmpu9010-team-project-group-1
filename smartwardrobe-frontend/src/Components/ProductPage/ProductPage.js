@@ -159,7 +159,7 @@ const ProductPage = () => {
     // Simulate API call
     setTimeout(() => {
       setProducts(dummyData);
-            setLoading(false);
+      setLoading(false);
     }, 2000);
   }, []);
 
@@ -216,12 +216,12 @@ const ProductPage = () => {
             <h3 className='searchedData'>{state?.searchValue}</h3>
             </div> */}
         <div className="SearchedContent-div">
-        <div className="search-filter-div">
-        <div className="searched-result-bar-div">
+          <div className="search-filter-div">
+            <div className="searched-result-bar-div">
               <h3>Search Results</h3>
             </div>
-             <div className="productsearch-input-div">
-             {/* <div className="search-input-container"> */}
+            <div className="productsearch-input-div">
+              {/* <div className="search-input-container"> */}
               <FormControl
                 sx={{ m: 1, width: "100%", maxWidth: "800px" }}
                 variant="outlined"
@@ -306,7 +306,7 @@ const ProductPage = () => {
                   }}
                 />
               </FormControl>
-            {/* </div> */}
+              {/* </div> */}
             </div>
             <div
               style={{
@@ -419,12 +419,20 @@ const ProductPage = () => {
                 </div>
               </div>
             </div>
-        </div>  
+          </div>
         </div>
-        <div className={`${loading ? "cards-div skeleton-products" : "cards-div"}`}>
-        {loading
-                ? <div className="skeleton-product-cards"><ProductPageSkeletonLoader /></div>
-                : <div className="products-cards"><ProductPageCards data={products} /></div>}
+        <div
+          className={`${loading ? "cards-div skeleton-products" : "cards-div"}`}
+        >
+          {loading ? (
+            <div className="skeleton-product-cards">
+              <ProductPageSkeletonLoader />
+            </div>
+          ) : (
+            <div className="products-cards">
+              <ProductPageCards data={products} />
+            </div>
+          )}
         </div>
         <Footer />
       </div>
@@ -434,9 +442,8 @@ const ProductPage = () => {
 
 export default ProductPage;
 
-
-
-{/* <div className="chat">
+{
+  /* <div className="chat">
             <div className="chat-content">
               <ChatSection />
             </div>
@@ -527,4 +534,5 @@ export default ProductPage;
                 />
               </FormControl>
             </div>
-          </div> */}
+          </div> */
+}
