@@ -26,7 +26,7 @@
 
 ### **3. Discussion and Taks**
 
-- **Pavan:** Working on the virtual try-on feature, and working on the interm report points.
+- **Pavan:** Working on the virtual try-on feature, making changes for combing the models to run for preprocessing the data and working on the interm report points.
 
 - **Osama:** Still working on the Responsive issues and it will be finised tonight, and converting code to be into the generic component, and working on the interm report points.
 
