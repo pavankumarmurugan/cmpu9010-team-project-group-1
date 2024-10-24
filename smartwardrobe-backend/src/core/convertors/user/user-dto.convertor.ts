@@ -70,9 +70,8 @@ export class UserDtoConvertor {
   }
 
   toUserLoginInfoResDTOFromGetMyProfile(entity: UserEntity): UserResDTO {
-    const { firstname, lastname, username, userId, role, email, dob } = entity;
+    const { lastname, username, userId, role, email, dob } = entity;
     return {
-      firstname,
       lastname,
       username,
       userId,

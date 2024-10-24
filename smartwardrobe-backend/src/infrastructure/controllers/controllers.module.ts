@@ -18,7 +18,7 @@ import { CartItemController } from './cart-item/cart-item.controller';
 import { CartController } from './cart/cart.controller';
 import { SearchSimilarProductsController } from './search/search-products.controller';
 import { ServicesModule } from '../services/services.module';
-import { ScriptController } from './script/script';
+// import { ScriptController } from './script/script';
 
 @Module({
   imports: [

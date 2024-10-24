@@ -12,7 +12,7 @@ export class UserResDTO {
 
   @ApiProperty({ required: true })
   @IsString()
-  readonly firstname: string;
+  readonly firstname?: string;
 
   @ApiProperty({ required: true })
   @IsString()

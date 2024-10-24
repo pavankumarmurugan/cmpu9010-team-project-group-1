@@ -44,7 +44,6 @@ export class UserController {
   }
 
   @Post('create')
-  @ApiBearerAuth()
   @UseInterceptors(RefreshTokenUpdateInterceptor)
   @UseInterceptors(CartCreateInterceptor)
   async saveUser(@Body() dto: UserReqDTO) {

@@ -10,7 +10,6 @@ import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { BcryptService } from 'src/infrastructure/frameworks/bcrypt/bcrypt.service';
 import { JWTDataService } from 'src/infrastructure/frameworks/jwt/jwt.data-service';
-import { CartUsecase } from '../cart/cart.usecase';
 
 @Injectable()
 export class UserUsecase {
@@ -19,7 +18,6 @@ export class UserUsecase {
     private jwtDataService: JWTDataService,
     private userDtoConvertor: UserDtoConvertor,
     private bcryptService: BcryptService,
-    private cartUsecase: CartUsecase,
   ) {}
 
   async getAllUsers(): Promise<IResponse<UserResDTO[]>> {

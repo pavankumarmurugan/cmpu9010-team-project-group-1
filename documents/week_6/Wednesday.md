@@ -25,7 +25,7 @@
 
 ### **3. Discussion and Taks**
 
-- **Pavan:** Working on the virtual try-on, and working on the interm report points.
+- **Pavan:** Working on the virtual try-on, loading the pre processsed data to the model to get the output and working on the interm report points.
 
 - **Osama:** working on the skeleton loading in the product details page, changes in the generic functionalities and other UI changes, and working on the interm report points.
 
