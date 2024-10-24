@@ -22,7 +22,7 @@
 
 - Update on the yesterday's meeting discussed tasks.
 - Discussion on the Interm Report & Presentation.
-- Discussion on the feedback from Breandan.
+- Discussion on the feedback from Brendan.
 
 ### **3. Discussion and Taks**
 
@@ -43,4 +43,4 @@
 
 ### **5. Discussion about Tuesday Meeting with Brendan**
 
-- Discussion on tuesday meeting with Brendon, he told to be more communicative and give the full context of things we are doing in demo.
+- Discussion on tuesday meeting with Brendan, he told to be more communicative and give the full context of things we are doing in demo.

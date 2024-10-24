@@ -43,6 +43,6 @@
 
 ### **4. Discussion about Tuesday Meeting with Brendan**
 
-- Discussed various point with Brendon regarding AI model used and gave status updates.
+- Discussed various point with Brendan regarding AI model used and gave status updates.
 
 - How the tasks are going on everyone end, what are the challenges we are facing and how can we solve these.
