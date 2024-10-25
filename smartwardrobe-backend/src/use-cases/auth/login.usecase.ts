@@ -4,6 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { log } from 'console';
 import { IDataServices } from 'src/core/abstracts';
 import { AuthDtoConvertor } from 'src/core/convertors/auth/auth-dto.convertor';
 
@@ -33,8 +34,7 @@ export class LoginUsecase {
       const userEntity: UserEntity = await this.databaseService.users.get({
         username,
       });
-
-      if (userEntity === null)
+      if (userEntity == null)
         throw new NotFoundException(MESSAGES.USER.USER_NOT_FOUND);
 
       const token = await this.jwtDataService.generateToken(
