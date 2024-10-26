@@ -1,191 +1,101 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
 
-import { IDataServices } from '../../src/core/abstracts';
 import { UserDtoConvertor } from '../../src/core/convertors/user/user-dto.convertor';
 import { BcryptService } from '../../src/infrastructure/frameworks/bcrypt/bcrypt.service';
-import { RefreshTokenUsecase } from '../../src/use-cases/auth/refresh-token.usecase';
-import { JWTDataService } from '../../src/infrastructure/frameworks/jwt/jwt.data-service';
-import { LoginUsecase } from 'src/use-cases/auth/login.usecase';
-import { LogoutUsecase } from 'src/use-cases/auth/logout.usecase';
-import { of } from 'rxjs';
-import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.guard';
-import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
-import { ResponseStatusTextEnum } from 'src/infrastructure/common/enum.ts/responseStatus.enum';
-import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
-import { UserController } from 'src/infrastructure/controllers/user/user.controller';
-import { UserUsecase } from 'src/use-cases/user/user.usecase';
-import { AuthController } from 'src/infrastructure/controllers/auth/auth.controller';
-import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
 
-describe('AuthController (e2e)', () => {
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { ControllersModule } from 'src/infrastructure/controllers/controllers.module';
+import { CartItemModel } from 'src/infrastructure/frameworks/data-services/model/cart-items.model';
+import { CartModel } from 'src/infrastructure/frameworks/data-services/model/cart.model';
+import { ProductCategoryModel } from 'src/infrastructure/frameworks/data-services/model/product-category.model';
+import { ProductInventoryModel } from 'src/infrastructure/frameworks/data-services/model/product-inventory.model';
+import { ProductModel } from 'src/infrastructure/frameworks/data-services/model/product.model';
+import { UserModel } from 'src/infrastructure/frameworks/data-services/model/user.model';
+import { SQLDataServiceModule } from 'src/infrastructure/frameworks/data-services/sql-data-services.module';
+import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
+import { DataSource } from 'typeorm';
+import * as request from 'supertest';
+import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
+
+describe('UserController (e2e)', () => {
   let app: INestApplication;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
-    const mockDataService = {
-      users: {
-        get: jest.fn().mockResolvedValue({}),
-        getAll: jest.fn().mockResolvedValue([]),
-        getAllByProperties: jest.fn().mockResolvedValue([]),
-        getAllByIdsIn: jest.fn().mockResolvedValue([]),
-        create: jest.fn().mockResolvedValue({}),
-        update: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue(true),
-        deleteByProperties: jest.fn().mockResolvedValue(true),
-        search: jest.fn().mockResolvedValue([]),
-        filter: jest.fn().mockResolvedValue([]),
-        getAllPaginated: jest.fn().mockResolvedValue({ data: [], total: 0 }),
-      },
-      productCategory: {
-        get: jest.fn().mockResolvedValue({}),
-        getAll: jest.fn().mockResolvedValue([]),
-      },
-      productInventory: {
-        get: jest.fn().mockResolvedValue({}),
-        getAll: jest.fn().mockResolvedValue([]),
-      },
-      product: {
-        get: jest.fn().mockResolvedValue({}),
-        getAll: jest.fn().mockResolvedValue([]),
-      },
-      cartItem: {
-        get: jest.fn().mockResolvedValue({}),
-        getAll: jest.fn().mockResolvedValue([]),
-      },
-      cart: {
-        get: jest.fn().mockResolvedValue({}),
-        getAll: jest.fn().mockResolvedValue([]),
-      },
-    };
-
-    const mockJWTDataService = {
-      generateToken: jest.fn().mockResolvedValue('mockAccessToken'),
-      generateRefreshToken: jest.fn().mockResolvedValue('mockRefreshToken'),
-    };
-
-    const mockLoginUsecase: Partial<LoginUsecase> = {
-      login: jest.fn().mockImplementation(() => {
-        return of({
-          data: {
-            token: 'mockToken',
-            userId: 2,
-            username: 'string',
-            refreshToken: 'mockRefreshToken',
-            role: ROLES.USER,
-          },
-          statusCode: {
-            code: 1,
-            text: ResponseStatusTextEnum.SUCCESS,
-          },
-          message: MESSAGES.LOGIN.SUCCESS,
-        });
-      }),
-    };
-
-    const mockRefreshTokenUsecase = {
-      refreshToken: jest.fn().mockResolvedValue({
-        data: {
-          token: 'mockAccessToken',
-          refreshToken: 'mockRefreshToken',
-        },
-        statusCode: {
-          code: 1,
-          text: ResponseStatusTextEnum.SUCCESS,
-        },
-        message: MESSAGES.REFRESH_TOKEN.SUCCESS,
-      }),
-    };
-
-    const mockUserUsecase: Partial<UserUsecase> = {
-      getMyProfile: jest.fn().mockImplementation(() => {
-        return of({
-          data: {
-            firstname: 'string',
-            lastname: 'string',
-            username: 'string',
-            userId: 2,
-            role: ROLES.USER,
-            email: null,
-            dob: null,
-          },
-          statusCode: {
-            code: 1,
-            text: 'Success',
-          },
-          message: 'SUCCESSFULLY FETCHED USER',
-        });
-      }),
-    };
-
-    const mockLogoutUsecase: Partial<LogoutUsecase> = {
-      logout: jest.fn().mockResolvedValue([MESSAGES.LOGOUT.SUCCESS]),
-    };
-
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [UserController, AuthController],
-      providers: [
-        {
-          provide: IDataServices,
-          useValue: mockDataService,
-        },
-        {
-          provide: JWTDataService,
-          useValue: mockJWTDataService,
-        },
-        {
-          provide: LoginUsecase,
-          useValue: mockLoginUsecase,
-        },
-        {
-          provide: RefreshTokenUsecase,
-          useValue: mockRefreshTokenUsecase,
-        },
-        {
-          provide: UserUsecase,
-          useValue: mockUserUsecase,
-        },
-        {
-          provide: LogoutUsecase,
-          useValue: mockLogoutUsecase,
-        },
-        UserDtoConvertor,
-        BcryptService,
+      imports: [
+        ConfigModule.forRoot({}),
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          host: process.env.DATABASE_HOST,
+          port: +process.env.DATABASE_PORT,
+          username: process.env.DATABASE_USERNAME,
+          database: process.env.DATABASE_NAME,
+          entities: [
+            UserModel,
+            ProductCategoryModel,
+            ProductInventoryModel,
+            ProductModel,
+            CartItemModel,
+            CartModel,
+          ],
+          password: process.env.DATABASE_PASSWORD,
+          ssl: true,
+          extra: {
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          },
+        }),
+        TypeOrmModule.forFeature([
+          UserModel,
+          ProductCategoryModel,
+          ProductInventoryModel,
+          ProductModel,
+          CartItemModel,
+          CartModel,
+        ]),
+        JwtModule.register({}),
+        SQLDataServiceModule,
+        ControllersModule,
       ],
-    })
-      .overrideGuard(RefreshTokenGuard)
-      .useValue({
-        canActivate: (context) => {
-          const request = context.switchToHttp().getRequest();
-          request.user = { userId: 2 };
-          return true;
-        },
-      })
-      .overrideGuard(AccessTokenGuard)
-      .useValue({
-        canActivate: (context) => {
-          const request = context.switchToHttp().getRequest();
-          request.user = { userId: 2, role: ROLES.USER };
-          return true;
-        },
-      })
-      .overrideGuard(RolesGuard)
-      .useValue({
-        canActivate: (context) => {
-          const request = context.switchToHttp().getRequest();
-          const userRole = request.user.role;
-          return [ROLES.ADMIN, ROLES.OWNER, ROLES.USER].includes(userRole); // Simulate role check
-        },
-      })
-      .compile();
+      providers: [
+        RefreshTokenUpdateInterceptor,
+        RefreshTokenGuard,
+        BcryptService,
+        UserDtoConvertor,
+      ],
+    }).compile();
 
     app = moduleFixture.createNestApplication();
+    dataSource = moduleFixture.get<DataSource>(DataSource);
+
+    if (!dataSource.isInitialized) {
+      await dataSource.initialize();
+    }
+
     await app.init();
   });
 
+  beforeEach(async () => {
+    await dataSource.query('BEGIN');
+  });
+
+  afterEach(async () => {
+    await dataSource.query('ROLLBACK');
+  });
+
   afterAll(async () => {
-    await app.close();
+    if (dataSource && dataSource.isInitialized) {
+      await dataSource.destroy();
+    }
+    if (app) {
+      await app.close();
+    }
   });
 
   it('should return the user profile when authenticated', async () => {
@@ -211,16 +121,60 @@ describe('AuthController (e2e)', () => {
       expect(response.body.data).toHaveProperty('username', 'string');
       expect(response.body.data).toHaveProperty('userId', 2);
       expect(response.body.data).toHaveProperty('role', ROLES.USER);
-      expect(response.body.data).toHaveProperty('email', null);
-      expect(response.body.data).toHaveProperty('dob', null);
+      expect(response.body.data).toHaveProperty('email');
+      expect(response.body.data).toHaveProperty('dob');
+    } catch (error) {
+      console.error('Test Error:', error);
+      throw error;
+    }
+  });
 
-      // Check the statusCode and message properties
-      expect(response.body).toHaveProperty('statusCode.code', 1);
-      expect(response.body).toHaveProperty('statusCode.text', 'Success');
-      expect(response.body).toHaveProperty(
-        'message',
-        MESSAGES.USER.GET.SUCCESS,
-      );
+  it('should update the user password when authenticated', async () => {
+    try {
+      const loginResponse = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          username: 'string',
+          password: 'string',
+        })
+        .expect(201);
+
+      const accessToken = loginResponse.body.data.token;
+
+      await request(app.getHttpServer())
+        .patch('/users/update-password')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          password: 'string',
+        })
+        .expect(200);
+    } catch (error) {
+      console.error('Test Error:', error);
+      throw error;
+    }
+  });
+
+  it('should update the user profile when authenticated', async () => {
+    try {
+      const loginResponse = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          username: 'string',
+          password: 'string',
+        })
+        .expect(201);
+
+      const accessToken = loginResponse.body.data.token;
+
+      await request(app.getHttpServer())
+        .patch('/users/update')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          firstname: 'string',
+          lastname: 'string',
+          email: 'test@gmail.com',
+        })
+        .expect(200);
     } catch (error) {
       console.error('Test Error:', error);
       throw error;

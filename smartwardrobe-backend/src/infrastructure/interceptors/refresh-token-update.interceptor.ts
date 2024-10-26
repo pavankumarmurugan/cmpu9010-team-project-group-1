@@ -47,7 +47,6 @@ export class RefreshTokenUpdateInterceptor implements NestInterceptor {
             hashRefreshToken,
           );
 
-        // Update the refresh token
         await this.databaseService.users.update(id, updateEntity);
         this.logger.debug(`Successfully updated refresh token for user ${id}`);
       } catch (error) {
@@ -55,7 +54,6 @@ export class RefreshTokenUpdateInterceptor implements NestInterceptor {
           `Failed to update refresh token: ${error.message}`,
           error.stack,
         );
-        // Don't throw the error to prevent affecting the response
       }
       return new Observable((subscriber) => {
         subscriber.next(response);
@@ -63,7 +61,7 @@ export class RefreshTokenUpdateInterceptor implements NestInterceptor {
       });
     } catch (error) {
       this.logger.error(`Interceptor error: ${error.message}`, error.stack);
-      return next.handle(); // Return original observable if there's an error
+      return next.handle();
     }
   }
 }
