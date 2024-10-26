@@ -45,7 +45,6 @@ describe('AuthController (e2e)', () => {
             CartModel,
           ],
           password: process.env.DATABASE_PASSWORD,
-          // logging: ['query', 'error'],
           ssl: true,
           extra: {
             ssl: {
