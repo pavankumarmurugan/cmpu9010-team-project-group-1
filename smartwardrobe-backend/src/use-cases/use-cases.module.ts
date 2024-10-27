@@ -17,6 +17,7 @@ import { ServicesModule } from 'src/infrastructure/services/services.module';
 import { SearchService } from 'src/infrastructure/services/search/search';
 import { SearchProductUsecase } from './search/search.usecase';
 import { LikesUsecase } from './likes/likes.usecase';
+import { ChatUsecase } from './chat/chat.usecase';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { LikesUsecase } from './likes/likes.usecase';
     SearchService,
     SearchProductUsecase,
     LikesUsecase,
+    ChatUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -54,6 +56,7 @@ import { LikesUsecase } from './likes/likes.usecase';
     CartUsecase,
     SearchProductUsecase,
     LikesUsecase,
+    ChatUsecase,
   ],
 })
 export class UseCasesModule {}

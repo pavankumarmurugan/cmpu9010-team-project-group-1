@@ -17,6 +17,8 @@ import { CartEntity } from 'src/core/entities/cart/cart.entity';
 import { CartModel } from './model/cart.model';
 import { LikesEntity } from 'src/core/entities/likes/likes.entity';
 import { LikesModel } from './model/likes.model';
+import { ChatEntity } from 'src/core/entities/chat/chat.entity';
+import { ChatModel } from './model/chat.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -27,6 +29,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   cartItem: IGenericRepository<CartItemEntity>;
   cart: IGenericRepository<CartEntity>;
   likes: IGenericRepository<LikesEntity>;
+  chat: IGenericRepository<ChatEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -43,6 +46,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private cartRepository: Repository<CartEntity>,
     @InjectRepository(LikesModel)
     private likesRepository: Repository<LikesEntity>,
+    @InjectRepository(ChatModel)
+    private chatRepository: Repository<ChatEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -61,5 +66,6 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     );
     this.cart = new SQLGenericRepository<CartEntity>(this.cartRepository);
     this.likes = new SQLGenericRepository<LikesEntity>(this.likesRepository);
+    this.chat = new SQLGenericRepository<ChatEntity>(this.chatRepository);
   }
 }
