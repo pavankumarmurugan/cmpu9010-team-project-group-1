@@ -155,13 +155,19 @@ export const HomeProductSection = (props) => {
 //   );
 // };
 
-export const ProductPageCards = ({data}) => {
+export const ProductPageCards = ({data,handleTryon}) => {
+  const clickOnTryOn = (e) => {
+    debugger
+    handleTryon(e);
+  };
   return (
     <div className="productpagecards">
       {data.map((item, index) => (
         <div className="card" key={index}>
           <div className="image-container">
-            <img className="product--image" loading="lazy" src={item?.image} alt="product image" />
+            {/* Try On Button */}
+            <button className="try-on-button" onClick={() => clickOnTryOn(item)}>Try On</button>
+            <img className="productspage-product--image" loading="lazy" src={item?.image} alt="product image" />
           </div>
           <h4>{item?.name}</h4>
           <p className="description">{item?.description}</p>
@@ -176,6 +182,7 @@ export const ProductPageCards = ({data}) => {
     </div>
   );
 };
+
 
 
 

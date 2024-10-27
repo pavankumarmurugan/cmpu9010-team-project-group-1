@@ -148,7 +148,7 @@ const HomeProductSection = (props) => { /** will remove this component when data
           </Button>
       </p>
     </div> */}
-</Carousel>;
+</Carousel>
 </div>
      /* <div className="homeproductsection-main">
       <Carousel

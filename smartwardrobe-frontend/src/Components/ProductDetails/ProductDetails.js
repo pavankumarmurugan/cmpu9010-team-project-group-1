@@ -75,13 +75,12 @@ const ProductDetails = () => {
     }
   };
 
-  
-const imageUpload = async (e) => {
-  debugger;
-  let imageData = await handleImageUpload(e);
+  const imageUpload = async (e) => {
+    debugger;
+    let imageData = await handleImageUpload(e);
 
-  console.log(imageData)
-}
+    console.log(imageData);
+  };
 
   return (
     <div>
@@ -111,8 +110,12 @@ const imageUpload = async (e) => {
                   alt="Product Image"
                   className="product-details-main-image"
                 />
-                <button className="product-detailsimage-top-right-button">Try Out</button>
-                <button className="product-detailsimage-bottom-right-button">Create Your Avatar</button>
+                <button className="product-detailsimage-top-right-button">
+                  Try Out
+                </button>
+                <button className="product-detailsimage-bottom-right-button">
+                  Create Your Avatar
+                </button>
               </div>
               <div className="Products-Details-div">
                 <div>
@@ -240,11 +243,12 @@ const imageUpload = async (e) => {
                       </AccordionDetails>
                     </Accordion>
                     <Accordion
-                    sx={{
-                      backgroundColor: "#f0f0f0",
-                      // marginBottom: "10px",
-                      borderBottom: "none",
-                    }}>
+                      sx={{
+                        backgroundColor: "#f0f0f0",
+                        // marginBottom: "10px",
+                        borderBottom: "none",
+                      }}
+                    >
                       <AccordionSummary>
                         FABRIC & HOW TO LOOK AFTER ME
                       </AccordionSummary>
@@ -255,11 +259,12 @@ const imageUpload = async (e) => {
                       </AccordionDetails>
                     </Accordion>
                     <Accordion
-                    sx={{
-                      backgroundColor: "#f0f0f0",
-                      // marginBottom: "10px",
-                      borderBottom: "none",
-                    }}>
+                      sx={{
+                        backgroundColor: "#f0f0f0",
+                        // marginBottom: "10px",
+                        borderBottom: "none",
+                      }}
+                    >
                       <AccordionSummary>SIZE GUIDE</AccordionSummary>
                       <AccordionDetails>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit,

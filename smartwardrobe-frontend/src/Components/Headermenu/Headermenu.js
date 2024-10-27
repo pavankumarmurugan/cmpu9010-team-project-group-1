@@ -441,7 +441,6 @@ function Headermenu() {
   /*  search work*/
 
   const onChangeSearchValue = (e) => {
-    debugger;
     setSearchValue(e.target.value);
   };
 
@@ -491,6 +490,7 @@ function Headermenu() {
               <FormControl sx={{ m: 1 }} variant="outlined">
                 <InputLabel
                   sx={{
+                    lineHeight: "1rem",
                     color: "white",
                     "&.Mui-focused": {
                       color: "white",
@@ -522,6 +522,7 @@ function Headermenu() {
                   }
                   label="Password"
                   sx={{
+                    height: 45,
                     "& label": {
                       color: "white",
                     },
@@ -624,6 +625,7 @@ function Headermenu() {
               <FormControl sx={{ m: 1 }} variant="outlined">
                 <InputLabel
                   sx={{
+                    lineHeight: "1rem",
                     color: "white",
                     "&.Mui-focused": {
                       color: "white",
@@ -637,19 +639,24 @@ function Headermenu() {
                 <OutlinedInput
                   id="outlined-adornment-password"
                   type={"text"}
+                  style={{ color: "white" }}
+                  value={searchValue}
+                  onChange={onChangeSearchValue}
+                  autoComplete="off"
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
                         aria-label="toggle password visibility"
-                        //   onClick={handleClickShowPassword}
+                        onClick={handleSearch}
                         edge="end"
                       >
-                        <SearchIcon />
+                        <SearchIcon style={{ color: "white" }} />
                       </IconButton>
                     </InputAdornment>
                   }
                   label="Password"
                   sx={{
+                    height: 45,
                     "& label": {
                       color: "white",
                     },

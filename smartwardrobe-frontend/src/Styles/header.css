@@ -78,14 +78,29 @@
 .page-width {
     max-width: 160rem;
     margin: 0 auto;
-    padding: 0 10% 0 5%;
+    padding: 0 15% 0 10%;
 }
 
-@media screen and (max-width: 767px){
+@media screen and (max-width: 1300px){
     .page-width {
         max-width: 160rem;
         margin: 0 auto;
-        padding: 0;
+        padding: 0 10% 0 5% !important;
+    }   
+}
+@media screen and (max-width: 1100px){
+    .page-width {
+        max-width: 160rem;
+        margin: 0 auto;
+        padding: 0 !important;
+    }
+    
+}
+@media screen and (max-width: 900px){
+    .page-width {
+        max-width: 160rem;
+        margin: 0 auto;
+        padding: 0 !important;
     }
     
 }
@@ -111,6 +126,7 @@
 .mobile-search-input .MuiFormControl-root{
     /* margin-left: 0 !important; */
     width: 100%;
+    margin-left: 0px !important;
 }
 
 /* .header-menus{
@@ -177,20 +193,23 @@
 
 .HomeShoppingCollectioncollection-buttons {
     display: flex;
+    flex-direction: row;
     gap: 2rem;
     justify-content: center; 
     margin-bottom: 50px;
 }
 
 .collection-buttons {
-    flex: 1 1 200px; /* Allow buttons to grow/shrink with a minimum width */
-    max-width: 212px; /* Keep a max width to maintain button size */
+    flex: 1 1 240px;
+    /* flex: 1 1 200px; */
+    min-width: 240px;
     height: 40px;
     text-transform: uppercase;
-    letter-spacing: 0.3rem;
+    letter-spacing: 0.2rem;
     background-color: #E8E4E0 !important;
     font-weight: bold;
     cursor: pointer;
+    border-radius: inherit;
     transition: background-color 0.3s, color 0.3s; /* Smooth transition on hover */
 }
 
@@ -199,16 +218,100 @@
     color: #fff;
 }
 
-@media screen and (max-width: 469px){
+.first2buttons{
+    display: flex;
+    gap: 20px;
+}
+.last2buttons{
+    display: flex;
+    gap: 20px;
+}
+
+
+@media screen and (max-width: 1200px){
+    .collection-buttons {
+        min-width: 186px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 1040px){
+    .collection-buttons {
+        min-width: 180px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 1000px){
+    .collection-buttons {
+        min-width: 175px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 950px){
+    .collection-buttons {
+        min-width: 160px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 850px){
+    .collection-buttons {
+        min-width: 250px !important;
+        letter-spacing: 0.2rem;
+}
+.HomeShoppingCollectioncollection-buttons{
+    /* flex-wrap: wrap;  */
+    margin-bottom: 0px;
+    flex-direction: column !important;
+    /* flex: 0 0 48%; */
+    margin: 5px 0;
+}
+}
+@media screen and (max-width: 665px){
+    .collection-buttons {
+        min-width: 230px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 600px){
+    .collection-buttons {
+        min-width: 220px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 500px){
+    .collection-buttons {
+        min-width: 200px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 499px){
+    .collection-buttons {
+        min-width: 180px !important;
+        letter-spacing: 0.2rem;
+}
+}
+@media screen and (max-width: 459px){
+    .collection-buttons {
+        min-width: 150px !important;
+        letter-spacing: 0.2rem;
+}
+}
+/* @media screen and (max-width: 750px){
+    .collection-buttons {
+        min-width: 150px !important;
+        letter-spacing: 0.2rem;
+}
+} */
+
+/* @media screen and (max-width: 469px){
         .collection-buttons {
             max-width: 150px;
             letter-spacing: 0.2rem;
     }
-}
+} */
 @media screen and (max-width: 919px){
     .HomeShoppingCollectioncollection-buttons{
-        flex-wrap: wrap; 
-        margin-bottom: 0px;
+        /* flex-wrap: wrap; 
+        margin-bottom: 0px; */
     }
     .homeproductsection-main{
         margin-top: 5rem !important;
