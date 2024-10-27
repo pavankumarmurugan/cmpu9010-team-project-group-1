@@ -14,7 +14,7 @@ jobs:
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
       - name: Build Docker Image
         working-directory: ./smartwardrobe-AI/pgvector-image-search/flask-api
-        run: docker build -t image-search .
+        run: docker build -t d23124670/image-search .
       - name: Publish image to docker hub
         run: docker push d23124670/image-search:latest
   deploy:
