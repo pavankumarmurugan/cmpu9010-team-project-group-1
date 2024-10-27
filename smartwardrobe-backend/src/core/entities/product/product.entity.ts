@@ -1,5 +1,4 @@
 import { BaseEntity } from '../base/base.entity';
-import { ProductInventoryEntity } from '../product-inventory/product-inventory.entity';
 
 export class ProductEntity extends BaseEntity {
   readonly id?: number;
@@ -34,5 +33,13 @@ export class ProductEntity extends BaseEntity {
   readonly inventoryId?: number;
   readonly discountId?: number;
   readonly price?: number;
-  readonly imageUrl?: string; // Added column for image URL
+  readonly imageUrl?: string;
+  readonly imageName?: string;
+  readonly productName?: string;
+  readonly category?: string;
+  readonly color?: string;
+  readonly fit?: string;
+  readonly material?: string;
+  readonly neckline?: string;
+  readonly description?: string;
 }

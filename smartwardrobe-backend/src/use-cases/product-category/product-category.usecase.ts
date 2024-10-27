@@ -88,7 +88,7 @@ export class ProductCategoryUsecase {
   async getOne(id: number): Promise<IResponse<ProductCategoryResDto>> {
     try {
       const data: ProductCategoryEntity =
-        await this.databaseService.productCategory.get(id);
+        await this.databaseService.productCategory.get({ id });
       return {
         data,
         message: MESSAGES.PRODUCT_CATEGORY.GET.SUCCESS,
