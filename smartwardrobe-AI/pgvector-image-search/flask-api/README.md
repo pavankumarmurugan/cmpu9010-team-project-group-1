@@ -2,7 +2,7 @@
 
 ## API Endpoint
 
-- `localhost:5000/search`
+- `localhost:9090/search`
 
 ## Model
 
@@ -10,6 +10,7 @@
 
 ## Run
 
+- `flask --app image_search.app run --host=0.0.0.0 --port=9090`
 - `flask --app app run`
 
 ## Request
@@ -19,8 +20,7 @@
 ```JSON
 {
   "image": {
-    "mime": "image/jpeg",
-    "data": "BASE64_ENCODED_IMAGE_DATA"
+    "image_url": "image_url"
   }
 }
 ```
@@ -44,3 +44,8 @@
   ...
 ]
 ```
+# Build the Docker image
+ - `docker build -t <image_name> .`
+
+# Run the Docker container
+ - `docker run -d -p 9090:9090 --name <container_name> <image_name>`

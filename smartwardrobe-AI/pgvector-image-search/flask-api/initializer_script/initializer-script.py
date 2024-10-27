@@ -129,7 +129,7 @@ def count_subdirectories_and_images(image_dir):
     return total_subdirs, total_images
 
 # Example usage
-# image_dir = '/Users/Tommy/AI/image-search/image-search-pgvector/image-test'
+# image_dir = '/Users/Tommy/AI/image_search/image_search-pgvector/image-test'
 # subdirs, images = count_subdirectories_and_images(image_dir)
 # print(f"Total number of subdirectories: {subdirs}")
 # print(f"Total number of images: {images}")
