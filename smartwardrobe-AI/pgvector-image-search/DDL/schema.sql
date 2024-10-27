@@ -1,8 +1,8 @@
 
--- create database image-search
+-- create database image_search
 CREATE DATABASE image-search;
 
--- connect to image-search
+-- connect to image_search
 \c image-search
 
 ------------------------------------------------

@@ -1,0 +1,29 @@
+name: CICD-image-search
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Login to docker hub
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - name: Build Docker Image
+        working-directory: ./smartwardrobe-AI/pgvector-image-search/flask-api
+        run: docker build -t d23125391/image-search .
+      - name: Publish image to docker hub
+        run: docker push d23125391/image-search:latest
+  deploy:
+    needs: build
+    runs-on: [aws-ec2]
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull d23125391/image-search:latest
+      - name: Delete Old Container
+        run: docker rm -f image-search
+      - name: Run docker container
+        run: docker run -d -p 9090:9090 --name image-search d23125391/image-search:latest

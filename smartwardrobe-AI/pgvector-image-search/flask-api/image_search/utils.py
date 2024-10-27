@@ -1,6 +1,6 @@
-import base64
 import io
 
+import requests
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -8,47 +8,57 @@ from torchvision import transforms
 from image_search.model import load_model
 
 
-def preprocess_image(image_base64, image_mime):
+def download_image(url):
     """
-    1. Decode a Base64 string to a PIL image.
-    2. generate a 2048-dimensional vector of images.
-    3. Search for similar images in the database.
+    Downloads an image from a URL and returns it as a PIL image.
     """
-
-    # Decode the Base64 image
-    original_image = base64_image_decoder(image_base64)
-
-    # Load the pre-trained ResNet50 model
-    model = load_model()
-
-    # Generate a 2048-dimensional vector of images
-    searchable_vector = generate_image_vector(model, original_image)
-
-    return searchable_vector
-
-def base64_image_decoder(image_data):
     try:
-        # Decode the Base64 string into bytes
-        image_bytes = base64.b64decode(image_data)
+        # Send a GET request to the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an error for bad HTTP status
 
-        # Create a BytesIO object from the decoded bytes
-        image_stream = io.BytesIO(image_bytes)
+        # Create a BytesIO object from the response content
+        image_stream = io.BytesIO(response.content)
 
-        # Open the image using PIL (Pillow)
-        image = Image.open(image_stream)
+        # Open the image using PIL and convert it to RGB format
+        image = Image.open(image_stream).convert("RGB")
 
-        rgb_image = image.convert("RGB")
-
-        # Print the image format and size
-        print(f"Image format: {image.format}, size: {image.size}")
-
-        return rgb_image  # Return the opened image for further processing
+        return image
 
     except Exception as e:
-        print(f"Error processing image: {e}")
+        print(f"Error downloading image: {e}")
         return None
 
-def generate_image_vector(model, original_image):
+
+# def base64_image_decoder(image_base64):
+#     """
+#     Decode the Base64 string into an image.
+#     :param image_base64: Base64-encoded image string
+#     :return: rgb_image
+#     """
+#     try:
+#         # Decode the Base64 string into bytes
+#         image_bytes = base64.b64decode(image_base64)
+#
+#         # Create a BytesIO object from the decoded bytes
+#         image_stream = io.BytesIO(image_bytes)
+#
+#         # Open the image using PIL (Pillow)
+#         image = Image.open(image_stream)
+#
+#         rgb_image = image.convert("RGB")
+#
+#         # Print the image format and size
+#         print(f"Image format: {image.format}, size: {image.size}")
+#
+#         return rgb_image  # Return the opened image for further processing
+#
+#     except Exception as e:
+#         print(f"Error processing image: {e}")
+#         return None
+
+
+def generate_image_vector(original_image):
     """
     Generate a 2048-dimensional vector of images.
 
@@ -59,6 +69,10 @@ def generate_image_vector(model, original_image):
     Returns:
         numpy.ndarray: 2048-dimensional image vector
     """
+
+    # Load the pre-trained ResNet50 model
+    model = load_model()
+
     image_tensor = process_image(original_image)  # Preprocessed images to get image_tensor
     with torch.no_grad():  # Disable gradient calculation
         image_vector = model(image_tensor).numpy()  # Generate vectors using models and convert to numpy arrays
@@ -93,6 +107,7 @@ def process_image(original_image):
 
     image_tensor = transform(original_image).unsqueeze(0)  # Add Batch Dimension
     return image_tensor
+
 
 def format_search_results(search_results):
     """
