@@ -15,6 +15,8 @@ import { CartItemModel } from './model/cart-items.model';
 import { CartItemEntity } from 'src/core/entities/cart-item/cart-item.entity';
 import { CartEntity } from 'src/core/entities/cart/cart.entity';
 import { CartModel } from './model/cart.model';
+import { LikesEntity } from 'src/core/entities/likes/likes.entity';
+import { LikesModel } from './model/likes.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -24,6 +26,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   product: IGenericRepository<ProductEntity>;
   cartItem: IGenericRepository<CartItemEntity>;
   cart: IGenericRepository<CartEntity>;
+  likes: IGenericRepository<LikesEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -38,6 +41,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private cartItemRepository: Repository<CartItemEntity>,
     @InjectRepository(CartModel)
     private cartRepository: Repository<CartEntity>,
+    @InjectRepository(LikesModel)
+    private likesRepository: Repository<LikesEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -55,5 +60,6 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
       this.cartItemRepository,
     );
     this.cart = new SQLGenericRepository<CartEntity>(this.cartRepository);
+    this.likes = new SQLGenericRepository<LikesEntity>(this.likesRepository);
   }
 }

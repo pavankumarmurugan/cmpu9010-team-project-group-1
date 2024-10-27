@@ -9,6 +9,7 @@ import { ProductInventoryModel } from './model/product-inventory.model';
 import { ProductModel } from './model/product.model';
 import { CartItemModel } from './model/cart-items.model';
 import { CartModel } from './model/cart.model';
+import { LikesModel } from './model/likes.model';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { CartModel } from './model/cart.model';
       database: process.env.DATABASE_NAME,
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
-      logging: ['query', 'error'],
+      // logging: ['query', 'error'],
       ssl: true,
       extra: {
         ssl: {
@@ -36,6 +37,7 @@ import { CartModel } from './model/cart.model';
       ProductModel,
       CartItemModel,
       CartModel,
+      LikesModel,
     ]),
   ],
   providers: [

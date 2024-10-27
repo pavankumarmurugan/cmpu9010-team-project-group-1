@@ -128,5 +128,36 @@ export class ProductModel extends BaseModel {
   //   cascade: true,
   //   onDelete: 'CASCADE',
   // })
-  // inventory?: ProductInventoryModel;
+  // ... existing code ...
+
+  @Column({ type: 'varchar', length: 255, name: 'image_name', nullable: true })
+  readonly imageName?: string; // Added column for image name
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'product_name',
+    nullable: true,
+  })
+  readonly productName?: string; // Added column for product name
+
+  @Column({ type: 'varchar', length: 50, name: 'category', nullable: true })
+  readonly category?: string; // Added column for category
+
+  @Column({ type: 'varchar', length: 255, name: 'color', nullable: true })
+  readonly color?: string; // Added column for color
+
+  @Column({ type: 'varchar', length: 50, name: 'fit', nullable: true })
+  readonly fit?: string; // Added column for fit
+
+  @Column({ type: 'varchar', length: 50, name: 'material', nullable: true })
+  readonly material?: string; // Added column for material
+
+  @Column({ type: 'varchar', length: 50, name: 'neckline', nullable: true })
+  readonly neckline?: string; // Added column for neckline
+
+  @Column({ type: 'text', name: 'description', nullable: true })
+  readonly description?: string; // Added column for description
+
+  // ... existing code ...
 }

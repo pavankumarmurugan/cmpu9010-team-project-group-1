@@ -88,7 +88,7 @@ export class ProductInventoryUsecase {
   async getOne(id: number): Promise<IResponse<ProductInventoryResDto>> {
     try {
       const data: ProductInventoryEntity =
-        await this.databaseService.productInventory.get(id);
+        await this.databaseService.productInventory.get({ id });
       return {
         data,
         message: MESSAGES.PRODUCT_INVENTORY.GET.SUCCESS,

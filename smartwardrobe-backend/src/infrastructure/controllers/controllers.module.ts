@@ -19,6 +19,7 @@ import { CartController } from './cart/cart.controller';
 import { SearchSimilarProductsController } from './search/search-products.controller';
 import { ServicesModule } from '../services/services.module';
 import { ScriptController } from './script/script';
+import { LikesController } from './likes/likes.controller';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ScriptController } from './script/script';
     CartController,
     SearchSimilarProductsController,
     ScriptController,
+    LikesController,
   ],
   providers: [
     {
