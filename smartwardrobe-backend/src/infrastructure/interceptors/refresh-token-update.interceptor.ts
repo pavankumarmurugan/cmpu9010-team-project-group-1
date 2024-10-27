@@ -3,8 +3,9 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  Logger,
 } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { IDataServices } from 'src/core/abstracts';
 import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
 import { UserEntity } from 'src/core/entities/user/user.entity';
@@ -12,33 +13,55 @@ import { BcryptService } from '../frameworks/bcrypt/bcrypt.service';
 
 @Injectable()
 export class RefreshTokenUpdateInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(RefreshTokenUpdateInterceptor.name);
+
   constructor(
-    private databaseService: IDataServices,
-    private userDtoConvertor: UserDtoConvertor,
-    private bcryptService: BcryptService,
+    private readonly databaseService: IDataServices,
+    private readonly userDtoConvertor: UserDtoConvertor,
+    private readonly bcryptService: BcryptService,
   ) {}
-  intercept(
+
+  async intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
-  ): Observable<any> | Promise<Observable<any>> {
+  ): Promise<Observable<any>> {
     const { user } = context.switchToHttp().getRequest();
-    const userId = user ? user.userId : null;
-    return next.handle().pipe(
-      tap(async (response) => {
-        const refreshToken = response['data']['refreshToken'];
-        const id = userId !== null ? userId : response['data']['userId'];
+    const userId = user?.userId;
 
-        const hashRefreshToken: string = await this.bcryptService.hash(
-          refreshToken,
-        );
+    try {
+      const responseObservable = next.handle();
+      const response = await lastValueFrom(responseObservable);
 
+      const refreshToken = response?.data?.refreshToken;
+      const id = userId ?? response?.data?.userId;
+
+      if (!refreshToken || !id) {
+        this.logger.debug('Missing refreshToken or userId, skipping update');
+        return responseObservable;
+      }
+
+      try {
+        const hashRefreshToken = await this.bcryptService.hash(refreshToken);
         const updateEntity: UserEntity =
           this.userDtoConvertor.toUserLoginEntityForUpdateRefreshToken(
             hashRefreshToken,
           );
 
         await this.databaseService.users.update(id, updateEntity);
-      }),
-    );
+        this.logger.debug(`Successfully updated refresh token for user ${id}`);
+      } catch (error) {
+        this.logger.error(
+          `Failed to update refresh token: ${error.message}`,
+          error.stack,
+        );
+      }
+      return new Observable((subscriber) => {
+        subscriber.next(response);
+        subscriber.complete();
+      });
+    } catch (error) {
+      this.logger.error(`Interceptor error: ${error.message}`, error.stack);
+      return next.handle();
+    }
   }
 }

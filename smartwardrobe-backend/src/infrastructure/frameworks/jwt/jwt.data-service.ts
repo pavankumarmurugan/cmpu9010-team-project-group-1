@@ -29,6 +29,4 @@ export class JWTDataService {
       },
     );
   }
-
-  // async verifyToken(token: string) {}
 }
