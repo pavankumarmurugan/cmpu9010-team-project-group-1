@@ -21,7 +21,6 @@ import { ServicesModule } from '../services/services.module';
 import { ScriptController } from './script/script';
 import { LikesController } from './likes/likes.controller';
 import { ChatController } from './chat/chat.controller';
-import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -57,7 +56,6 @@ import { ChatGateway } from './chat/chat.gateway';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    ChatGateway,
   ],
 })
 export class ControllersModule {}
