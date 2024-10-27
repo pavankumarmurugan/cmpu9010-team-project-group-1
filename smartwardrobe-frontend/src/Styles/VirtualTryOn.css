@@ -1,0 +1,172 @@
+.modal-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Models-separation-div {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex: 1;
+}
+
+.vto-heading{
+    font-size: 30px;
+    text-align: center;
+}
+
+.model-result {
+  flex: 0 0 40%;
+  position: relative;
+}
+
+.Mobile-models-div {
+  display: none;
+}
+
+.predefined-models {
+  /* background-color: red; */
+  flex: 1;
+  padding-left: 2%;
+  padding-right: 2%;
+  max-height: 750px; /* Set the max height here */
+  overflow-y: auto;
+  scrollbar-width: none;
+  background-color: white;
+  margin-left: 20px;
+  border-radius: 30px;
+}
+
+.Result-Image {
+  width: 100%;
+  height: 100%;
+  max-height: 750px;
+  /* height: 500px; */
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.Right-Div-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.Model-Images-div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.predefined-Model-Image {
+  width: 100%;
+  /* height: 100%; */
+  object-fit: cover;
+  /* border-radius: 50px; */
+}
+
+.VTO-card {
+  max-width: 354px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+@media (min-width: 1200px) {
+  .VTO-card {
+    flex: 0 0 calc(33.33% - 25px); /* 3 cards in a row minus gap */
+    max-width: calc(33.33% - 25px); /* Prevent stretching */
+  }
+}
+@media (min-width: 1000px) and (max-width: 1199px) {
+  .VTO-card {
+    flex: 0 0 calc(50% - 25px); /* 3 cards in a row minus gap */
+    max-width: calc(50% - 25px); /* Prevent stretching */
+  }
+  
+}
+
+@media (max-width: 1200px) {
+    .vto-heading{
+        font-size: 24px !important;
+      }
+}
+@media (max-width: 768px) {
+    .vto-heading{
+        font-size: 20px !important;
+      }
+}
+
+@media (min-width: 768px) and (max-width: 1000px) {
+  .model-result {
+    flex: 0 0 60% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .Models-separation-div {
+    flex-direction: column !important;
+  }
+  .Model-Images-div {
+    display: none !important;
+  }
+  .MobileScreen-Model-Images-div {
+    display: block !important;
+  }
+  .mobile-model-images {
+    width: 200px;
+    /* min-height: 250px; */
+    max-height: 300px;
+    /* padding-bottom: 10px; */
+    margin-top: 10px;
+    object-fit: fill;
+    margin-right: 20px;
+    border-radius: 20px;
+  }
+  .Mobile-models-div {
+    display: block !important;
+  }
+  .mobile-model-image-div {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    max-height: 200px;
+    max-width: 100%;
+    /* margin-left: 10px; */
+    scrollbar-width: none;
+  }
+}
+
+.VTO-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.VTO-model--image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 20px;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.custom-modal .ant-modal {
+  height: 100vh !important; /* Full screen height */
+  top: 0 !important; /* Start at the top */
+  padding-bottom: 0; /* Remove any bottom padding */
+}
+
+.custom-modal .ant-modal-content {
+  height: 100%; /* Ensure the modal content fills the height */
+  background-color: #f8f8f8;
+}

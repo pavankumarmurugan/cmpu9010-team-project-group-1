@@ -108,6 +108,8 @@
 
 .filterdropdowns .ant-select-selector {
   background-color: #e9ecef !important;
+  border: none !important;
+  border-radius: inherit !important;
 }
 
 .filterdropdowns .ant-select-selection-placeholder {
@@ -184,18 +186,37 @@
   display: inline-block;
   transition: transform 0.3s ease;
   &:hover {
-    transform: scale(1.02);
+    transform: scale(1.05);
   }
 }
 
-.product--image {
+.try-on-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 2;
+  &:hover{
+    background-color: black;
+    color: white !important;
+    transform: scale(1.05);
+    border: 1px solid #cbcbcb !important;
+  }
+}
+
+.productspage-product--image {
   width: 100%;
   height: 500px;
   object-fit: cover;
   /* transition: transform 0.3s ease; */
 }
 
-.product--image:hover {
+.productspage-product--image:hover {
   /* transform: scale(1.05); */
   cursor: pointer;
 }
@@ -417,8 +438,8 @@
   margin-bottom: 20px;
 }
 .color-swatch {
-  width: 39px;
-  height: 39px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%; /* rounded corners */
   cursor: pointer; /* pointer on hover */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

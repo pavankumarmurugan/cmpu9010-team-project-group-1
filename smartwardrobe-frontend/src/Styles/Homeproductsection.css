@@ -34,7 +34,8 @@
 }
 
 .View-Product-Button {
-    height: 40px;
+    height: 37px;
+    border-radius: inherit;
   margin-top: 10px !important;
   border: none !important;
   outline: 0 !important;
@@ -49,14 +50,14 @@
   &:hover {
     color: white !important;
     background-color: #000000 !important;
-    opacity: 0.7 !important;
+    /* opacity: 0.7 !important; */
   }
 }
 
 
 .homeproductsection-main .react-multi-carousel-item {
   max-width: 354px !important;
-  margin-right: 40px;
+  margin-right: 10px;
 }
 
 .card h4 {

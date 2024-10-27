@@ -172,6 +172,7 @@ const dummyData = [
           <h3>SHOP BY COLLECTION</h3>
         </div>
         <div className="HomeShoppingCollectioncollection-buttons">
+          <div className="first2buttons">
           <Button
             className="collection-buttons"
             color="default"
@@ -186,6 +187,8 @@ const dummyData = [
           >
             Footwear
           </Button>
+          </div>
+          <div className="last2buttons">
           <Button
             className="collection-buttons"
             color="default"
@@ -200,6 +203,7 @@ const dummyData = [
           >
             Jewellery
           </Button>
+          </div>
         </div>
         <div
           className="carousel-container"

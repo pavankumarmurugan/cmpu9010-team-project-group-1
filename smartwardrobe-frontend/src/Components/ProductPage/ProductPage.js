@@ -33,10 +33,12 @@ import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
+import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 
 const ProductPage = () => {
   const location = useLocation();
   let { state } = location;
+  const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -201,14 +203,37 @@ const ProductPage = () => {
     }
   };
 
+  /** this is to handle tryon modal */
+  const handleTryon = (data) => {
+    debugger;
+    setOpenTryOnModal(true);
+  }
+
+  const closeTryOnModal = () => {
+    setOpenTryOnModal(false);
+  };
+  /** this is to handle tryon modal */
+
   return (
     <>
+      {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-      >
+        >
         <CircularProgress color="inherit" />
       </Backdrop>
+        {/** loader code */}
+
+      {/** Try On modal */}
+
+      <VirtualTryOn
+      isShowModel={openTryOnModal}
+      closeModal={closeTryOnModal}
+      />
+
+      {/** Try On modal */}
+
       <div className="productpage-container">
         <ScrollButton />
         <Headermenu />
@@ -430,7 +455,7 @@ const ProductPage = () => {
             </div>
           ) : (
             <div className="products-cards">
-              <ProductPageCards data={products} />
+              <ProductPageCards data={products} handleTryon={handleTryon} />
             </div>
           )}
         </div>
