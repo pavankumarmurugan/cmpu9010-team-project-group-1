@@ -54,6 +54,9 @@ jobs:
       - name: Unzip artifact for testing
         run: unzip release.zip
 
+      - name: Check directory contents
+        run: ls -R # List contents recursively to verify structure
+
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
@@ -61,25 +64,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd smartwardrobe-backend
+          cd smartwardrobe-backend || echo "Already in correct directory" 
           npm install
 
       - name: Set environment variables for tests
-        run: echo "Setting environment variables"
         env:
           DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
           DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-          DATABASE_TYPE: "postgres" # If DATABASE_TYPE is not sensitive, you can leave it here
+          DATABASE_TYPE: "postgres"
           JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
           JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+        run: echo "Environment variables set"
 
       - name: Run tests
         run: |
-          cd smartwardrobe-backend
-          npm run test
+          # Adjust path based on structure, if needed
+          cd smartwardrobe-backend || echo "Already in correct directory"
+          npm run test:e2e
 
   deploy:
     runs-on: ubuntu-latest
