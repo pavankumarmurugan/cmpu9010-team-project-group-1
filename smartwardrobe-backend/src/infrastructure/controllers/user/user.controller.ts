@@ -14,7 +14,6 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
 import { UpdatePasswordUserReqDTO } from 'src/core/dto/user/user-req-update-profile-password.dto';
 import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profile.dto';
 import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
@@ -45,7 +44,6 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Roles(ROLES.ADMIN)
-  @Throttle(3, 60)
   async getAll() {
     try {
       return await this.userUsecase.getAllUsers();
