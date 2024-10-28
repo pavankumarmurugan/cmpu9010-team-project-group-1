@@ -54,8 +54,11 @@ jobs:
       - name: Unzip artifact for testing
         run: unzip release.zip
 
-      - name: Check directory contents
-        run: ls -R # List contents recursively to verify structure
+      - name: Remove node_modules and reinstall dependencies
+        run: |
+          cd smartwardrobe-backend
+          rm -rf node_modules
+          npm ci
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
