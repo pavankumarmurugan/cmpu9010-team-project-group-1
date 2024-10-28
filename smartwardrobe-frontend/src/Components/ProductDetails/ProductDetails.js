@@ -77,9 +77,9 @@ const ProductDetails = () => {
 
   const imageUpload = async (e) => {
     debugger;
-    let imageData = await handleImageUpload(e);
+    // let imageData = await handleImageUpload(e);
 
-    console.log(imageData);
+    // console.log(imageData);
   };
 
   return (

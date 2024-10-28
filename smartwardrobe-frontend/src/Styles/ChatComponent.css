@@ -1,0 +1,205 @@
+.Chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 90px; 
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 53%;
+    height: 50px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 1000;
+    transition: 0.3s ease-in-out;
+    &:hover {
+        background-color: black !important;
+        color: white !important;
+        transform: scale(1.1);
+    }
+}
+
+/* Main container */
+.modal-container-chat{
+    margin-top: 2rem;
+}
+.chat-container {
+    display: flex;
+    height: 70vh;
+    width: 100%;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  /* Left chat section (contacts) */
+  .left-chat-section {
+    width: 30%;
+    background-color: #2e3b4e;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .left-chat-section h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #505e70;
+    padding-bottom: 10px;
+  }
+  
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .contact {
+    padding: 12px;
+    border-radius: 6px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .contact:hover {
+    background-color: lightgray;
+  }
+  
+  /* Right chat section */
+  /* Wrapper for each message with name */
+.message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Space between name and message */
+  }
+  /* Name label above each message */
+.message-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #888;
+    padding-left: 8px; /* Slight indent for alignment */
+  }
+  .right-chat-section {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: #ffffff;
+  }
+  
+  .right-chat-section h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    padding-left: 10px;
+  }
+  
+  /* Chat messages */
+  .chat-messages {
+    flex-grow: 1;
+    padding: 20px 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scrollbar-width: none;
+  }
+  
+  .message {
+  position: relative;
+  padding: 20px 15px 10px 15px; /* Additional padding at the top for the name */
+  max-width: 70%;
+  border-radius: 15px;
+  font-size: 1rem;
+}
+  
+  .message.received {
+    align-self: flex-start;
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  
+  .message.sent {
+    align-self: flex-end;
+    background-color: #4e97f5;
+    color: white;
+  }
+  
+  /* Chat input section */
+.chat-input {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding-top: 15px;
+    position: relative;
+  }
+  
+  .chat-input input {
+    flex-grow: 1;
+    padding: 10px 40px 10px 15px; /* Adjust padding for the icon space */
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  .send-button {
+    position: absolute;
+    right: 25px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .chats_list {
+    height: 75vh;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+.chat_sender {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row
+}
+
+.chat_sender p {
+    padding: 10px;
+    background-color: #2e3b4e;
+    color: white;
+    border-radius: 10px;
+    max-width: 60%;
+    font-size: 17px;
+    text-transform: capitalize;
+    letter-spacing: normal;
+}
+
+.chat_receiver {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+.chat_receiver p {
+    padding: 10px;
+    background-color: #E9ECEF;
+    border-radius: 10px;
+    max-width: 80%;
+    font-size: 17px;
+    text-transform: capitalize;
+    letter-spacing: normal;
+}

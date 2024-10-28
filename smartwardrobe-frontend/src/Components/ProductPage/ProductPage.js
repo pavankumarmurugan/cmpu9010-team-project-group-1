@@ -38,6 +38,8 @@ import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 const ProductPage = () => {
   const location = useLocation();
   let { state } = location;
+  let virtualTryOnClickedData = {};
+  // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
   const [products, setProducts] = useState([]);
@@ -167,11 +169,12 @@ const ProductPage = () => {
 
   const imageUpload = async (e) => {
     debugger;
-    let imageData = await handleImageUpload(e);
-    console.log(imageData);
+    // let imageData = await handleImageUpload(e);
+    let imageData =  e.target.files[0];
+    console.log(e);
     setOpenLoader(true);
     let callingUploadImageApi = await apiCall(
-      "https://smartwardrobe-backend.azurewebsites.net/api#/Search/SearchSimilarProductsController_searchProducts",
+      "https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image",
       "POST",
       imageData
     );
@@ -206,6 +209,7 @@ const ProductPage = () => {
   /** this is to handle tryon modal */
   const handleTryon = (data) => {
     debugger;
+    localStorage.setItem('VTOData', JSON.stringify(data));
     setOpenTryOnModal(true);
   }
 
@@ -227,10 +231,12 @@ const ProductPage = () => {
 
       {/** Try On modal */}
 
+      {openTryOnModal && 
       <VirtualTryOn
       isShowModel={openTryOnModal}
       closeModal={closeTryOnModal}
-      />
+      data={virtualTryOnClickedData}
+      />}
 
       {/** Try On modal */}
 

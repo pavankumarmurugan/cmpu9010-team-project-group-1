@@ -9,6 +9,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  styled,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -37,9 +38,11 @@ function Headermenu() {
   {
     /*  Use State*/
   }
+  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [login, setlogin] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
   const [openTop, setOpenTop] = useState(false);
   const [openFootwear, setOpenFootwear] = useState(false);
@@ -52,6 +55,13 @@ function Headermenu() {
   {
     /*  Use State*/
   }
+
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    "& .MuiBadge-badge": {
+      color: "black",
+      backgroundColor: "white",
+    },
+  }));
 
   {
     /*  drawer work*/
@@ -93,10 +103,21 @@ function Headermenu() {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 300 }} className="mobile-menu-main" role="presentation" onClick={toggleDrawer(false)}>
+    <Box
+      sx={{ width: 300 }}
+      className="mobile-menu-main"
+      role="presentation"
+      onClick={toggleDrawer(false)}
+    >
       <List>
-        <div style={{display:"flex", justifyContent:"flex-end", marginBottom:"10px"}}>
-        <IoMdClose />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "10px",
+          }}
+        >
+          <IoMdClose />
         </div>
         <div className="menu-item">
           <a href="/" className="item">
@@ -307,10 +328,14 @@ function Headermenu() {
   const items = [
     {
       key: "1",
-      label: "User Name",
+      label: token?.username,
     },
     {
       key: "2",
+      label: "Profile",
+    },
+    {
+      key: "3",
       label: "Logout",
     },
   ];
@@ -411,8 +436,9 @@ function Headermenu() {
   const userDropdown = (e) => {
     debugger;
     console.log(e);
-    if (e.key === "2") {
-      console.log("User Name Clicked");
+    if (e.key === "3") {
+      localStorage.removeItem('user');
+      window.location.reload();
     } else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
@@ -456,7 +482,7 @@ function Headermenu() {
   /** handle dropdown click */
 
   const handleDropdownClick = (value) => {
-    debugger
+    debugger;
     console.log("Selected value:", value);
   };
 
@@ -483,7 +509,13 @@ function Headermenu() {
 
       <div className="header-main">
         <div className="header-conatiner page-width">
-          <div className={location?.pathname === "/products" ? "search-div-laptop-productspage search-input-above-900px" : "search-div-laptop search-input-above-900px"} >
+          <div
+            className={
+              location?.pathname === "/products"
+                ? "search-div-laptop-productspage search-input-above-900px"
+                : "search-div-laptop search-input-above-900px"
+            }
+          >
             {location?.pathname === "/products" ? (
               <></>
             ) : (
@@ -547,38 +579,51 @@ function Headermenu() {
               <h1 className="header-logo">SMARTWARDROBE</h1>
             </a>
             <div className="header-icons">
-            <Badge badgeContent={2} color="error"
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}>
-              <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
-              </Badge>
-              {/* this is for logout*/}
-              {/* <Dropdown 
-                menu={{
-                  items,
-                  onClick: userDropdown,
+              <StyledBadge
+                badgeContent={2}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
                 }}
-                placement="bottom"
               >
-                <PersonOutlineIcon sx={{ color: "white", fontSize: "30px" }} />
-              </Dropdown> */}
+                <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
+              </StyledBadge>
               {/* this is for logout*/}
-              <PersonOutlineIcon
-                onClick={userDropdown}
-                sx={{ color: "white", fontSize: "30px" }}
-              />
+              {token !== undefined && token !== null ? (
+                <Dropdown
+                  menu={{
+                    items,
+                    onClick: userDropdown,
+                  }}
+                  placement="bottom"
+                >
+                  <PersonOutlineIcon
+                    sx={{ color: "white", fontSize: "30px" }}
+                  />
+                </Dropdown>
+              ) : (
+                <>
+                  <PersonOutlineIcon
+                    onClick={userDropdown}
+                    sx={{ color: "white", fontSize: "30px" }}
+                  />
+                </>
+              )}
+              {/* this is for logout*/}
+
               {/* will use later for login signup form open only*/}
-              <Badge badgeContent={2} color="error"
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}>
-              <ShoppingBagOutlinedIcon
-                sx={{ color: "white", fontSize: "30px" }}
-              />
-              </Badge>
+              <StyledBadge
+                badgeContent={3}
+                color="error"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+              >
+                <ShoppingBagOutlinedIcon
+                  sx={{ color: "white", fontSize: "30px" }}
+                />
+              </StyledBadge>
             </div>
           </div>
           <div className="search-div-mobile search-input-below-900px">
@@ -587,34 +632,50 @@ function Headermenu() {
               sx={{ color: "white", fontSize: "30px" }}
             />
             <a href="/" className="anchor-tag">
-            <h1 className="header-logo">SMARTWARDROBE</h1>
+              <h1 className="header-logo">SMARTWARDROBE</h1>
             </a>
             <div className="header-icons">
-            <Badge badgeContent={2} color="error"
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}>
-              <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
-              </Badge>
-              <Dropdown
-                className="profile-icon"
-                menu={{
-                  items,
-                  onClick: userDropdown,
+              <Badge
+                badgeContent={2}
+                color="error"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
                 }}
-                placement="bottom"
               >
-                <PersonOutlineIcon sx={{ color: "white", fontSize: "30px" }} />
-              </Dropdown>
-              <Badge badgeContent={2} color="error"
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}>
-              <ShoppingBagOutlinedIcon
-                sx={{ color: "white", fontSize: "30px" }}
-              />
+                <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
+              </Badge>
+              {token !== undefined && token !== null ? (
+                <Dropdown
+                  menu={{
+                    items,
+                    onClick: userDropdown,
+                  }}
+                  placement="bottom"
+                >
+                  <PersonOutlineIcon
+                    sx={{ color: "white", fontSize: "30px" }}
+                  />
+                </Dropdown>
+              ) : (
+                <>
+                  <PersonOutlineIcon
+                    onClick={userDropdown}
+                    sx={{ color: "white", fontSize: "30px" }}
+                  />
+                </>
+              )}
+              <Badge
+                badgeContent={2}
+                color="error"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+              >
+                <ShoppingBagOutlinedIcon
+                  sx={{ color: "white", fontSize: "30px" }}
+                />
               </Badge>
             </div>
           </div>
@@ -680,7 +741,10 @@ function Headermenu() {
           )}
           {/* Header Dropdowns */}
           <div className="search-input-above-900px">
-            <GenericDropdownMenu menuData={menuData} handleChange={handleDropdownClick} />
+            <GenericDropdownMenu
+              menuData={menuData}
+              handleChange={handleDropdownClick}
+            />
           </div>
           {/* Header Dropdowns */}
         </div>

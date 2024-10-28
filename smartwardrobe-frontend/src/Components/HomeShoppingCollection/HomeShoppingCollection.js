@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../Styles/header.css";
 import { Button } from "antd";
 import { Carousel } from "antd";
@@ -19,7 +19,8 @@ import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
 import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import HomeProductSection from "../HomeProductsSection/HomeProductSection";
 
-function HomeShoppingCollection() {
+function HomeShoppingCollection({data}) {
+  const [homeData, setHomeData] = useState({});
   //   const carouseldata = [
   //     {
   //       src: "https://images.unsplash.com/photo-1502657877623-f66bf489d236",
@@ -165,6 +166,14 @@ const dummyData = [
     </Flex>
   );
 
+  useEffect(() => {
+    if (data) {
+      debugger
+      let top10Data = data?.slice(0, 10);
+      setHomeData(top10Data);
+    }
+  }, [data]);
+
   return (
     <>
       <div className="HomeShoppingCollection-main">
@@ -282,9 +291,10 @@ const dummyData = [
               />
             </div>
           </Carousel>
-
+          <div className="homeproductsection-main">
           {/* <HomeProductSection data={dummyData} /> */}  {/** will uncomment when data comes */}
-          <HomeProductSection data={dummyData}/>
+          {homeData  && homeData?.length > 0 && <HomeProductSection data={homeData}/>}
+          </div>
         </div>
         <div className="splitter-div">
             <div className="bestselling-div" style={{display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center", margin: "20px auto", fontSize:"20px", fontFamily:"bold", textTransform:"uppercase", letterSpacing:"0.3rem"}}>

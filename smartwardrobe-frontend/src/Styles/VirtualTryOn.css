@@ -58,8 +58,8 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 25px;
-  justify-content: center;
+  gap: 30px;
+  /* justify-content: center; */
   padding-top: 25px;
   padding-bottom: 25px;
 }

@@ -60,6 +60,11 @@
   margin-right: 10px;
 }
 
+.recently-viewed-main .react-multi-carousel-item{
+  max-width: 354px !important;
+  margin-right: 10px;
+}
+
 .card h4 {
   padding-top: 20px;
   padding-bottom: 10px;

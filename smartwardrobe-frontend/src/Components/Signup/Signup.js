@@ -6,8 +6,9 @@ import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import { showToastSuccess } from "../GenericToasters/GenericToasters";
+import { setTokenToLocalStorage } from "../GenericCode/GenericCode";
 
 function SignupModal(props) {
   const navigate = useNavigate();
@@ -37,11 +38,6 @@ function SignupModal(props) {
     right: 0,
   });
   const draggleRef = useRef(null);
-  /** modal open function */
-  //   const handleOk = (e) => {
-  //     props?.okModalFunction();
-  //   };
-  /** modal close function */
   const handleCancel = (e) => {
     props?.closeModal();
   };
@@ -75,10 +71,9 @@ function SignupModal(props) {
     }
   };
 
-  const handleSignUp = async () => {
-    debugger;
+  const handleValidations = () => {
+    let showerror = false;
     if (props?.checkingLoginOrSignup === "Signup") {
-      let showerror = false;
       if (formData.firstname.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
@@ -107,26 +102,7 @@ function SignupModal(props) {
         }));
         showerror = true;
       }
-
-      if(showerror){
-        return;
-      }
-      setOpenLoader(true);
-      const response = await apiCall("POST", "https://sw-backend-afhxerfcftakduhk.northeurope-01.azurewebsites.net/users/create", formData);
-      debugger
-      setOpenLoader(false)
-      handleloginOrSignupChange()
-      if (response?.statusCode?.text === 'Success') {
-        showToastSuccess(response?.data?.message);
-        handleCancel();
-        const data = response?.data;
-        setTimeout(() => {
-          navigate("/", { state: { data } });
-          
-        }, 1000);
-      }
-    } else {
-      let showerror = false;
+    }else{
       if (formData.username.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
@@ -141,7 +117,38 @@ function SignupModal(props) {
         }));
         showerror = true;
       }
+    }
       if(showerror){
+        showerror = false;
+        return true;
+      }
+  }
+
+  const handleSignUp = async () => {
+    debugger;
+    if (props?.checkingLoginOrSignup === "Signup") {
+      const valdiations = handleValidations();
+      if(valdiations){
+        return;
+      }
+      setOpenLoader(true);
+      const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/users/create", formData);
+      debugger
+      setOpenLoader(false)
+      handleloginOrSignupChange()
+      if (response?.statusCode?.text === 'Success') {
+        let token = setTokenToLocalStorage(response?.data);
+        showToastSuccess(response?.data?.message);
+        handleCancel();
+        const data = response?.data;
+        setTimeout(() => {
+          navigate("/", { state: { data } });
+          
+        }, 1000);
+      }
+    } else {
+      const valdiations = handleValidations();
+      if(valdiations){
         return;
       }
       
@@ -149,12 +156,12 @@ function SignupModal(props) {
       delete formData["lastname"];
       delete formData["role"];
       setOpenLoader(true);
-      const response = await apiCall("POST", "https://sw-backend-afhxerfcftakduhk.northeurope-01.azurewebsites.net/auth/login", formData);
+      const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/auth/login", formData);
       debugger
-      console.log(response)
       setOpenLoader(false)
-      handleloginOrSignupChange()
+      handleloginOrSignupChange("fromApi")
       if (response?.statusCode?.text === 'Success') {
+        let token = setTokenToLocalStorage(response?.data);
         showToastSuccess(response?.data?.message);
         handleCancel();
         const data = response?.data;
@@ -167,7 +174,7 @@ function SignupModal(props) {
     }
   };
 
-  const handleloginOrSignupChange = () => {
+  const handleloginOrSignupChange = (from) => {
     setFormData({
       username: "",
       firstname: "",
@@ -181,7 +188,9 @@ function SignupModal(props) {
       lastname: false,
       password: false,
     })
-    props?.accountCreate(props?.checkingLoginOrSignup);
+    if(from !== "fromApi"){
+      props?.accountCreate(props?.checkingLoginOrSignup);
+    }
   }
 
   return (
@@ -214,7 +223,6 @@ function SignupModal(props) {
           </div>
         }
         open={props.isShowModel}
-        // onOk={handleOk}
         onCancel={handleCancel}
         className="custom-modal"
         footer={[]}

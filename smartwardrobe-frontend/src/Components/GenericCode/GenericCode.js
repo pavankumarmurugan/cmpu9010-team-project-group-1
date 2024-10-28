@@ -7,6 +7,9 @@ import "../../Styles/ProductPage.css";
 import { useEffect, useRef, useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 import imageCompression from 'browser-image-compression';
+import { IoMdChatboxes } from "react-icons/io";
+import ChatComponent from "../ChatComponent/ChatComponent";
+
 
 const renderMenuItems = (items) => {
   return items.map((item) => {
@@ -250,41 +253,79 @@ export const ScrollButton = () => {
   );
 };
 
-export const handleImageUpload = async (e) => {
+// export const ChatButton = () => {
+//   const [showChat, setShowChat] = useState(false);
+//   const chatHandler = () => {
+//     setShowChat(!showChat);
+//   }
+//     return (
+//       <>
+//     <div>
+//       <Button className="Chat-button" aria-label="Scroll to top" onClick={chatHandler}>
+//         <IoMdChatboxes className="scroll-to-top-icons"/>
+//       </Button>
+//     </div>  
+//       </>
+//   );
+// };
+
+// export const handleImageUpload = async (e) => {
+//   debugger
+//   return new Promise(async (resolve, reject) => {
+//     const file = e.target.files[0];
+//     if(file){
+//       return file;
+//     }
+//     // if (file) {
+//     //   const compressedFile = await imageCompression(file, {
+//     //     maxSizeMB: 1,
+//     //     maxWidthOrHeight: 1280,
+//     //     useWebWorker: true 
+//     //   });
+
+//     //   const reader = new FileReader();
+//     //   reader.readAsDataURL(compressedFile);
+//     //   reader.onload = () => {
+//     //     try {
+//     //       const base64Data = reader.result;
+//     //       const data = {
+//     //         image: {
+//     //           mime: file.type,
+//     //           data: base64Data
+
+//     //         }
+//     //       };
+//     //       resolve(data);
+//     //     } catch (error) {
+//     //       reject(error);
+//     //     }
+//     //   };
+
+//     //   reader.onerror = (error) => {
+//     //     reject(error);
+//     //   };
+//     // } else {
+//     //   reject(new Error('No file selected'));
+//     // }
+//   });
+// };
+
+export const SaveVisitedProduct = (productId) => {
   debugger
-  return new Promise(async (resolve, reject) => {
-    const file = e.target.files[0];
+  let visitedProducts = JSON.parse(localStorage.getItem('visitedProducts')) || [];
+  let alreadyAddedProduct = visitedProducts?.filter(x => x?.image === productId?.image) /** will cahnge from image to product id when data comes */
+  if (alreadyAddedProduct?.length === 0) {
+      visitedProducts.push(productId);
+  }
 
-    if (file) {
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1280,
-        useWebWorker: true 
-      });
+  if (visitedProducts?.length > 10) {
+      visitedProducts.shift();
+  }
 
-      const reader = new FileReader();
-      reader.readAsDataURL(compressedFile);
-      reader.onload = () => {
-        try {
-          const base64Data = reader.result;
-          const data = {
-            image: {
-              mime: file.type,
-              data: base64Data
+  localStorage.setItem('visitedProducts', JSON.stringify(visitedProducts));
+}
 
-            }
-          };
-          resolve(data);
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    } else {
-      reject(new Error('No file selected'));
-    }
-  });
-};
+export const setTokenToLocalStorage = (data) => {
+  debugger;
+  let token = localStorage.setItem('user', JSON.stringify(data));
+}

@@ -51,6 +51,7 @@
     align-items: center;
     color: #fff;
     font-weight: lighter;
+    letter-spacing: 0.2rem;
 }
 
 @media (min-width: 300px) and (max-width: 500px) {
@@ -70,10 +71,10 @@
        
 }
 
-.header-icons .css-2kk4p4-MuiBadge-badge{
+/* .header-icons .css-2kk4p4-MuiBadge-badge{
     background-color: white !important;
     color: black !important;
-}
+} */
 
 .page-width {
     max-width: 160rem;
