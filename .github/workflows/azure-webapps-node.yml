@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - sw-backend
+name: Build and deploy Node.js app to Azure Web App - smartwardrobe-backend
 
 on:
   push:
@@ -23,22 +20,17 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: npm install, build
+      - name: Install dependencies and build
         run: |
           cd smartwardrobe-backend
-          npm install
+          npm ci
           npm run build --if-present
-
-      - name: Zip artifact for deployment
-        run: |
-          cd smartwardrobe-backend
-          zip -r ../release.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: release.zip
+          path: smartwardrobe-backend # Uploads the full directory
 
   deploy:
     runs-on: ubuntu-latest
@@ -54,9 +46,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+          path: smartwardrobe-backend
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -67,6 +57,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "sw-backend"
+          app-name: "smartwardrobe-backend"
           slot-name: "production"
-          package: .
+          package: smartwardrobe-backend

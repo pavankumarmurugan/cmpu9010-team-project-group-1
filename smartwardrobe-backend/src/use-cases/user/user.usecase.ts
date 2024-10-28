@@ -160,4 +160,23 @@ export class UserUsecase {
       throw error;
     }
   }
+
+  async uploadProfilePicture(
+    userId: number,
+    filePath: any,
+  ): Promise<IResponse<null>> {
+    try {
+      const entity: UserEntity =
+        this.userDtoConvertor.toUpdateProfilePhoto(filePath);
+
+      await this.databaseService.users.update(userId, entity);
+
+      return {
+        data: null,
+        message: MESSAGES.USER.UPDATE.SUCCESS,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -16,6 +16,8 @@ import { CartUsecase } from './cart/cart.usecase';
 import { ServicesModule } from 'src/infrastructure/services/services.module';
 import { SearchService } from 'src/infrastructure/services/search/search';
 import { SearchProductUsecase } from './search/search.usecase';
+import { LikesUsecase } from './likes/likes.usecase';
+import { ChatUsecase } from './chat/chat.usecase';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { SearchProductUsecase } from './search/search.usecase';
     CartUsecase,
     SearchService,
     SearchProductUsecase,
+    LikesUsecase,
+    ChatUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -51,6 +55,8 @@ import { SearchProductUsecase } from './search/search.usecase';
     CartItemUsecase,
     CartUsecase,
     SearchProductUsecase,
+    LikesUsecase,
+    ChatUsecase,
   ],
 })
 export class UseCasesModule {}

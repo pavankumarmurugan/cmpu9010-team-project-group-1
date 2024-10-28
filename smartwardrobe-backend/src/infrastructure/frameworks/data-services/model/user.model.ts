@@ -21,4 +21,6 @@ export class UserModel extends BaseModel {
   readonly email?: string;
   @Column({ type: 'varchar', name: 'dob' })
   readonly dob?: string;
+  @Column({ type: 'varchar', name: 'profile_pic' })
+  readonly profilePic?: string;
 }

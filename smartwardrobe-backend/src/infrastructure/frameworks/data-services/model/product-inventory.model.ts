@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-  OneToOne,
-} from 'typeorm';
-import { ProductModel } from './product.model';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { BaseModel } from './base.model';
 
 @Entity('product_inventory')

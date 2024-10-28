@@ -1,32 +1,20 @@
-CREATE TABLE `user` (
-    `user_id` int NOT NULL AUTO_INCREMENT,
-    `username` varchar(255) NOT NULL,
-    `firstname` varchar(255) NOT NULL,
-    `lastname` varchar(255) NOT NULL,
-    `password` varchar(255)  NOT NULL,
-    `refresh_token` varchar(255)  DEFAULT NULL,
-    `email` varchar(255) DEFAULT NULL,
-    `dob` varchar(255) DEFAULT NULL,
-    `updated_at` date DEFAULT NULL,
-    `created_at` date DEFAULT NULL,
-    `role` varchar(255) NOT NULL,
-  PRIMARY KEY (`user_id`),
-    UNIQUE (`username`)
+
+CREATE TABLE "user" (
+    "user_id" SERIAL PRIMARY KEY,
+    "username" VARCHAR(255) NOT NULL UNIQUE,
+    "firstname" VARCHAR(255) NOT NULL,
+    "lastname" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "refresh_token" VARCHAR(255) DEFAULT NULL,
+    "email" VARCHAR(255) DEFAULT NULL,
+    "dob" VARCHAR(255) DEFAULT NULL,
+    "updated_at" DATE DEFAULT NULL,
+    "created_at" DATE DEFAULT NULL,
+    "role" VARCHAR(255) NOT NULL,
+    "profile_pic" VARCHAR(255) DEFAULT NULL
 );
 
--- CREATE TABLE "user" (
---     "user_id" SERIAL PRIMARY KEY,
---     "username" VARCHAR(255) NOT NULL UNIQUE,
---     "firstname" VARCHAR(255) NOT NULL,
---     "lastname" VARCHAR(255) NOT NULL,
---     "password" VARCHAR(255) NOT NULL,
---     "refresh_token" VARCHAR(255) DEFAULT NULL,
---     "email" VARCHAR(255) DEFAULT NULL,
---     "dob" VARCHAR(255) DEFAULT NULL,
---     "updated_at" DATE DEFAULT NULL,
---     "created_at" DATE DEFAULT NULL,
---     "role" VARCHAR(255) NOT NULL
--- );
+ALTER TABLE "user" ADD COLUMN "profile_pic" VARCHAR(255) DEFAULT NULL;
 
   CREATE TABLE `product_category` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -100,75 +88,75 @@ EXECUTE FUNCTION create_product_inventory();
 --       ON UPDATE CASCADE
 --   );
 
-   CREATE TABLE `product` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `article_id` VARCHAR(255) NOT NULL,
-    `product_code` VARCHAR(255) NULL,
-    `prod_name` VARCHAR(255) NULL,
-    `product_type_no` INT NULL,
-    `product_type_name` VARCHAR(255) NULL,
-    `product_group_name` VARCHAR(255) NULL,
-    `graphical_appearance_no` INT NULL,
-    `graphical_appearance_name` VARCHAR(255) NULL,
-    `colour_group_code` VARCHAR(255) NULL,
-    `colour_group_name` VARCHAR(255) NULL,
-    `perceived_colour_value_id` INT NULL,
-    `perceived_colour_value_name` VARCHAR(255) NULL,
-    `perceived_colour_master_id` INT NULL,
-    `perceived_colour_master_name` VARCHAR(255) NULL,
-    `department_no` INT NULL,
-    `department_name` VARCHAR(255) NULL,
-    `index_code` VARCHAR(255) NULL,
-    `index_name` VARCHAR(255) NULL,
-    `index_group_no` INT NULL,
-    `index_group_name` VARCHAR(255) NULL,
-    `section_no` INT NULL,
-    `section_name` VARCHAR(255) NULL,
-    `garment_group_no` INT NULL,
-    `garment_group_name` VARCHAR(255) NULL,
-    `detail_desc` TEXT NULL,
-    `sku` VARCHAR(255) NULL,
-    `category_id` INT NULL,
-    `inventory_id` INT NULL,
-    `price` DECIMAL NULL,
-    `discount_id` INT NULL,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NULL,
-    `deleted_at` TIMESTAMP NULL,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `fk_product_on_category_id`
-      FOREIGN KEY (`category_id`)
-      REFERENCES `smartwardrobe`.`product_category` (`id`)
-      ON UPDATE CASCADE
-);
+--    CREATE TABLE `product` (
+--     `id` INT NOT NULL AUTO_INCREMENT,
+--     `article_id` VARCHAR(255) NULL,
+--     `product_code` VARCHAR(255) NULL,
+--     `prod_name` VARCHAR(255) NULL,
+--     `product_type_no` INT NULL,
+--     `product_type_name` VARCHAR(255) NULL,
+--     `product_group_name` VARCHAR(255) NULL,
+--     `graphical_appearance_no` INT NULL,
+--     `graphical_appearance_name` VARCHAR(255) NULL,
+--     `colour_group_code` VARCHAR(255) NULL,
+--     `colour_group_name` VARCHAR(255) NULL,
+--     `perceived_colour_value_id` INT NULL,
+--     `perceived_colour_value_name` VARCHAR(255) NULL,
+--     `perceived_colour_master_id` INT NULL,
+--     `perceived_colour_master_name` VARCHAR(255) NULL,
+--     `department_no` INT NULL,
+--     `department_name` VARCHAR(255) NULL,
+--     `index_code` VARCHAR(255) NULL,
+--     `index_name` VARCHAR(255) NULL,
+--     `index_group_no` INT NULL,
+--     `index_group_name` VARCHAR(255) NULL,
+--     `section_no` INT NULL,
+--     `section_name` VARCHAR(255) NULL,
+--     `garment_group_no` INT NULL,
+--     `garment_group_name` VARCHAR(255) NULL,
+--     `detail_desc` TEXT NULL,
+--     `sku` VARCHAR(255) NULL,
+--     `category_id` INT NULL,
+--     `inventory_id` INT NULL,
+--     `price` DECIMAL NULL,
+--     `discount_id` INT NULL,
+--     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     `updated_at` TIMESTAMP NULL,
+--     `deleted_at` TIMESTAMP NULL,
+--     PRIMARY KEY (`id`),
+--     CONSTRAINT `fk_product_on_category_id`
+--       FOREIGN KEY (`category_id`)
+--       REFERENCES `smartwardrobe`.`product_category` (`id`)
+--       ON UPDATE CASCADE
+-- );
 
 -- CREATE TABLE product (
 --     id SERIAL PRIMARY KEY,
---     article_id VARCHAR(255) NOT NULL,
---     product_code VARCHAR(255),
---     prod_name VARCHAR(255),
---     product_type_no INT,
---     product_type_name VARCHAR(255),
---     product_group_name VARCHAR(255),
---     graphical_appearance_no INT,
---     graphical_appearance_name VARCHAR(255),
---     colour_group_code VARCHAR(255),
---     colour_group_name VARCHAR(255),
---     perceived_colour_value_id INT,
---     perceived_colour_value_name VARCHAR(255),
---     perceived_colour_master_id INT,
---     perceived_colour_master_name VARCHAR(255),
---     department_no INT,
---     department_name VARCHAR(255),
---     index_code VARCHAR(255),
---     index_name VARCHAR(255),
---     index_group_no INT,
---     index_group_name VARCHAR(255),
---     section_no INT,
---     section_name VARCHAR(255),
---     garment_group_no INT,
---     garment_group_name VARCHAR(255),
---     detail_desc TEXT,
+--     article_id VARCHAR(255) NULL,
+--     product_code VARCHAR(255) NULL,
+--     prod_name VARCHAR(255) NULL,
+--     product_type_no INT NULL,
+--     product_type_name VARCHAR(255) NULL,
+--     product_group_name VARCHAR(255)  NULL,
+--     graphical_appearance_no INT  NULL,
+--     graphical_appearance_name VARCHAR(255)  NULL,
+--     colour_group_code VARCHAR(255)  NULL,
+--     colour_group_name VARCHAR(255)  NULL,
+--     perceived_colour_value_id INT  NULL,
+--     perceived_colour_value_name VARCHAR(255)  NULL,
+--     perceived_colour_master_id INT  NULL,
+--     perceived_colour_master_name VARCHAR(255)  NULL,
+--     department_no INT  NULL,
+--     department_name VARCHAR(255)  NULL,
+--     index_code VARCHAR(255)  NULL,
+--     index_name VARCHAR(255)  NULL,
+--     index_group_no INT  NULL,
+--     index_group_name VARCHAR(255)  NULL,
+--     section_no INT  NULL,
+--     section_name VARCHAR(255)  NULL,
+--     garment_group_no INT  NULL,
+--     garment_group_name VARCHAR(255)  NULL,
+--     detail_desc TEXT  NULL,
 --     sku VARCHAR(255) NULL, -- Made nullable
 --     category_id INT NULL, -- Made nullable
 --     inventory_id INT NULL, -- Made nullable
@@ -183,6 +171,25 @@ EXECUTE FUNCTION create_product_inventory();
 --       REFERENCES product_category (id)
 --       ON UPDATE CASCADE
 -- );
+
+CREATE TABLE products (
+	id SERIAL PRIMARY KEY,
+    image_name VARCHAR(255),
+    color VARCHAR(50) NULL,
+    type VARCHAR(100) NULL,
+    style VARCHAR(100) NULL,
+    material VARCHAR(100) NULL,
+    category VARCHAR(100) NULL,
+    occasion VARCHAR(100) NULL,
+    neckline VARCHAR(100) NULL,
+    fit VARCHAR(50) NULL,
+    description text NULL,
+    image_url VARCHAR(255) NULL,
+    price DECIMAL(10, 2) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL
+);
+
 
 CREATE TABLE `smartwardrobe`.`cart` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -278,41 +285,40 @@ CREATE TABLE `smartwardrobe`.`cart_item` (
 
 
 
-CREATE TABLE `smartwardrobe`.`like` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NULL,
-  `product_id` INT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_user_id`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `smartwardrobe`.`user` (`user_id`)
+CREATE TABLE public.like (
+  id SERIAL PRIMARY KEY,
+  user_id INT NULL,
+  product_id INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  CONSTRAINT fk_user_id
+    FOREIGN KEY (user_id)
+    REFERENCES public.user (user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_product_id`
-    FOREIGN KEY (`product_id`)
-    REFERENCES `smartwardrobe`.`product` (`id`)
+  CONSTRAINT fk_product_id
+    FOREIGN KEY (product_id)
+    REFERENCES public.product (id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
 
-CREATE TABLE `smartwardrobe`.`chat` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `sender_id` INT NULL,
-  `receiver_id` INT NULL,
-  `message` TEXT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_sender_id`
-    FOREIGN KEY (`sender_id`)
-    REFERENCES `smartwardrobe`.`user` (`user_id`)
+
+CREATE TABLE public.chat (
+  id SERIAL PRIMARY KEY,
+  sender_id INT NULL,
+  receiver_id INT NULL,
+  message TEXT NULL,
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL,
+  CONSTRAINT fk_sender_id
+    FOREIGN KEY (sender_id)
+    REFERENCES public.user (user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_receiver_id`
-    FOREIGN KEY (`receiver_id`)
-    REFERENCES `smartwardrobe`.`user` (`user_id`)
+  CONSTRAINT fk_receiver_id
+    FOREIGN KEY (receiver_id)
+    REFERENCES public.user (user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );

@@ -78,12 +78,12 @@ export class ProductController {
   }
 
   @Get('get-one/:id')
-  @Roles(ROLES.USER)
+  @Roles(ROLES.USER, ROLES.ADMIN)
   async getOneAddress(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<IResponse<ProductResDto>> {
     try {
-      return await this.productUsecase.getOneAddress(id);
+      return await this.productUsecase.getOne(id);
     } catch (error) {
       throw error;
     }

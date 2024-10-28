@@ -87,7 +87,9 @@ export class CartItemUsecase {
 
   async getOne(id: number): Promise<IResponse<CartItemResDto>> {
     try {
-      const data: CartItemEntity = await this.databaseService.cartItem.get(id);
+      const data: CartItemEntity = await this.databaseService.cartItem.get({
+        id,
+      });
       return {
         data,
         message: MESSAGES.CART_ITEMS.GET.SUCCESS,

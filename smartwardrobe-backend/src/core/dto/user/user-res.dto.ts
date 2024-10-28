@@ -37,4 +37,8 @@ export class UserResDTO {
   @ApiProperty({ required: false })
   @IsString()
   readonly dob?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  readonly profilePic?: string;
 }

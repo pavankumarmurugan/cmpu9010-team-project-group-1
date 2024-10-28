@@ -21,9 +21,8 @@ export class ProductUsecase {
     try {
       const productEntity: ProductEntity =
         this.productConvertor.toProductModelFromDto(productReqDto);
-      const entity: ProductEntity = await this.databaseService.product.create(
-        productEntity,
-      );
+      const entity: ProductEntity =
+        await this.databaseService.product.create(productEntity);
       const data: ProductResDto =
         this.productConvertor.toProductResDtoFromEntity(entity);
 
@@ -85,9 +84,9 @@ export class ProductUsecase {
     }
   }
 
-  async getOneAddress(id: number): Promise<IResponse<ProductResDto>> {
+  async getOne(id: number): Promise<IResponse<ProductResDto>> {
     try {
-      const data = await this.databaseService.product.get(id);
+      const data = await this.databaseService.product.get({ id });
       return {
         data,
         message: MESSAGES.PRODUCT.GET.SUCCESS,

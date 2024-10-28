@@ -83,7 +83,7 @@ export class CartUsecase {
 
   async getOne(id: number): Promise<IResponse<CartResDto>> {
     try {
-      const data: CartEntity = await this.databaseService.cart.get(id);
+      const data: CartEntity = await this.databaseService.cart.get({ id });
       return {
         data,
         message: MESSAGES.CART.GET.SUCCESS,
