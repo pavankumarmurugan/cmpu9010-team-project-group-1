@@ -1,32 +1,20 @@
-CREATE TABLE `user` (
-    `user_id` int NOT NULL AUTO_INCREMENT,
-    `username` varchar(255) NOT NULL,
-    `firstname` varchar(255) NOT NULL,
-    `lastname` varchar(255) NOT NULL,
-    `password` varchar(255)  NOT NULL,
-    `refresh_token` varchar(255)  DEFAULT NULL,
-    `email` varchar(255) DEFAULT NULL,
-    `dob` varchar(255) DEFAULT NULL,
-    `updated_at` date DEFAULT NULL,
-    `created_at` date DEFAULT NULL,
-    `role` varchar(255) NOT NULL,
-  PRIMARY KEY (`user_id`),
-    UNIQUE (`username`)
+
+CREATE TABLE "user" (
+    "user_id" SERIAL PRIMARY KEY,
+    "username" VARCHAR(255) NOT NULL UNIQUE,
+    "firstname" VARCHAR(255) NOT NULL,
+    "lastname" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
+    "refresh_token" VARCHAR(255) DEFAULT NULL,
+    "email" VARCHAR(255) DEFAULT NULL,
+    "dob" VARCHAR(255) DEFAULT NULL,
+    "updated_at" DATE DEFAULT NULL,
+    "created_at" DATE DEFAULT NULL,
+    "role" VARCHAR(255) NOT NULL,
+    "profile_pic" VARCHAR(255) DEFAULT NULL
 );
 
--- CREATE TABLE "user" (
---     "user_id" SERIAL PRIMARY KEY,
---     "username" VARCHAR(255) NOT NULL UNIQUE,
---     "firstname" VARCHAR(255) NOT NULL,
---     "lastname" VARCHAR(255) NOT NULL,
---     "password" VARCHAR(255) NOT NULL,
---     "refresh_token" VARCHAR(255) DEFAULT NULL,
---     "email" VARCHAR(255) DEFAULT NULL,
---     "dob" VARCHAR(255) DEFAULT NULL,
---     "updated_at" DATE DEFAULT NULL,
---     "created_at" DATE DEFAULT NULL,
---     "role" VARCHAR(255) NOT NULL
--- );
+ALTER TABLE "user" ADD COLUMN "profile_pic" VARCHAR(255) DEFAULT NULL;
 
   CREATE TABLE `product_category` (
   `id` INT NOT NULL AUTO_INCREMENT,

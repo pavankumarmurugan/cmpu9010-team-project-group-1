@@ -70,7 +70,16 @@ export class UserDtoConvertor {
   }
 
   toUserLoginInfoResDTOFromGetMyProfile(entity: UserEntity): UserResDTO {
-    const { firstname, lastname, username, userId, role, email, dob } = entity;
+    const {
+      firstname,
+      lastname,
+      username,
+      userId,
+      role,
+      email,
+      dob,
+      profilePic,
+    } = entity;
     return {
       firstname,
       lastname,
@@ -79,11 +88,16 @@ export class UserDtoConvertor {
       role,
       email,
       dob,
+      profilePic,
     };
   }
 
   toUpdateUserEntityFromUpdatePasswordDto(password: string): UserEntity {
     return { password };
+  }
+
+  toUpdateProfilePhoto(profilePic: string): UserEntity {
+    return { profilePic };
   }
 
   toRefreshTokenResDtoFromRefreshToken(

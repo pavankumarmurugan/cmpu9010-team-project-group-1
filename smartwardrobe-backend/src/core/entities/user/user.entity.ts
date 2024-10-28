@@ -11,4 +11,5 @@ export class UserEntity extends BaseEntity {
   role?: string;
   email?: string;
   dob?: string;
+  profilePic?: string;
 }
