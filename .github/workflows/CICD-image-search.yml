@@ -17,13 +17,13 @@ jobs:
         run: docker build -t d23124670/image-search .
       - name: Publish image to docker hub
         run: docker push d23124670/image-search:latest
-  deploy:
-    needs: build
-    runs-on: [aws-ec2]
-    steps:
-      - name: Pull image from docker hub
-        run: docker pull d23124670/image-search:latest
-      - name: Delete Old Container
-        run: docker rm -f image-search
-      - name: Run docker container
-        run: docker run -d -p 9090:9090 --name image-search d23124670/image-search:latest
+  # deploy:
+  #   needs: build
+  #   runs-on: [aws-ec2]
+  #   steps:
+  #     - name: Pull image from docker hub
+  #       run: docker pull d23124670/image-search:latest
+  #     - name: Delete Old Container
+  #       run: docker rm -f image-search
+  #     - name: Run docker container
+  #       run: docker run -d -p 9090:9090 --name image-search d23124670/image-search:latest
