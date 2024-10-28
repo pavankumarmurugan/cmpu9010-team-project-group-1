@@ -5,11 +5,43 @@ import "../../Styles/VirtualTryOn.css";
 import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
 import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
 import { Tooltip, tooltipClasses } from "@mui/material";
+import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 
 const VirtualTryOn = (props) => {
+  debugger
+  let DataClicked = JSON.parse(localStorage.getItem('VTOData')) || {};
   const [disabled, setDisabled] = useState(true);
+  const [currentImage, setCurrentImage] = useState(-1);
+  const [resultImage, setResultImage] = useState(DataClicked?.image);
+  const [dummyData, setDummyData] = useState([
+    {
+      image_id: "00034_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00034_00.jpg",
+    },
+    {
+      image_id: "00034_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+    },
+    {
+      image_id: "00034_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+    },
+    {
+      image_id: "00034_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00135_00.jpg",
+    },
+    {
+      image_id: "00034_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+    },
+    {
+      image_id: "00034_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+    },
+  ]);
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
@@ -45,6 +77,23 @@ const VirtualTryOn = (props) => {
       border: "1px solid #dadde9",
     },
   }));
+
+  const callApiForModels = async () => {
+    debugger;
+    const data = {
+      /** dummy data for now */ user_image_name: "00035_00.jpg",
+      cloth_image_name: "00013_00.jpg",
+    };
+    const getModels = await apiCall(
+      "POST",
+      "https://c90b-35-230-26-234.ngrok-free.app/try-on",
+      data
+    );
+    if(getModels){
+      setCurrentImage(-1)
+      setResultImage(getModels?.image_url);
+    }
+  };
 
   return (
     <div>
@@ -92,11 +141,26 @@ const VirtualTryOn = (props) => {
           </h1>
           <div className="Models-separation-div">
             <div className="model-result">
+              <FavoriteBorderIcon
+                className="hover-icon"
+                sx={{
+                  color: "white",
+                  fontSize: "40px",
+                  position: "absolute",
+                  top: "10px",
+                  left: "10px",
+                  transition: "transform 0.3s, color 0.3s",
+                  "&:hover": {
+                    cursor: "pointer",
+                    transform: "scale(1.5)",
+                  },
+                }}
+              />
               <ShoppingBagOutlinedIcon
                 className="hover-icon"
                 sx={{
                   color: "white",
-                  fontSize: "30px",
+                  fontSize: "40px",
                   position: "absolute",
                   top: "10px",
                   right: "10px",
@@ -111,7 +175,7 @@ const VirtualTryOn = (props) => {
               <img
                 className="Result-Image"
                 loading="lazy"
-                src={Homeproductimage_4}
+                src= {`${currentImage !== -1 ? dummyData[currentImage]?.url : resultImage}`} 
                 alt="product image"
               />
             </div>
@@ -120,7 +184,7 @@ const VirtualTryOn = (props) => {
                     <h1 style={{marginBottom:"15px", marginTop:"15px"}}>Choose a Model</h1>
                 </div> */}
               <div className="Model-Images-div">
-                <div className="VTO-card">
+                {/* <div className="VTO-card">
                   <div className="VTO-image-container">
                     <HtmlTooltip
                       title={
@@ -131,142 +195,40 @@ const VirtualTryOn = (props) => {
                       }
                     >
                       <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
+                        className="VTO-model--image"
+                        loading="lazy"
+                        src={Homeproductimage_3}
+                        alt="product image"
+                      />
                     </HtmlTooltip>
                   </div>
-                </div>
-                <div className="VTO-card">
+                </div> */}
+                {dummyData?.map((item, index) => (
+                  <div className="VTO-card">
                   <div className="VTO-image-container">
                     <img
                       className="VTO-model--image"
                       loading="lazy"
-                      src={Homeproductimage_3}
+                      src={item?.url}
                       alt="product image"
+                      onMouseEnter={() => setCurrentImage(index)}
+                      onMouseLeave={() => setCurrentImage(-1)}
+                      onClick={callApiForModels}
                     />
                   </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
-                <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={Homeproductimage_3}
-                      alt="product image"
-                    />
-                  </div>
-                </div>
+                </div> ))}
               </div>
             </div>
             <div className="Mobile-models-div">
               <div className="mobile-model-image-div">
-                {/* {productimages.map((image, index) => ( */}
+              {dummyData?.map((item, index) => (
                 <img
-                  src={Homeproductimage_3}
+                  src={item?.url}
                   loading="lazy"
                   alt="Product Imgae"
                   className="mobile-model-images"
                 />
-                <img
-                  src={Homeproductimage_3}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-                <img
-                  src={Homeproductimage_3}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-                <img
-                  src={Homeproductimage_3}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-                <img
-                  src={Homeproductimage_3}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-                <img
-                  src={Homeproductimage_3}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-                <img
-                  src={Homeproductimage_3}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-                {/* ))} */}
+              ))}
               </div>
             </div>
           </div>

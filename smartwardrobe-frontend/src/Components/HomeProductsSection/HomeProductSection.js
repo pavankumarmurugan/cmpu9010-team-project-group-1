@@ -4,6 +4,7 @@ import 'react-multi-carousel/lib/styles.css';
 import "../../Styles/Homeproductsection.css"
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { SaveVisitedProduct } from "../GenericCode/GenericCode";
 
 const HomeProductSection = (props) => { /** will remove this component when data comes */
   const navigate = useNavigate();
@@ -26,7 +27,9 @@ const HomeProductSection = (props) => { /** will remove this component when data
         }
       };
 
-      const handleImgaeClick = () => {
+      const handleImgaeClick = (e) => {
+        debugger
+        SaveVisitedProduct(e);
         navigate("/productdetails");
       }
 
@@ -35,17 +38,18 @@ const HomeProductSection = (props) => { /** will remove this component when data
       }
 
   return (
-    <div className="homeproductsection-main">
+    // <div className="homeproductsection-main">
     <Carousel responsive={responsive}
         // autoPlay={true}
         autoPlaySpeed={1500}
     >
       {props?.data?.map((items, index) => (
         <div className="card">
-        <img className="product--image" loading="lazy" src={items?.image} alt="product image" onClick={handleImgaeClick}/>
-        <h4>{items?.name}</h4>
-        <p className="description">{items?.description}</p>
+        <img className="product--image" loading="lazy" src={items?.imageUrl} alt="product image" onClick={() => handleImgaeClick(items)}/>
+        <h4>{items?.category}</h4>
+        <p className="description">{items?.type}</p>
         <p className="price">{items?.price}</p>
+        {props?.from !== "RecentlyViewed" && (
         <p>
           <Button
               className="View-Product-Button"
@@ -55,7 +59,7 @@ const HomeProductSection = (props) => { /** will remove this component when data
             >
               More Like this
             </Button>
-        </p>
+        </p>)}
       </div>
       ))}
     {/* <div className="card">
@@ -149,7 +153,7 @@ const HomeProductSection = (props) => { /** will remove this component when data
       </p>
     </div> */}
 </Carousel>
-</div>
+// </div>
      /* <div className="homeproductsection-main">
       <Carousel
     //     ref={carouselRef}

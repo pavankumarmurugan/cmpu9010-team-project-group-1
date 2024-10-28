@@ -3,9 +3,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Homepage from "./Components/Homepage/Homepage";
 import { Fragment } from "react";
 import ProductPage from "./Components/ProductPage/ProductPage";
-import { ScrollButton } from "./Components/GenericCode/GenericCode";
+import { ChatButton, ScrollButton } from "./Components/GenericCode/GenericCode";
 import ProductDetails from "./Components/ProductDetails/ProductDetails";
 import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
+import ChatComponent from "./Components/ChatComponent/ChatComponent";
 
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
   return (
     <div className="App">
       <ScrollButton />
+      {/* <ChatButton /> */}
+      <ChatComponent />
       <Fragment>
         <BrowserRouter>
       <ScrollToTop /> 
