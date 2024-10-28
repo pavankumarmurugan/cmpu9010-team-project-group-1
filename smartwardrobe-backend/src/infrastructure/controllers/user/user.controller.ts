@@ -10,8 +10,10 @@ import {
   UseGuards,
   UseInterceptors,
   Request,
+  BadRequestException,
+  UploadedFile,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { UpdatePasswordUserReqDTO } from 'src/core/dto/user/user-req-update-profile-password.dto';
 import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profile.dto';
@@ -24,11 +26,20 @@ import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { UserUsecase } from 'src/use-cases/user/user.usecase';
 import { CartCreateInterceptor } from 'src/infrastructure/interceptors/cart-add.interceptor';
+import { UserResDTO } from 'src/core/dto/user/user-res.dto';
+import { IResponse } from 'src/core/interface/response.interface';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadProfilePictureService } from 'src/infrastructure/services/uploadProfilePicture/upload-profile-picture';
+import { Multer } from 'multer';
+import { ProfilePictureUploadDto } from 'src/core/dto/user/profile-picture-upload.dto';
 
 @Controller('users')
 @ApiTags('User')
 export class UserController {
-  constructor(private userUsecase: UserUsecase) {}
+  constructor(
+    private userUsecase: UserUsecase,
+    private uploadPicture: UploadProfilePictureService,
+  ) {}
 
   @Get('get-all')
   @ApiBearerAuth()
@@ -88,7 +99,9 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Roles(ROLES.USER, ROLES.ADMIN, ROLES.OWNER)
-  async getMyProfile(@Request() request: RequestWithUser) {
+  async getMyProfile(
+    @Request() request: RequestWithUser,
+  ): Promise<IResponse<UserResDTO>> {
     try {
       const {
         user: { userId },
@@ -115,5 +128,45 @@ export class UserController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Post('upload-profile-picture')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+      fileFilter: (req, file, callback) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          return callback(
+            new BadRequestException('Only image files are allowed!'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Roles(ROLES.USER, ROLES.ADMIN, ROLES.OWNER)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'User profile picture upload',
+    type: ProfilePictureUploadDto,
+  })
+  async uploadProfilePicture(
+    @UploadedFile() file: Multer.File,
+    @Request() request: RequestWithUser,
+  ) {
+    const {
+      user: { userId },
+    } = request;
+
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+
+    const fileUrl = await this.uploadPicture.uploadFile(file, userId);
+
+    return await this.userUsecase.uploadProfilePicture(userId, fileUrl);
   }
 }
