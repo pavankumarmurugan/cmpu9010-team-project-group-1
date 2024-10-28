@@ -4,7 +4,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { log } from 'console';
 import { IDataServices } from 'src/core/abstracts';
 import { AuthDtoConvertor } from 'src/core/convertors/auth/auth-dto.convertor';
 
