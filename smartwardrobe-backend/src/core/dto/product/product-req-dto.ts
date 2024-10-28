@@ -2,33 +2,51 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class ProductReqDto {
-  @ApiProperty({ required: true })
+  @ApiProperty()
   @IsString()
-  @IsOptional()
-  readonly name: string;
+  readonly imageName?: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty()
   @IsString()
-  @IsOptional()
-  readonly desc: string;
+  readonly color?: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty()
   @IsString()
-  @IsOptional()
-  readonly SKU: string;
+  readonly type?: string;
 
-  @ApiProperty({ required: true })
-  @IsNumber()
-  @IsOptional()
-  readonly categoryId: number;
+  @ApiProperty()
+  @IsString()
+  readonly style?: string;
 
-  @ApiProperty({ required: true })
-  @IsNumber()
-  @IsOptional()
-  readonly discountId: number;
+  @ApiProperty()
+  @IsString()
+  readonly material?: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty()
+  @IsString()
+  readonly category?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly occasion?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly neckline?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly fit?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly description?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly imageUrl?: string;
+
+  @ApiProperty()
   @IsNumber()
-  @IsOptional()
-  readonly price: number;
+  readonly price?: number;
 }

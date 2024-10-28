@@ -130,47 +130,66 @@ EXECUTE FUNCTION create_product_inventory();
 --       ON UPDATE CASCADE
 -- );
 
-CREATE TABLE product (
-    id SERIAL PRIMARY KEY,
-    article_id VARCHAR(255) NULL,
-    product_code VARCHAR(255) NULL,
-    prod_name VARCHAR(255) NULL,
-    product_type_no INT NULL,
-    product_type_name VARCHAR(255) NULL,
-    product_group_name VARCHAR(255)  NULL,
-    graphical_appearance_no INT  NULL,
-    graphical_appearance_name VARCHAR(255)  NULL,
-    colour_group_code VARCHAR(255)  NULL,
-    colour_group_name VARCHAR(255)  NULL,
-    perceived_colour_value_id INT  NULL,
-    perceived_colour_value_name VARCHAR(255)  NULL,
-    perceived_colour_master_id INT  NULL,
-    perceived_colour_master_name VARCHAR(255)  NULL,
-    department_no INT  NULL,
-    department_name VARCHAR(255)  NULL,
-    index_code VARCHAR(255)  NULL,
-    index_name VARCHAR(255)  NULL,
-    index_group_no INT  NULL,
-    index_group_name VARCHAR(255)  NULL,
-    section_no INT  NULL,
-    section_name VARCHAR(255)  NULL,
-    garment_group_no INT  NULL,
-    garment_group_name VARCHAR(255)  NULL,
-    detail_desc TEXT  NULL,
-    sku VARCHAR(255) NULL, -- Made nullable
-    category_id INT NULL, -- Made nullable
-    inventory_id INT NULL, -- Made nullable
-    price DECIMAL NULL, -- Made nullable
-    discount_id INT NULL, -- Made nullable
-    image_url VARCHAR(255), 
+-- CREATE TABLE product (
+--     id SERIAL PRIMARY KEY,
+--     article_id VARCHAR(255) NULL,
+--     product_code VARCHAR(255) NULL,
+--     prod_name VARCHAR(255) NULL,
+--     product_type_no INT NULL,
+--     product_type_name VARCHAR(255) NULL,
+--     product_group_name VARCHAR(255)  NULL,
+--     graphical_appearance_no INT  NULL,
+--     graphical_appearance_name VARCHAR(255)  NULL,
+--     colour_group_code VARCHAR(255)  NULL,
+--     colour_group_name VARCHAR(255)  NULL,
+--     perceived_colour_value_id INT  NULL,
+--     perceived_colour_value_name VARCHAR(255)  NULL,
+--     perceived_colour_master_id INT  NULL,
+--     perceived_colour_master_name VARCHAR(255)  NULL,
+--     department_no INT  NULL,
+--     department_name VARCHAR(255)  NULL,
+--     index_code VARCHAR(255)  NULL,
+--     index_name VARCHAR(255)  NULL,
+--     index_group_no INT  NULL,
+--     index_group_name VARCHAR(255)  NULL,
+--     section_no INT  NULL,
+--     section_name VARCHAR(255)  NULL,
+--     garment_group_no INT  NULL,
+--     garment_group_name VARCHAR(255)  NULL,
+--     detail_desc TEXT  NULL,
+--     sku VARCHAR(255) NULL, -- Made nullable
+--     category_id INT NULL, -- Made nullable
+--     inventory_id INT NULL, -- Made nullable
+--     price DECIMAL NULL, -- Made nullable
+--     discount_id INT NULL, -- Made nullable
+--     image_url VARCHAR(255), 
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP,
+--     deleted_at TIMESTAMP,
+--     CONSTRAINT fk_product_on_category_id
+--       FOREIGN KEY (category_id)
+--       REFERENCES product_category (id)
+--       ON UPDATE CASCADE
+-- );
+
+CREATE TABLE products (
+	id SERIAL PRIMARY KEY,
+    image_name VARCHAR(255),
+    color VARCHAR(50) NULL,
+    type VARCHAR(100) NULL,
+    style VARCHAR(100) NULL,
+    material VARCHAR(100) NULL,
+    category VARCHAR(100) NULL,
+    occasion VARCHAR(100) NULL,
+    neckline VARCHAR(100) NULL,
+    fit VARCHAR(50) NULL,
+    description text NULL,
+    image_url VARCHAR(255) NULL,
+    price DECIMAL(10, 2) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    CONSTRAINT fk_product_on_category_id
-      FOREIGN KEY (category_id)
-      REFERENCES product_category (id)
-      ON UPDATE CASCADE
+    updated_at TIMESTAMP NULL
 );
+
 
 CREATE TABLE `smartwardrobe`.`cart` (
   `id` INT NOT NULL AUTO_INCREMENT,
