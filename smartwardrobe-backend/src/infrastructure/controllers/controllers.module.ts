@@ -18,8 +18,11 @@ import { CartItemController } from './cart-item/cart-item.controller';
 import { CartController } from './cart/cart.controller';
 import { SearchSimilarProductsController } from './search/search-products.controller';
 import { ServicesModule } from '../services/services.module';
-import { ScriptController } from './script/script';
+// import { ScriptController } from './script/script';
 import { LikesController } from './likes/likes.controller';
+import { ChatController } from './chat/chat.controller';
+import { ChatGateway } from './chat/chat-gateway.controller';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -28,6 +31,9 @@ import { LikesController } from './likes/likes.controller';
     ThrottlerModule.forRoot({
       ttl: +process.env.THROTTLER_TTL,
       limit: +process.env.THROTTLER_LIMIT,
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_SECRET,
     }),
     DataServicesModule,
     JWTModule,
@@ -46,14 +52,17 @@ import { LikesController } from './likes/likes.controller';
     CartItemController,
     CartController,
     SearchSimilarProductsController,
-    ScriptController,
+    // ScriptController,
     LikesController,
+    ChatController,
   ],
   providers: [
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    ChatGateway,
+    JwtService,
   ],
 })
 export class ControllersModule {}

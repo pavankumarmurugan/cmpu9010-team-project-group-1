@@ -9,7 +9,7 @@ export class JWTDataService {
     return await this.jwtService.signAsync(
       {
         sub: userId,
-        data: { role },
+        data: { userId, role },
       },
       {
         secret: process.env.JWT_ACCESS_SECRET,

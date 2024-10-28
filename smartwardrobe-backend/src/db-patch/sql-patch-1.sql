@@ -297,22 +297,21 @@ CREATE TABLE public.like (
 );
 
 
-CREATE TABLE `smartwardrobe`.`chat` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `sender_id` INT NULL,
-  `receiver_id` INT NULL,
-  `message` TEXT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_sender_id`
-    FOREIGN KEY (`sender_id`)
-    REFERENCES `smartwardrobe`.`user` (`user_id`)
+CREATE TABLE public.chat (
+  id SERIAL PRIMARY KEY,
+  sender_id INT NULL,
+  receiver_id INT NULL,
+  message TEXT NULL,
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL,
+  CONSTRAINT fk_sender_id
+    FOREIGN KEY (sender_id)
+    REFERENCES public.user (user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_receiver_id`
-    FOREIGN KEY (`receiver_id`)
-    REFERENCES `smartwardrobe`.`user` (`user_id`)
+  CONSTRAINT fk_receiver_id
+    FOREIGN KEY (receiver_id)
+    REFERENCES public.user (user_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );

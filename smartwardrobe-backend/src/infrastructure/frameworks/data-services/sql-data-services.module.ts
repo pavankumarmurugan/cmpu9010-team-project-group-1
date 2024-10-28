@@ -10,6 +10,7 @@ import { ProductModel } from './model/product.model';
 import { CartItemModel } from './model/cart-items.model';
 import { CartModel } from './model/cart.model';
 import { LikesModel } from './model/likes.model';
+import { ChatModel } from './model/chat.model';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { LikesModel } from './model/likes.model';
       CartItemModel,
       CartModel,
       LikesModel,
+      ChatModel,
     ]),
   ],
   providers: [

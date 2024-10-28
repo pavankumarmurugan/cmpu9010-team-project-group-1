@@ -49,6 +49,20 @@ export const MESSAGES = {
       SUCCESS: 'DELETED LIKES',
     },
   },
+  CHATS: {
+    CREATE: {
+      SUCCESS: 'SUCCESSFULLY ADDED CHAT',
+    },
+    GET: {
+      SUCCESS: 'SUCCESSFULLY FETCHED CHAT',
+    },
+    UPDATE: {
+      SUCCESS: 'SUCCESSFULLY UPDATED CHAT',
+    },
+    DELETE: {
+      SUCCESS: 'DELETED CHAT',
+    },
+  },
   PRODUCT_INVENTORY: {
     CREATE: {
       SUCCESS: 'SUCCESSFULLY ADDED PRODUCT INVENTORY',
