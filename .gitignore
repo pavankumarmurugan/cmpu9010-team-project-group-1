@@ -68,4 +68,4 @@ build/config\.gypi
 /dist
 env/dev.env
 env/localhost.env
-package-lock.json
+# package-lock.json
