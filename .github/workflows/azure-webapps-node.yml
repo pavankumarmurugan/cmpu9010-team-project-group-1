@@ -64,7 +64,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Adjust directory path based on structure observed in previous step
           cd smartwardrobe-backend || echo "Already in correct directory" 
           npm install
 
