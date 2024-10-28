@@ -3,131 +3,55 @@ import { IsNumber, IsString } from 'class-validator';
 import { BaseDto } from '../base-dto/base.dto';
 
 export class ProductResDto extends BaseDto {
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsNumber()
-  readonly id?: number;
+  readonly id: number;
 
-  @ApiProperty({ required: true })
+  @ApiProperty()
   @IsString()
-  readonly articleId?: string;
+  readonly imageName?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly productCode?: string;
+  readonly color?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly prodName?: string;
+  readonly type?: string;
 
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly productTypeNo?: number;
-
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly productTypeName?: string;
+  readonly style?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly productGroupName?: string;
+  readonly material?: string;
 
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly graphicalAppearanceNo?: number;
-
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly graphicalAppearanceName?: string;
+  readonly category?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly colourGroupCode?: string;
+  readonly occasion?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly colourGroupName?: string;
+  readonly neckline?: string;
 
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly perceivedColourValueId?: number;
-
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly perceivedColourValueName?: string;
+  readonly fit?: string;
 
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly perceivedColourMasterId?: number;
-
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  readonly perceivedColourMasterName?: string;
+  readonly description?: string;
 
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly departmentNo?: number;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly departmentName?: string;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly indexCode?: string;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly indexName?: string;
-
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly indexGroupNo?: number;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly indexGroupName?: string;
-
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly sectionNo?: number;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly sectionName?: string;
-
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly garmentGroupNo?: number;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly garmentGroupName?: string;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  readonly detailDesc?: string;
-
-  @ApiProperty({ required: true })
-  @IsString()
-  readonly sku?: string;
-
-  @ApiProperty({ required: true })
-  @IsNumber()
-  readonly categoryId?: number;
-
-  @ApiProperty({ required: false })
-  @IsNumber()
-  readonly inventoryId?: number;
-
-  @ApiProperty({ required: true })
-  @IsNumber()
-  readonly discountId?: number;
-
-  @ApiProperty({ required: true })
-  @IsNumber()
-  readonly price?: number;
-
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
   readonly imageUrl?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  readonly price?: number;
 }

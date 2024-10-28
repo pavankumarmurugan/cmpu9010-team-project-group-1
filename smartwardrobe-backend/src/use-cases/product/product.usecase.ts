@@ -21,9 +21,8 @@ export class ProductUsecase {
     try {
       const productEntity: ProductEntity =
         this.productConvertor.toProductModelFromDto(productReqDto);
-      const entity: ProductEntity = await this.databaseService.product.create(
-        productEntity,
-      );
+      const entity: ProductEntity =
+        await this.databaseService.product.create(productEntity);
       const data: ProductResDto =
         this.productConvertor.toProductResDtoFromEntity(entity);
 
