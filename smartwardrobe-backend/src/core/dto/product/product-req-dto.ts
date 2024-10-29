@@ -8,45 +8,60 @@ export class ProductReqDto {
 
   @ApiProperty()
   @IsString()
-  readonly color?: string;
+  readonly name: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   readonly type?: string;
 
   @ApiProperty()
   @IsString()
-  readonly style?: string;
+  @IsOptional()
+  readonly pattern?: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
+  readonly color?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly colorShade?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   readonly material?: string;
 
   @ApiProperty()
   @IsString()
-  readonly category?: string;
-
-  @ApiProperty()
-  @IsString()
+  @IsOptional()
   readonly occasion?: string;
 
   @ApiProperty()
   @IsString()
-  readonly neckline?: string;
+  @IsOptional()
+  readonly applicableSeason?: string;
 
   @ApiProperty()
   @IsString()
-  readonly fit?: string;
-
-  @ApiProperty()
-  @IsString()
+  @IsOptional()
   readonly description?: string;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  readonly price?: number;
+
+  @ApiProperty()
   @IsString()
+  @IsOptional()
   readonly imageUrl?: string;
 
   @ApiProperty()
-  @IsNumber()
-  readonly price?: number;
+  @IsString()
+  @IsOptional()
+  readonly trail?: boolean;
 }

@@ -172,23 +172,23 @@ EXECUTE FUNCTION create_product_inventory();
 -- );
 
 CREATE TABLE products (
-	id SERIAL PRIMARY KEY,
-    image_name VARCHAR(255),
-    color VARCHAR(50) NULL,
+    id SERIAL PRIMARY KEY,
+    image_name VARCHAR(255) NULL,
+    name VARCHAR(255) NOT NULL,
     type VARCHAR(100) NULL,
-    style VARCHAR(100) NULL,
+    pattern VARCHAR(100) NULL,
+    color VARCHAR(50) NULL,
+    color_shade VARCHAR(50) NULL,
     material VARCHAR(100) NULL,
-    category VARCHAR(100) NULL,
     occasion VARCHAR(100) NULL,
-    neckline VARCHAR(100) NULL,
-    fit VARCHAR(50) NULL,
-    description text NULL,
+    applicable_season VARCHAR(100) NULL,
+    description TEXT NULL,
+    price NUMERIC(10, 2) CHECK (price >= 0) NULL,
     image_url VARCHAR(255) NULL,
-    price DECIMAL(10, 2) NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL
+    trail BOOLEAN DEFAULT true null,
+    "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP NULL
 );
-
 
 CREATE TABLE public."cart" (
   "id" SERIAL PRIMARY KEY,

@@ -48,7 +48,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     @InjectRepository(ProductInventoryModel)
     private productInventoryRepository: Repository<ProductInventoryEntity>,
     @InjectRepository(ProductModel)
-    private productRepository: Repository<ProductEntity>,
+    private productRepository: Repository<ProductModel>,
     @InjectRepository(CartItemModel)
     private cartItemRepository: Repository<CartItemEntity>,
     @InjectRepository(CartModel)

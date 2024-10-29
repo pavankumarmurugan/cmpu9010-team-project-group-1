@@ -5,7 +5,7 @@ import { BaseDto } from '../base-dto/base.dto';
 export class ProductResDto extends BaseDto {
   @ApiProperty()
   @IsNumber()
-  readonly id: number;
+  readonly id?: number;
 
   @ApiProperty()
   @IsString()
@@ -13,7 +13,7 @@ export class ProductResDto extends BaseDto {
 
   @ApiProperty()
   @IsString()
-  readonly color?: string;
+  readonly name?: string;
 
   @ApiProperty()
   @IsString()
@@ -21,7 +21,15 @@ export class ProductResDto extends BaseDto {
 
   @ApiProperty()
   @IsString()
-  readonly style?: string;
+  readonly pattern?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly color?: string;
+
+  @ApiProperty()
+  @IsString()
+  readonly colorShade?: string;
 
   @ApiProperty()
   @IsString()
@@ -29,29 +37,25 @@ export class ProductResDto extends BaseDto {
 
   @ApiProperty()
   @IsString()
-  readonly category?: string;
-
-  @ApiProperty()
-  @IsString()
   readonly occasion?: string;
 
   @ApiProperty()
   @IsString()
-  readonly neckline?: string;
-
-  @ApiProperty()
-  @IsString()
-  readonly fit?: string;
+  readonly applicableSeason?: string;
 
   @ApiProperty()
   @IsString()
   readonly description?: string;
 
   @ApiProperty()
+  @IsNumber()
+  readonly price?: number;
+
+  @ApiProperty()
   @IsString()
   readonly imageUrl?: string;
 
   @ApiProperty()
-  @IsNumber()
-  readonly price?: number;
+  @IsString()
+  readonly trail?: boolean;
 }
