@@ -171,3 +171,33 @@
   height: 100%; /* Ensure the modal content fills the height */
   background-color: #f8f8f8;
 }
+
+.Similar-Products-div{
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  text-align: start !important;
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.similar-products-heading{
+  padding-left: 35px;
+  margin-top: 15px;
+}
+
+.Similar-Products-Images{
+  /* margin-top: 20px; */
+  padding: 25px;
+  
+}
+
+.Similar-Products-div{
+  background-color: white;
+  border-radius: 30px;
+}
+
+.Similar-Products-div .react-multi-carousel-item{
+  max-width: 360px !important;
+  margin-right: 10px;
+}
