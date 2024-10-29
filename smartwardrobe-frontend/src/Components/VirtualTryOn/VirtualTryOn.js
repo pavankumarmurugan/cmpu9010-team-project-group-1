@@ -93,7 +93,7 @@ const VirtualTryOn = (props) => {
       setOpenLoader(true);
       const getModels = await apiCall(
         "POST",
-        "https://8acd-34-16-211-239.ngrok-free.app/try-on",
+        "https://4001-34-143-156-185.ngrok-free.app/try-on",
         data
       );
       setOpenLoader(false);
