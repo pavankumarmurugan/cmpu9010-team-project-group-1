@@ -7,8 +7,15 @@ import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
-import { Backdrop, CircularProgress, Tooltip, tooltipClasses } from "@mui/material";
+import {
+  Backdrop,
+  CircularProgress,
+  Tooltip,
+  tooltipClasses,
+} from "@mui/material";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
+import Carousel from "react-multi-carousel";
 
 const VirtualTryOn = (props) => {
   let DataClicked = JSON.parse(localStorage.getItem("VTOData")) || {};
@@ -17,6 +24,7 @@ const VirtualTryOn = (props) => {
   const [resultImage, setResultImage] = useState(DataClicked?.imageUrl);
   const [openLoader, setOpenLoader] = useState(false);
   const [modelsDataFromApi, setModelsDataFromApi] = useState([]);
+  const [similarProductsData, setSimilarProductsData] = useState([]);
   console.log(DataClicked, "DataClicked");
   const [dummyData, setDummyData] = useState([
     {
@@ -44,6 +52,24 @@ const VirtualTryOn = (props) => {
       url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
     },
   ]);
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 3000 },
+      items: 5,
+    },
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
@@ -82,7 +108,7 @@ const VirtualTryOn = (props) => {
 
   useEffect(() => {
     callApiForModels();
-  },[])
+  }, []);
 
   const callApiForModels = async () => {
     debugger;
@@ -96,19 +122,34 @@ const VirtualTryOn = (props) => {
         "https://4001-34-143-156-185.ngrok-free.app/try-on",
         data
       );
-      setOpenLoader(false);
       if (getModels) {
         setModelsDataFromApi(getModels?.image_links);
-        // setCurrentImage(-1);
-        // setResultImage(getModels?.image_links[index]);
+      }
+      let similarProductsHeaders = {
+        topN: 10,
+        imageName: DataClicked?.imageName,
+      };
+      const getSimilarProducts = await apiCall(
+        "POST",
+        "https://smartwardrobe-backend.azurewebsites.net/recommend/similar-products",
+        similarProductsHeaders
+      );
+      setOpenLoader(false);
+      if (getSimilarProducts) {
+        setSimilarProductsData(getSimilarProducts?.data);
       }
     }
   };
 
   const changeModalOnModelClick = (index) => {
-      // setCurrentImage(-1);
-      setResultImage(modelsDataFromApi?.[index]);
-    
+    // setCurrentImage(-1);
+    setResultImage(modelsDataFromApi?.[index]);
+  };
+
+  const handleSimilarProductsClick = (item) => {
+    debugger
+    console.log(item) 
+    setResultImage(item?.imageUrl)
   }
 
   return (
@@ -116,7 +157,7 @@ const VirtualTryOn = (props) => {
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-        >
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
       <Modal
@@ -206,25 +247,6 @@ const VirtualTryOn = (props) => {
                     <h1 style={{marginBottom:"15px", marginTop:"15px"}}>Choose a Model</h1>
                 </div> */}
               <div className="Model-Images-div">
-                {/* <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <HtmlTooltip
-                      title={
-                        <React.Fragment>
-                          <p>Size: 22</p>
-                          <p>Color: red</p>
-                        </React.Fragment>
-                      }
-                    >
-                      <img
-                        className="VTO-model--image"
-                        loading="lazy"
-                        src={Homeproductimage_3}
-                        alt="product image"
-                      />
-                    </HtmlTooltip>
-                  </div>
-                </div> */}
                 {dummyData?.map((item, index) => (
                   <div className="VTO-card">
                     <div className="VTO-image-container">
@@ -233,8 +255,6 @@ const VirtualTryOn = (props) => {
                         loading="lazy"
                         src={item?.url}
                         alt="product image"
-                        // onMouseEnter={() => setCurrentImage(index)}
-                        // onMouseLeave={() => setCurrentImage(-1)}
                         onClick={() => changeModalOnModelClick(index)}
                       />
                     </div>
@@ -255,6 +275,27 @@ const VirtualTryOn = (props) => {
               </div>
             </div>
           </div>
+
+          {similarProductsData?.length > 0 && (
+            <div className="Similar-Products-div">
+              <h1 className="similar-products-heading">SIMILAR PRODUCTS</h1>
+              <div className="Similar-Products-Images">
+                <Carousel responsive={responsive} autoPlaySpeed={1500}>
+                  {similarProductsData?.map((items, index) => (
+                    <div className="card">
+                      <img
+                        className="product--image"
+                        loading="lazy"
+                        src={items?.imageUrl}
+                        alt="product image"
+                        onClick={() => handleSimilarProductsClick(items)}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
+            </div>
+          )}
         </div>
       </Modal>
     </div>
