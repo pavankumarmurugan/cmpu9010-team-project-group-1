@@ -26,10 +26,13 @@ import AccordionGroup from "@mui/joy/AccordionGroup";
 import Accordion from "@mui/joy/Accordion";
 import AccordionDetails from "@mui/joy/AccordionDetails";
 import AccordionSummary from "@mui/joy/AccordionSummary";
-
 import { Input } from "antd";
+import { useLocation } from "react-router-dom";
 
 const ProductDetails = () => {
+  const location = useLocation();
+  let {state} = location;
+  console.log(state?.imageName?.imageName, "productData");
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [selectedSize, setSelectedSize] = useState(1);

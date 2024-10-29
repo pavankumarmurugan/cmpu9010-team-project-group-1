@@ -9,6 +9,7 @@ import { FaArrowUp } from "react-icons/fa6";
 import imageCompression from 'browser-image-compression';
 import { IoMdChatboxes } from "react-icons/io";
 import ChatComponent from "../ChatComponent/ChatComponent";
+import { useNavigate } from "react-router-dom";
 
 
 const renderMenuItems = (items) => {
@@ -159,21 +160,60 @@ export const HomeProductSection = (props) => {
 // };
 
 export const ProductPageCards = ({data,handleTryon}) => {
+  const navigate = useNavigate();
+  const [visibleProducts, setVisibleProducts] = useState(24);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Function to load more products
+  const loadMoreProducts = () => {
+    if (!isLoading) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setVisibleProducts((prev) => prev + 24);
+        setIsLoading(false);
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const threshold = document.body.offsetHeight * 0.95;
+
+      if (scrollPosition >= threshold) {
+        loadMoreProducts();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const clickOnTryOn = (e) => {
     debugger
     handleTryon(e);
   };
+
+  const handleProductDetails = (item) => {
+    debugger;
+    navigate("/productdetails", { state: { item } });
+  }
+
   return (
     <div className="productpagecards">
-      {data.map((item, index) => (
+      {data?.slice(0, visibleProducts).map((item, index) => (
         <div className="card" key={index}>
           <div className="image-container">
-            {/* Try On Button */}
             <button className="try-on-button" onClick={() => clickOnTryOn(item)}>Try On</button>
-            <img className="productspage-product--image" loading="lazy" src={item?.image} alt="product image" />
+            <img
+              className="productspage-product--image"
+              loading="lazy"
+              src={item?.imageUrl}
+              alt="product image"
+              onClick={() => handleProductDetails(item)}
+            />
           </div>
-          <h4>{item?.name}</h4>
-          <p className="description">{item?.description}</p>
+          <h4>{item?.category}</h4>
+          <p className="description">{item?.type}</p>
           <p className="price">{item?.price}</p>
           <p className="button-container">
             <Button className="View-Product-Button" color="default">

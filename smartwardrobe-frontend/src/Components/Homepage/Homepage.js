@@ -8,12 +8,14 @@ import { useLocation } from "react-router-dom";
 import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
 
 function Homepage() {
   const location = useLocation();
   let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   let { state } = location;
-  // let homeData = useRef(null);
+  const dispatch = useDispatch();
   const [openLoader, setOpenLoader] = useState(false);
   const [homeData, setHomeData] = useState(null);
 
@@ -28,7 +30,8 @@ function Homepage() {
     const response = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product/get-all", null, token?.token);
     setOpenLoader(false)
     if (response) {
-      setHomeData(response?.data); // Set data in state to trigger re-render
+      setHomeData(response?.data);
+      dispatch(homeDataSuccess({ homeData: response?.data}));
     }
   }
 

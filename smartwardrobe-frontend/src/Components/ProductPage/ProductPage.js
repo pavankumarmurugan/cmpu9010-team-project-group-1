@@ -34,10 +34,16 @@ import Button from "@mui/joy/Button";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
+import { useDispatch, useSelector } from "react-redux";
+import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
 
 const ProductPage = () => {
+  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  const dispatch = useDispatch();
   const location = useLocation();
   let { state } = location;
+  const homeData = useSelector((state) => state.homeData.homeData);
+  console.log(homeData,'homeDataproducts');
   let virtualTryOnClickedData = {};
   // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
@@ -161,11 +167,26 @@ const ProductPage = () => {
 
   useEffect(() => {
     // Simulate API call
-    setTimeout(() => {
-      setProducts(dummyData);
-      setLoading(false);
-    }, 2000);
+    // setTimeout(() => {
+    //   setProducts(homeData);
+    //   setLoading(false);
+    // }, 2000);
+
+    getProductsData();
+
   }, []);
+
+  const getProductsData = async () => {
+    debugger
+    // setOpenLoader(true);
+    const response = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product/get-all", null, token?.token);
+    // setOpenLoader(false)
+    setLoading(false);
+    if (response) {
+      setProducts(response?.data);
+      dispatch(homeDataSuccess({ homeData: response?.data}));
+    }
+  }
 
   const imageUpload = async (e) => {
     debugger;
