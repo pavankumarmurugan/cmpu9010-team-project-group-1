@@ -19,6 +19,8 @@ import { LikesEntity } from 'src/core/entities/likes/likes.entity';
 import { LikesModel } from './model/likes.model';
 import { ChatEntity } from 'src/core/entities/chat/chat.entity';
 import { ChatModel } from './model/chat.model';
+import { ImageClusterEntity } from 'src/core/entities/image-cluster/image-cluster.entity';
+import { ImageClusterModel } from './model/image-clusters.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -30,6 +32,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   cart: IGenericRepository<CartEntity>;
   likes: IGenericRepository<LikesEntity>;
   chat: IGenericRepository<ChatEntity>;
+  imageCluster: IGenericRepository<ImageClusterEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -48,6 +51,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private likesRepository: Repository<LikesEntity>,
     @InjectRepository(ChatModel)
     private chatRepository: Repository<ChatEntity>,
+    @InjectRepository(ImageClusterModel)
+    private imageClusterRepository: Repository<ImageClusterEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -67,5 +72,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     this.cart = new SQLGenericRepository<CartEntity>(this.cartRepository);
     this.likes = new SQLGenericRepository<LikesEntity>(this.likesRepository);
     this.chat = new SQLGenericRepository<ChatEntity>(this.chatRepository);
+    this.imageCluster = new SQLGenericRepository<ImageClusterEntity>(
+      this.imageClusterRepository,
+    );
   }
 }

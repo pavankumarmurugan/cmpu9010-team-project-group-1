@@ -11,6 +11,7 @@ import { CartItemModel } from './model/cart-items.model';
 import { CartModel } from './model/cart.model';
 import { LikesModel } from './model/likes.model';
 import { ChatModel } from './model/chat.model';
+import { ImageClusterModel } from './model/image-clusters.model';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { ChatModel } from './model/chat.model';
       database: process.env.DATABASE_NAME,
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
-      // logging: ['query', 'error'],
+      logging: ['query', 'error'],
       ssl: true,
       extra: {
         ssl: {
@@ -40,6 +41,7 @@ import { ChatModel } from './model/chat.model';
       CartModel,
       LikesModel,
       ChatModel,
+      ImageClusterModel,
     ]),
   ],
   providers: [

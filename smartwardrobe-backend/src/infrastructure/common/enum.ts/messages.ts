@@ -136,4 +136,9 @@ export const MESSAGES = {
       SUCCESS: 'SUCCESSFULLY FETCHED ITEMS',
     },
   },
+  RECOMMENDATIONS: {
+    GET: {
+      SUCCESS: 'SUCCESSFULLY FETCHED RECOMMENDATIONS',
+    },
+  },
 };
