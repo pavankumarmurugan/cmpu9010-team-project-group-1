@@ -18,16 +18,19 @@ import { SearchService } from 'src/infrastructure/services/search/search';
 import { SearchProductUsecase } from './search/search.usecase';
 import { LikesUsecase } from './likes/likes.usecase';
 import { ChatUsecase } from './chat/chat.usecase';
+import { RecommendationUsecase } from './recommendation/recommendation.usecase';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 
 @Module({
   imports: [
     HttpModule.register({}),
-
     DataServicesModule,
     ConvertorsModule,
     JWTModule,
     BcryptModule,
     ServicesModule,
+    TypeOrmModule.forFeature([ImageClusterModel]),
   ],
   providers: [
     ProductInventoryUsecase,
@@ -43,6 +46,7 @@ import { ChatUsecase } from './chat/chat.usecase';
     SearchProductUsecase,
     LikesUsecase,
     ChatUsecase,
+    RecommendationUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -57,6 +61,7 @@ import { ChatUsecase } from './chat/chat.usecase';
     SearchProductUsecase,
     LikesUsecase,
     ChatUsecase,
+    RecommendationUsecase,
   ],
 })
 export class UseCasesModule {}
