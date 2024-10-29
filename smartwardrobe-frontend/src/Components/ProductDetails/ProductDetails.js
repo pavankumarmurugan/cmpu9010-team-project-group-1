@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Headermenu from "../Headermenu/Headermenu";
 import "../../Styles/ProductPage.css";
 import ChatSection from "../ChatSection/ChatSection";
 import SearchIcon from "@mui/icons-material/Search";
 import {
+  Backdrop,
+  CircularProgress,
   FormControl,
   IconButton,
   InputAdornment,
@@ -28,13 +30,15 @@ import AccordionDetails from "@mui/joy/AccordionDetails";
 import AccordionSummary from "@mui/joy/AccordionSummary";
 import { Input } from "antd";
 import { useLocation } from "react-router-dom";
+import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 
 const ProductDetails = () => {
   const location = useLocation();
   let {state} = location;
-  console.log(state?.imageName?.imageName, "productData");
+  console.log(state?.item?.imageName, "productData");
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
+  const [openLoader, setOpenLoader] = useState(false);
   const [selectedSize, setSelectedSize] = useState(1);
   const [productimages, setProductImages] = useState([
     Homeproductimage_1,
@@ -77,16 +81,40 @@ const ProductDetails = () => {
       setShowHideWishlist(true);
     }
   };
-
-  const imageUpload = async (e) => {
+  
+  useEffect(() => {
     debugger;
-    // let imageData = await handleImageUpload(e);
+    callApiForModels();
+  }, []);
 
-    // console.log(imageData);
+  const callApiForModels = async () => {
+    debugger;
+    let numberString = state?.item?.imageName.replace('.jpg', '');
+    let number = parseInt(numberString);
+      setOpenLoader(true);
+      const getModels = await apiCall(
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${number}`, null
+      );
+      setOpenLoader(false);
+      if (getModels) {
+        console.log(getModels?.data, 'details')
+        // setModelsDataFromApi(getModels?.image_links);
+        // setCurrentImage(-1);
+      }
+    
   };
 
   return (
     <div>
+      {/** loader code */}
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openLoader}
+        >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+        {/** loader code */}
       <Headermenu />
       <div className="SearchedContent-div product-details-content">
         <div className="products">
