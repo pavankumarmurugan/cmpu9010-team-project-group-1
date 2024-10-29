@@ -13,6 +13,7 @@ import { LikesModel } from './model/likes.model';
 import { ChatModel } from './model/chat.model';
 import { ImageClusterModel } from './model/image-clusters.model';
 import { FriendsRequestsModel } from './model/friend-request.model';
+import { FriendsModel } from './model/friends.model';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { FriendsRequestsModel } from './model/friend-request.model';
       ChatModel,
       ImageClusterModel,
       FriendsRequestsModel,
+      FriendsModel,
     ]),
   ],
   providers: [

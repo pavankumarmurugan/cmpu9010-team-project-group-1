@@ -8,6 +8,11 @@ import { ProductCategoryModel } from 'src/infrastructure/frameworks/data-service
 import { ProductInventoryModel } from 'src/infrastructure/frameworks/data-services/model/product-inventory.model';
 import { ProductModel } from 'src/infrastructure/frameworks/data-services/model/product.model';
 import { UserModel } from 'src/infrastructure/frameworks/data-services/model/user.model';
+import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
+import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
+import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 
 describe('Database Connection', () => {
   let dataSource: DataSource;
@@ -29,6 +34,11 @@ describe('Database Connection', () => {
             ProductModel,
             CartItemModel,
             CartModel,
+            LikesModel,
+            ChatModel,
+            ImageClusterModel,
+            FriendsRequestsModel,
+            FriendsModel,
           ],
           password: process.env.DATABASE_PASSWORD,
           ssl: true,
@@ -45,6 +55,11 @@ describe('Database Connection', () => {
           ProductModel,
           CartItemModel,
           CartModel,
+          LikesModel,
+          ChatModel,
+          ImageClusterModel,
+          FriendsRequestsModel,
+          FriendsModel,
         ]),
       ],
     }).compile();

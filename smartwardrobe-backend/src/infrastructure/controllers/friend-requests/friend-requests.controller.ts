@@ -25,13 +25,12 @@ import { FriendRequestsUsecase } from 'src/use-cases/friend-requests/friend-requ
 @Controller('friend-requests')
 @ApiTags('Friend Requests')
 @UseGuards(AccessTokenGuard, RolesGuard)
+@Roles(ROLES.ADMIN, ROLES.USER)
 export class FriendRequestsController {
   constructor(private usecase: FriendRequestsUsecase) {}
 
   @Get('get-all-my-requests')
   @ApiBearerAuth()
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  @Roles(ROLES.ADMIN, ROLES.USER)
   async getAll(
     @Request() request: RequestWithUser,
   ): Promise<IResponse<FriendRequestsResDto[]>> {
@@ -66,13 +65,9 @@ export class FriendRequestsController {
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
   async update(
-    @Request() request: RequestWithUser,
     @Body() dto: UpdateFriendRequestsReqDto,
   ): Promise<IResponse<FriendRequestsResDto>> {
     try {
-      const {
-        user: { userId },
-      } = request;
       const { requestId } = dto;
       return await this.usecase.update(requestId, dto);
     } catch (error) {

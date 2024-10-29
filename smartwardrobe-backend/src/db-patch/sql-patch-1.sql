@@ -339,6 +339,7 @@ CREATE TABLE public.friends (
   user1_id INT NOT NULL,
   user2_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL,
   CONSTRAINT fk_user1
     FOREIGN KEY (user1_id)
     REFERENCES public.user (user_id)

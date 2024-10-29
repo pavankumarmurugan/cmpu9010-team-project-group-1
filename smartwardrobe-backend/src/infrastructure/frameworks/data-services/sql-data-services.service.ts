@@ -23,6 +23,8 @@ import { ImageClusterEntity } from 'src/core/entities/image-cluster/image-cluste
 import { ImageClusterModel } from './model/image-clusters.model';
 import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
 import { FriendsRequestsModel } from './model/friend-request.model';
+import { FriendsEntity } from 'src/core/entities/friends/friends';
+import { FriendsModel } from './model/friends.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -36,6 +38,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   chat: IGenericRepository<ChatEntity>;
   imageCluster: IGenericRepository<ImageClusterEntity>;
   friendRequests: IGenericRepository<FriendRequestsEntity>;
+  friends: IGenericRepository<FriendsEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -58,6 +61,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private imageClusterRepository: Repository<ImageClusterEntity>,
     @InjectRepository(FriendsRequestsModel)
     private friendRequestsRepository: Repository<FriendRequestsEntity>,
+    @InjectRepository(FriendsModel)
+    private friendsRepository: Repository<FriendsEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -82,6 +87,9 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     );
     this.friendRequests = new SQLGenericRepository<FriendRequestsEntity>(
       this.friendRequestsRepository,
+    );
+    this.friends = new SQLGenericRepository<FriendsEntity>(
+      this.friendsRepository,
     );
   }
 }

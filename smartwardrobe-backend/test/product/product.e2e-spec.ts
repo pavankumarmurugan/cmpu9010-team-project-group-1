@@ -17,6 +17,11 @@ import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/r
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import * as request from 'supertest';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
+import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
+import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
+import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 
 describe('ProductController (e2e)', () => {
   let app: INestApplication;
@@ -39,6 +44,11 @@ describe('ProductController (e2e)', () => {
             ProductModel,
             CartItemModel,
             CartModel,
+            LikesModel,
+            ChatModel,
+            ImageClusterModel,
+            FriendsRequestsModel,
+            FriendsModel,
           ],
           password: process.env.DATABASE_PASSWORD,
           ssl: true,
@@ -55,6 +65,11 @@ describe('ProductController (e2e)', () => {
           ProductModel,
           CartItemModel,
           CartModel,
+          LikesModel,
+          ChatModel,
+          ImageClusterModel,
+          FriendsRequestsModel,
+          FriendsModel,
         ]),
         JwtModule.register({}),
         SQLDataServiceModule,

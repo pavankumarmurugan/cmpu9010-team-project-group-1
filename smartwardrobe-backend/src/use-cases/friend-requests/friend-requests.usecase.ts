@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
-import { FriendRequestsConvertor } from 'src/core/convertors/frriend-requests/friend-requests.convertor';
+import { FriendRequestsConvertor } from 'src/core/convertors/friend-requests/friend-requests.convertor';
 import { FriendRequestsReqDto } from 'src/core/dto/friend-requests/friend-requests.req-dto';
 import { UpdateFriendRequestsReqDto } from 'src/core/dto/friend-requests/friend-requests.req-update-dto';
 import { FriendRequestsResDto } from 'src/core/dto/friend-requests/friend-requests.res-dto';
 import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
 import { IResponse } from 'src/core/interface/response.interface';
+import { FRIEND_REQUEST_STATUS } from 'src/infrastructure/common/enum.ts/friend-requests.enum';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 
 @Injectable()
@@ -63,6 +64,16 @@ export class FriendRequestsUsecase {
         requestId,
         friendRequestsEntity,
       );
+      if (dto.status === FRIEND_REQUEST_STATUS.ACCEPTED) {
+        const entity: FriendRequestsEntity =
+          await this.databaseService.friendRequests.get({
+            requestId: requestId,
+          });
+        await this.databaseService.friends.create({
+          user1Id: entity.senderId,
+          user2Id: entity.receiverId,
+        });
+      }
       return {
         data: null,
         message: MESSAGES.FRIEND_REQUEST.UPDATE.SUCCESS,
@@ -88,7 +99,7 @@ export class FriendRequestsUsecase {
     try {
       const entity: FriendRequestsEntity =
         await this.databaseService.friendRequests.get({
-          request_id: requestId,
+          requestId: requestId,
         });
       const data: FriendRequestsResDto =
         this.convertor.toFriendRequestsResDtoFromEntity(entity);
