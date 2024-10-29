@@ -7,15 +7,16 @@ import { ChatButton, ScrollButton } from "./Components/GenericCode/GenericCode";
 import ProductDetails from "./Components/ProductDetails/ProductDetails";
 import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
 import ChatComponent from "./Components/ChatComponent/ChatComponent";
-
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 function App() {
   
 
   return (
+    <Provider store={store}>
     <div className="App">
       <ScrollButton />
-      {/* <ChatButton /> */}
       <ChatComponent />
       <Fragment>
         <BrowserRouter>
@@ -30,6 +31,7 @@ function App() {
         </BrowserRouter>
       </Fragment>
     </div>
+    </Provider>
   );
 }
 

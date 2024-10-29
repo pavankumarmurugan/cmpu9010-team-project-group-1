@@ -45,6 +45,7 @@
   /* height: 500px; */
   object-fit: cover;
   border-radius: 20px;
+  border: 2px solid black;
 }
 
 .Right-Div-heading {

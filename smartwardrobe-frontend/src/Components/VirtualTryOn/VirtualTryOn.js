@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import "../../Styles/VirtualTryOn.css";
 import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
@@ -7,19 +7,21 @@ import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
-import { Tooltip, tooltipClasses } from "@mui/material";
+import { Backdrop, CircularProgress, Tooltip, tooltipClasses } from "@mui/material";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 
 const VirtualTryOn = (props) => {
-  debugger
-  let DataClicked = JSON.parse(localStorage.getItem('VTOData')) || {};
+  let DataClicked = JSON.parse(localStorage.getItem("VTOData")) || {};
   const [disabled, setDisabled] = useState(true);
   const [currentImage, setCurrentImage] = useState(-1);
-  const [resultImage, setResultImage] = useState(DataClicked?.image);
+  const [resultImage, setResultImage] = useState(DataClicked?.imageUrl);
+  const [openLoader, setOpenLoader] = useState(false);
+  const [modelsDataFromApi, setModelsDataFromApi] = useState([]);
+  console.log(DataClicked, "DataClicked");
   const [dummyData, setDummyData] = useState([
     {
-      image_id: "00034_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00034_00.jpg",
+      image_id: "01066_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
     },
     {
       image_id: "00034_00",
@@ -78,25 +80,45 @@ const VirtualTryOn = (props) => {
     },
   }));
 
+  useEffect(() => {
+    callApiForModels();
+  },[])
+
   const callApiForModels = async () => {
     debugger;
-    const data = {
-      /** dummy data for now */ user_image_name: "00035_00.jpg",
-      cloth_image_name: "00013_00.jpg",
-    };
-    const getModels = await apiCall(
-      "POST",
-      "https://c90b-35-230-26-234.ngrok-free.app/try-on",
-      data
-    );
-    if(getModels){
-      setCurrentImage(-1)
-      setResultImage(getModels?.image_url);
+    if (!modelsDataFromApi?.length) {
+      const data = {
+        cloth_image_name: DataClicked?.imageName,
+      };
+      setOpenLoader(true);
+      const getModels = await apiCall(
+        "POST",
+        "https://8acd-34-16-211-239.ngrok-free.app/try-on",
+        data
+      );
+      setOpenLoader(false);
+      if (getModels) {
+        setModelsDataFromApi(getModels?.image_links);
+        setCurrentImage(-1);
+        // setResultImage(getModels?.image_links[index]);
+      }
     }
   };
 
+  const changeModalOnModelClick = (index) => {
+      setCurrentImage(-1);
+      setResultImage(modelsDataFromApi?.[index]);
+    
+  }
+
   return (
     <div>
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openLoader}
+        >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Modal
         title={
           <div
@@ -144,7 +166,7 @@ const VirtualTryOn = (props) => {
               <FavoriteBorderIcon
                 className="hover-icon"
                 sx={{
-                  color: "white",
+                  color: "black",
                   fontSize: "40px",
                   position: "absolute",
                   top: "10px",
@@ -152,14 +174,14 @@ const VirtualTryOn = (props) => {
                   transition: "transform 0.3s, color 0.3s",
                   "&:hover": {
                     cursor: "pointer",
-                    transform: "scale(1.5)",
+                    transform: "scale(1.2)",
                   },
                 }}
               />
               <ShoppingBagOutlinedIcon
                 className="hover-icon"
                 sx={{
-                  color: "white",
+                  color: "black",
                   fontSize: "40px",
                   position: "absolute",
                   top: "10px",
@@ -168,14 +190,18 @@ const VirtualTryOn = (props) => {
                   "&:hover": {
                     cursor: "pointer",
                     // color: "#ffcc00",
-                    transform: "scale(1.5)",
+                    transform: "scale(1.2)",
                   },
                 }}
               />
               <img
                 className="Result-Image"
                 loading="lazy"
-                src= {`${currentImage !== -1 ? dummyData[currentImage]?.url : resultImage}`} 
+                src={`${
+                  currentImage !== -1
+                    ? dummyData[currentImage]?.url
+                    : resultImage
+                }`}
                 alt="product image"
               />
             </div>
@@ -205,30 +231,31 @@ const VirtualTryOn = (props) => {
                 </div> */}
                 {dummyData?.map((item, index) => (
                   <div className="VTO-card">
-                  <div className="VTO-image-container">
-                    <img
-                      className="VTO-model--image"
-                      loading="lazy"
-                      src={item?.url}
-                      alt="product image"
-                      onMouseEnter={() => setCurrentImage(index)}
-                      onMouseLeave={() => setCurrentImage(-1)}
-                      onClick={callApiForModels}
-                    />
+                    <div className="VTO-image-container">
+                      <img
+                        className="VTO-model--image"
+                        loading="lazy"
+                        src={item?.url}
+                        alt="product image"
+                        onMouseEnter={() => setCurrentImage(index)}
+                        onMouseLeave={() => setCurrentImage(-1)}
+                        onClick={() => changeModalOnModelClick(index)}
+                      />
+                    </div>
                   </div>
-                </div> ))}
+                ))}
               </div>
             </div>
             <div className="Mobile-models-div">
               <div className="mobile-model-image-div">
-              {dummyData?.map((item, index) => (
-                <img
-                  src={item?.url}
-                  loading="lazy"
-                  alt="Product Imgae"
-                  className="mobile-model-images"
-                />
-              ))}
+                {dummyData?.map((item, index) => (
+                  <img
+                    src={item?.url}
+                    loading="lazy"
+                    alt="Product Imgae"
+                    className="mobile-model-images"
+                  />
+                ))}
               </div>
             </div>
           </div>
