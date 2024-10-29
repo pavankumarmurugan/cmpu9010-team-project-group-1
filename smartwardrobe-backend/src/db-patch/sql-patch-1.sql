@@ -14,7 +14,6 @@ CREATE TABLE "user" (
     "profile_pic" VARCHAR(255) DEFAULT NULL
 );
 
-ALTER TABLE "user" ADD COLUMN "profile_pic" VARCHAR(255) DEFAULT NULL;
 
   CREATE TABLE `product_category` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -191,32 +190,18 @@ CREATE TABLE products (
 );
 
 
-CREATE TABLE `smartwardrobe`.`cart` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  `deleted_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_user_id`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `smartwardrobe`.`user` (`user_id`)
+CREATE TABLE public."cart" (
+  "id" SERIAL PRIMARY KEY,
+  "user_id" INT NULL,
+  "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" TIMESTAMP NULL,
+  "deleted_at" TIMESTAMP NULL,
+  CONSTRAINT "fk_user_id"
+    FOREIGN KEY ("user_id")
+    REFERENCES "public"."user" ("user_id")
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
-
--- CREATE TABLE public."cart" (
---   "id" SERIAL PRIMARY KEY,
---   "user_id" INT NULL,
---   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
---   "updated_at" TIMESTAMP NULL,
---   "deleted_at" TIMESTAMP NULL,
---   CONSTRAINT "fk_user_id"
---     FOREIGN KEY ("user_id")
---     REFERENCES "public"."user" ("user_id")
---     ON DELETE CASCADE
---     ON UPDATE CASCADE
--- );
 
 DELIMITER //
 
@@ -244,44 +229,26 @@ DELIMITER ;
 -- FOR EACH ROW
 -- EXECUTE FUNCTION create_cart_after_user_insert();
 
-CREATE TABLE `smartwardrobe`.`cart_item` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `cart_id` INT NULL,
-  `product_id` INT NULL,
-  `quantity` INT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_product_id`
-    FOREIGN KEY (`product_id`)
-    REFERENCES `smartwardrobe`.`product` (`id`)
+
+
+CREATE TABLE "smartwardrobe"."cart_item" (
+  "id" SERIAL PRIMARY KEY,
+  "cart_id" INT NULL,
+  "product_id" INT NULL,
+  "quantity" INT NULL,
+  "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" TIMESTAMP NULL,
+  CONSTRAINT "fk_product_id"
+    FOREIGN KEY ("product_id")
+    REFERENCES "smartwardrobe"."product" ("id")
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_cart_item_on_cart_id`
-    FOREIGN KEY (`cart_id`)
-    REFERENCES `smartwardrobe`.`cart` (`id`)
+  CONSTRAINT "fk_cart_item_on_cart_id"
+    FOREIGN KEY ("cart_id")
+    REFERENCES "smartwardrobe"."cart" ("id")
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
-
--- CREATE TABLE "smartwardrobe"."cart_item" (
---   "id" SERIAL PRIMARY KEY,
---   "cart_id" INT NULL,
---   "product_id" INT NULL,
---   "quantity" INT NULL,
---   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
---   "updated_at" TIMESTAMP NULL,
---   CONSTRAINT "fk_product_id"
---     FOREIGN KEY ("product_id")
---     REFERENCES "smartwardrobe"."product" ("id")
---     ON DELETE CASCADE
---     ON UPDATE CASCADE,
---   CONSTRAINT "fk_cart_item_on_cart_id"
---     FOREIGN KEY ("cart_id")
---     REFERENCES "smartwardrobe"."cart" ("id")
---     ON DELETE CASCADE
---     ON UPDATE CASCADE
--- );
 
 
 
@@ -304,12 +271,33 @@ CREATE TABLE public.like (
 );
 
 
+-- CREATE TABLE public.chat (
+--   id SERIAL PRIMARY KEY,
+--   sender_id INT NULL,
+--   receiver_id INT NULL,
+--   message TEXT NULL,
+--   created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+--   updated_at TIMESTAMP NULL,
+--   CONSTRAINT fk_sender_id
+--     FOREIGN KEY (sender_id)
+--     REFERENCES public.user (user_id)
+--     ON DELETE CASCADE
+--     ON UPDATE CASCADE,
+--   CONSTRAINT fk_receiver_id
+--     FOREIGN KEY (receiver_id)
+--     REFERENCES public.user (user_id)
+--     ON DELETE CASCADE
+--     ON UPDATE CASCADE
+-- );
+
 CREATE TABLE public.chat (
   id SERIAL PRIMARY KEY,
-  sender_id INT NULL,
+  sender_id INT NOT NULL,
   receiver_id INT NULL,
+  group_id INT NULL,  
   message TEXT NULL,
-  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  message_type VARCHAR(50) DEFAULT 'text', 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NULL,
   CONSTRAINT fk_sender_id
     FOREIGN KEY (sender_id)
@@ -320,5 +308,94 @@ CREATE TABLE public.chat (
     FOREIGN KEY (receiver_id)
     REFERENCES public.user (user_id)
     ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_group_id
+    FOREIGN KEY (group_id)
+    REFERENCES public.group (group_id)
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+
+CREATE TABLE public.friend_requests (
+  request_id SERIAL PRIMARY KEY,
+  sender_id INT NOT NULL,
+  receiver_id INT NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending', 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL,
+  CONSTRAINT fk_sender
+    FOREIGN KEY (sender_id)
+    REFERENCES public.user (user_id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_receiver
+    FOREIGN KEY (receiver_id)
+    REFERENCES public.user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE public.friends (
+  friend_id SERIAL PRIMARY KEY,
+  user1_id INT NOT NULL,
+  user2_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user1
+    FOREIGN KEY (user1_id)
+    REFERENCES public.user (user_id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_user2
+    FOREIGN KEY (user2_id)
+    REFERENCES public.user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE public.group (
+  group_id SERIAL PRIMARY KEY,
+  group_name VARCHAR(255) NOT NULL,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_creator
+    FOREIGN KEY (created_by)
+    REFERENCES public.user (user_id)
+    ON DELETE SET NULL
+);
+
+CREATE TABLE public.group_members (
+  membership_id SERIAL PRIMARY KEY,
+  group_id INT NOT NULL,
+  user_id INT NOT NULL,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_group
+    FOREIGN KEY (group_id)
+    REFERENCES public.group (group_id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_user
+    FOREIGN KEY (user_id)
+    REFERENCES public.user (user_id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE public.message_attachments (
+  attachment_id SERIAL PRIMARY KEY,
+  message_id INT NOT NULL,
+  attachment_type VARCHAR(50) NOT NULL, 
+  url VARCHAR(255) NOT NULL,            
+  CONSTRAINT fk_message
+    FOREIGN KEY (message_id)
+    REFERENCES public.chat (id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE public.notifications (
+  notification_id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  type VARCHAR(50) NOT NULL,          
+  content VARCHAR(255) NOT NULL,      
+  status VARCHAR(20) DEFAULT 'unread',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user
+    FOREIGN KEY (user_id)
+    REFERENCES public.user (user_id)
+    ON DELETE CASCADE
+);
+

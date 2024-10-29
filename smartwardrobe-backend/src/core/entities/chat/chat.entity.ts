@@ -5,4 +5,6 @@ export class ChatEntity extends BaseEntity {
   readonly senderId?: number;
   readonly receiverId?: number;
   readonly message?: string;
+  readonly messageType?: string;
+  readonly groupId?: number;
 }

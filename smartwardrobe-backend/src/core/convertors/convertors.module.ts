@@ -9,6 +9,7 @@ import { CartConvertor } from './cart/cart.convertor';
 import { SearchImageSimilarProductsConvertor } from './search/search-image-similar-products.convertor';
 import { LikesConvertor } from './likes/likes.convertor';
 import { ChatConvertor } from './chat/chat.convertor';
+import { FriendRequestsConvertor } from './frriend-requests/friend-requests.convertor';
 
 @Module({
   providers: [
@@ -22,6 +23,7 @@ import { ChatConvertor } from './chat/chat.convertor';
     SearchImageSimilarProductsConvertor,
     LikesConvertor,
     ChatConvertor,
+    FriendRequestsConvertor,
   ],
   exports: [
     UserDtoConvertor,
@@ -34,6 +36,7 @@ import { ChatConvertor } from './chat/chat.convertor';
     SearchImageSimilarProductsConvertor,
     LikesConvertor,
     ChatConvertor,
+    FriendRequestsConvertor,
   ],
 })
 export class ConvertorsModule {}

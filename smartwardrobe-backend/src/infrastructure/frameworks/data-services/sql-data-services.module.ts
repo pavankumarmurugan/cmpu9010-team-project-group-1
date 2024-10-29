@@ -12,6 +12,7 @@ import { CartModel } from './model/cart.model';
 import { LikesModel } from './model/likes.model';
 import { ChatModel } from './model/chat.model';
 import { ImageClusterModel } from './model/image-clusters.model';
+import { FriendsRequestsModel } from './model/friend-request.model';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ImageClusterModel } from './model/image-clusters.model';
       LikesModel,
       ChatModel,
       ImageClusterModel,
+      FriendsRequestsModel,
     ]),
   ],
   providers: [
