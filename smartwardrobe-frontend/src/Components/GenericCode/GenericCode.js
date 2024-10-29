@@ -230,6 +230,13 @@ export const ProductPageCards = ({data,handleTryon}) => {
 
 
 export const Productfilterdropdowns = (props) => {
+  const handleChange = (selectedValues) => {
+    // Pass both name and selected values to the parent
+    props.onChange(props.fieldName, selectedValues);
+  };
+  const handleReset = () => {
+    props?.resetHandler(props?.fieldName);
+  }
   return (
     <Select
       mode="multiple"
@@ -238,9 +245,9 @@ export const Productfilterdropdowns = (props) => {
       placeholder={props?.placeholder}
       name={props?.name}
       options={props?.options}
+      value={props?.value}
       popupMatchSelectWidth={true}
-      onChange={(selectedValues) => props.onChange(props.name, selectedValues)}
-      onBlur={props.onBlur}
+      onChange={handleChange}
       dropdownRender={(menu) => (
         <div>
           <div
@@ -255,7 +262,7 @@ export const Productfilterdropdowns = (props) => {
               <b>0 Selected</b>
               {/* <b>Selected:</b> {selectedItems.length > 0 ? selectedItems.join(', ') : 'None'} */}
             </span>
-            <p size="small" type="primary" className="reset-btn">
+            <p size="small" type="primary" className="reset-btn" onClick={handleReset}>
               <u>Reset</u>
             </p>
           </div>
@@ -369,3 +376,26 @@ export const setTokenToLocalStorage = (data) => {
   debugger;
   let token = localStorage.setItem('user', JSON.stringify(data));
 }
+
+export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
+  
+  let filteredData = data;
+  let fromValue = 0;
+  let toValue = Infinity;
+
+  if (pricevalue !== "Price") {
+    const splitFromToValue = pricevalue.split("-");
+    fromValue = parseFloat(splitFromToValue[0]) || 0;
+    toValue = parseFloat(splitFromToValue[1]) || Infinity;
+  }
+
+  filteredData = filteredData.filter(item => {
+    const itemPrice = parseFloat(item.price);
+    const isColorMatch = colourvalue.length === 0 || colourvalue.includes(item.color);
+    const isPriceInRange = itemPrice >= fromValue && itemPrice <= toValue;
+
+    return isColorMatch && isPriceInRange;
+  });
+
+  return filteredData;
+};
