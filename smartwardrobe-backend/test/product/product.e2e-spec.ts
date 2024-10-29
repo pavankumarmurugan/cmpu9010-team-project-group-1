@@ -17,6 +17,11 @@ import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/r
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import * as request from 'supertest';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
+import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
+import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
+import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 
 describe('ProductController (e2e)', () => {
   let app: INestApplication;
@@ -39,6 +44,11 @@ describe('ProductController (e2e)', () => {
             ProductModel,
             CartItemModel,
             CartModel,
+            LikesModel,
+            ChatModel,
+            ImageClusterModel,
+            FriendsRequestsModel,
+            FriendsModel,
           ],
           password: process.env.DATABASE_PASSWORD,
           ssl: true,
@@ -55,6 +65,11 @@ describe('ProductController (e2e)', () => {
           ProductModel,
           CartItemModel,
           CartModel,
+          LikesModel,
+          ChatModel,
+          ImageClusterModel,
+          FriendsRequestsModel,
+          FriendsModel,
         ]),
         JwtModule.register({}),
         SQLDataServiceModule,
@@ -98,7 +113,7 @@ describe('ProductController (e2e)', () => {
 
   it('/product/get-all (GET) - should return all products', async () => {
     const response = await request(app.getHttpServer())
-      .get('/product/get-all')
+      .get('/product/get-all/1/10')
       .expect(200);
 
     expect(response.body).toHaveProperty('data');
@@ -108,16 +123,18 @@ describe('ProductController (e2e)', () => {
     response.body.data.forEach((product) => {
       expect(product).toHaveProperty('id');
       expect(product).toHaveProperty('imageName');
-      expect(product).toHaveProperty('color');
+      expect(product).toHaveProperty('name');
       expect(product).toHaveProperty('type');
-      expect(product).toHaveProperty('style');
+      expect(product).toHaveProperty('pattern');
+      expect(product).toHaveProperty('color');
+      expect(product).toHaveProperty('colorShade');
       expect(product).toHaveProperty('material');
-      expect(product).toHaveProperty('category');
       expect(product).toHaveProperty('occasion');
-      expect(product).toHaveProperty('neckline');
-      expect(product).toHaveProperty('fit');
+      expect(product).toHaveProperty('applicableSeason');
       expect(product).toHaveProperty('description');
+      expect(product).toHaveProperty('price');
       expect(product).toHaveProperty('imageUrl');
+      expect(product).toHaveProperty('trail');
     });
   });
 
@@ -129,15 +146,17 @@ describe('ProductController (e2e)', () => {
     expect(response.body).toHaveProperty('data');
     expect(response.body.data).toHaveProperty('id');
     expect(response.body.data).toHaveProperty('imageName');
-    expect(response.body.data).toHaveProperty('color');
+    expect(response.body.data).toHaveProperty('name');
     expect(response.body.data).toHaveProperty('type');
-    expect(response.body.data).toHaveProperty('style');
+    expect(response.body.data).toHaveProperty('pattern');
+    expect(response.body.data).toHaveProperty('color');
+    expect(response.body.data).toHaveProperty('colorShade');
     expect(response.body.data).toHaveProperty('material');
-    expect(response.body.data).toHaveProperty('category');
     expect(response.body.data).toHaveProperty('occasion');
-    expect(response.body.data).toHaveProperty('neckline');
-    expect(response.body.data).toHaveProperty('fit');
+    expect(response.body.data).toHaveProperty('applicableSeason');
     expect(response.body.data).toHaveProperty('description');
+    expect(response.body.data).toHaveProperty('price');
     expect(response.body.data).toHaveProperty('imageUrl');
+    expect(response.body.data).toHaveProperty('trail');
   });
 });

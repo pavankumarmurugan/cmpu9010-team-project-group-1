@@ -13,7 +13,7 @@ export class JWTDataService {
       },
       {
         secret: process.env.JWT_ACCESS_SECRET,
-        expiresIn: '15m',
+        expiresIn: '3d',
       },
     );
   }

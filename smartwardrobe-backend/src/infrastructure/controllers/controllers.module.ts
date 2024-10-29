@@ -24,6 +24,8 @@ import { ChatController } from './chat/chat.controller';
 import { ChatGateway } from './chat/chat-gateway.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { RecommendationController } from './recommendation/recommendation.controller';
+import { FriendRequestsController } from './friend-requests/friend-requests.controller';
+import { FriendsController } from './friends/friend.controller';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { RecommendationController } from './recommendation/recommendation.contro
     LikesController,
     ChatController,
     RecommendationController,
+    FriendRequestsController,
+    FriendsController,
   ],
   providers: [
     // {

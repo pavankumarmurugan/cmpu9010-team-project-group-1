@@ -21,6 +21,8 @@ import { ChatUsecase } from './chat/chat.usecase';
 import { RecommendationUsecase } from './recommendation/recommendation.usecase';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { FriendRequestsUsecase } from './friend-requests/friend-requests.usecase';
+import { FriendsUsecase } from './friends/friends.usecase';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/m
     LikesUsecase,
     ChatUsecase,
     RecommendationUsecase,
+    FriendRequestsUsecase,
+    FriendsUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -62,6 +66,8 @@ import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/m
     LikesUsecase,
     ChatUsecase,
     RecommendationUsecase,
+    FriendRequestsUsecase,
+    FriendsUsecase,
   ],
 })
 export class UseCasesModule {}

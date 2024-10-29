@@ -41,4 +41,8 @@ export class UserResDTO {
   @ApiProperty({ required: false })
   @IsString()
   readonly profilePic?: string;
+
+  @ApiProperty({ required: false })
+  @IsNumber()
+  readonly friendId?: number;
 }
