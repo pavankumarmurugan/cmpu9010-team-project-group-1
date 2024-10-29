@@ -21,6 +21,7 @@ import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
 import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import {
+  filterDataAccordingToUser,
   handleImageUpload,
   Productfilterdropdowns,
   ProductPageCards,
@@ -48,13 +49,14 @@ const ProductPage = () => {
   // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
+  const [productsDataForFilter, setProductsDataForFilter] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     searchValue: "",
     Category: [],
     Size: [],
-    Price: [],
+    Price: 'Price',
     fromPrice: "",
     toPrice: "",
     Colour: [],
@@ -140,17 +142,26 @@ const ProductPage = () => {
     { label: 2, value: 2 },
   ];
   const sizefilter = [
-    { label: 1, value: 1 },
-    { label: 2, value: 2 },
+    { label: "XS", value: "XS" },
+    { label: "S", value: "S" },
+    { label: "M", value: "M" },
+    { label: "L", value: "L" },
+    { label: "XL", value: "XL" },
+    { label: "2XL", value: "2XL" },
   ];
   const pricefilter = [
     { label: 1, value: 100 },
     { label: 2, value: 200 },
   ];
   const colourfilter = [
-    { label: 1, value: "red" },
-    { label: 2, value: "blue" },
-    { label: 2, value: "black" },
+    { label: "Black", value: "Black" },
+    { label: "Blue", value: "Blue" },
+    { label: "Brown", value: "Brown" },
+    { label: "Green", value: "Green" },
+    { label: "Navy", value: "Navy" },
+    { label: "Red", value: "Red" },
+    { label: "Orange", value: "Orange" },
+    { label: "Pink", value: "Pink" },
   ];
 
   const VisuallyHiddenInput = styled("input")`
@@ -184,6 +195,7 @@ const ProductPage = () => {
     setLoading(false);
     if (response) {
       setProducts(response?.data);
+      setProductsDataForFilter(response?.data);
       dispatch(homeDataSuccess({ homeData: response?.data}));
     }
   }
@@ -203,20 +215,20 @@ const ProductPage = () => {
     console.log(callingUploadImageApi);
   };
 
-  const handleFilters = (name, selectedValues) => {
+  const handleFilters = async (name, selectedValues) => {
     debugger;
+    let filterData;
+    if(name === "Colour"){
+         filterData = await filterDataAccordingToUser(productsDataForFilter, formData?.Price, selectedValues);
+      }
     setFormData((prevState) => ({
       ...prevState,
-      [name]: selectedValues, // Use the name to update the correct field
+      [name]: selectedValues,
     }));
+    setProducts(filterData);
   };
 
-  const handleFiltersOnBlur = () => {
-    debugger;
-    console.log(formData);
-  };
-
-  const handlePriceFilter = (e) => {
+  const handlePriceFilter = async (e) => {
     debugger;
     let { value, name } = e.target;
     if (/^\d+$/.test(value)) {
@@ -224,8 +236,51 @@ const ProductPage = () => {
         ...prevState,
         [name]: value,
       }));
+    }else{
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: '',
+      }));
     }
+
+    let fromPrice = name === "fromPrice" ? +value : +formData?.fromPrice;
+    let toPrice = name === "toPrice" ? +value : +formData?.toPrice;
+    let pricevalue = fromPrice + '-' + toPrice;
+    let filterData;
+    filterData = await filterDataAccordingToUser(productsDataForFilter, pricevalue ,formData?.Colour);
+      
+    if(pricevalue !== "0-0"){
+      setFormData((prevState) => ({
+        ...prevState,
+        ["Price"]: pricevalue,
+      }));
+    }else{
+      setFormData((prevState) => ({
+        ...prevState,
+        ["Price"]: "Price",
+      }));
+
+    }
+    setProducts(filterData);
   };
+
+  const resetPriceFilter = async () => {
+    setFormData((prevState) => ({
+      ...prevState,
+      ["fromPrice"]: "",
+      ["toPrice"]: "",
+      ["Price"]: "Price",
+    }));
+    let filterData = await filterDataAccordingToUser(productsDataForFilter, "Price" , formData?.Colour);
+    setProducts(filterData);
+  }
+
+  const resetHandler = (name) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: [],
+    }));
+  }
 
   /** this is to handle tryon modal */
   const handleTryon = (data) => {
@@ -369,24 +424,24 @@ const ProductPage = () => {
               }}
             >
               <div className="filters-section">
-                <div>
+                {/* <div>
                   <Productfilterdropdowns
                     name="Category"
                     placeholder="Category"
                     options={categoryfilter}
-                    onChange={handleFilters}
-                    onBlur={handleFiltersOnBlur}
+                    onChange={(name, value) => handleFilters(name, value)}
+                    fieldName="Category"
                   />
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                   <Productfilterdropdowns
                     placeholder="Size"
                     name={formData.size}
                     options={sizefilter}
-                    onChange={handleFilters}
-                    onBlur={handleFiltersOnBlur}
+                    fieldName="Colour"
+                    onChange={(name, value) => handleFilters(name, value)}
                   />
-                </div>
+                </div> */}
                 <div>
                   <Select
                     style={{
@@ -395,9 +450,9 @@ const ProductPage = () => {
                       textTransform: "capitalize",
                     }}
                     placeholder="Price"
-                    name={formData.price}
+                    name={formData?.Price}
+                    value={formData?.Price}
                     className="filterdropdowns"
-                    onBlur={handleFiltersOnBlur}
                     dropdownRender={(menu) => (
                       <>
                         <div
@@ -428,6 +483,7 @@ const ProductPage = () => {
                               justifyContent: "flex-end",
                               paddingRight: "10px",
                             }}
+                            onClick={resetPriceFilter}
                           >
                             <u>Reset</u>
                           </p>
@@ -463,10 +519,12 @@ const ProductPage = () => {
                 <div>
                   <Productfilterdropdowns
                     placeholder="Colour"
-                    name="Colour"
+                    name={formData.Colour}
                     options={colourfilter}
-                    onChange={handleFilters}
-                    onBlur={handleFiltersOnBlur}
+                    value={formData.Colour}
+                    onChange={(name, value) => handleFilters(name, value)}
+                    resetHandler={resetHandler}
+                    fieldName="Colour"
                   />
                 </div>
               </div>

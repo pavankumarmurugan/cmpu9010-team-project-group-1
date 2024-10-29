@@ -13,7 +13,7 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 const VirtualTryOn = (props) => {
   let DataClicked = JSON.parse(localStorage.getItem("VTOData")) || {};
   const [disabled, setDisabled] = useState(true);
-  const [currentImage, setCurrentImage] = useState(-1);
+  // const [currentImage, setCurrentImage] = useState(-1);
   const [resultImage, setResultImage] = useState(DataClicked?.imageUrl);
   const [openLoader, setOpenLoader] = useState(false);
   const [modelsDataFromApi, setModelsDataFromApi] = useState([]);
@@ -99,14 +99,14 @@ const VirtualTryOn = (props) => {
       setOpenLoader(false);
       if (getModels) {
         setModelsDataFromApi(getModels?.image_links);
-        setCurrentImage(-1);
+        // setCurrentImage(-1);
         // setResultImage(getModels?.image_links[index]);
       }
     }
   };
 
   const changeModalOnModelClick = (index) => {
-      setCurrentImage(-1);
+      // setCurrentImage(-1);
       setResultImage(modelsDataFromApi?.[index]);
     
   }
@@ -197,11 +197,7 @@ const VirtualTryOn = (props) => {
               <img
                 className="Result-Image"
                 loading="lazy"
-                src={`${
-                  currentImage !== -1
-                    ? dummyData[currentImage]?.url
-                    : resultImage
-                }`}
+                src={resultImage}
                 alt="product image"
               />
             </div>
@@ -237,8 +233,8 @@ const VirtualTryOn = (props) => {
                         loading="lazy"
                         src={item?.url}
                         alt="product image"
-                        onMouseEnter={() => setCurrentImage(index)}
-                        onMouseLeave={() => setCurrentImage(-1)}
+                        // onMouseEnter={() => setCurrentImage(index)}
+                        // onMouseLeave={() => setCurrentImage(-1)}
                         onClick={() => changeModalOnModelClick(index)}
                       />
                     </div>
