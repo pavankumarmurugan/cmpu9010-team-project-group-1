@@ -8,7 +8,7 @@ model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 # Text Search service
-def perform_search(search_query, table_name="text_vector", top_k=200):
+def perform_search(search_query, table_name="products_des_embedding", top_k=200):
     # Add numpy type adapter
     add_numpy_adapter()
 
@@ -19,13 +19,23 @@ def perform_search(search_query, table_name="text_vector", top_k=200):
 
     search_embedding_str = ','.join([str(x) for x in search_embedding])
 
+
+    # sql_query = f"""
+    #     SELECT article_id, product_code,
+    #            1 - (text_vector <=> '[{search_embedding_str}]') AS similarity
+    #     FROM {table_name}
+    #     ORDER BY similarity DESC
+    #     LIMIT {top_k};
+    # """
+
     sql_query = f"""
-        SELECT article_id, product_code,
-               1 - (text_vector <=> '[{search_embedding_str}]') AS similarity
-        FROM {table_name}
+        select t1.image_name, t2.id, 1 - (t1.text_vector <=> '[{search_embedding_str}]') AS similarity
+        from {table_name} t1, products t2
+        where t1.image_name = t2.image_name
         ORDER BY similarity DESC
         LIMIT {top_k};
-    """
+       """
+
 
     # Get database connection
     conn = get_db_connection()
@@ -36,7 +46,7 @@ def perform_search(search_query, table_name="text_vector", top_k=200):
             cur.execute(sql_query)
             results = cur.fetchall()
 
-        return [{"article_id": row[0], "product_code": row[1]} for row in results]
+        return [{"image_name": row[0], "product_id": row[1]} for row in results]
 
     finally:
         conn.close()

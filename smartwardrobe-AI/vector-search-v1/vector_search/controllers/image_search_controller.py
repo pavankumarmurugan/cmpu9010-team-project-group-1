@@ -6,7 +6,7 @@ search_im = Blueprint('imagesearch', __name__)
 
 @search_im.route('/image-search', methods=['POST'])
 def search_image():
-    TOP_K = 10  # Number of similar images to retrieve
+    TOP_K = 100  # Number of similar images to retrieve
 
     data = request.json  # Parse JSON request body
     image_url = data.get('image_url')
