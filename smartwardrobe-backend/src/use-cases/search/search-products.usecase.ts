@@ -21,6 +21,8 @@ export class SearchProductUsecase {
   async searchSimilarItemsToImage(
     filePath: string,
     query: string,
+    page: number = 1,
+    limit: number = 10,
   ): Promise<IResponse<ProductResDto[]>> {
     try {
       let imageSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
@@ -62,8 +64,10 @@ export class SearchProductUsecase {
         );
       });
 
+      const pages = unique.slice(page * limit, (page + 1) * limit);
+
       const entities = await Promise.all(
-        unique.map(async ({ image_name }) =>
+        pages.map(async ({ image_name }) =>
           this.databaseService.product.get({ imageName: image_name }),
         ),
       );
