@@ -3,6 +3,7 @@ import { RefreshTokenResDto } from 'src/core/dto/auth/refresh-token-dto.class';
 import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profile.dto';
 import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
 import { UserResDTO } from 'src/core/dto/user/user-res.dto';
+import { FriendsEntity } from 'src/core/entities/friends/friends';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 
 @Injectable()
@@ -105,5 +106,25 @@ export class UserDtoConvertor {
     refreshToken: string,
   ): RefreshTokenResDto {
     return { refreshToken, token };
+  }
+
+  toUserResDTOFromFriendsEntity(
+    friendEntities: FriendsEntity[],
+    entities: UserEntity[],
+  ): UserResDTO[] {
+    return entities.map(({ firstname, lastname, username, userId, role }) => {
+      const { friendId } = friendEntities.find(
+        (friendEntity) =>
+          friendEntity.user1Id === userId || friendEntity.user2Id === userId,
+      );
+      return {
+        firstname,
+        lastname,
+        username,
+        userId,
+        role,
+        friendId,
+      };
+    });
   }
 }

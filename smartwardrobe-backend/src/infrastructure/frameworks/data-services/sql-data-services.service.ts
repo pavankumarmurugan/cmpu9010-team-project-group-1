@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IDataServices, IGenericRepository } from 'src/core/abstracts';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { UserModel } from './model/user.model';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { SQLGenericRepository } from './sql-generic-repository';
 import { ProductCategoryModel } from './model/product-category.model';
 import { ProductCategoryEntity } from 'src/core/entities/product-category/product-category.entity';
@@ -21,6 +21,10 @@ import { ChatEntity } from 'src/core/entities/chat/chat.entity';
 import { ChatModel } from './model/chat.model';
 import { ImageClusterEntity } from 'src/core/entities/image-cluster/image-cluster.entity';
 import { ImageClusterModel } from './model/image-clusters.model';
+import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
+import { FriendsRequestsModel } from './model/friend-request.model';
+import { FriendsEntity } from 'src/core/entities/friends/friends';
+import { FriendsModel } from './model/friends.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -33,6 +37,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   likes: IGenericRepository<LikesEntity>;
   chat: IGenericRepository<ChatEntity>;
   imageCluster: IGenericRepository<ImageClusterEntity>;
+  friendRequests: IGenericRepository<FriendRequestsEntity>;
+  friends: IGenericRepository<FriendsEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -42,7 +48,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     @InjectRepository(ProductInventoryModel)
     private productInventoryRepository: Repository<ProductInventoryEntity>,
     @InjectRepository(ProductModel)
-    private productRepository: Repository<ProductEntity>,
+    private productRepository: Repository<ProductModel>,
     @InjectRepository(CartItemModel)
     private cartItemRepository: Repository<CartItemEntity>,
     @InjectRepository(CartModel)
@@ -53,6 +59,10 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private chatRepository: Repository<ChatEntity>,
     @InjectRepository(ImageClusterModel)
     private imageClusterRepository: Repository<ImageClusterEntity>,
+    @InjectRepository(FriendsRequestsModel)
+    private friendRequestsRepository: Repository<FriendRequestsEntity>,
+    @InjectRepository(FriendsModel)
+    private friendsRepository: Repository<FriendsEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -74,6 +84,12 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     this.chat = new SQLGenericRepository<ChatEntity>(this.chatRepository);
     this.imageCluster = new SQLGenericRepository<ImageClusterEntity>(
       this.imageClusterRepository,
+    );
+    this.friendRequests = new SQLGenericRepository<FriendRequestsEntity>(
+      this.friendRequestsRepository,
+    );
+    this.friends = new SQLGenericRepository<FriendsEntity>(
+      this.friendsRepository,
     );
   }
 }

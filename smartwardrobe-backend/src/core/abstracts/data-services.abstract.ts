@@ -1,6 +1,8 @@
 import { CartItemEntity } from '../entities/cart-item/cart-item.entity';
 import { CartEntity } from '../entities/cart/cart.entity';
 import { ChatEntity } from '../entities/chat/chat.entity';
+import { FriendRequestsEntity } from '../entities/friend-request/friend-requests.entity';
+import { FriendsEntity } from '../entities/friends/friends';
 import { ImageClusterEntity } from '../entities/image-cluster/image-cluster.entity';
 import { LikesEntity } from '../entities/likes/likes.entity';
 import { ProductCategoryEntity } from '../entities/product-category/product-category.entity';
@@ -19,4 +21,6 @@ export abstract class IDataServices {
   abstract likes: IGenericRepository<LikesEntity>;
   abstract chat: IGenericRepository<ChatEntity>;
   abstract imageCluster: IGenericRepository<ImageClusterEntity>;
+  abstract friendRequests: IGenericRepository<FriendRequestsEntity>;
+  abstract friends: IGenericRepository<FriendsEntity>;
 }

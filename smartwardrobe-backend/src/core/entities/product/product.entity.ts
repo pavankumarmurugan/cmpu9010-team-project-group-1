@@ -1,17 +1,18 @@
 import { BaseEntity } from '../base/base.entity';
 
 export class ProductEntity extends BaseEntity {
-  readonly id: number;
+  readonly id?: number;
   readonly imageName?: string;
-  readonly color?: string;
+  readonly name?: string;
   readonly type?: string;
-  readonly style?: string;
+  readonly pattern?: string;
+  readonly color?: string;
+  readonly colorShade?: string;
   readonly material?: string;
-  readonly category?: string;
   readonly occasion?: string;
-  readonly neckline?: string;
-  readonly fit?: string;
+  readonly applicableSeason?: string;
   readonly description?: string;
-  readonly imageUrl?: string;
   readonly price?: number;
+  readonly imageUrl?: string;
+  readonly trail?: boolean;
 }

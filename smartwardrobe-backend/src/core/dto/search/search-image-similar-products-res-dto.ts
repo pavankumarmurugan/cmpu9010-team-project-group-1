@@ -5,9 +5,5 @@ import { BaseDto } from '../base-dto/base.dto';
 export class SearchImageSimilarProductResDto extends BaseDto {
   @ApiProperty({ required: false })
   @IsString()
-  readonly article_id?: string;
-
-  @ApiProperty({ required: true })
-  @IsNumber()
-  readonly product_id?: number;
+  readonly image_name?: string;
 }

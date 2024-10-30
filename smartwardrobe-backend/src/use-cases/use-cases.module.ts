@@ -14,13 +14,15 @@ import { ProductUsecase } from './product/product.usecase';
 import { CartItemUsecase } from './cart-item/cart-item.usecase';
 import { CartUsecase } from './cart/cart.usecase';
 import { ServicesModule } from 'src/infrastructure/services/services.module';
-import { SearchService } from 'src/infrastructure/services/search/search';
-import { SearchProductUsecase } from './search/search.usecase';
+import { SearchProductsService } from 'src/infrastructure/services/search/search-products.service';
+import { SearchProductUsecase } from './search/search-products.usecase';
 import { LikesUsecase } from './likes/likes.usecase';
 import { ChatUsecase } from './chat/chat.usecase';
 import { RecommendationUsecase } from './recommendation/recommendation.usecase';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { FriendRequestsUsecase } from './friend-requests/friend-requests.usecase';
+import { FriendsUsecase } from './friends/friends.usecase';
 
 @Module({
   imports: [
@@ -42,11 +44,13 @@ import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/m
     ProductUsecase,
     CartItemUsecase,
     CartUsecase,
-    SearchService,
+    SearchProductsService,
     SearchProductUsecase,
     LikesUsecase,
     ChatUsecase,
     RecommendationUsecase,
+    FriendRequestsUsecase,
+    FriendsUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -62,6 +66,8 @@ import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/m
     LikesUsecase,
     ChatUsecase,
     RecommendationUsecase,
+    FriendRequestsUsecase,
+    FriendsUsecase,
   ],
 })
 export class UseCasesModule {}

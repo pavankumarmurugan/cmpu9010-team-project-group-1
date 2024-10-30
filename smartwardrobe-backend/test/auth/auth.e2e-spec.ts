@@ -19,6 +19,11 @@ import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.g
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { DataSource } from 'typeorm';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
+import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
+import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -43,6 +48,11 @@ describe('AuthController (e2e)', () => {
             ProductModel,
             CartItemModel,
             CartModel,
+            LikesModel,
+            ChatModel,
+            ImageClusterModel,
+            FriendsRequestsModel,
+            FriendsModel,
           ],
           password: process.env.DATABASE_PASSWORD,
           ssl: true,
@@ -59,6 +69,11 @@ describe('AuthController (e2e)', () => {
           ProductModel,
           CartItemModel,
           CartModel,
+          LikesModel,
+          ChatModel,
+          ImageClusterModel,
+          FriendsRequestsModel,
+          FriendsModel,
         ]),
         JwtModule.register({}),
         SQLDataServiceModule,

@@ -35,10 +35,13 @@ export class ProductUsecase {
     }
   }
 
-  async getAllProduct(): Promise<IResponse<ProductResDto[]>> {
+  async getAllProduct(
+    page: number,
+    limit: number,
+  ): Promise<IResponse<ProductResDto[]>> {
     try {
-      const entities: ProductEntity[] =
-        await this.databaseService.product.getAll();
+      const { data: entities }: { data: ProductEntity[]; total: number } =
+        await this.databaseService.product.getAllPaginated(page, limit);
 
       const data: ProductResDto[] =
         this.productConvertor.toProductResDtoFromEntities(entities);

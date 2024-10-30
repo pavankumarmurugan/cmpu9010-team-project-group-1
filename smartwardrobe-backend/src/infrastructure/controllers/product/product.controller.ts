@@ -25,11 +25,14 @@ import { ProductUsecase } from 'src/use-cases/product/product.usecase';
 export class ProductController {
   constructor(private productUsecase: ProductUsecase) {}
 
-  @Get('get-all')
+  @Get('get-all/:page/:limit')
   @Roles(ROLES.ADMIN, ROLES.USER)
-  async getProductById(): Promise<IResponse<ProductResDto[]>> {
+  async getProductById(
+    @Param('page', ParseIntPipe) page: number = 1,
+    @Param('limit', ParseIntPipe) limit: number = 10,
+  ): Promise<IResponse<ProductResDto[]>> {
     try {
-      return await this.productUsecase.getAllProduct();
+      return await this.productUsecase.getAllProduct(page, limit);
     } catch (error) {
       throw error;
     }
