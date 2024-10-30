@@ -52,7 +52,7 @@ export const GenericDropdownMenu = ({ menuData, handleChange }) => {
           justifyContent: "center",
           alignItems: "center",
           marginTop: "1rem",
-          marginLeft: "8px",
+          marginLeft: "50px",
         }}
         mode="horizontal"
         items={menuItems}
@@ -195,6 +195,7 @@ export const ProductPageCards = ({data,handleTryon}) => {
 
   const handleProductDetails = (item) => {
     debugger;
+    SaveVisitedProduct(item);
     navigate("/productdetails", { state: { item } });
   }
 
@@ -360,7 +361,7 @@ export const ScrollButton = () => {
 export const SaveVisitedProduct = (productId) => {
   debugger
   let visitedProducts = JSON.parse(localStorage.getItem('visitedProducts')) || [];
-  let alreadyAddedProduct = visitedProducts?.filter(x => x?.image === productId?.image) /** will cahnge from image to product id when data comes */
+  let alreadyAddedProduct = visitedProducts?.filter(x => x?.id === productId?.id)
   if (alreadyAddedProduct?.length === 0) {
       visitedProducts.push(productId);
   }

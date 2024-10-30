@@ -6,7 +6,6 @@ import ProductPage from "./Components/ProductPage/ProductPage";
 import { ChatButton, ScrollButton } from "./Components/GenericCode/GenericCode";
 import ProductDetails from "./Components/ProductDetails/ProductDetails";
 import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
-import ChatComponent from "./Components/ChatComponent/ChatComponent";
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
@@ -17,7 +16,6 @@ function App() {
     <Provider store={store}>
     <div className="App">
       <ScrollButton />
-      <ChatComponent />
       <Fragment>
         <BrowserRouter>
       <ScrollToTop /> 

@@ -2,14 +2,12 @@ import { showToastError, showToastSuccess } from "../GenericToasters/GenericToas
 
 const apiCall = async (method = "GET", url, data = null, token = null) => {
   try {
-    debugger
     const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
     const options = {
       method,
       headers: {
-        "Content-Type": "application/json",
-        "Control-Allow-Origin": "*",
+        "Content-Type": data ? "application/json" : undefined,
         ...authHeaders,
       },
     };
@@ -23,7 +21,6 @@ const apiCall = async (method = "GET", url, data = null, token = null) => {
     if (!response.ok) {
       const errorData = await response.json();
       showToastError(errorData?.message || response.statusText);
-      // throw new Error(errorData?.message || 'API call failed');
       return errorData;
     }
 
@@ -33,7 +30,6 @@ const apiCall = async (method = "GET", url, data = null, token = null) => {
   } catch (error) {
     console.error("API call failed:", error);
     showToastError(error.message || "An error occurred");
-    // throw error;
   }
 };
 
