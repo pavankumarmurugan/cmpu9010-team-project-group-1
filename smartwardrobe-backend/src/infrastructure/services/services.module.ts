@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { SearchService } from './search/search';
+import { SearchProductsService } from './search/search-products.service';
 import { UploadProfilePictureService } from './uploadProfilePicture/upload-profile-picture';
 import { FaissService } from './faiss/faiss.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageClusterModel } from '../frameworks/data-services/model/image-clusters.model';
 import { DataServicesModule } from './data-services/data-service.module';
+import { UploadSearchPictureService } from './uploadProfilePicture/upload-search-picture';
 
 @Module({
   imports: [
@@ -13,7 +14,17 @@ import { DataServicesModule } from './data-services/data-service.module';
     DataServicesModule,
     TypeOrmModule.forFeature([ImageClusterModel]),
   ],
-  providers: [SearchService, UploadProfilePictureService, FaissService],
-  exports: [SearchService, UploadProfilePictureService, FaissService],
+  providers: [
+    SearchProductsService,
+    UploadProfilePictureService,
+    FaissService,
+    UploadSearchPictureService,
+  ],
+  exports: [
+    SearchProductsService,
+    UploadProfilePictureService,
+    FaissService,
+    UploadSearchPictureService,
+  ],
 })
 export class ServicesModule {}

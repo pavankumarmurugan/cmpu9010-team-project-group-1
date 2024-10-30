@@ -14,8 +14,8 @@ import { ProductUsecase } from './product/product.usecase';
 import { CartItemUsecase } from './cart-item/cart-item.usecase';
 import { CartUsecase } from './cart/cart.usecase';
 import { ServicesModule } from 'src/infrastructure/services/services.module';
-import { SearchService } from 'src/infrastructure/services/search/search';
-import { SearchProductUsecase } from './search/search.usecase';
+import { SearchProductsService } from 'src/infrastructure/services/search/search-products.service';
+import { SearchProductUsecase } from './search/search-products.usecase';
 import { LikesUsecase } from './likes/likes.usecase';
 import { ChatUsecase } from './chat/chat.usecase';
 import { RecommendationUsecase } from './recommendation/recommendation.usecase';
@@ -44,7 +44,7 @@ import { FriendsUsecase } from './friends/friends.usecase';
     ProductUsecase,
     CartItemUsecase,
     CartUsecase,
-    SearchService,
+    SearchProductsService,
     SearchProductUsecase,
     LikesUsecase,
     ChatUsecase,
