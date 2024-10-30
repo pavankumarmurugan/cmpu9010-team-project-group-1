@@ -37,15 +37,19 @@ import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoa
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
 import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import { showToastError } from "../GenericToasters/GenericToasters";
 
 const ProductPage = () => {
-  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const dispatch = useDispatch();
   const location = useLocation();
   let { state } = location;
   const homeData = useSelector((state) => state.homeData.homeData);
-  console.log(homeData,'homeDataproducts');
-  let virtualTryOnClickedData = {};
+  console.log(homeData, "homeDataproducts");
+  // let virtualTryOnClickedData = {};
   // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
@@ -54,13 +58,16 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     searchValue: "",
+    image: null,
+    imagePreview: null,
     Category: [],
     Size: [],
-    Price: 'Price',
+    Price: "Price",
     fromPrice: "",
     toPrice: "",
     Colour: [],
   });
+  const [file, setFile] = useState(null);
 
   const dummyData = [
     {
@@ -177,50 +184,137 @@ const ProductPage = () => {
   `;
 
   useEffect(() => {
-    // Simulate API call
-    // setTimeout(() => {
-    //   setProducts(homeData);
-    //   setLoading(false);
-    // }, 2000);
-
     getProductsData();
-
   }, []);
 
   const getProductsData = async () => {
-    debugger
+    debugger;
     // setOpenLoader(true);
-    const response = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product/get-all", null, token?.token);
+    const response = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/product/get-all/1/100",
+      null,
+      token?.token
+    );
     // setOpenLoader(false)
     setLoading(false);
     if (response) {
       setProducts(response?.data);
       setProductsDataForFilter(response?.data);
-      dispatch(homeDataSuccess({ homeData: response?.data}));
+      dispatch(homeDataSuccess({ homeData: response?.data }));
     }
-  }
+  };
 
   const imageUpload = async (e) => {
     debugger;
-    // let imageData = await handleImageUpload(e);
-    let imageData =  e.target.files[0];
-    console.log(e);
-    setOpenLoader(true);
-    let callingUploadImageApi = await apiCall(
-      "https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image",
-      "POST",
-      imageData
-    );
-    setOpenLoader(false);
-    console.log(callingUploadImageApi);
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file);
+      setFormData((prevData) => ({
+        ...prevData,
+        imagePreview: URL.createObjectURL(file),
+      }));
+    }
+    // console.log(formData.image);
+  };
+
+  const handleSearch = async (event) => {
+    if (formData?.searchValue !== "" || file) {
+      event.preventDefault();
+      const formData = new FormData();
+      if (file) {
+        formData.append("file", file);
+      }
+      formData.append("text", formData?.searchValue);
+      try {
+        setOpenLoader(true);
+        const response = await fetch(
+          "https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image",
+          {
+            method: "POST",
+            headers: {
+              accept: "*/*",
+            },
+            body: formData,
+          }
+        );
+        setOpenLoader(false);
+        if (!response.ok) {
+          const errorData = await response.json();
+          showToastError(errorData?.message || response.statusText);
+        }
+        const result = await response.json();
+        removeImage();
+        setProducts(result?.data);
+      } catch (error) {
+        console.error("There was an error uploading the image:", error);
+      }
+    }
+  };
+
+  // const handleSearch = async () => {
+  //   debugger
+  //   if (formData?.searchValue !== "" || formData?.image !== null) {
+  //     const { image } = formData; // Extract the image file
+
+  //     // Check if the image is present
+  //     if (!image) {
+  //       console.error("No image file found");
+  //       return; // Exit if there's no image
+  //     }
+
+  //     // Set loading state
+  //     setOpenLoader(true);
+
+  //     const fileUpload = new FormData();
+  //     fileUpload.append("File", formData?.image); // Append the image file
+
+  //     for (let [key, value] of fileUpload.entries()) {
+  //       console.log(key, value); // Show what you're sending
+  //     }
+  //     console.log(fileUpload, "fileUpload");
+  //     try {
+  //       const response = await apiCall(
+  //         "POST",
+  //         "https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image",
+  //         fileUpload
+  //       );
+
+  //       console.log("API Response:", response);
+  //     } catch (error) {
+  //       console.error("API call error:", error);
+  //     } finally {
+  //       setOpenLoader(false); // Stop loading
+  //     }
+  //   } else {
+  //     console.warn("No search value or image provided");
+  //   }
+  // };
+
+  const handleSearchInput = (e) => {
+    let { value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      searchValue: value,
+    }));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
   };
 
   const handleFilters = async (name, selectedValues) => {
     debugger;
     let filterData;
-    if(name === "Colour"){
-         filterData = await filterDataAccordingToUser(productsDataForFilter, formData?.Price, selectedValues);
-      }
+    if (name === "Colour") {
+      filterData = await filterDataAccordingToUser(
+        productsDataForFilter,
+        formData?.Price,
+        selectedValues
+      );
+    }
     setFormData((prevState) => ({
       ...prevState,
       [name]: selectedValues,
@@ -236,30 +330,33 @@ const ProductPage = () => {
         ...prevState,
         [name]: value,
       }));
-    }else{
+    } else {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: '',
+        [name]: "",
       }));
     }
 
     let fromPrice = name === "fromPrice" ? +value : +formData?.fromPrice;
     let toPrice = name === "toPrice" ? +value : +formData?.toPrice;
-    let pricevalue = fromPrice + '-' + toPrice;
+    let pricevalue = fromPrice + "-" + toPrice;
     let filterData;
-    filterData = await filterDataAccordingToUser(productsDataForFilter, pricevalue ,formData?.Colour);
-      
-    if(pricevalue !== "0-0"){
+    filterData = await filterDataAccordingToUser(
+      productsDataForFilter,
+      pricevalue,
+      formData?.Colour
+    );
+
+    if (pricevalue !== "0-0") {
       setFormData((prevState) => ({
         ...prevState,
         ["Price"]: pricevalue,
       }));
-    }else{
+    } else {
       setFormData((prevState) => ({
         ...prevState,
         ["Price"]: "Price",
       }));
-
     }
     setProducts(filterData);
   };
@@ -271,28 +368,36 @@ const ProductPage = () => {
       ["toPrice"]: "",
       ["Price"]: "Price",
     }));
-    let filterData = await filterDataAccordingToUser(productsDataForFilter, "Price" , formData?.Colour);
+    let filterData = await filterDataAccordingToUser(
+      productsDataForFilter,
+      "Price",
+      formData?.Colour
+    );
     setProducts(filterData);
-  }
+  };
 
   const resetHandler = (name) => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: [],
     }));
-  }
+  };
 
   /** this is to handle tryon modal */
   const handleTryon = (data) => {
     debugger;
-    localStorage.setItem('VTOData', JSON.stringify(data));
+    localStorage.setItem("VTOData", JSON.stringify(data));
     setOpenTryOnModal(true);
-  }
+  };
 
   const closeTryOnModal = () => {
     setOpenTryOnModal(false);
   };
   /** this is to handle tryon modal */
+
+  const removeImage = () => {
+    setFormData((prevData) => ({ ...prevData, imagePreview: null }));
+  };
 
   return (
     <>
@@ -300,19 +405,20 @@ const ProductPage = () => {
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-        >
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
-        {/** loader code */}
+      {/** loader code */}
 
       {/** Try On modal */}
 
-      {openTryOnModal && 
-      <VirtualTryOn
-      isShowModel={openTryOnModal}
-      closeModal={closeTryOnModal}
-      data={virtualTryOnClickedData}
-      />}
+      {openTryOnModal && (
+        <VirtualTryOn
+          isShowModel={openTryOnModal}
+          closeModal={closeTryOnModal}
+          // data={virtualTryOnClickedData}
+        />
+      )}
 
       {/** Try On modal */}
 
@@ -343,61 +449,99 @@ const ProductPage = () => {
                       fontSize: "18px",
                     },
                   }}
-                  htmlFor="outlined-adornment-password"
+                  htmlFor="outlined-adornment-search"
                 >
                   Search
                 </InputLabel>
                 <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={"text"}
+                  id="outlined-adornment-search"
+                  type="text"
                   style={{ width: "100%", backgroundColor: "#e9ecef" }}
                   className="productsearch-input"
                   autoComplete="off"
+                  value={formData.searchValue}
+                  onChange={(e) => handleSearchInput(e)}
+                  onKeyPress={handleKeyDown}
+                  startAdornment={
+                    formData?.imagePreview && (
+                      <InputAdornment
+                        position="start"
+                        sx={{ mr: 1, display: "flex", alignItems: "center" }}
+                      >
+                        <div
+                          style={{
+                            position: "relative",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <img
+                            src={formData?.imagePreview}
+                            alt="Uploaded preview"
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              borderRadius: "5px",
+                              marginRight: "8px",
+                            }}
+                          />
+                          <IconButton
+                            onClick={removeImage}
+                            size="small"
+                            sx={{
+                              position: "absolute",
+                              top: "-8px",
+                              right: "-8px",
+                              backgroundColor: "white",
+                              boxShadow: 1,
+                              "&:hover": { backgroundColor: "#f0f0f0" },
+                            }}
+                          >
+                            <IoCloseCircleOutline fontSize="small" />
+                          </IconButton>
+                        </div>
+                      </InputAdornment>
+                    )
+                  }
                   endAdornment={
                     <InputAdornment position="end">
                       <Button
                         component="label"
-                        role={undefined}
-                        tabIndex={-1}
                         variant="outlined"
                         color="neutral"
-                        style={{
-                          border: "none",
-                          width: "10px",
-                          borderRadius: "50%",
-                        }}
-                        startDecorator={
-                          <SvgIcon>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                              />
-                            </svg>
-                          </SvgIcon>
-                        }
+                        style={{ border: "none", borderRadius: "50%" }}
                       >
-                        <VisuallyHiddenInput
+                        <SvgIcon>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                            />
+                          </svg>
+                        </SvgIcon>
+                        <input
                           type="file"
+                          accept="image/*"
                           onChange={imageUpload}
+                          style={{ display: "none" }}
                         />
                       </Button>
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        edge="end"
-                      >
-                        <SearchIcon style={{ color: "black" }} />
+                      <IconButton aria-label="search" edge="end">
+                        <SearchIcon
+                          style={{ color: "black" }}
+                          onClick={handleSearch}
+                        />
                       </IconButton>
                     </InputAdornment>
                   }
-                  label="Password"
+                  label="Search"
                   sx={{
                     height: "50px",
                     "& .MuiOutlinedInput-notchedOutline": {

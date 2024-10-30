@@ -82,6 +82,7 @@
     background-color: white;
     border-radius: 0.5rem;
     border: 2px solid red;
+    color: red;
     font-weight: 500;
     gap: 2rem;
     &:hover{

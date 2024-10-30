@@ -2,8 +2,6 @@ import { Modal } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import "../../Styles/VirtualTryOn.css";
-import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
@@ -147,10 +145,10 @@ const VirtualTryOn = (props) => {
   };
 
   const handleSimilarProductsClick = (item) => {
-    debugger
-    console.log(item) 
-    setResultImage(item?.imageUrl)
-  }
+    debugger;
+    console.log(item);
+    setResultImage(item?.imageUrl);
+  };
 
   return (
     <div>
@@ -290,6 +288,9 @@ const VirtualTryOn = (props) => {
                         alt="product image"
                         onClick={() => handleSimilarProductsClick(items)}
                       />
+                      <h4 style={{fontSize:"18px"}}>{items?.name}</h4>
+                      <p className="description" >{items?.type}</p>
+                      <p className="price" style={{fontSize:"15px"}}>{items?.price}</p>
                     </div>
                   ))}
                 </Carousel>

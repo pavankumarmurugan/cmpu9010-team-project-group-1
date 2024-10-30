@@ -45,7 +45,7 @@
   /* height: 500px; */
   object-fit: cover;
   border-radius: 20px;
-  border: 2px solid black;
+  border: 5px solid white;
 }
 
 .Right-Div-heading {
@@ -200,4 +200,10 @@
 .Similar-Products-div .react-multi-carousel-item{
   max-width: 360px !important;
   margin-right: 10px;
+}
+
+.description {
+  color: grey;
+  font-size: 18px;
+  padding-bottom: 10px;
 }

@@ -15,19 +15,19 @@ function SignupModal(props) {
   const [disabled, setDisabled] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
+    // username: "",
     firstname: "",
     lastname: "",
-    // userEmail: "",
+    email: "",
     password: "",
     role: "user",
   });
 
   const [validationField, setValidationField] = useState({
-    username: false,
+    // username: false,
     firstname: false,
     lastname: false,
-    // signUpEmail: false,
+    email: false,
     password: false,
   });
 
@@ -88,14 +88,14 @@ function SignupModal(props) {
         }));
         showerror = true;
       }
-      if (formData.username.trim() === "") {
+      if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
         setValidationField((prev) => ({
           ...prev,
-          username: true,
+          email: true,
         }));
         showerror = true;
       }
-      if (formData.password.trim() === "") {
+      if (formData.password.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
         setValidationField((prev) => ({
           ...prev,
           password: true,
@@ -103,14 +103,14 @@ function SignupModal(props) {
         showerror = true;
       }
     }else{
-      if (formData.username.trim() === "") {
+      if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
         setValidationField((prev) => ({
           ...prev,
-          username: true,
+          email: true,
         }));
         showerror = true;
       }
-      if (formData.password.trim() === "") {
+      if (formData.password.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
         setValidationField((prev) => ({
           ...prev,
           password: true,
@@ -176,14 +176,14 @@ function SignupModal(props) {
 
   const handleloginOrSignupChange = (from) => {
     setFormData({
-      username: "",
+      email: "",
       firstname: "",
       lastname: "",
       password: "",
       role: "user",
     })
     setValidationField({
-      username: false,
+      email: false,
       firstname: false,
       lastname: false,
       password: false,
@@ -249,7 +249,7 @@ function SignupModal(props) {
             )}
           </div>
           <div className="Signup-form-section">
-            <div className="google-section">
+            {/* <div className="google-section">
               <button className="Signup-form-button">
                 <FcGoogle
                   style={{ width: "20px", height: "20px", marginRight: "5px" }}
@@ -259,12 +259,12 @@ function SignupModal(props) {
                   : "Sign in with Google"}
               </button>
               <span style={{ fontSize: "18px", fontWeight: "bold" }}>or</span>
-            </div>
+            </div> */}
             <div className="inputfields-section">
               <div className="Signup-Inputs">
                 {props?.checkingLoginOrSignup === "Signup" ? (
                   <>
-                  <Typography.Title
+                  {/* <Typography.Title
                       level={5}
                       className={`${
                         validationField.username && "Error-FieldName"
@@ -283,7 +283,7 @@ function SignupModal(props) {
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
-                    />
+                    /> */}
                     <Typography.Title
                       level={5}
                       className={`${
@@ -320,6 +320,26 @@ function SignupModal(props) {
                           : "Signup-Inputfield"
                       }`}
                     />
+                    <Typography.Title
+                      level={5}
+                      className={`${
+                        validationField.email && "Error-FieldName"
+                      }`}
+                    >
+                      Email
+                    </Typography.Title>
+                    <Input
+                      placeholder="Email"
+                      name="email"
+                      autoComplete="off"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`${
+                        validationField.email
+                          ? "errorSignup-Inputfield"
+                          : "Signup-Inputfield"
+                      }`}
+                    />
                   </>
                 )
               :
@@ -328,19 +348,19 @@ function SignupModal(props) {
                 <Typography.Title
                       level={5}
                       className={`${
-                        validationField.username && "Error-FieldName"
+                        validationField.email && "Error-FieldName"
                       }`}
                     >
-                      User Name
+                     Email
                     </Typography.Title>
                     <Input
-                      placeholder="First Name"
-                      name="username"
-                      value={formData.username}
+                      placeholder="Email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
                       autoComplete="off"
                       className={`${
-                        validationField.username
+                        validationField.email
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
@@ -365,14 +385,14 @@ function SignupModal(props) {
                       : "Signup-Inputfield"
                   }`}
                 />
-                {props?.checkingLoginOrSignup !== "Signup" && (
+                {/* {props?.checkingLoginOrSignup !== "Signup" && (
                   <Typography.Title
                     level={5}
                     style={{ float: "right", cursor: "pointer" }}
                   >
                     Forget Password?
                   </Typography.Title>
-                )}
+                )} */}
               </div>
               <div class="text-xs text-text-neutral font-brittiSans">
                 &nbsp;

@@ -1,7 +1,7 @@
 import { Button, Modal } from "antd";
 import { useRef, useState } from "react";
 import Draggable from "react-draggable";
-import { FcGoogle } from "react-icons/fc";
+import { FaPlus } from "react-icons/fa";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
@@ -11,6 +11,10 @@ import { showToastSuccess } from "../GenericToasters/GenericToasters";
 import { IoMdChatboxes } from "react-icons/io";
 import "../../Styles/ChatComponent.css";
 import { FaPaperPlane } from "react-icons/fa6";
+import { IoExitOutline } from "react-icons/io5";
+import chatbackgroundimage from "../../Assets/chatbackgroundimage.jpg";
+import { Search } from "@mui/icons-material";
+import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 
 function ChatComponent(props) {
   const [disabled, setDisabled] = useState(true);
@@ -57,45 +61,52 @@ function ChatComponent(props) {
   };
   const [showChat, setShowChat] = useState(false);
   const chatHandler = () => {
-    setShowChat(!showChat);
+    props?.closeModal();
+  };
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
   };
 
   return (
     <>
-      <div>
+      {/* <div>
         <Button
           className="Chat-button"
           aria-label="Scroll to top"
           onClick={chatHandler}
         >
-          <IoMdChatboxes className="scroll-to-top-icons" />
+          <IoMdChatboxes style={{color:"white"}} />
         </Button>
-      </div>
+      </div> */}
       <Modal
-        title={
-          <div
-            style={{
-              width: "100%",
-              cursor: "move",
-            }}
-            onMouseOver={() => {
-              if (disabled) {
-                setDisabled(false);
-              }
-            }}
-            onMouseOut={() => {
-              setDisabled(true);
-            }}
-            onFocus={() => {}}
-            onBlur={() => {}}
-          >
-            {/* {props?.title} */}
-          </div>
-        }
-        open={showChat}
-        width={"70%"}
+        // title={
+        //   <div
+        //     style={{
+        //       width: "100%",
+        //       cursor: "move",
+        //     }}
+        //     onMouseOver={() => {
+        //       if (disabled) {
+        //         setDisabled(false);
+        //       }
+        //     }}
+        //     onMouseOut={() => {
+        //       setDisabled(true);
+        //     }}
+        //     onFocus={() => {}}
+        //     onBlur={() => {}}
+        //   >
+        //     {/* {props?.title} */}
+        //   </div>
+        // }
+        open={props?.isShowModel}
+        width={"80%"}
+        style={{ top: 20 }}
         onCancel={chatHandler}
-        // className="custom-modal"
+        className="custom-modal-for-collaborative-chat"
         footer={[]}
         modalRender={(modal) => (
           <Draggable
@@ -109,17 +120,119 @@ function ChatComponent(props) {
         )}
       >
         <div className="modal-container-chat">
+          {/* <h1 className="collaborative-chat-heading">Collaborative Chat</h1> */}
           <div className="chat-container">
-            <div className="left-chat-section">
-              <h2>Contacts</h2>
+            {/* <div className="notification-bar">
+              <div className="notification-bar-elements">
+                <IoExitOutline
+                  style={{ width: "30px", height: "30px", color: "white" }}
+                />
+                <IoExitOutline
+                  style={{ width: "30px", height: "30px", color: "white" }}
+                />
+              </div>
+            </div> */}
+            <div className="left-chat-section"
+            style={{ display: isVisible ? 'block' : 'none' }}>
+              <div className="search-contacts">
+                <div className="search-input">
+                  <input type="text" placeholder="Search Friends" />
+                  <button className="search-button">
+                    <Search style={{ color: "2e3b4e" }} />
+                  </button>
+                </div>
+              </div>
+              <h4>
+                <b style={{ paddingLeft: "10px" }}>GROUPS</b>
+              </h4>
               <div className="contact-list">
-                <div className="contact">Alice</div>
-                <div className="contact">Bob</div>
-                <div className="contact">Charlie</div>
+                <div className="contact-details-div">
+                  <img
+                    src={chatbackgroundimage}
+                    alt="Alice"
+                    className="contact-image"
+                  />
+                  <div className="contact-name-and-last-msg">
+                    <div className="contact-Name">Alice</div>
+                    <div className="contact-last-msg">Hi, how are you?</div>
+                  </div>
+                </div>
+                <div className="contact-details-div">
+                  <img
+                    src={chatbackgroundimage}
+                    alt="Alice"
+                    className="contact-image"
+                  />
+                  <div className="contact-name-and-last-msg">
+                    <div className="contact-Name">Salil</div>
+                    <div className="contact-last-msg">Hi, how are you?</div>
+                  </div>
+                </div>
+              </div>
+              <h4>
+                <b style={{ paddingLeft: "10px" }}>CONTACTS</b>
+              </h4>
+              <div className="contact-list">
+                <div className="contact-details-div">
+                  <img
+                    src={chatbackgroundimage}
+                    alt="Alice"
+                    className="contact-image"
+                  />
+                  <div className="contact-name-and-last-msg">
+                    <div className="contact-Name">Pavan</div>
+                    <div className="contact-last-msg">Hi, how are you?</div>
+                  </div>
+                </div>
+                <div className="contact-details-div">
+                  <img
+                    src={chatbackgroundimage}
+                    alt="Alice"
+                    className="contact-image"
+                  />
+                  <div className="contact-name-and-last-msg">
+                    <div className="contact-Name">Jane</div>
+                    <div className="contact-last-msg">Hi, how are you?</div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="right-chat-section">
-              <h2>Chat</h2>
+            <div
+              className="right-chat-section"
+              style={{
+                // backgroundImage: `url(${chatbackgroundimage})`,
+                backgroundColor: "#f7f8fa",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              <div className="chat-header">
+                <div className="back-icon">
+                <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}} onClick={toggleVisibility} />
+                </div>
+                <div className="Chat-Icon-and-Name-div">
+                <div className="Chat-Icon-and-Name">
+                  <img
+                    src={chatbackgroundimage}
+                    alt="Alice"
+                    className="contact-image"
+                  />
+                  <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
+                </div>
+                <div className="Invite-Friends">
+                  <FaPlus
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      paddingRight: "10px",
+                      paddingBottom: "3px",
+                    }}
+                  />
+                  <h3 className="invite-friends-text">Invite Friends</h3>
+                </div>
+              </div>
+              </div>
               <div className="chat-messages">
                 <div className="message-container">
                   {messages.map((msg, index) => (
@@ -130,21 +243,29 @@ function ChatComponent(props) {
                       }`}
                     >
                       {msg.sender === "user" ? (
-                        <p>{msg.text}</p>
+                          <p>{msg.text}</p>
                       ) : (
-                        <p>
-                          <strong>{msg?.sender}</strong> <br />
-                          {msg.text}
-                        </p>
+                        <div className="receiver-message">
+                          <img
+                            src={chatbackgroundimage}
+                            alt={msg.sender}
+                            className="receiver-image"
+                          />
+                          <p>
+                            <strong>{msg?.sender}</strong> <br />
+                            {msg.text}
+                          </p>
+                        </div>
                       )}
                     </div>
                   ))}
                 </div>
               </div>
+
               <div className="chat-input">
                 <input type="text" placeholder="Type a message..." />
                 <button className="send-button">
-                  <FaPaperPlane />
+                  <FaPaperPlane style={{ color: "2e3b4e" }} />
                 </button>
               </div>
             </div>

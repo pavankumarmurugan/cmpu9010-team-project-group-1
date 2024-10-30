@@ -15,6 +15,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { ListItemText } from "@mui/material";
@@ -33,6 +34,8 @@ import { Dropdown } from "antd";
 import { GenericDropdownMenu } from "../GenericCode/GenericCode";
 import SignupModal from "../Signup/Signup";
 import { useLocation, useNavigate } from "react-router-dom";
+import ChatComponent from "../ChatComponent/ChatComponent";
+import { showToastInfo } from "../GenericToasters/GenericToasters";
 
 function Headermenu() {
   {
@@ -51,6 +54,7 @@ function Headermenu() {
   const [openAccessories, setOpenAccessories] = useState(false);
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
+  const [openChatComponent, setOpenChatComponent] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   {
     /*  Use State*/
@@ -102,12 +106,17 @@ function Headermenu() {
     setOpenAccessories(!openAccessories);
   };
 
+  const handleItemClick = (item) => {
+    debugger
+    console.log(`${item} selected`);
+  };
+
   const DrawerList = (
     <Box
       sx={{ width: 300 }}
       className="mobile-menu-main"
       role="presentation"
-      onClick={toggleDrawer(false)}
+      // onClick={toggleDrawer(false)}
     >
       <List>
         <div
@@ -152,51 +161,52 @@ function Headermenu() {
                 button
                 className="item"
                 data-hidden-text="Dresses Extra Info"
+                onClick={() => handleItemClick("Women Dresses")}
               >
                 <ListItemText primary="Dresses" />
               </ListItem>
               <ListItem
                 button
                 className="submenu-item"
-                onClick={() => console.log("Tops selected")}
+                onClick={() => handleItemClick("Women Tops")}
               >
                 <ListItemText primary="Tops" />
               </ListItem>
               <ListItem
                 button
                 className="submenu-item"
-                onClick={() => console.log("Bottom selected")}
+                onClick={() => handleItemClick("Women Bottoms")}
               >
                 <ListItemText primary="Bottom" />
               </ListItem>
               <ListItem
                 button
                 className="submenu-item"
-                onClick={() => console.log("Skirts selected")}
+                onClick={() => handleItemClick("Women Skirts")}
               >
                 <ListItemText primary="Skirts" />
               </ListItem>
               <ListItem
                 button
                 className="submenu-item"
-                onClick={() => console.log("Pants selected")}
+                onClick={() => handleItemClick("Women Pants")}
               >
                 <ListItemText primary="Pants " />
               </ListItem>
               <ListItem
                 button
                 className="submenu-item"
-                onClick={() => console.log("Trousers selected")}
+                onClick={() => handleItemClick("Women Trousers")}
               >
                 <ListItemText primary="Trousers" />
               </ListItem>
-              <ListItem
+              {/* <ListItem
                 button
                 className="submenu-item"
-                onClick={() => console.log("Outerwear selected")}
+                onClick={() => handleItemClick("Women Outerwear")}
               >
                 <ListItemText primary="Outerwear" />
-              </ListItem>
+              </ListItem> */}
             </List>
           </Collapse>
         </div>
@@ -207,25 +217,25 @@ function Headermenu() {
         </div>
         <Collapse in={openTop} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button className="submenu-item">
+            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men T-Shirts")}>
               <ListItemText primary="T-Shirts" />
             </ListItem>
-            <ListItem button className="submenu-item">
+            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Shirts")}>
               <ListItemText primary="Shirts" />
             </ListItem>
-            <ListItem button className="submenu-item">
+            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Pants")}>
               <ListItemText primary="Pants" />
             </ListItem>
-            <ListItem button className="submenu-item">
+            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Trousers & Cargo")}>
               <ListItemText primary="Trousers & Cargo" />
             </ListItem>
-            <ListItem button className="submenu-item">
+            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Shorts")}>
               <ListItemText primary="Shorts" />
             </ListItem>
-            <ListItem button className="submenu-item">
+            {/* <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Outwear")}>
               <ListItemText primary="Outwear" />
-            </ListItem>
-            <ListItem button className="submenu-item">
+            </ListItem> */}
+            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Suits & Blazers")}>
               <ListItemText primary="Suits & Blazers" />
             </ListItem>
           </List>
@@ -248,16 +258,16 @@ function Headermenu() {
             </ListItem>
             <Collapse in={openMenFootwear} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Casual Shoes")}>
                   <ListItemText primary="Casual Shoes" />
                 </ListItem>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Formal Shoes")}>
                   <ListItemText primary="Formal Shoes" />
                 </ListItem>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Sneakers")}>
                   <ListItemText primary="Sneakers" />
                 </ListItem>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Boots")}>
                   <ListItemText primary="Boots" />
                 </ListItem>
               </List>
@@ -274,16 +284,16 @@ function Headermenu() {
             </ListItem>
             <Collapse in={openWomenenFootwear} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Heels")}>
                   <ListItemText primary="Heels" />
                 </ListItem>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Flats")}>
                   <ListItemText primary="Flats" />
                 </ListItem>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Sneakers")}>
                   <ListItemText primary="Sneakers" />
                 </ListItem>
-                <ListItem button className="submenu-item">
+                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Boots")}>
                   <ListItemText primary="Boots" />
                 </ListItem>
               </List>
@@ -296,22 +306,22 @@ function Headermenu() {
           </div>
           <Collapse in={openAccessories} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className="item">
+              <ListItem button className="item" onClick={() => handleItemClick("Bags")}>
                 <ListItemText primary="Bags" />
               </ListItem>
-              <ListItem button className="submenu-item">
+              <ListItem button className="submenu-item" onClick={() => handleItemClick("Jewelery")}>
                 <ListItemText primary="Jewelry" />
               </ListItem>
-              <ListItem button className="submenu-item">
+              <ListItem button className="submenu-item" onClick={() => handleItemClick("Belts & Wallets")}>
                 <ListItemText primary="Belts & Wallets" />
               </ListItem>
-              <ListItem button className="submenu-item">
+              <ListItem button className="submenu-item" onClick={() => handleItemClick("Sunglasses")}>
                 <ListItemText primary="Sunglasses" />
               </ListItem>
-              <ListItem button className="submenu-item">
+              <ListItem button className="submenu-item" onClick={() => handleItemClick("Watches")}>
                 <ListItemText primary="Watches" />
               </ListItem>
-              <ListItem button className="submenu-item">
+              <ListItem button className="submenu-item" onClick={() => handleItemClick("Hats & Caps")}>
                 <ListItemText primary="Hats & Caps" />
               </ListItem>
             </List>
@@ -438,6 +448,7 @@ function Headermenu() {
     console.log(e);
     if (e.key === "3") {
       localStorage.removeItem('user');
+      navigate("/");
       window.location.reload();
     } else {
       setCheckingLoginOrSignup("Login");
@@ -486,6 +497,17 @@ function Headermenu() {
     console.log("Selected value:", value);
   };
 
+  const handleChatComponent = () => {
+    // if(token !== undefined && token !== null){ /** will uncomment after login signup setup to email */
+    setOpenChatComponent(true);
+    // }else{
+    //   showToastInfo("Please login first to chat with your friends.");
+    // }
+  };
+  const CloseChatComponent = () => {
+    setOpenChatComponent(!openChatComponent);
+  };
+
   /** handle dropdown click */
 
   return (
@@ -496,6 +518,16 @@ function Headermenu() {
       </Drawer>
 
       {/*  drawer work*/}
+      
+      {/*  Chat component */}
+
+      <ChatComponent 
+      isShowModel={openChatComponent}
+      closeModal={setOpenChatComponent}
+      />
+
+      {/*  Chat component */}
+      
 
       {/* Signup/Login Modal */}
 
@@ -580,7 +612,7 @@ function Headermenu() {
             </a>
             <div className="header-icons">
               <StyledBadge
-                badgeContent={2}
+                badgeContent={0}
                 anchorOrigin={{
                   vertical: "top",
                   horizontal: "right",
@@ -588,7 +620,26 @@ function Headermenu() {
               >
                 <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
               </StyledBadge>
-              {/* this is for logout*/}
+
+              {/* will use later for login signup form open only*/}
+              <StyledBadge
+                badgeContent={0}
+                color="error"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+              >
+                <ShoppingBagOutlinedIcon
+                  sx={{ color: "white", fontSize: "30px" }}
+                />
+              </StyledBadge>
+
+              <QuestionAnswerOutlinedIcon
+                  sx={{ color: "white", fontSize: "30px" }}
+                  onClick={handleChatComponent}
+                />
+                {/* this is for logout*/}
               {token !== undefined && token !== null ? (
                 <Dropdown
                   menu={{
@@ -610,20 +661,6 @@ function Headermenu() {
                 </>
               )}
               {/* this is for logout*/}
-
-              {/* will use later for login signup form open only*/}
-              <StyledBadge
-                badgeContent={3}
-                color="error"
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-              >
-                <ShoppingBagOutlinedIcon
-                  sx={{ color: "white", fontSize: "30px" }}
-                />
-              </StyledBadge>
             </div>
           </div>
           <div className="search-div-mobile search-input-below-900px">
@@ -635,7 +672,7 @@ function Headermenu() {
               <h1 className="header-logo">SMARTWARDROBE</h1>
             </a>
             <div className="header-icons">
-              <Badge
+              {/* <Badge
                 badgeContent={2}
                 color="error"
                 anchorOrigin={{
@@ -644,7 +681,12 @@ function Headermenu() {
                 }}
               >
                 <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
-              </Badge>
+              </Badge> */}
+              <QuestionAnswerOutlinedIcon
+                  sx={{ color: "white", fontSize: "30px", paddingTop:"5px" }}
+                  onClick={handleChatComponent}
+                />
+                
               {token !== undefined && token !== null ? (
                 <Dropdown
                   menu={{
@@ -665,7 +707,7 @@ function Headermenu() {
                   />
                 </>
               )}
-              <Badge
+              {/* <Badge
                 badgeContent={2}
                 color="error"
                 anchorOrigin={{
@@ -676,7 +718,7 @@ function Headermenu() {
                 <ShoppingBagOutlinedIcon
                   sx={{ color: "white", fontSize: "30px" }}
                 />
-              </Badge>
+              </Badge> */}
             </div>
           </div>
           {location?.pathname === "/products" ? (

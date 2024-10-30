@@ -20,7 +20,7 @@ import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
 import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
 import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import { IoMdAdd } from "react-icons/io";
-import { RiSubtractFill } from "react-icons/ri";
+import { RiFontSize, RiSubtractFill } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
 import Footer from "../Footer/Footer";
@@ -31,6 +31,7 @@ import AccordionSummary from "@mui/joy/AccordionSummary";
 import { Input } from "antd";
 import { useLocation } from "react-router-dom";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 
 const ProductDetails = () => {
   const location = useLocation();
@@ -40,15 +41,9 @@ const ProductDetails = () => {
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
   const [selectedSize, setSelectedSize] = useState(1);
-  const [productimages, setProductImages] = useState([
-    Homeproductimage_1,
-    Homeproductimage_2,
-    Homeproductimage_4,
-    Homeproductimage_1,
-    Homeproductimage_2,
-    Homeproductimage_4,
-  ]);
+  const [productimages, setProductImages] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
+  const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const imageUrl = productimages[currentImage];
 
   const VisuallyHiddenInput = styled("input")`
@@ -89,24 +84,45 @@ const ProductDetails = () => {
 
   const callApiForModels = async () => {
     debugger;
-    let numberString = state?.item?.imageName.replace('.jpg', '');
-    let number = parseInt(numberString);
+    let numberString = state?.item?.id;
+    // let number = parseInt(numberString);
       setOpenLoader(true);
       const getModels = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${number}`, null
+        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`, null
       );
       setOpenLoader(false);
       if (getModels) {
         console.log(getModels?.data, 'details')
-        // setModelsDataFromApi(getModels?.image_links);
-        // setCurrentImage(-1);
+        setProductImages(getModels?.data);
       }
     
   };
 
+  /** this is to handle tryon modal */
+  const handleTryon = (data) => {
+    debugger;
+    localStorage.setItem('VTOData', JSON.stringify(data));
+    setOpenTryOnModal(true);
+  }
+
+  const closeTryOnModal = () => {
+    setOpenTryOnModal(false);
+  };
+  /** this is to handle tryon modal */
+
   return (
     <div>
+      {/** Virtual Tryon Component */}
+
+      {openTryOnModal && 
+      <VirtualTryOn
+      isShowModel={openTryOnModal}
+      closeModal={closeTryOnModal}
+      />}
+
+      {/** Virtual Tryon Component */}
+      
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
@@ -121,7 +137,7 @@ const ProductDetails = () => {
           <div className="product-details-conatiner">
             <div className="vertical-product-image-div">
               <div className="vertical-product-images">
-                {productimages.map((image, index) => (
+                {/* {productimages?.map((image, index) => (
                   <img
                     src={image}
                     loading="lazy"
@@ -130,28 +146,28 @@ const ProductDetails = () => {
                     key={index}
                     onClick={(e) => setCurrentImage(index)}
                   />
-                ))}
+                ))} */}
               </div>
             </div>
             <div className="main-iamge-and-description">
               <div className="product-details-main-image-div">
                 <img
-                  src={productimages[currentImage]}
+                  src={productimages?.imageUrl}
                   loading="lazy"
                   alt="Product Image"
                   className="product-details-main-image"
                 />
-                <button className="product-detailsimage-top-right-button">
+                <button className="product-detailsimage-top-right-button" onClick={() => handleTryon(productimages)}>
                   Try Out
                 </button>
-                <button className="product-detailsimage-bottom-right-button">
+                {/* <button className="product-detailsimage-bottom-right-button">
                   Create Your Avatar
-                </button>
+                </button> */}
               </div>
               <div className="Products-Details-div">
                 <div>
-                  <h1>Zapara Wedding Suit</h1>
-                  <h3>&#8364;49.99</h3>
+                  <h1>{productimages?.type}</h1>
+                  <h3>&#8364; {productimages?.price}</h3>
                 </div>
                 <div>
                   <div className="colour-div">
@@ -168,9 +184,9 @@ const ProductDetails = () => {
                     <div class="color-swatch-container">
                       <div
                         class="color-swatch"
-                        style={{ backgroundColor: "lightsalmon" }}
+                        style={{ backgroundColor: productimages?.color }}
                       ></div>
-                      <div
+                      {/* <div
                         class="color-swatch"
                         style={{ backgroundColor: "lightblue" }}
                       ></div>
@@ -185,7 +201,7 @@ const ProductDetails = () => {
                       <div
                         class="color-swatch"
                         style={{ backgroundColor: "lightpink" }}
-                      ></div>
+                      ></div> */}
                     </div>
                   </div>
                   <div className="size-div">
@@ -267,10 +283,13 @@ const ProductDetails = () => {
                       }}
                     >
                       <AccordionSummary>DESCRIPTION</AccordionSummary>
-                      <AccordionDetails>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua.
+                      <AccordionDetails
+                      sx={{
+                        fontSize:"smaller",
+                        textTransform: "capitalize",
+                        letterSpacing:"0.1rem"
+                      }}>
+                        {productimages?.description}
                       </AccordionDetails>
                     </Accordion>
                     <Accordion
@@ -283,10 +302,13 @@ const ProductDetails = () => {
                       <AccordionSummary>
                         FABRIC & HOW TO LOOK AFTER ME
                       </AccordionSummary>
-                      <AccordionDetails>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua.
+                      <AccordionDetails
+                      sx={{
+                        fontSize:"smaller",
+                        textTransform: "capitalize",
+                        letterSpacing:"0.1rem"
+                      }}>
+                        {`${productimages?.material} Wash in cold water, tumble dry low, and iron as needed for best care.`}
                       </AccordionDetails>
                     </Accordion>
                     <Accordion
@@ -297,7 +319,12 @@ const ProductDetails = () => {
                       }}
                     >
                       <AccordionSummary>SIZE GUIDE</AccordionSummary>
-                      <AccordionDetails>
+                      <AccordionDetails
+                      sx={{
+                        fontSize:"smaller",
+                        textTransform: "capitalize",
+                        letterSpacing:"0.1rem"
+                      }}>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                         sed do eiusmod tempor incididunt ut labore et dolore
                         magna aliqua.

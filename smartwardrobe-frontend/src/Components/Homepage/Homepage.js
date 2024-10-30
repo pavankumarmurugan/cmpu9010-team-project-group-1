@@ -27,7 +27,7 @@ function Homepage() {
   const getHomeData = async () => {
     debugger
     setOpenLoader(true);
-    const response = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product/get-all", null, token?.token);
+    const response = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product/get-all/1/20", null, token?.token);
     setOpenLoader(false)
     if (response) {
       setHomeData(response?.data);
