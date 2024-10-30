@@ -400,3 +400,10 @@ CREATE TABLE public.notifications (
     ON DELETE CASCADE
 );
 
+CREATE TABLE image_info_image_search (
+    id SERIAL PRIMARY KEY,
+    image_name VARCHAR(255) NOT NULL,
+    vector vector(2048) NOT  null,
+    "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP NULL
+);
