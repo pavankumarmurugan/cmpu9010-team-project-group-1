@@ -1,5 +1,3 @@
-// src/core/convertors/group/group.convertor.ts
-
 import { Injectable } from '@nestjs/common';
 import { GroupReqDto } from 'src/core/dto/group/group.req-dto';
 import { UpdateGroupDto } from 'src/core/dto/group/group.req-update-dto';

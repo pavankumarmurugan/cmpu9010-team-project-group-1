@@ -24,6 +24,7 @@ import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/m
 import { FriendRequestsUsecase } from './friend-requests/friend-requests.usecase';
 import { FriendsUsecase } from './friends/friends.usecase';
 import { GroupUsecase } from './group/group.usecase';
+import { GroupMemberUsecase } from './group-members/group-members.usecase';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { GroupUsecase } from './group/group.usecase';
     FriendRequestsUsecase,
     FriendsUsecase,
     GroupUsecase,
+    GroupMemberUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -71,6 +73,7 @@ import { GroupUsecase } from './group/group.usecase';
     FriendRequestsUsecase,
     FriendsUsecase,
     GroupUsecase,
+    GroupMemberUsecase,
   ],
 })
 export class UseCasesModule {}

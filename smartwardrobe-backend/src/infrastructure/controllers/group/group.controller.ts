@@ -28,7 +28,7 @@ import { GroupUsecase } from 'src/use-cases/group/group.usecase';
 export class GroupController {
   constructor(private readonly usecase: GroupUsecase) {}
 
-  @Get('get-all')
+  @Get('get-my-groups')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
   async getAll(
@@ -104,19 +104,16 @@ export class GroupController {
     }
   }
 
-  // @Get('get-my-groups')
-  // @ApiBearerAuth()
-  // @Roles(ROLES.ADMIN, ROLES.USER)
-  // async getByUser(
-  //   @Request() request: RequestWithUser,
-  // ): Promise<IResponse<GroupEntity[]>> {
-  //   try {
-  //     const {
-  //       user: { userId },
-  //     } = request;
-  //     return await this.usecase.getByUser(userId);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+  @Get('get-all-members-in-group/:groupId')
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async getAllMembersInGroup(
+    @Param('groupId', ParseIntPipe) groupId: number,
+  ): Promise<IResponse<GroupEntity>> {
+    try {
+      return await this.usecase.getAllMembersInGroup(groupId);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

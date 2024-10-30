@@ -168,6 +168,9 @@ export const MESSAGES = {
     },
   },
   GROUP: {
+    GET_ALL_MEMBERS_IN_GROUP: {
+      SUCCESS: 'SUCCESSFULLY FETCHED ALL MEMBERS IN GROUP',
+    },
     CREATE: {
       SUCCESS: 'SUCCESSFULLY CREATED GROUP',
     },
@@ -183,6 +186,17 @@ export const MESSAGES = {
     },
     GET_ONE: {
       SUCCESS: 'SUCCESSFULLY FETCHED GROUP',
+    },
+  },
+  GROUP_MEMBERS: {
+    CREATE: {
+      SUCCESS: 'SUCCESSFULLY CREATED GROUP MEMBER',
+    },
+    GET_ALL: {
+      SUCCESS: 'SUCCESSFULLY FETCHED GROUP MEMBERS',
+    },
+    DELETE: {
+      SUCCESS: 'DELETED GROUP MEMBER',
     },
   },
 };

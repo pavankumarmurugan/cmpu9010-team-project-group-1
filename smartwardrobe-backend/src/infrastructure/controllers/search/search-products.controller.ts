@@ -47,19 +47,15 @@ export class SearchSimilarProductsController {
     @Body() dto: SearchImageSimilarProductReqDto,
   ) {
     const { query } = dto;
-
+    let fileUrl = '';
     if (file === undefined && query === '') {
       throw new BadRequestException(MESSAGES.SEARCH.NO_FILE_OR_QUERY);
     }
 
     if (file !== undefined) {
-      const fileUrl = await this.uploadSearchPictureService.uploadFile(file);
-      return await this.usecase.searchSimilarItemsToImage(fileUrl);
+      fileUrl = await this.uploadSearchPictureService.uploadFile(file);
     }
 
-    return {
-      data: [],
-      message: MESSAGES.PRODUCT.GET.SUCCESS,
-    };
+    return await this.usecase.searchSimilarItemsToImage(fileUrl, query);
   }
 }

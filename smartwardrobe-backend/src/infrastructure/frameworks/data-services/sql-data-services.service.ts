@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IDataServices, IGenericRepository } from 'src/core/abstracts';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { UserModel } from './model/user.model';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { SQLGenericRepository } from './sql-generic-repository';
 import { ProductCategoryModel } from './model/product-category.model';
 import { ProductCategoryEntity } from 'src/core/entities/product-category/product-category.entity';
@@ -27,6 +27,8 @@ import { FriendsEntity } from 'src/core/entities/friends/friends';
 import { FriendsModel } from './model/friends.model';
 import { GroupEntity } from 'src/core/entities/group/group';
 import { GroupModel } from './model/group.model';
+import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
+import { GroupMembersModel } from './model/group-members.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -42,6 +44,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   friendRequests: IGenericRepository<FriendRequestsEntity>;
   friends: IGenericRepository<FriendsEntity>;
   group: IGenericRepository<GroupEntity>;
+  groupMembers: IGenericRepository<GroupMembersEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -68,6 +71,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private friendsRepository: Repository<FriendsEntity>,
     @InjectRepository(GroupModel)
     private groupRepository: Repository<GroupEntity>,
+    @InjectRepository(GroupMembersModel)
+    private groupMembersRepository: Repository<GroupMembersEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -97,5 +102,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
       this.friendsRepository,
     );
     this.group = new SQLGenericRepository<GroupEntity>(this.groupRepository);
+    this.groupMembers = new SQLGenericRepository<GroupMembersEntity>(
+      this.groupMembersRepository,
+    );
   }
 }

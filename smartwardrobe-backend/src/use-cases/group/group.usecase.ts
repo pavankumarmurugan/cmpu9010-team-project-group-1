@@ -1,9 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { GroupConvertor } from 'src/core/convertors/group/group.convertor';
+import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
 import { GroupReqDto } from 'src/core/dto/group/group.req-dto';
 import { UpdateGroupDto } from 'src/core/dto/group/group.req-update-dto';
+import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
 import { GroupEntity } from 'src/core/entities/group/group';
+import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 
@@ -12,6 +15,7 @@ export class GroupUsecase {
   constructor(
     private databaseService: IDataServices,
     private convertor: GroupConvertor,
+    private userDtoConvertor: UserDtoConvertor,
   ) {}
 
   async create(
@@ -111,9 +115,23 @@ export class GroupUsecase {
     }
   }
 
-  // async getByUser(userId: number): Promise<IResponse<GroupEntity[]>> {
-  //   try {
-  //     const entity: GroupEntity[] = await this.databaseService.group.getAllByProperties({})
-  //   } catch (error) {}
-  // }
+  async getAllMembersInGroup(
+    groupId: number,
+  ): Promise<IResponse<GroupEntity> | any> {
+    const groupMembersEntity: GroupMembersEntity[] =
+      await this.databaseService.groupMembers.getAllByProperties({ groupId });
+
+    const userEntity: UserEntity[] = await Promise.all(
+      groupMembersEntity.map(({ userId }) =>
+        this.databaseService.users.get({ userId }),
+      ),
+    );
+
+    const data = this.userDtoConvertor.toUserResDTOFromEntity(userEntity);
+
+    return {
+      data,
+      message: MESSAGES.GROUP.GET_ALL_MEMBERS_IN_GROUP.SUCCESS,
+    };
+  }
 }

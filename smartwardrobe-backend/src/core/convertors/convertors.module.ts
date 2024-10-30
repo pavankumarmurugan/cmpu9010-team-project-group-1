@@ -12,6 +12,7 @@ import { ChatConvertor } from './chat/chat.convertor';
 import { FriendRequestsConvertor } from './friend-requests/friend-requests.convertor';
 import { FriendsConvertor } from './friends/friend.convertor';
 import { GroupConvertor } from './group/group.convertor';
+import { GroupMemberConvertor } from './group-members/group-members.convertor';
 
 @Module({
   providers: [
@@ -28,6 +29,7 @@ import { GroupConvertor } from './group/group.convertor';
     FriendRequestsConvertor,
     FriendsConvertor,
     GroupConvertor,
+    GroupMemberConvertor,
   ],
   exports: [
     UserDtoConvertor,
@@ -43,6 +45,7 @@ import { GroupConvertor } from './group/group.convertor';
     FriendRequestsConvertor,
     FriendsConvertor,
     GroupConvertor,
+    GroupMemberConvertor,
   ],
 })
 export class ConvertorsModule {}

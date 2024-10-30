@@ -15,6 +15,7 @@ import { ImageClusterModel } from './model/image-clusters.model';
 import { FriendsRequestsModel } from './model/friend-request.model';
 import { FriendsModel } from './model/friends.model';
 import { GroupModel } from './model/group.model';
+import { GroupMembersModel } from './model/group-members.model';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { GroupModel } from './model/group.model';
       FriendsRequestsModel,
       FriendsModel,
       GroupModel,
+      GroupMembersModel,
     ]),
   ],
   providers: [

@@ -367,6 +367,7 @@ CREATE TABLE public.group_members (
   group_id INT NOT NULL,
   user_id INT NOT NULL,
   joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT NULL,
   CONSTRAINT fk_group
     FOREIGN KEY (group_id)
@@ -378,11 +379,28 @@ CREATE TABLE public.group_members (
     ON DELETE CASCADE
 );
 
+CREATE OR REPLACE FUNCTION add_group_creator_as_member()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Insert a new row into group_members with the created group's ID and creator's user ID
+  INSERT INTO public.group_members (group_id, user_id, joined_at)
+  VALUES (NEW.group_id, NEW.created_by, NOW());
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_add_creator_as_member
+AFTER INSERT ON public.group
+FOR EACH ROW
+EXECUTE FUNCTION add_group_creator_as_member();
+
 CREATE TABLE public.message_attachments (
   attachment_id SERIAL PRIMARY KEY,
   message_id INT NOT NULL,
   attachment_type VARCHAR(50) NOT NULL, 
   updated_at TIMESTAMP DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   url VARCHAR(255) NOT NULL,            
   CONSTRAINT fk_message
     FOREIGN KEY (message_id)

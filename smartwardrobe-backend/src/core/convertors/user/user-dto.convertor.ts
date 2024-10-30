@@ -9,13 +9,16 @@ import { UserEntity } from 'src/core/entities/user/user.entity';
 @Injectable()
 export class UserDtoConvertor {
   toUserResDTOFromEntity(entities: UserEntity[]): UserResDTO[] {
-    return entities.map(({ firstname, lastname, username, userId, role }) => ({
-      firstname,
-      lastname,
-      username,
-      userId,
-      role,
-    }));
+    return entities.map(
+      ({ firstname, lastname, username, userId, role, profilePic }) => ({
+        firstname,
+        lastname,
+        username,
+        userId,
+        role,
+        profilePic,
+      }),
+    );
   }
   toEntityFromUserReqDTO(dto: UserReqDTO, hashPassword: string): UserEntity {
     const { firstname, lastname, username, role } = dto;
@@ -60,13 +63,14 @@ export class UserDtoConvertor {
   }
 
   toUserResDTOFromGetMyProfile(entity: UserEntity): UserResDTO {
-    const { firstname, lastname, username, userId, role } = entity;
+    const { firstname, lastname, username, userId, role, profilePic } = entity;
     return {
       firstname,
       lastname,
       username,
       userId,
       role,
+      profilePic,
     };
   }
 

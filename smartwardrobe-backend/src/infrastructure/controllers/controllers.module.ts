@@ -27,6 +27,7 @@ import { RecommendationController } from './recommendation/recommendation.contro
 import { FriendRequestsController } from './friend-requests/friend-requests.controller';
 import { FriendsController } from './friends/friend.controller';
 import { GroupController } from './group/group.controller';
+import { GroupMemberController } from './group-members/group-members.controller';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { GroupController } from './group/group.controller';
     FriendRequestsController,
     FriendsController,
     GroupController,
+    GroupMemberController,
   ],
   providers: [
     // {
