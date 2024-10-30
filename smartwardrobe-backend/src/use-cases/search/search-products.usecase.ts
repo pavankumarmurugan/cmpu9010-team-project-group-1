@@ -18,76 +18,9 @@ export class SearchProductUsecase {
     private productConvertor: ProductConvertor,
   ) {}
 
-  // async searchSimilarItemsToImage(
-  //   filePath: string,
-  //   query: string,
-  // ): Promise<IResponse<ProductResDto[]>> {
-  //   try {
-  //     let imageSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
-  //       {
-  //         data: [],
-  //         status: 200,
-  //         statusText: 'OK',
-  //         headers: {},
-  //         config: null,
-  //       };
-  //     let textSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
-  //       {
-  //         data: [],
-  //         status: 200,
-  //         statusText: 'OK',
-  //         headers: {},
-  //         config: null,
-  //       };
-
-  //     if (filePath !== '') {
-  //       imageSearchResults = await await firstValueFrom(
-  //         this.services.searchProductToSimilarImages(filePath),
-  //       );
-  //     }
-
-  //     if (query !== '') {
-  //       textSearchResults = await await firstValueFrom(
-  //         this.services.searchUsingNLP(query),
-  //       );
-  //     }
-
-  //     const results: SearchImageSimilarProductResDto[] =
-  //       imageSearchResults.data.concat(textSearchResults.data);
-
-  //     const unique = results.filter((v, i, a) => {
-  //       const seen = new Set();
-  //       return a.filter(
-  //         (item) => !seen.has(item.image_name) && seen.add(item.image_name),
-  //       );
-  //     });
-
-  //     const entities = await Promise.all(
-  //       unique.map(async ({ image_name }) =>
-  //         this.databaseService.product.get({ imageName: image_name }),
-  //       ),
-  //     );
-  //     const productEntities: ProductEntity[] = entities.filter(
-  //       (entity) => entity !== null,
-  //     );
-
-  //     const data: ProductResDto[] =
-  //       this.productConvertor.toProductResDtoFromEntities(productEntities);
-
-  //     return {
-  //       data,
-  //       message: MESSAGES.PRODUCT.GET.SUCCESS,
-  //     };
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
-
   async searchSimilarItemsToImage(
     filePath: string,
     query: string,
-    page: number = 1, // Default to page 1 if not provided
-    limit: number = 10, // Default limit of items per page
   ): Promise<IResponse<ProductResDto[]>> {
     try {
       let imageSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
@@ -108,13 +41,13 @@ export class SearchProductUsecase {
         };
 
       if (filePath !== '') {
-        imageSearchResults = await firstValueFrom(
+        imageSearchResults = await await firstValueFrom(
           this.services.searchProductToSimilarImages(filePath),
         );
       }
 
       if (query !== '') {
-        textSearchResults = await firstValueFrom(
+        textSearchResults = await await firstValueFrom(
           this.services.searchUsingNLP(query),
         );
       }
@@ -122,7 +55,6 @@ export class SearchProductUsecase {
       const results: SearchImageSimilarProductResDto[] =
         imageSearchResults.data.concat(textSearchResults.data);
 
-      // Filter unique items by `image_name`
       const unique = results.filter((v, i, a) => {
         const seen = new Set();
         return a.filter(
@@ -130,13 +62,8 @@ export class SearchProductUsecase {
         );
       });
 
-      // Pagination logic
-      const startIndex = (page - 1) * limit;
-      const paginatedUnique = unique.slice(startIndex, startIndex + limit);
-
-      // Fetch entities for the paginated items
       const entities = await Promise.all(
-        paginatedUnique.map(async ({ image_name }) =>
+        unique.map(async ({ image_name }) =>
           this.databaseService.product.get({ imageName: image_name }),
         ),
       );
