@@ -26,6 +26,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { RecommendationController } from './recommendation/recommendation.controller';
 import { FriendRequestsController } from './friend-requests/friend-requests.controller';
 import { FriendsController } from './friends/friend.controller';
+import { GroupController } from './group/group.controller';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { FriendsController } from './friends/friend.controller';
     RecommendationController,
     FriendRequestsController,
     FriendsController,
+    GroupController,
   ],
   providers: [
     // {

@@ -167,4 +167,22 @@ export const MESSAGES = {
       SUCCESS: 'DELETED FRIEND',
     },
   },
+  GROUP: {
+    CREATE: {
+      SUCCESS: 'SUCCESSFULLY CREATED GROUP',
+    },
+    GET: {
+      SUCCESS: 'SUCCESSFULLY FETCHED GROUP',
+    },
+    UPDATE: {
+      SUCCESS: 'SUCCESSFULLY UPDATED GROUP',
+      UNAUTHORIZED: 'UNAUTHORIZED TO UPDATE GROUP',
+    },
+    DELETE: {
+      SUCCESS: 'DELETED GROUP',
+    },
+    GET_ONE: {
+      SUCCESS: 'SUCCESSFULLY FETCHED GROUP',
+    },
+  },
 };

@@ -355,6 +355,7 @@ CREATE TABLE public.group (
   group_name VARCHAR(255) NOT NULL,
   created_by INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT NULL,
   CONSTRAINT fk_creator
     FOREIGN KEY (created_by)
     REFERENCES public.user (user_id)
@@ -366,6 +367,7 @@ CREATE TABLE public.group_members (
   group_id INT NOT NULL,
   user_id INT NOT NULL,
   joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT NULL,
   CONSTRAINT fk_group
     FOREIGN KEY (group_id)
     REFERENCES public.group (group_id)
@@ -380,6 +382,7 @@ CREATE TABLE public.message_attachments (
   attachment_id SERIAL PRIMARY KEY,
   message_id INT NOT NULL,
   attachment_type VARCHAR(50) NOT NULL, 
+  updated_at TIMESTAMP DEFAULT NULL,
   url VARCHAR(255) NOT NULL,            
   CONSTRAINT fk_message
     FOREIGN KEY (message_id)
@@ -394,6 +397,7 @@ CREATE TABLE public.notifications (
   content VARCHAR(255) NOT NULL,      
   status VARCHAR(20) DEFAULT 'unread',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT NULL,
   CONSTRAINT fk_user
     FOREIGN KEY (user_id)
     REFERENCES public.user (user_id)
