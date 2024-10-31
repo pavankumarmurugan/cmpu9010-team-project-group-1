@@ -36,15 +36,13 @@ export class UploadSearchPictureService {
         if (error.code === 'NotFound') {
           return false;
         }
-        throw error; // rethrow other errors
+        throw error;
       });
 
     if (fileExists) {
-      // If the file exists, return its URL
       return `https://${this.bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
     }
 
-    // If the file does not exist, proceed with the upload
     const params: AWS.S3.PutObjectRequest = {
       Bucket: this.bucketName,
       Key: fileName,

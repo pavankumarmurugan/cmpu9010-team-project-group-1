@@ -179,4 +179,19 @@ export class UserUsecase {
       throw error;
     }
   }
+
+  async searchUser(searchKey: string) {
+    try {
+      const userEntities: UserEntity[] =
+        await this.databaseService.users.search(searchKey);
+      const data: UserResDTO[] =
+        this.userDtoConvertor.toUserResDTOFromEntity(userEntities);
+      return {
+        data,
+        message: MESSAGES.USER.GET_ALL.SUCCESS,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

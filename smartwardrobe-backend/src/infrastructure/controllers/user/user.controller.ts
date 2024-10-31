@@ -131,7 +131,7 @@ export class UserController {
   @Post('upload-profile-picture')
   @UseInterceptors(
     FileInterceptor('file', {
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
       fileFilter: (req, file, callback) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
           return callback(
@@ -166,5 +166,17 @@ export class UserController {
     const fileUrl = await this.uploadPicture.uploadFile(file, userId);
 
     return await this.userUsecase.uploadProfilePicture(userId, fileUrl);
+  }
+
+  @Get('search/:searchKey')
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async searchUser(@Param('searchKey') searchKey: string) {
+    try {
+      return await this.userUsecase.searchUser(searchKey);
+    } catch (error) {
+      throw error;
+    }
   }
 }

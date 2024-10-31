@@ -27,7 +27,7 @@ export class SearchSimilarProductsController {
   @Post('get-all-similar-products-to-image/:page/:limit')
   @UseInterceptors(
     FileInterceptor('file', {
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
       fileFilter: (req, file, callback) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
           return callback(

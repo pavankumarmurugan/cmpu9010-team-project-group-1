@@ -26,9 +26,8 @@ export class LikesUsecase {
         userId,
         dto,
       );
-      const entity: LikesEntity = await this.databaseService.likes.create(
-        likesEntity,
-      );
+      const entity: LikesEntity =
+        await this.databaseService.likes.create(likesEntity);
       const data: LikesResDto = this.convertor.toLikesResDtoFromEntity(entity);
       return {
         data,
@@ -88,9 +87,12 @@ export class LikesUsecase {
     }
   }
 
-  async delete(id: number): Promise<IResponse<null>> {
+  async delete(userId: number, productId: number): Promise<IResponse<null>> {
     try {
-      await this.databaseService.likes.delete(id);
+      await this.databaseService.likes.deleteByProperties({
+        userId,
+        productId,
+      });
       return {
         data: null,
         message: MESSAGES.LIKES.DELETE.SUCCESS,
@@ -106,6 +108,18 @@ export class LikesUsecase {
       return {
         data,
         message: MESSAGES.PRODUCT_INVENTORY.GET.SUCCESS,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteAllLikes(userId: number): Promise<IResponse<null>> {
+    try {
+      await this.databaseService.likes.deleteByProperties({ userId });
+      return {
+        data: null,
+        message: MESSAGES.LIKES.DELETE_ALL.SUCCESS,
       };
     } catch (error) {
       throw error;
