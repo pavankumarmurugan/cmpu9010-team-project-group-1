@@ -199,4 +199,9 @@ export const MESSAGES = {
       SUCCESS: 'DELETED GROUP MEMBER',
     },
   },
+  VTO_IMAGE_SEARCH: {
+    GET_ALL: {
+      SUCCESS: 'SUCCESSFULLY FETCHED VTO IMAGE SEARCH',
+    },
+  },
 };

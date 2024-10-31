@@ -13,6 +13,7 @@ import { FriendRequestsConvertor } from './friend-requests/friend-requests.conve
 import { FriendsConvertor } from './friends/friend.convertor';
 import { GroupConvertor } from './group/group.convertor';
 import { GroupMemberConvertor } from './group-members/group-members.convertor';
+import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
 
 @Module({
   providers: [
@@ -30,6 +31,7 @@ import { GroupMemberConvertor } from './group-members/group-members.convertor';
     FriendsConvertor,
     GroupConvertor,
     GroupMemberConvertor,
+    VtoImageSearchConvertor,
   ],
   exports: [
     UserDtoConvertor,
@@ -46,6 +48,7 @@ import { GroupMemberConvertor } from './group-members/group-members.convertor';
     FriendsConvertor,
     GroupConvertor,
     GroupMemberConvertor,
+    VtoImageSearchConvertor,
   ],
 })
 export class ConvertorsModule {}

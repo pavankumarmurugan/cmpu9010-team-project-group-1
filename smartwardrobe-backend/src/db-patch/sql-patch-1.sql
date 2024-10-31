@@ -422,6 +422,17 @@ CREATE TABLE public.notifications (
     ON DELETE CASCADE
 );
 
+
+CREATE TABLE vto_image_search (
+  id SERIAL PRIMARY KEY,
+  model_image_name VARCHAR(255) NOT NULL,
+  image_name VARCHAR(255) NOT NULL,
+  vto_s3_url TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT NULL,
+);
+
+
 CREATE TABLE image_info_image_search (
     id SERIAL PRIMARY KEY,
     image_name VARCHAR(255) NOT NULL,

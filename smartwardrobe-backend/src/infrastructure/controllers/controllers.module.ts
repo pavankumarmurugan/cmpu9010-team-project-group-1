@@ -29,6 +29,7 @@ import { FriendsController } from './friends/friend.controller';
 import { GroupController } from './group/group.controller';
 import { GroupMemberController } from './group-members/group-members.controller';
 import { CacheModule } from '@nestjs/cache-manager';
+import { VtoImageSearchController } from './vto/vto.controller';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     FriendsController,
     GroupController,
     GroupMemberController,
+    VtoImageSearchController,
   ],
   providers: [
     // {
