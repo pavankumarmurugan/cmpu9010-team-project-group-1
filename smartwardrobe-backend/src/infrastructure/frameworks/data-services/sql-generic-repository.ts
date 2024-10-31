@@ -52,6 +52,7 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
       where: { ...properties },
     });
   }
+
   delete(id: any) {
     return this._repository.delete(id);
   }
@@ -59,6 +60,7 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
   async deleteByProperties(properties: any) {
     return await this._repository.delete({ ...properties });
   }
+
   async getAllByIdsIn(properties: any, propertyName: string): Promise<T[]> {
     const query: any = {
       [propertyName]: In(properties),
@@ -69,9 +71,9 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
   search(searchCriteria: any): Promise<T[]> {
     return this._repository.find({
       where: [
-        {
-          title: Like(`%${searchCriteria}%`),
-        },
+        { email: Like(`%${searchCriteria}%`) },
+        { firstname: Like(`%${searchCriteria}%`) },
+        { lastname: Like(`%${searchCriteria}%`) },
       ] as any,
     });
   }
