@@ -29,6 +29,8 @@ import { GroupEntity } from 'src/core/entities/group/group';
 import { GroupModel } from './model/group.model';
 import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
 import { GroupMembersModel } from './model/group-members.model';
+import { VtoImageSearchEntity } from 'src/core/entities/vto/vto.entity';
+import { VtoImageSearchModel } from './model/vto.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -45,6 +47,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   friends: IGenericRepository<FriendsEntity>;
   group: IGenericRepository<GroupEntity>;
   groupMembers: IGenericRepository<GroupMembersEntity>;
+  vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -73,6 +76,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private groupRepository: Repository<GroupEntity>,
     @InjectRepository(GroupMembersModel)
     private groupMembersRepository: Repository<GroupMembersEntity>,
+    @InjectRepository(VtoImageSearchModel)
+    private vtoImageSearchRepository: Repository<VtoImageSearchEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -104,6 +109,9 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     this.group = new SQLGenericRepository<GroupEntity>(this.groupRepository);
     this.groupMembers = new SQLGenericRepository<GroupMembersEntity>(
       this.groupMembersRepository,
+    );
+    this.vtoImageSearch = new SQLGenericRepository<VtoImageSearchEntity>(
+      this.vtoImageSearchRepository,
     );
   }
 }

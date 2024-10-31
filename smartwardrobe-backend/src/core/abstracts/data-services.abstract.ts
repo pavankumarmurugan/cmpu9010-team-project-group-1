@@ -11,6 +11,7 @@ import { ProductCategoryEntity } from '../entities/product-category/product-cate
 import { ProductInventoryEntity } from '../entities/product-inventory/product-inventory.entity';
 import { ProductEntity } from '../entities/product/product.entity';
 import { UserEntity } from '../entities/user/user.entity';
+import { VtoImageSearchEntity } from '../entities/vto/vto.entity';
 import { IGenericRepository } from './generic-repository.abstract';
 
 export abstract class IDataServices {
@@ -27,4 +28,5 @@ export abstract class IDataServices {
   abstract friends: IGenericRepository<FriendsEntity>;
   abstract group: IGenericRepository<GroupEntity>;
   abstract groupMembers: IGenericRepository<GroupMembersEntity>;
+  abstract vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
 }

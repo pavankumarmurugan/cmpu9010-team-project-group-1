@@ -16,6 +16,7 @@ import { FriendsRequestsModel } from './model/friend-request.model';
 import { FriendsModel } from './model/friends.model';
 import { GroupModel } from './model/group.model';
 import { GroupMembersModel } from './model/group-members.model';
+import { VtoImageSearchModel } from './model/vto.model';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { GroupMembersModel } from './model/group-members.model';
       FriendsModel,
       GroupModel,
       GroupMembersModel,
+      VtoImageSearchModel,
     ]),
   ],
   providers: [
