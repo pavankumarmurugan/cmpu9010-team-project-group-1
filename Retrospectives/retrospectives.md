@@ -71,3 +71,27 @@
 
 - Find ways to make natural language search more precise. At present, the data set may not be comprehensive enough. The data set does not have more specific product descriptions such as seasons and wearing occasions, which may be one of the reasons affecting the search results.
 - Interim reports and demos
+
+
+# 🕘 Week 6 18/10/2024 
+
+****
+## Participants: All members
+
+## What worked well
+
+- Meeting in person on Thursday make our presentation more organized.
+- Finish interim report and ppt.
+
+
+## What could be improved
+
+- Integration of front-end and back-end need to be done.
+- Deploy as much as we can for demo.
+- Keep implementing chatroom feature in both front-end and back-end.
+
+
+## What will we commit to doing in the next Sprint?
+
+- Deploy all features we have developed for demo.
+
