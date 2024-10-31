@@ -36,6 +36,8 @@ import SignupModal from "../Signup/Signup";
 import { useLocation, useNavigate } from "react-router-dom";
 import ChatComponent from "../ChatComponent/ChatComponent";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
+import { headerSearchValue, headerSearchValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch } from "react-redux";
 
 function Headermenu() {
   {
@@ -44,6 +46,7 @@ function Headermenu() {
   let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [login, setlogin] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
@@ -481,10 +484,18 @@ function Headermenu() {
     setSearchValue(e.target.value);
   };
 
+  const handleKeyDown = (e) => {
+    debugger
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   const handleSearch = () => {
     debugger;
     if (searchValue.trim() !== "") {
-      navigate("/products", { state: { searchValue } });
+      dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue }));
+      navigate("/products");
     }
   };
 
@@ -572,6 +583,7 @@ function Headermenu() {
                   placeholder="What do you want?"
                   value={searchValue}
                   onChange={onChangeSearchValue}
+                  onKeyDown={handleKeyDown}
                   autoComplete="off"
                   endAdornment={
                     <InputAdornment position="end">
@@ -745,6 +757,7 @@ function Headermenu() {
                   style={{ color: "white" }}
                   value={searchValue}
                   onChange={onChangeSearchValue}
+                  onKeyDown={handleKeyDown}
                   autoComplete="off"
                   endAdornment={
                     <InputAdornment position="end">

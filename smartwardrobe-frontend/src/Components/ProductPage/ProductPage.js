@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Headermenu from "../Headermenu/Headermenu";
 import "../../Styles/ProductPage.css";
@@ -36,7 +36,7 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
-import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
+import { headerSearchValueSuccess, homeDataSuccess } from "../../redux/slices/HomeDataSlice";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
 
@@ -47,12 +47,18 @@ const ProductPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   let { state } = location;
+  // let pagination = 1;
+  // let imagePagination = 1;
+  const pagination = useRef(1);
+  const imagePagination = useRef(1);
   const homeData = useSelector((state) => state.homeData.homeData);
+  const headerSearchValue = useSelector((state) => state.homeData.headerSearchValue);
   console.log(homeData, "homeDataproducts");
   // let virtualTryOnClickedData = {};
   // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
+  const [hideLoadMoreButton, sethideLoadMoreButton] = useState(false);
   const [productsDataForFilter, setProductsDataForFilter] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -187,21 +193,52 @@ const ProductPage = () => {
     getProductsData();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      // state.searchValue = null;
+      pagination.current = 1;
+      imagePagination.current = 1;
+      setFormData({
+        searchValue: "",
+        image: null,
+        imagePreview: null,
+        Category: [],
+        Size: [],
+        Price: "Price",
+        fromPrice: "",
+        toPrice: "",
+        Colour: [],
+      });
+    };
+  }, []);
+
   const getProductsData = async () => {
     debugger;
-    // setOpenLoader(true);
-    const response = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/product/get-all/1/100",
-      null,
-      token?.token
-    );
-    // setOpenLoader(false)
-    setLoading(false);
-    if (response) {
-      setProducts(response?.data);
-      setProductsDataForFilter(response?.data);
-      dispatch(homeDataSuccess({ homeData: response?.data }));
+    if (headerSearchValue) {
+      setFormData((prevState) => ({
+        ...prevState,
+        searchValue: headerSearchValue,
+      }));
+      handleSearch(headerSearchValue);
+      // state.searchValue = null;
+    } else {
+      // setOpenLoader(true);
+      const response = await apiCall(
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/product/get-all/${pagination?.current}/100`,
+        null,
+        token?.token
+      );
+      // setOpenLoader(false)
+      setLoading(false);
+      if (response) {
+        setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+        setProductsDataForFilter((prevProducts) => [
+          ...prevProducts,
+          ...response?.data,
+        ]);
+        dispatch(homeDataSuccess({ homeData: response?.data }));
+      }
     }
   };
 
@@ -219,17 +256,19 @@ const ProductPage = () => {
   };
 
   const handleSearch = async (event) => {
-    if (formData?.searchValue !== "" || file) {
-      event.preventDefault();
+    debugger;
+    let searchValue = event === null ? formData?.searchValue : event;
+    if (searchValue !== "" || file) {
+      // event.preventDefault();
       const formData = new FormData();
       if (file) {
         formData.append("file", file);
       }
-      formData.append("text", formData?.searchValue);
+      formData.append("query", searchValue);
       try {
         setOpenLoader(true);
         const response = await fetch(
-          "https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image",
+          `https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
           {
             method: "POST",
             headers: {
@@ -238,6 +277,7 @@ const ProductPage = () => {
             body: formData,
           }
         );
+        setLoading(false);
         setOpenLoader(false);
         if (!response.ok) {
           const errorData = await response.json();
@@ -245,51 +285,63 @@ const ProductPage = () => {
         }
         const result = await response.json();
         removeImage();
-        setProducts(result?.data);
+        if (imagePagination?.current === 1) {
+          setProducts(result?.data);
+        } else {
+          setProducts((prevProducts) => [...prevProducts, ...result?.data]);
+        }
+        if (result?.data?.length === 0) {
+          sethideLoadMoreButton(true);
+        }
       } catch (error) {
         console.error("There was an error uploading the image:", error);
       }
     }
   };
-
-  // const handleSearch = async () => {
-  //   debugger
-  //   if (formData?.searchValue !== "" || formData?.image !== null) {
-  //     const { image } = formData; // Extract the image file
-
-  //     // Check if the image is present
-  //     if (!image) {
-  //       console.error("No image file found");
-  //       return; // Exit if there's no image
+  // const handleSearch = async (event) => {
+  //   if (formData?.searchValue !== "" || file) {
+  //     event.preventDefault();
+  //     const formData = new FormData();
+  //     if (file) {
+  //       formData.append("file", file);
   //     }
-
-  //     // Set loading state
-  //     setOpenLoader(true);
-
-  //     const fileUpload = new FormData();
-  //     fileUpload.append("File", formData?.image); // Append the image file
-
-  //     for (let [key, value] of fileUpload.entries()) {
-  //       console.log(key, value); // Show what you're sending
-  //     }
-  //     console.log(fileUpload, "fileUpload");
+  //     formData.append("text", formData?.searchValue);
   //     try {
-  //       const response = await apiCall(
-  //         "POST",
-  //         "https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image",
-  //         fileUpload
+  //       setOpenLoader(true);
+  //       const response = await fetch(
+  //         `https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image/${imagePagination}/100`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             accept: "*/*",
+  //           },
+  //           body: formData,
+  //         }
   //       );
-
-  //       console.log("API Response:", response);
+  //       setOpenLoader(false);
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         showToastError(errorData?.message || response.statusText);
+  //       }
+  //       const result = await response.json();
+  //       removeImage();
+  //       setProducts(result?.data);
   //     } catch (error) {
-  //       console.error("API call error:", error);
-  //     } finally {
-  //       setOpenLoader(false); // Stop loading
+  //       console.error("There was an error uploading the image:", error);
   //     }
-  //   } else {
-  //     console.warn("No search value or image provided");
   //   }
   // };
+
+  const handleLoadMoreProducts = () => {
+    debugger;
+    if (file || formData?.searchValue || headerSearchValue) {
+      imagePagination.current = imagePagination.current + 1;
+      handleSearch(null);
+    } else {
+      pagination.current = pagination.current + 1;
+      getProductsData();
+    }
+  };
 
   const handleSearchInput = (e) => {
     let { value } = e.target;
@@ -297,11 +349,12 @@ const ProductPage = () => {
       ...prevState,
       searchValue: value,
     }));
+    dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      handleSearch();
+      handleSearch(null);
     }
   };
 
@@ -430,9 +483,9 @@ const ProductPage = () => {
             </div> */}
         <div className="SearchedContent-div">
           <div className="search-filter-div">
-            <div className="searched-result-bar-div">
+            {/* <div className="searched-result-bar-div">
               <h3>Search Results</h3>
-            </div>
+            </div> */}
             <div className="productsearch-input-div">
               {/* <div className="search-input-container"> */}
               <FormControl
@@ -564,7 +617,7 @@ const ProductPage = () => {
                 width: "100%",
                 display: "flex",
                 justifyContent: "center",
-                marginTop: "30px",
+                marginTop: "20px",
               }}
             >
               <div className="filters-section">
@@ -592,6 +645,8 @@ const ProductPage = () => {
                       width: "100%",
                       letterSpacing: "0.1rem",
                       textTransform: "capitalize",
+                      borderRadius:"5px",
+                      height: "30px"
                     }}
                     placeholder="Price"
                     name={formData?.Price}
@@ -688,6 +743,17 @@ const ProductPage = () => {
             </div>
           )}
         </div>
+        {!hideLoadMoreButton && (
+          <div className="LoadMore-Div">
+            <Button
+              className="LoadMore-Button"
+              color="default"
+              onClick={handleLoadMoreProducts}
+            >
+              Load More Products
+            </Button>
+          </div>
+        )}
         <Footer />
       </div>
     </>

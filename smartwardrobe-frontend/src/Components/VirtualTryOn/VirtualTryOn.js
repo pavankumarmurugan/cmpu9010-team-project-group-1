@@ -288,7 +288,7 @@ const VirtualTryOn = (props) => {
                         alt="product image"
                         onClick={() => handleSimilarProductsClick(items)}
                       />
-                      <h4 style={{fontSize:"18px"}}>{items?.name}</h4>
+                      <h3 style={{fontSize:"18px"}}>{items?.name}</h3>
                       <p className="description" >{items?.type}</p>
                       <p className="price" style={{fontSize:"15px"}}>{items?.price}</p>
                     </div>

@@ -25,7 +25,7 @@
     display: grid;
     grid-template-columns: 1.2fr 1.8fr 1fr;
     align-items: center;
-    padding-top: 10px;
+    padding-top: 15px;
     padding-bottom: 10px;
 }
 
@@ -33,7 +33,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 10px;
+    padding-top: 15px;
     padding-bottom: 10px;
 }
 

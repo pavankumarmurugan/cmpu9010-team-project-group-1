@@ -51,7 +51,7 @@ export const GenericDropdownMenu = ({ menuData, handleChange }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "1rem",
+          marginTop: "5px",
           marginLeft: "50px",
         }}
         mode="horizontal"
@@ -161,33 +161,33 @@ export const HomeProductSection = (props) => {
 
 export const ProductPageCards = ({data,handleTryon}) => {
   const navigate = useNavigate();
-  const [visibleProducts, setVisibleProducts] = useState(24);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [visibleProducts, setVisibleProducts] = useState(100);
+  // const [isLoading, setIsLoading] = useState(false);
 
   // Function to load more products
-  const loadMoreProducts = () => {
-    if (!isLoading) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setVisibleProducts((prev) => prev + 24);
-        setIsLoading(false);
-      }, 500);
-    }
-  };
+  // const loadMoreProducts = () => {
+  //   if (!isLoading) {
+  //     setIsLoading(true);
+  //     setTimeout(() => {
+  //       setVisibleProducts((prev) => prev + 24);
+  //       setIsLoading(false);
+  //     }, 500);
+  //   }
+  // };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.innerHeight + window.scrollY;
-      const threshold = document.body.offsetHeight * 0.95;
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const scrollPosition = window.innerHeight + window.scrollY;
+  //     const threshold = document.body.offsetHeight * 0.95;
 
-      if (scrollPosition >= threshold) {
-        loadMoreProducts();
-      }
-    };
+  //     if (scrollPosition >= threshold) {
+  //       loadMoreProducts();
+  //     }
+  //   };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
   const clickOnTryOn = (e) => {
     debugger
     handleTryon(e);
@@ -201,7 +201,7 @@ export const ProductPageCards = ({data,handleTryon}) => {
 
   return (
     <div className="productpagecards">
-      {data?.slice(0, visibleProducts).map((item, index) => (
+      {data?.map((item, index) => (
         <div className="card" key={index}>
           <div className="image-container">
             <button className="try-on-button" onClick={() => clickOnTryOn(item)}>Try On</button>
@@ -213,11 +213,11 @@ export const ProductPageCards = ({data,handleTryon}) => {
               onClick={() => handleProductDetails(item)}
             />
           </div>
-          <h4>{item?.category}</h4>
+          <h3>{item?.name}</h3>
           <p className="description">{item?.type}</p>
-          <p className="price">{item?.price}</p>
+          <p className="price">&euro;{Number(item?.price)}</p>
           <p className="button-container">
-            <Button className="View-Product-Button" color="default">
+            <Button className="View-Product-Button" color="default" onClick={() => handleProductDetails(item)}>
               View
             </Button>
           </p>
@@ -232,7 +232,6 @@ export const ProductPageCards = ({data,handleTryon}) => {
 
 export const Productfilterdropdowns = (props) => {
   const handleChange = (selectedValues) => {
-    // Pass both name and selected values to the parent
     props.onChange(props.fieldName, selectedValues);
   };
   const handleReset = () => {
@@ -242,7 +241,7 @@ export const Productfilterdropdowns = (props) => {
     <Select
       mode="multiple"
       className="filterdropdowns"
-      style={{ width: '100%', letterSpacing: "0.1rem", textTransform: "capitalize" }}
+      style={{ width: '100%', letterSpacing: "0.1rem", textTransform: "capitalize", borderRadius:"5px" }}
       placeholder={props?.placeholder}
       name={props?.name}
       options={props?.options}
