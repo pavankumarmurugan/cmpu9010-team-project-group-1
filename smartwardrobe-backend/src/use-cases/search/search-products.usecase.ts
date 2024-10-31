@@ -9,13 +9,15 @@ import { ProductResDto } from 'src/core/dto/product/product-res-dto';
 import { SearchImageSimilarProductResDto } from 'src/core/dto/search/search-image-similar-products-res-dto';
 import { AxiosResponse } from 'axios';
 import { ProductEntity } from 'src/core/entities/product/product.entity';
+import { CacheService } from 'src/infrastructure/services/cache/cache.service';
 
 @Injectable()
 export class SearchProductUsecase {
   constructor(
-    private services: SearchProductsService,
-    private databaseService: IDataServices,
-    private productConvertor: ProductConvertor,
+    private readonly services: SearchProductsService,
+    private readonly databaseService: IDataServices,
+    private readonly productConvertor: ProductConvertor,
+    private readonly cacheService: CacheService,
   ) {}
 
   async searchSimilarItemsToImage(
@@ -24,6 +26,17 @@ export class SearchProductUsecase {
     page: number = 1,
     limit: number = 10,
   ): Promise<IResponse<ProductResDto[]>> {
+    const cacheKey = `similarProducts:${filePath.trim()}:${query.trim()}:${page}:${limit}`;
+
+    const cachedData =
+      await this.cacheService.getFromCache<ProductResDto[]>(cacheKey);
+    if (cachedData) {
+      return {
+        data: cachedData,
+        message: MESSAGES.PRODUCT.GET.SUCCESS + ' (from cache)',
+      };
+    }
+
     try {
       let imageSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
         {
@@ -77,6 +90,8 @@ export class SearchProductUsecase {
 
       const data: ProductResDto[] =
         this.productConvertor.toProductResDtoFromEntities(productEntities);
+
+      await this.cacheService.setToCache<ProductResDto[]>(cacheKey, data);
 
       return {
         data,

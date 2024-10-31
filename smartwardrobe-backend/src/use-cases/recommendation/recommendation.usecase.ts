@@ -3,6 +3,7 @@ import { IDataServices } from 'src/core/abstracts';
 import { RecommendationsResDto } from 'src/core/dto/recommendations/recommendations-res-dto';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { CacheService } from 'src/infrastructure/services/cache/cache.service';
 import { FaissService } from 'src/infrastructure/services/faiss/faiss.service';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class RecommendationUsecase {
   constructor(
     private readonly faissService: FaissService,
     private readonly dataService: IDataServices,
+    private readonly cacheService: CacheService,
   ) {}
 
   public async findSimilarProducts(
@@ -17,6 +19,17 @@ export class RecommendationUsecase {
     topN: number,
   ): Promise<IResponse<RecommendationsResDto[]>> {
     try {
+      const cacheKey = `similarProducts:${imageName}:${topN}`;
+
+      const cachedData =
+        await this.cacheService.getFromCache<RecommendationsResDto[]>(cacheKey);
+      if (cachedData) {
+        return {
+          data: cachedData,
+          message: MESSAGES.RECOMMENDATIONS.GET.SUCCESS + ' (from cache)',
+        };
+      }
+
       const imageData = this.faissService.getImageData();
       const embeddingMatrix = this.faissService.getEmbeddingMatrix();
 
@@ -49,6 +62,11 @@ export class RecommendationUsecase {
             imageName: item.imageName,
           }),
         ),
+      );
+
+      await this.cacheService.setToCache<RecommendationsResDto[]>(
+        cacheKey,
+        result.flat(),
       );
 
       return {
