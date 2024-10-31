@@ -30,7 +30,7 @@
   flex: 1;
   padding-left: 2%;
   padding-right: 2%;
-  max-height: 750px; /* Set the max height here */
+  max-height: 612px; /* Set the max height here */
   overflow-y: auto;
   scrollbar-width: none;
   background-color: white;
@@ -41,9 +41,9 @@
 .Result-Image {
   width: 100%;
   height: 100%;
-  max-height: 750px;
+  max-height: 600px;
   /* height: 500px; */
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 20px;
   border: 5px solid white;
 }
@@ -153,7 +153,7 @@
 
 .VTO-model--image {
   width: 100%;
-  height: 300px;
+  height: 260px;
   object-fit: cover;
   border-radius: 20px;
   &:hover {
@@ -177,8 +177,8 @@
   align-items: flex-start !important;
   text-align: start !important;
   width: 100%;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 1%;
+  margin-bottom: 10px;
 }
 
 .similar-products-heading{
@@ -199,11 +199,26 @@
 
 .Similar-Products-div .react-multi-carousel-item{
   max-width: 360px !important;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 
-.description {
+/* .description {
   color: grey;
   font-size: 18px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
+} */
+
+.Similar-Products-div .product--image{
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: scale(1.05);
+    }
 }
+
+/* .Similar-Products-div .card h4 {
+  padding-top: 10px;
+  padding-bottom: 0px;
+} */

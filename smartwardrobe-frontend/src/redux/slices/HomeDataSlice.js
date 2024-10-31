@@ -4,6 +4,7 @@ const HomeDataSlice = createSlice({
   name: 'HomeData',
   initialState: {
     homeData: [],
+    headerSearchValue:"",
     user: null,
     error: null,
   },
@@ -13,9 +14,14 @@ const HomeDataSlice = createSlice({
       state.user = action.payload;
       state.error = null;
     },
+    headerSearchValueSuccess: (state, action) => {
+      state.headerSearchValue = action.payload.headerSearchValue;
+      state.user = action.payload;
+      state.error = null;
+    },
   },
 });
 
-export const { homeDataSuccess } = HomeDataSlice.actions;
+export const { homeDataSuccess, headerSearchValueSuccess } = HomeDataSlice.actions;
 
 export default HomeDataSlice.reducer;

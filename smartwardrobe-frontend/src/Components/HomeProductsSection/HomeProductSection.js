@@ -46,9 +46,9 @@ const HomeProductSection = (props) => { /** will remove this component when data
       {props?.data?.map((items, index) => (
         <div className="card">
         <img className="product--image" loading="lazy" src={items?.imageUrl} alt="product image" onClick={() => handleImgaeClick(items)}/>
-        <h4>{items?.category}</h4>
+        <h3>{items?.name}</h3>
         <p className="description">{items?.type}</p>
-        <p className="price">{items?.price}</p>
+        <p className="price">&euro;{Number(items?.price)}</p>
         {props?.from !== "RecentlyViewed" && (
         <p>
           <Button

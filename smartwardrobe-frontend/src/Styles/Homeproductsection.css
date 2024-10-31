@@ -35,7 +35,7 @@
 
 .View-Product-Button {
     height: 37px;
-    border-radius: inherit;
+    border-radius: 5px;
   margin-top: 10px !important;
   border: none !important;
   outline: 0 !important;
@@ -65,9 +65,9 @@
   margin-right: 10px;
 }
 
-.card h4 {
+.card h3 {
   padding-top: 20px;
-  padding-bottom: 10px;
+  /* padding-bottom: 10px; */
 }
 
 /* .button-container {
