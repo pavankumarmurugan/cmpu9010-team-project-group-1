@@ -26,6 +26,10 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { RecommendationController } from './recommendation/recommendation.controller';
 import { FriendRequestsController } from './friend-requests/friend-requests.controller';
 import { FriendsController } from './friends/friend.controller';
+import { GroupController } from './group/group.controller';
+import { GroupMemberController } from './group-members/group-members.controller';
+import { CacheModule } from '@nestjs/cache-manager';
+import { VtoImageSearchController } from './vto/vto.controller';
 
 @Module({
   imports: [
@@ -44,6 +48,11 @@ import { FriendsController } from './friends/friend.controller';
     ConvertorsModule,
     UseCasesModule,
     ServicesModule,
+    CacheModule.register({
+      ttl: 300000,
+      max: 100,
+      isGlobal: true,
+    }),
   ],
   controllers: [
     UserController,
@@ -61,6 +70,9 @@ import { FriendsController } from './friends/friend.controller';
     RecommendationController,
     FriendRequestsController,
     FriendsController,
+    GroupController,
+    GroupMemberController,
+    VtoImageSearchController,
   ],
   providers: [
     // {

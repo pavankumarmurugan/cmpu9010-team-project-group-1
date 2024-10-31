@@ -3,12 +3,15 @@ import { CartEntity } from '../entities/cart/cart.entity';
 import { ChatEntity } from '../entities/chat/chat.entity';
 import { FriendRequestsEntity } from '../entities/friend-request/friend-requests.entity';
 import { FriendsEntity } from '../entities/friends/friends';
+import { GroupMembersEntity } from '../entities/group-members/group-members.entity';
+import { GroupEntity } from '../entities/group/group';
 import { ImageClusterEntity } from '../entities/image-cluster/image-cluster.entity';
 import { LikesEntity } from '../entities/likes/likes.entity';
 import { ProductCategoryEntity } from '../entities/product-category/product-category.entity';
 import { ProductInventoryEntity } from '../entities/product-inventory/product-inventory.entity';
 import { ProductEntity } from '../entities/product/product.entity';
 import { UserEntity } from '../entities/user/user.entity';
+import { VtoImageSearchEntity } from '../entities/vto/vto.entity';
 import { IGenericRepository } from './generic-repository.abstract';
 
 export abstract class IDataServices {
@@ -23,4 +26,7 @@ export abstract class IDataServices {
   abstract imageCluster: IGenericRepository<ImageClusterEntity>;
   abstract friendRequests: IGenericRepository<FriendRequestsEntity>;
   abstract friends: IGenericRepository<FriendsEntity>;
+  abstract group: IGenericRepository<GroupEntity>;
+  abstract groupMembers: IGenericRepository<GroupMembersEntity>;
+  abstract vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
 }

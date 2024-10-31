@@ -14,6 +14,9 @@ import { ChatModel } from './model/chat.model';
 import { ImageClusterModel } from './model/image-clusters.model';
 import { FriendsRequestsModel } from './model/friend-request.model';
 import { FriendsModel } from './model/friends.model';
+import { GroupModel } from './model/group.model';
+import { GroupMembersModel } from './model/group-members.model';
+import { VtoImageSearchModel } from './model/vto.model';
 
 @Module({
   imports: [
@@ -46,6 +49,9 @@ import { FriendsModel } from './model/friends.model';
       ImageClusterModel,
       FriendsRequestsModel,
       FriendsModel,
+      GroupModel,
+      GroupMembersModel,
+      VtoImageSearchModel,
     ]),
   ],
   providers: [

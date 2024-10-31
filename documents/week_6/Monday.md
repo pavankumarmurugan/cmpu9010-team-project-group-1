@@ -2,7 +2,7 @@
 
 **Project Title:** Smartwardrobe
 
-**Group Members:** Pavean, Osama, Jiaxin, Lin, Salil
+**Group Members:** Pavan, Osama, Jiaxin, Lin, Salil
 
 **Date:** 21 October 2024
 

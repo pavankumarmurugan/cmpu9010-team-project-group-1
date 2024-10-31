@@ -2,7 +2,7 @@
 
 **Project Title:** Smartwardrobe
 
-**Group Members:** Pavean, Osama, Jiaxin, Lin, Salil
+**Group Members:** Pavan, Osama, Jiaxin, Lin, Salil
 
 **Date:** 23 October 2024
 
@@ -35,6 +35,6 @@
 
 - **Lin:** working on python Flask image search API with model Resnet50, do research on multimodal model CLIP, and working on the interm report points.
 
-### **3. Discussion about Interim Report & Presentation**
+### **4. Discussion about Interim Report & Presentation**
 
 - Discussion on how everyone is doing in the report work.

@@ -7,12 +7,14 @@ import { ProductResDto } from 'src/core/dto/product/product-res-dto';
 import { ProductEntity } from 'src/core/entities/product/product.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { CacheService } from 'src/infrastructure/services/cache/cache.service';
 
 @Injectable()
 export class ProductUsecase {
   constructor(
-    private databaseService: IDataServices,
-    private productConvertor: ProductConvertor,
+    private readonly databaseService: IDataServices,
+    private readonly productConvertor: ProductConvertor,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(
@@ -40,11 +42,24 @@ export class ProductUsecase {
     limit: number,
   ): Promise<IResponse<ProductResDto[]>> {
     try {
+      const cacheKey = `products:${page}:${limit}`;
+
+      const cachedData =
+        await this.cacheService.getFromCache<ProductResDto[]>(cacheKey);
+      if (cachedData) {
+        return {
+          data: cachedData,
+          message: MESSAGES.PRODUCT.GET.SUCCESS + ' (from cache)',
+        };
+      }
+
       const { data: entities }: { data: ProductEntity[]; total: number } =
         await this.databaseService.product.getAllPaginated(page, limit);
 
       const data: ProductResDto[] =
         this.productConvertor.toProductResDtoFromEntities(entities);
+
+      await this.cacheService.setToCache<ProductResDto[]>(cacheKey, data);
 
       return {
         data,

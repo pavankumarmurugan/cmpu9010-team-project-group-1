@@ -23,6 +23,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { FriendRequestsUsecase } from './friend-requests/friend-requests.usecase';
 import { FriendsUsecase } from './friends/friends.usecase';
+import { GroupUsecase } from './group/group.usecase';
+import { GroupMemberUsecase } from './group-members/group-members.usecase';
+import { VtoImageSearchUsecase } from './vto/vto.usecase';
 
 @Module({
   imports: [
@@ -51,6 +54,9 @@ import { FriendsUsecase } from './friends/friends.usecase';
     RecommendationUsecase,
     FriendRequestsUsecase,
     FriendsUsecase,
+    GroupUsecase,
+    GroupMemberUsecase,
+    VtoImageSearchUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -68,6 +74,9 @@ import { FriendsUsecase } from './friends/friends.usecase';
     RecommendationUsecase,
     FriendRequestsUsecase,
     FriendsUsecase,
+    GroupUsecase,
+    GroupMemberUsecase,
+    VtoImageSearchUsecase,
   ],
 })
 export class UseCasesModule {}
