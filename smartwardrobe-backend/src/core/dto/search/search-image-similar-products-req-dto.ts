@@ -14,7 +14,7 @@ export class SearchImageSimilarProductReqDto {
 
   @ApiProperty({
     required: false,
-    example: 'Suggest dresses under 50 euros for summer party',
+    example: "Women's navy blazer suitable for office wear",
   })
   @IsString()
   @IsOptional()

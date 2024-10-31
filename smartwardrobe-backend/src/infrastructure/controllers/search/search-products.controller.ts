@@ -5,6 +5,8 @@ import {
   UploadedFile,
   UseInterceptors,
   Body,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { SearchProductUsecase } from 'src/use-cases/search/search-products.usecase';
@@ -22,7 +24,7 @@ export class SearchSimilarProductsController {
     private uploadSearchPictureService: UploadSearchPictureService,
   ) {}
 
-  @Post('get-all-similar-products-to-image')
+  @Post('get-all-similar-products-to-image/:page/:limit')
   @UseInterceptors(
     FileInterceptor('file', {
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
@@ -45,21 +47,24 @@ export class SearchSimilarProductsController {
   async uploadPictureAndFindSimilarProducts(
     @UploadedFile() file: Multer.File,
     @Body() dto: SearchImageSimilarProductReqDto,
+    @Param('page', ParseIntPipe) page: number = 1,
+    @Param('limit', ParseIntPipe) limit: number = 10,
   ) {
     const { query } = dto;
-
+    let fileUrl = '';
     if (file === undefined && query === '') {
       throw new BadRequestException(MESSAGES.SEARCH.NO_FILE_OR_QUERY);
     }
 
     if (file !== undefined) {
-      const fileUrl = await this.uploadSearchPictureService.uploadFile(file);
-      return await this.usecase.searchSimilarItemsToImage(fileUrl);
+      fileUrl = await this.uploadSearchPictureService.uploadFile(file);
     }
 
-    return {
-      data: [],
-      message: MESSAGES.PRODUCT.GET.SUCCESS,
-    };
+    return await this.usecase.searchSimilarItemsToImage(
+      fileUrl,
+      query,
+      page,
+      limit,
+    );
   }
 }

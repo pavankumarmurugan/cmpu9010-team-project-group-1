@@ -19,11 +19,11 @@ export class SearchProductsService {
   }
 
   searchUsingNLP(
-    filePath: string,
+    query: string,
   ): Observable<AxiosResponse<SearchImageSimilarProductResDto[]>> {
-    const url = `${BASE_URL.IMAGE_SEARCH}/image-search`;
+    const url = `${BASE_URL.IMAGE_SEARCH}/text-search`;
     return this.httpService.post(url, {
-      image_url: filePath,
+      query,
     });
   }
 }
