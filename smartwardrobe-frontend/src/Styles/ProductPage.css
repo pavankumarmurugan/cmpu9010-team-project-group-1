@@ -181,7 +181,7 @@
 
 @media (max-width: 600px) {
   .productpagecards {
-    grid-template-columns: 1fr;
+    /* grid-template-columns: 1fr; */
   }
   .productsearch-input {
     width: 100%;

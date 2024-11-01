@@ -105,23 +105,21 @@ const VirtualTryOn = (props) => {
   }));
 
   useEffect(() => {
-    callApiForModels();
+    callApiForModels(null,null);
   }, []);
 
-  const callApiForModels = async () => {
+  const callApiForModels = async (from,imageName) => {
     debugger;
-    if (!modelsDataFromApi?.length) {
-      const data = {
-        cloth_image_name: DataClicked?.imageName,
-      };
+    if (!modelsDataFromApi?.length || from === "fromSimilarProducts") {
+      const data = imageName ? imageName : DataClicked?.imageName;
       setOpenLoader(true);
       const getModels = await apiCall(
-        "POST",
-        "https://4001-34-143-156-185.ngrok-free.app/try-on",
-        data
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all/${data}`,
+        null
       );
       if (getModels) {
-        setModelsDataFromApi(getModels?.image_links);
+        setModelsDataFromApi(getModels?.data);
       }
       let similarProductsHeaders = {
         topN: 10,
@@ -141,13 +139,15 @@ const VirtualTryOn = (props) => {
 
   const changeModalOnModelClick = (index) => {
     // setCurrentImage(-1);
-    setResultImage(modelsDataFromApi?.[index]);
+    debugger
+    setResultImage(modelsDataFromApi?.[index].vtoS3Url);
   };
 
   const handleSimilarProductsClick = (item) => {
     debugger;
     console.log(item);
     setResultImage(item?.imageUrl);
+    callApiForModels("fromSimilarProducts", item?.imageName);
   };
 
   return (
