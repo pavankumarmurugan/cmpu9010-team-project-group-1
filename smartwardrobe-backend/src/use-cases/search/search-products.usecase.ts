@@ -26,16 +26,16 @@ export class SearchProductUsecase {
     page: number = 1,
     limit: number = 10,
   ): Promise<IResponse<ProductResDto[]>> {
-    // const cacheKey = `similarProducts:${filePath.trim()}:${query.trim()}:${page}:${limit}`;
+    const cacheKey = `similarProducts:${filePath.trim()}:${query.trim()}:${page}:${limit}`;
 
-    // const cachedData =
-    //   await this.cacheService.getFromCache<ProductResDto[]>(cacheKey);
-    // if (cachedData) {
-    //   return {
-    //     data: cachedData,
-    //     message: MESSAGES.PRODUCT.GET.SUCCESS + ' (from cache)',
-    //   };
-    // }
+    const cachedData =
+      await this.cacheService.getFromCache<ProductResDto[]>(cacheKey);
+    if (cachedData) {
+      return {
+        data: cachedData,
+        message: MESSAGES.PRODUCT.GET.SUCCESS + ' (from cache)',
+      };
+    }
 
     try {
       let imageSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
@@ -91,7 +91,7 @@ export class SearchProductUsecase {
       const data: ProductResDto[] =
         this.productConvertor.toProductResDtoFromEntities(productEntities);
 
-      // await this.cacheService.setToCache<ProductResDto[]>(cacheKey, data);
+      await this.cacheService.setToCache<ProductResDto[]>(cacheKey, data);
 
       return {
         data,
