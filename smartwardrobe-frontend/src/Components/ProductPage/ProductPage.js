@@ -220,6 +220,7 @@ const ProductPage = () => {
         searchValue: headerSearchValue,
       }));
       handleSearch(headerSearchValue);
+      dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
       // state.searchValue = null;
     } else {
       // setOpenLoader(true);
@@ -591,7 +592,7 @@ const ProductPage = () => {
                       <IconButton aria-label="search" edge="end">
                         <SearchIcon
                           style={{ color: "black" }}
-                          onClick={handleSearch}
+                          onClick={() => handleSearch(null)}
                         />
                       </IconButton>
                     </InputAdornment>
