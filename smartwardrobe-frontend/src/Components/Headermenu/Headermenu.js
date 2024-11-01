@@ -1,8 +1,10 @@
-import React, { Children, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import "../../Styles/header.css";
 import {
+  Backdrop,
   Badge,
   Box,
+  CircularProgress,
   Drawer,
   FormControl,
   IconButton,
@@ -36,8 +38,9 @@ import SignupModal from "../Signup/Signup";
 import { useLocation, useNavigate } from "react-router-dom";
 import ChatComponent from "../ChatComponent/ChatComponent";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
-import { headerSearchValue, headerSearchValueSuccess } from "../../redux/slices/HomeDataSlice";
-import { useDispatch } from "react-redux";
+import { headerSearchValue, headerSearchValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch, useSelector } from "react-redux";
+import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 
 function Headermenu() {
   {
@@ -54,11 +57,14 @@ function Headermenu() {
   const [openFootwear, setOpenFootwear] = useState(false);
   const [openMenFootwear, setOpenMenFootwear] = useState(false);
   const [openWomenenFootwear, setOpenWomenFootwear] = useState(false);
+  const [openLoader, setOpenLoader] = useState(false);
   const [openAccessories, setOpenAccessories] = useState(false);
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
   const [openChatComponent, setOpenChatComponent] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
+  const wishListValue = useSelector((state) => state.homeData.wishListValue);
   {
     /*  Use State*/
   }
@@ -521,8 +527,58 @@ function Headermenu() {
 
   /** handle dropdown click */
 
+  /** wishlist component  */
+
+  const handleWishListComponent = () => {
+    
+    if(!token){
+      showToastInfo("Please login first.");
+      return;
+    }
+    if(wishListValue === 0){
+      showToastInfo("No products in wishlist.");
+      return;
+    }
+    else{
+      navigate("/wishlist");
+    }
+    
+    }
+  
+
+  /** wishlist component  */
+
+  /** wish list count */
+
+  useEffect(() => {
+    getWishListCount();
+  },[])
+
+  const getWishListCount = async () => {
+    debugger;
+    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
+      setOpenLoader(false);
+        if(getLikeProducts?.data?.length){
+          // setCountOfLikeProducts(getLikeProducts?.data?.length);
+          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
+        
+      }
+  }
+
+  /** wish list count */
+
   return (
     <>
+
+       {/** loader code */}
+       <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openLoader}
+        >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+        {/** loader code */}
+
       {/*  drawer work*/}
       <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
@@ -624,13 +680,13 @@ function Headermenu() {
             </a>
             <div className="header-icons">
               <StyledBadge
-                badgeContent={0}
+                badgeContent={wishListValue}
                 anchorOrigin={{
                   vertical: "top",
                   horizontal: "right",
                 }}
               >
-                <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
+                <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} onClick={handleWishListComponent} />
               </StyledBadge>
 
               {/* will use later for login signup form open only*/}

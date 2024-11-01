@@ -8,6 +8,7 @@ import ProductDetails from "./Components/ProductDetails/ProductDetails";
 import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import WishListComponent from "./Components/WishListComponent/WishListComponent";
 
 function App() {
   
@@ -24,7 +25,7 @@ function App() {
             <Route path="/" element={<Homepage />} />
             <Route path="/products" element={<ProductPage />} />
             <Route path="/productdetails" element={<ProductDetails />} />
-            {/* <Route path="/ConversationalSearch" element={<ConversationalSearch />} /> */}
+            <Route path="/wishlist" element={<WishListComponent />} />
           </Routes>
         </BrowserRouter>
       </Fragment>

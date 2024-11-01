@@ -287,8 +287,10 @@ const ProductPage = () => {
         removeImage();
         if (imagePagination?.current === 1) {
           setProducts(result?.data);
+          setProductsDataForFilter(result?.data);
         } else {
           setProducts((prevProducts) => [...prevProducts, ...result?.data]);
+          setProductsDataForFilter((prevProducts) => [...prevProducts, ...result?.data]);
         }
         if (result?.data?.length === 0) {
           sethideLoadMoreButton(true);
@@ -403,7 +405,7 @@ const ProductPage = () => {
     if (pricevalue !== "0-0") {
       setFormData((prevState) => ({
         ...prevState,
-        ["Price"]: pricevalue,
+        ["Price"]: `€${pricevalue}`,
       }));
     } else {
       setFormData((prevState) => ({
@@ -743,7 +745,7 @@ const ProductPage = () => {
             </div>
           )}
         </div>
-        {!hideLoadMoreButton && (
+        {(!hideLoadMoreButton || products?.length === 0) && (
           <div className="LoadMore-Div">
             <Button
               className="LoadMore-Button"

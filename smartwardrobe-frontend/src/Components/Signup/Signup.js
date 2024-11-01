@@ -18,7 +18,7 @@ function SignupModal(props) {
     // username: "",
     firstname: "",
     lastname: "",
-    email: "",
+    username: "",
     password: "",
     role: "user",
   });
@@ -27,7 +27,7 @@ function SignupModal(props) {
     // username: false,
     firstname: false,
     lastname: false,
-    email: false,
+    username: false,
     password: false,
   });
 
@@ -88,10 +88,11 @@ function SignupModal(props) {
         }));
         showerror = true;
       }
-      if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
+      // if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
+      if (formData.username.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
-          email: true,
+          username: true,
         }));
         showerror = true;
       }
@@ -103,10 +104,11 @@ function SignupModal(props) {
         showerror = true;
       }
     }else{
-      if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
+      // if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
+      if (formData.username.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
-          email: true,
+          username: true,
         }));
         showerror = true;
       }
@@ -176,14 +178,14 @@ function SignupModal(props) {
 
   const handleloginOrSignupChange = (from) => {
     setFormData({
-      email: "",
+      username: "",
       firstname: "",
       lastname: "",
       password: "",
       role: "user",
     })
     setValidationField({
-      email: false,
+      username: false,
       firstname: false,
       lastname: false,
       password: false,
@@ -323,19 +325,20 @@ function SignupModal(props) {
                     <Typography.Title
                       level={5}
                       className={`${
-                        validationField.email && "Error-FieldName"
+                        validationField.username && "Error-FieldName"
                       }`}
                     >
-                      Email
+                      {/* Email */}
+                      User Name
                     </Typography.Title>
                     <Input
-                      placeholder="Email"
-                      name="email"
+                      placeholder="User Name"
+                      name="username"
                       autoComplete="off"
-                      value={formData.email}
+                      value={formData.username}
                       onChange={handleChange}
                       className={`${
-                        validationField.email
+                        validationField.username
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
@@ -348,19 +351,20 @@ function SignupModal(props) {
                 <Typography.Title
                       level={5}
                       className={`${
-                        validationField.email && "Error-FieldName"
+                        validationField.username && "Error-FieldName"
                       }`}
                     >
-                     Email
+                     {/* Email */}
+                     User Name
                     </Typography.Title>
                     <Input
-                      placeholder="Email"
-                      name="email"
-                      value={formData.email}
+                      placeholder="User Name"
+                      name="username"
+                      value={formData.username}
                       onChange={handleChange}
                       autoComplete="off"
                       className={`${
-                        validationField.email
+                        validationField.username
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}

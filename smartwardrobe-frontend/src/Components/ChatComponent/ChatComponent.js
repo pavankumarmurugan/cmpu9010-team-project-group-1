@@ -64,12 +64,6 @@ function ChatComponent(props) {
     props?.closeModal();
   };
 
-  const [isVisible, setIsVisible] = useState(false);
-
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
   return (
     <>
       {/* <div>
@@ -132,8 +126,7 @@ function ChatComponent(props) {
                 />
               </div>
             </div> */}
-            <div className="left-chat-section"
-            style={{ display: isVisible ? 'block' : 'none' }}>
+            <div className="left-chat-section">
               <div className="search-contacts">
                 <div className="search-input">
                   <input type="text" placeholder="Search Friends" />
@@ -209,7 +202,7 @@ function ChatComponent(props) {
             >
               <div className="chat-header">
                 <div className="back-icon">
-                <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}} onClick={toggleVisibility} />
+                <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}}/>
                 </div>
                 <div className="Chat-Icon-and-Name-div">
                 <div className="Chat-Icon-and-Name">

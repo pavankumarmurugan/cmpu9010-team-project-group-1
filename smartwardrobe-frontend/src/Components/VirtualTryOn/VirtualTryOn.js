@@ -105,51 +105,49 @@ const VirtualTryOn = (props) => {
   }));
 
   useEffect(() => {
-    callApiForModels(null,null);
+    callApiForModels();
   }, []);
 
-  const callApiForModels = async (event,value) => {
+  const callApiForModels = async () => {
     debugger;
-    if (!modelsDataFromApi?.length || event === "fromSimilarProducts") {
-      const data = value ? value?.imageName : DataClicked?.imageName;
+    if (!modelsDataFromApi?.length) {
+      const data = {
+        cloth_image_name: DataClicked?.imageName,
+      };
       setOpenLoader(true);
       const getModels = await apiCall(
-        "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all/${data}`,
-        null
+        "POST",
+        "https://4001-34-143-156-185.ngrok-free.app/try-on",
+        data
       );
       if (getModels) {
-        setModelsDataFromApi(getModels?.data);
+        setModelsDataFromApi(getModels?.image_links);
       }
       let similarProductsHeaders = {
         topN: 10,
         imageName: DataClicked?.imageName,
       };
-      if(event !== "fromSimilarProducts"){
-        
       const getSimilarProducts = await apiCall(
         "POST",
         "https://smartwardrobe-backend.azurewebsites.net/recommend/similar-products",
         similarProductsHeaders
       );
+      setOpenLoader(false);
       if (getSimilarProducts) {
         setSimilarProductsData(getSimilarProducts?.data);
       }
-    }
-    setOpenLoader(false);
     }
   };
 
   const changeModalOnModelClick = (index) => {
     // setCurrentImage(-1);
-    setResultImage(modelsDataFromApi?.[index]?.vtoS3Url);
+    setResultImage(modelsDataFromApi?.[index]);
   };
 
   const handleSimilarProductsClick = (item) => {
     debugger;
     console.log(item);
     setResultImage(item?.imageUrl);
-    callApiForModels("fromSimilarProducts",item);
   };
 
   return (
@@ -240,7 +238,6 @@ const VirtualTryOn = (props) => {
                 loading="lazy"
                 src={resultImage}
                 alt="product image"
-                style={{ backgroundColor: 'transparent' }}
               />
             </div>
             <div className="predefined-models">

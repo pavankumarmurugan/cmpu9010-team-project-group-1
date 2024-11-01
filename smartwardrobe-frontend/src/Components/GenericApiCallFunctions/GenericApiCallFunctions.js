@@ -20,12 +20,12 @@ const apiCall = async (method = "GET", url, data = null, token = null) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      showToastError(errorData?.message || response.statusText);
+      // showToastError(errorData?.message || response.statusText);
       return errorData;
     }
 
     const responseData = await response.json();
-    showToastSuccess(responseData?.message);
+    // showToastSuccess(responseData?.message);
     return responseData;
   } catch (error) {
     console.error("API call failed:", error);
