@@ -10,6 +10,7 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Clear } from "@mui/icons-material";
 
 function WishListComponent() {
   let token = localStorage.getItem("user")
@@ -66,6 +67,15 @@ function WishListComponent() {
     }
   };
 
+  const ClearWishlist = async () => {
+    debugger;
+    let clearwishlist = await apiCall("DELETE", "https://smartwardrobe-backend.azurewebsites.net/likes/delete-all-likes", null, token?.token);
+    if (clearwishlist?.statusCode?.text === "Success") {
+        dispatch(wishListValueSuccess({ wishListValue: 0 }));
+        navigate("/");
+        }
+    }
+
   return (
     <>
       {/** loader code */}
@@ -87,7 +97,7 @@ function WishListComponent() {
               <Button
                 className="wishlist-heading-buttons"
                 color="default"
-                //   onClick={handleLoadMoreProducts}
+                  onClick={ClearWishlist}
               >
                 Clear Wishlist
               </Button>
