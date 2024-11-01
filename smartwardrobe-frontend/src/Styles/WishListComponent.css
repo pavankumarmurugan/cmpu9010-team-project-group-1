@@ -1,0 +1,79 @@
+.wishlist-heading-Button{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    /* width: 70%; */
+    padding: 40px 0px 10px 0px;
+}
+
+.wishlist-heading-buttons{
+    background-color: black !important;
+    color: white !important;
+    cursor: pointer;
+    font-size: 14px !important;
+    transition: 0.3s ease-in-out;
+    max-height: 34px; /* Sets a consistent height */
+    height: 34px;
+    padding: 0 1rem; /* Adds padding for width control */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover{
+      transform: scale(1.05);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .wishlist-heading-buttons {
+        font-size: 12px !important; /* Adjust font size if needed on smaller screens */
+        padding: 0 0.8rem;
+    }
+}
+
+  .wishlist-Card-Buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 10px;
+    gap: 10px;
+  }
+  
+  .wishlist-cards {
+    padding: 25px;
+    display: grid;
+    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    max-width: 1400px; /* Limits width on larger screens */
+    margin: 0 auto; /* Centers the grid with space on the sides */
+  }
+  
+  /* 1 card per row, centered, on very small screens (under 500px) */
+  @media (max-width: 500px) {
+    .wishlist-cards {
+      grid-template-columns: 1fr;
+      justify-items: center; /* Centers the single card in the row */
+    }
+  }
+  
+  /* 2 cards per row on smaller screens (500px - 768px) */
+  @media (min-width: 501px) and (max-width: 768px) {
+    .wishlist-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* 3 cards per row on medium screens (769px - 1024px) */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .wishlist-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  /* 4 cards per row on large screens (1025px and above) */
+  @media (min-width: 1025px) {
+    .wishlist-cards {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  

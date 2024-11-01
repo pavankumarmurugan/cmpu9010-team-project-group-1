@@ -32,10 +32,15 @@ import { Input } from "antd";
 import { useLocation } from "react-router-dom";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
+import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch } from "react-redux";
+import { showToastInfo } from "../GenericToasters/GenericToasters";
 
 const ProductDetails = () => {
+  const dispatch = useDispatch();
   const location = useLocation();
   let {state} = location;
+  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   console.log(state?.item?.imageName, "productData");
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
@@ -68,13 +73,34 @@ const ProductDetails = () => {
     }
   };
 
-  const handleWishlist = (e) => {
+  const handleWishlist = async (e,productimages) => {
     debugger;
-    if (e === "add") {
-      setShowHideWishlist(false);
-    } else {
-      setShowHideWishlist(true);
+    if(!token){
+      showToastInfo("Please login to add to wishlist");
+      return;
     }
+    let data = {
+      productId: productimages?.id
+    };
+    if (e === "add") {
+      setOpenLoader(true);
+      let addWishlist = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/likes/create", data, token?.token);
+      if (addWishlist?.statusCode?.text === "Success") {
+        setShowHideWishlist(false);
+      }
+    } else {
+      setOpenLoader(true);
+      let addWishlist = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${productimages?.id}`, data, token?.token);
+      if (addWishlist?.statusCode?.text === "Success") {
+        setShowHideWishlist(true);
+      }
+    }
+    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
+      setOpenLoader(false);
+        if(getLikeProducts?.data?.length){
+          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
+      }
+
   };
   
   useEffect(() => {
@@ -91,12 +117,20 @@ const ProductDetails = () => {
         "GET",
         `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`, null
       );
-      setOpenLoader(false);
+      // setOpenLoader(false);
       if (getModels) {
         console.log(getModels?.data, 'details')
         setProductImages(getModels?.data);
       }
-    
+
+      const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
+      setOpenLoader(false);
+      if (getLikeProducts) {
+        let check = getLikeProducts?.data?.find((item) => (item?.productId === state?.item?.id) || (item?.productId === productimages?.id));
+        if(check){
+          setShowHideWishlist(false);
+        }
+      }
   };
 
   /** this is to handle tryon modal */
@@ -167,7 +201,7 @@ const ProductDetails = () => {
               <div className="Products-Details-div">
                 <div>
                   <h1>{productimages?.type}</h1>
-                  <h3>&#8364; {productimages?.price}</h3>
+                  <h3>&#8364;{ Number(productimages?.price)}</h3>
                 </div>
                 <div>
                   <div className="colour-div">
@@ -250,7 +284,7 @@ const ProductDetails = () => {
                             height: "25px",
                             cursor: "pointer",
                           }}
-                          onClick={() => handleWishlist("add")}
+                          onClick={() => handleWishlist("add",productimages)}
                         />
                         <p className="wishlist-text">Add to Wishlist</p>
                       </>
@@ -262,7 +296,7 @@ const ProductDetails = () => {
                             height: "25px",
                             cursor: "pointer",
                           }}
-                          onClick={() => handleWishlist("remove")}
+                          onClick={() => handleWishlist("remove",productimages)}
                         />
                         <p className="wishlist-text">Remove from Wishlist</p>
                       </>
