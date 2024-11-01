@@ -48,6 +48,9 @@ export const MESSAGES = {
     DELETE: {
       SUCCESS: 'DELETED LIKES',
     },
+    DELETE_ALL: {
+      SUCCESS: 'DELETED ALL LIKES',
+    },
   },
   CHATS: {
     CREATE: {

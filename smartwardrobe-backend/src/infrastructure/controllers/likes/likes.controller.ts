@@ -74,14 +74,18 @@ export class LikesController {
     }
   }
 
-  @Delete('delete/:id')
+  @Delete('delete/:productId')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
   async delete(
-    @Param('id', ParseIntPipe) id: number,
+    @Request() request: RequestWithUser,
+    @Param('productId', ParseIntPipe) productId: number,
   ): Promise<IResponse<LikesResDto>> {
     try {
-      return await this.usecase.delete(id);
+      const {
+        user: { userId },
+      } = request;
+      return await this.usecase.delete(userId, productId);
     } catch (error) {
       throw error;
     }
@@ -95,6 +99,22 @@ export class LikesController {
   ): Promise<IResponse<LikesResDto>> {
     try {
       return await this.usecase.getOne(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Delete('delete-all-likes')
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async deleteAllLikes(
+    @Request() request: RequestWithUser,
+  ): Promise<IResponse<string>> {
+    try {
+      const {
+        user: { userId },
+      } = request;
+      return await this.usecase.deleteAllLikes(userId);
     } catch (error) {
       throw error;
     }

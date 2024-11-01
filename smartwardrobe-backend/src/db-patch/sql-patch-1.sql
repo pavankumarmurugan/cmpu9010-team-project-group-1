@@ -253,21 +253,22 @@ CREATE TABLE "smartwardrobe"."cart_item" (
 
 
 CREATE TABLE public.like (
-  id SERIAL PRIMARY KEY,
-  user_id INT NULL,
-  product_id INT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP,
-  CONSTRAINT fk_user_id
-    FOREIGN KEY (user_id)
-    REFERENCES public.user (user_id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_product_id
-    FOREIGN KEY (product_id)
-    REFERENCES public.product (id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES public.user (user_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES public.products (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    UNIQUE (user_id, product_id)
 );
 
 
