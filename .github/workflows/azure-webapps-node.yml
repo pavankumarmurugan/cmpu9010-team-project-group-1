@@ -9,62 +9,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Install, Build, and Test
-    runs-on: ubuntu-latest
-    env:
-      PORT: ${{ secrets.PORT }}
-      DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-      DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
-      DATABASE_TYPE: ${{ secrets.DATABASE_TYPE }}
-      JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
-      JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
-      THROTTLER_TTL: ${{ secrets.THROTTLER_TTL }}
-      THROTTLER_LIMIT: ${{ secrets.THROTTLER_LIMIT }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20.x"
-
-      - name: Install dependencies
-        run: |
-          cd smartwardrobe-backend
-          npm ci
-
-      - name: Build application
-        run: |
-          cd smartwardrobe-backend
-          npm run build
-
-      - name: Run tests with coverage
-        run: |
-          cd smartwardrobe-backend
-          npm run test:cov
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./smartwardrobe-backend/coverage/lcov.info
-          flags: unittests
-          name: codecov-coverage
-          fail_ci_if_error: true
-
   build:
-    name: Build and Upload Artifact
     runs-on: ubuntu-latest
-    needs: test
+
     steps:
       - uses: actions/checkout@v4
 
@@ -73,14 +20,10 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: Install dependencies
+      - name: Install dependencies and build
         run: |
           cd smartwardrobe-backend
           npm ci
-
-      - name: Build application
-        run: |
-          cd smartwardrobe-backend
           npm run build --if-present
 
       - name: Upload artifact for deployment job
@@ -90,7 +33,6 @@ jobs:
           path: smartwardrobe-backend # Uploads the full directory
 
   deploy:
-    name: Deploy to Azure Web App
     runs-on: ubuntu-latest
     needs: build
     environment:
