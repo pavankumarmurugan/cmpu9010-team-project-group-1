@@ -29,7 +29,7 @@ import { VtoImageSearchModel } from './model/vto.model';
       database: process.env.DATABASE_NAME,
       entities: [__dirname + '/../**/*.model.js'],
       password: process.env.DATABASE_PASSWORD,
-      logging: ['query', 'error'],
+      // logging: ['query', 'error'],
       ssl: true,
       extra: {
         ssl: {
