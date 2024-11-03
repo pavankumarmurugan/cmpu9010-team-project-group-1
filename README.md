@@ -47,7 +47,7 @@ The project focuses on delivering a fast, seamless, and enjoyable experience for
 
 ---
 
-### 💻 **Smart Backend** [![codecov](https://codecov.io/gh/username/repository/branch/main/graph/badge.svg?token=YOURTOKEN)](https://codecov.io/gh/username/repository)
+### 💻 **Smart Backend** [![Codecov](https://codecov.io/gh/pavankumarmurugan/cmpu9010-team-project-group-1/branch/main/graph/badge.svg?token=71e3fa8b-4ff2-497d-bf2e-36f39c66a9e5)](https://codecov.io/gh/pavankumarmurugan/cmpu9010-team-project-group-1)
 
 ## Description
 
