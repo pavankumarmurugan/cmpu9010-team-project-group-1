@@ -6,9 +6,9 @@ import { CartEntity } from 'src/core/entities/cart/cart.entity';
 
 @Injectable()
 export class CartConvertor {
-  toResDtoFromEntity(entity: CartEntity): CartResDto {
-    return { ...entity };
-  }
+  // toResDtoFromEntity(entity: CartEntity): CartResDto {
+  //   return { ...entity };
+  // }
 
   toResDtoFromEntities(entity: CartEntity[]): CartResDto[] {
     return entity.map((item) => ({ ...item }));

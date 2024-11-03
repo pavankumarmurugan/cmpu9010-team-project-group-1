@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { LikesReqDto } from 'src/core/dto/likes/likes.req-dto';
-import { UpdateLikesReqDto } from 'src/core/dto/likes/likes.req-update-dto';
+// import { UpdateLikesReqDto } from 'src/core/dto/likes/likes.req-update-dto';
 import { LikesResDto } from 'src/core/dto/likes/likes.res-dto';
 import { RequestWithUser } from 'src/core/interface/request.interface';
 import { IResponse } from 'src/core/interface/response.interface';
@@ -61,18 +61,18 @@ export class LikesController {
     }
   }
 
-  @Patch('update')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN, ROLES.USER)
-  async update(
-    @Body() dto: UpdateLikesReqDto,
-  ): Promise<IResponse<LikesResDto>> {
-    try {
-      return await this.usecase.update(dto);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Patch('update')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN, ROLES.USER)
+  // async update(
+  //   @Body() dto: UpdateLikesReqDto,
+  // ): Promise<IResponse<LikesResDto>> {
+  //   try {
+  //     return await this.usecase.update(dto);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   @Delete('delete/:productId')
   @ApiBearerAuth()

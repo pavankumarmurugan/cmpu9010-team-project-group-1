@@ -87,16 +87,16 @@ export class CartItemController {
     }
   }
 
-  @Get('get-one/:id')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN, ROLES.USER)
-  async getOne(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<IResponse<CartItemResDto>> {
-    try {
-      return await this.usecase.getOne(id);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Get('get-one/:id')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN, ROLES.USER)
+  // async getOne(
+  //   @Param('id', ParseIntPipe) id: number,
+  // ): Promise<IResponse<CartItemResDto>> {
+  //   try {
+  //     return await this.usecase.getOne(id);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

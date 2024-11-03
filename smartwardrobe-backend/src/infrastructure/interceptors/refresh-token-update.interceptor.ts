@@ -48,7 +48,6 @@ export class RefreshTokenUpdateInterceptor implements NestInterceptor {
           );
 
         await this.databaseService.users.update(id, updateEntity);
-        this.logger.debug(`Successfully updated refresh token for user ${id}`);
       } catch (error) {
         this.logger.error(
           `Failed to update refresh token: ${error.message}`,

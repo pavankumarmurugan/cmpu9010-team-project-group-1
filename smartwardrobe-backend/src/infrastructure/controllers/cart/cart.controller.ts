@@ -29,70 +29,70 @@ import { CartUsecase } from 'src/use-cases/cart/cart.usecase';
 export class CartController {
   constructor(private usecase: CartUsecase) {}
 
-  @Get('get-all')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  async getAll(): Promise<IResponse<CartResDto[]>> {
-    try {
-      return await this.usecase.getAll();
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Get('get-all')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // async getAll(): Promise<IResponse<CartResDto[]>> {
+  //   try {
+  //     return await this.usecase.getAll();
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  @Post('create')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  async create(
-    @Request() request: RequestWithUser,
-    @Body() dto: CartReqDto,
-  ): Promise<IResponse<CartResDto>> {
-    try {
-      const {
-        user: { userId },
-      } = request;
-      return await this.usecase.create(userId, dto);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Post('create')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // async create(
+  //   @Request() request: RequestWithUser,
+  //   @Body() dto: CartReqDto,
+  // ): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     const {
+  //       user: { userId },
+  //     } = request;
+  //     return await this.usecase.create(userId, dto);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  @Patch('update')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  async update(@Body() dto: UpdateCartReqDto): Promise<IResponse<CartResDto>> {
-    try {
-      return await this.usecase.update(dto);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Patch('update')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // async update(@Body() dto: UpdateCartReqDto): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     return await this.usecase.update(dto);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  @Delete('delete/:id')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  async delete(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<IResponse<CartResDto>> {
-    try {
-      return await this.usecase.delete(id);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Delete('delete/:id')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // async delete(
+  //   @Param('id', ParseIntPipe) id: number,
+  // ): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     return await this.usecase.delete(id);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  @Get('get-one/:id')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  async getOne(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<IResponse<CartResDto>> {
-    try {
-      return await this.usecase.getOne(id);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Get('get-one/:id')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // async getOne(
+  //   @Param('id', ParseIntPipe) id: number,
+  // ): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     return await this.usecase.getOne(id);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   @Get('get-my-cart')
   @ApiBearerAuth()
