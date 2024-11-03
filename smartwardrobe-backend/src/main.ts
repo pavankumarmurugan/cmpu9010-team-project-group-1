@@ -14,7 +14,7 @@ async function bootstrap() {
   app.use(helmet());
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('Smart Wardrobe')
+    .setTitle('Smart Wardrobe MS')
     .setDescription('This is Smart Wardrobe ms API description')
     .setVersion('1.0')
     .addTag('Smart Wardrobe MS')
