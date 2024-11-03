@@ -1,11 +1,11 @@
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { FaPlus } from "react-icons/fa";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { showToastSuccess } from "../GenericToasters/GenericToasters";
 import { IoMdChatboxes } from "react-icons/io";
@@ -14,10 +14,13 @@ import { FaPaperPlane } from "react-icons/fa6";
 import { IoExitOutline } from "react-icons/io5";
 import chatbackgroundimage from "../../Assets/chatbackgroundimage.jpg";
 import { Search } from "@mui/icons-material";
-import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
+import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
+import NewChatModal from "../NewChatModal/NewChatModal";
 
 function ChatComponent(props) {
   const [disabled, setDisabled] = useState(true);
+  const [hideLeftSection, sethideLeftSection] = useState(false);
+  const [showNewChat, setShowNewChat] = useState(false);
   const [messages, setMessages] = useState([
     { sender: "user", text: "Hello, how are you?" },
     { sender: "bot", text: "I'm good! How can I assist you today?" },
@@ -64,6 +67,26 @@ function ChatComponent(props) {
     props?.closeModal();
   };
 
+  const toggleChatSection = () => {
+    // debugger
+    sethideLeftSection(false);
+  };
+
+  const handleShowChat = () => {
+    // debugger
+    if(window.innerWidth < 768){
+      sethideLeftSection(true);
+    }
+  }
+
+  const closeNewChat = () => {
+    setShowNewChat(false);
+  }
+
+  const handleNewChat = () => {
+    setShowNewChat(true);
+  }
+
   return (
     <>
       {/* <div>
@@ -75,6 +98,16 @@ function ChatComponent(props) {
           <IoMdChatboxes style={{color:"white"}} />
         </Button>
       </div> */}
+      
+      {/** new chat component */}
+
+        {showNewChat && 
+        <NewChatModal
+        isShowModel={showNewChat}
+        closeModal={closeNewChat} />
+      }
+
+      {/** new chat component */}
       <Modal
         // title={
         //   <div
@@ -114,19 +147,24 @@ function ChatComponent(props) {
         )}
       >
         <div className="modal-container-chat">
-          {/* <h1 className="collaborative-chat-heading">Collaborative Chat</h1> */}
           <div className="chat-container">
-            {/* <div className="notification-bar">
-              <div className="notification-bar-elements">
-                <IoExitOutline
-                  style={{ width: "30px", height: "30px", color: "white" }}
-                />
-                <IoExitOutline
-                  style={{ width: "30px", height: "30px", color: "white" }}
-                />
+            <div className={`left-chat-section ${hideLeftSection ? "hide-left" : "show-left"}`} >
+              <div className="new-conversation-div">
+                <div className="new-conversation">
+                  <Button className="new-converation-button" color="default" onClick={handleNewChat}>
+                    <FaPlus
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        paddingRight: "10px",
+                        paddingBottom: "3px",
+                      }}
+                    />
+                    New Conversation
+                  </Button>
+                </div>
               </div>
-            </div> */}
-            <div className="left-chat-section">
+              <h2>Chats</h2>
               <div className="search-contacts">
                 <div className="search-input">
                   <input type="text" placeholder="Search Friends" />
@@ -135,17 +173,17 @@ function ChatComponent(props) {
                   </button>
                 </div>
               </div>
-              <h4>
+              {/* <h4>
                 <b style={{ paddingLeft: "10px" }}>GROUPS</b>
-              </h4>
+              </h4> */}
               <div className="contact-list">
-                <div className="contact-details-div">
+                <div className="contact-details-div" onClick={handleShowChat}>
                   <img
                     src={chatbackgroundimage}
                     alt="Alice"
                     className="contact-image"
                   />
-                  <div className="contact-name-and-last-msg">
+                  <div className="contact-name-and-last-msg" >
                     <div className="contact-Name">Alice</div>
                     <div className="contact-last-msg">Hi, how are you?</div>
                   </div>
@@ -162,9 +200,9 @@ function ChatComponent(props) {
                   </div>
                 </div>
               </div>
-              <h4>
+              {/* <h4>
                 <b style={{ paddingLeft: "10px" }}>CONTACTS</b>
-              </h4>
+              </h4> */}
               <div className="contact-list">
                 <div className="contact-details-div">
                   <img
@@ -191,10 +229,10 @@ function ChatComponent(props) {
               </div>
             </div>
             <div
-              className="right-chat-section"
+              className={`right-chat-section ${hideLeftSection ? "show-right" : "hide-right"}`} 
               style={{
                 // backgroundImage: `url(${chatbackgroundimage})`,
-                backgroundColor: "#f7f8fa",
+                backgroundColor: "#f4f3f8",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
@@ -202,29 +240,36 @@ function ChatComponent(props) {
             >
               <div className="chat-header">
                 <div className="back-icon">
-                <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}}/>
+                  <ChevronLeftOutlinedIcon
+                    style={{ width: "30px", height: "30px" }}
+                    onClick={toggleChatSection}
+                  />
                 </div>
+                {/* {hideLeftSection && (
+                  <div className="back-icon">
+                <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}} onclick={toggleChatSection} />
+                </div>)} */}
                 <div className="Chat-Icon-and-Name-div">
-                <div className="Chat-Icon-and-Name">
-                  <img
-                    src={chatbackgroundimage}
-                    alt="Alice"
-                    className="contact-image"
-                  />
-                  <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
+                  <div className="Chat-Icon-and-Name">
+                    <img
+                      src={chatbackgroundimage}
+                      alt="Alice"
+                      className="contact-image"
+                    />
+                    <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
+                  </div>
+                  <div className="Invite-Friends">
+                    <FaPlus
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        paddingRight: "10px",
+                        paddingBottom: "3px",
+                      }}
+                    />
+                    <h3 className="invite-friends-text">Invite Friends</h3>
+                  </div>
                 </div>
-                <div className="Invite-Friends">
-                  <FaPlus
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      paddingRight: "10px",
-                      paddingBottom: "3px",
-                    }}
-                  />
-                  <h3 className="invite-friends-text">Invite Friends</h3>
-                </div>
-              </div>
               </div>
               <div className="chat-messages">
                 <div className="message-container">
@@ -236,7 +281,7 @@ function ChatComponent(props) {
                       }`}
                     >
                       {msg.sender === "user" ? (
-                          <p>{msg.text}</p>
+                        <p>{msg.text}</p>
                       ) : (
                         <div className="receiver-message">
                           <img

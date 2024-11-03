@@ -17,7 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { ListItemText } from "@mui/material";
@@ -38,15 +38,23 @@ import SignupModal from "../Signup/Signup";
 import { useLocation, useNavigate } from "react-router-dom";
 import ChatComponent from "../ChatComponent/ChatComponent";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
-import { headerSearchValue, headerSearchValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import {
+  addToCartValueSuccess,
+  headerSearchValue,
+  headerSearchValueSuccess,
+  wishListValueSuccess,
+} from "../../redux/slices/HomeDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import CartComponent from "../CartComponent/CartComponent";
 
 function Headermenu() {
   {
     /*  Use State*/
   }
-  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,9 +70,11 @@ function Headermenu() {
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
   const [openChatComponent, setOpenChatComponent] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
   const wishListValue = useSelector((state) => state.homeData.wishListValue);
+  const cartValue = useSelector((state) => state.homeData.cartValue);
   {
     /*  Use State*/
   }
@@ -116,7 +126,7 @@ function Headermenu() {
   };
 
   const handleItemClick = (item) => {
-    debugger
+    debugger;
     console.log(`${item} selected`);
   };
 
@@ -226,25 +236,49 @@ function Headermenu() {
         </div>
         <Collapse in={openTop} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men T-Shirts")}>
+            <ListItem
+              button
+              className="submenu-item"
+              onClick={() => handleItemClick("Men T-Shirts")}
+            >
               <ListItemText primary="T-Shirts" />
             </ListItem>
-            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Shirts")}>
+            <ListItem
+              button
+              className="submenu-item"
+              onClick={() => handleItemClick("Men Shirts")}
+            >
               <ListItemText primary="Shirts" />
             </ListItem>
-            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Pants")}>
+            <ListItem
+              button
+              className="submenu-item"
+              onClick={() => handleItemClick("Men Pants")}
+            >
               <ListItemText primary="Pants" />
             </ListItem>
-            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Trousers & Cargo")}>
+            <ListItem
+              button
+              className="submenu-item"
+              onClick={() => handleItemClick("Men Trousers & Cargo")}
+            >
               <ListItemText primary="Trousers & Cargo" />
             </ListItem>
-            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Shorts")}>
+            <ListItem
+              button
+              className="submenu-item"
+              onClick={() => handleItemClick("Men Shorts")}
+            >
               <ListItemText primary="Shorts" />
             </ListItem>
             {/* <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Outwear")}>
               <ListItemText primary="Outwear" />
             </ListItem> */}
-            <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Suits & Blazers")}>
+            <ListItem
+              button
+              className="submenu-item"
+              onClick={() => handleItemClick("Men Suits & Blazers")}
+            >
               <ListItemText primary="Suits & Blazers" />
             </ListItem>
           </List>
@@ -267,16 +301,32 @@ function Headermenu() {
             </ListItem>
             <Collapse in={openMenFootwear} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Casual Shoes")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Men Casual Shoes")}
+                >
                   <ListItemText primary="Casual Shoes" />
                 </ListItem>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Formal Shoes")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Men Formal Shoes")}
+                >
                   <ListItemText primary="Formal Shoes" />
                 </ListItem>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Sneakers")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Men Sneakers")}
+                >
                   <ListItemText primary="Sneakers" />
                 </ListItem>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Boots")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Men Boots")}
+                >
                   <ListItemText primary="Boots" />
                 </ListItem>
               </List>
@@ -293,16 +343,32 @@ function Headermenu() {
             </ListItem>
             <Collapse in={openWomenenFootwear} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Heels")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Women Heels")}
+                >
                   <ListItemText primary="Heels" />
                 </ListItem>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Flats")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Women Flats")}
+                >
                   <ListItemText primary="Flats" />
                 </ListItem>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Sneakers")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Women Sneakers")}
+                >
                   <ListItemText primary="Sneakers" />
                 </ListItem>
-                <ListItem button className="submenu-item" onClick={() => handleItemClick("Women Boots")}>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Women Boots")}
+                >
                   <ListItemText primary="Boots" />
                 </ListItem>
               </List>
@@ -315,22 +381,46 @@ function Headermenu() {
           </div>
           <Collapse in={openAccessories} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className="item" onClick={() => handleItemClick("Bags")}>
+              <ListItem
+                button
+                className="item"
+                onClick={() => handleItemClick("Bags")}
+              >
                 <ListItemText primary="Bags" />
               </ListItem>
-              <ListItem button className="submenu-item" onClick={() => handleItemClick("Jewelery")}>
+              <ListItem
+                button
+                className="submenu-item"
+                onClick={() => handleItemClick("Jewelery")}
+              >
                 <ListItemText primary="Jewelry" />
               </ListItem>
-              <ListItem button className="submenu-item" onClick={() => handleItemClick("Belts & Wallets")}>
+              <ListItem
+                button
+                className="submenu-item"
+                onClick={() => handleItemClick("Belts & Wallets")}
+              >
                 <ListItemText primary="Belts & Wallets" />
               </ListItem>
-              <ListItem button className="submenu-item" onClick={() => handleItemClick("Sunglasses")}>
+              <ListItem
+                button
+                className="submenu-item"
+                onClick={() => handleItemClick("Sunglasses")}
+              >
                 <ListItemText primary="Sunglasses" />
               </ListItem>
-              <ListItem button className="submenu-item" onClick={() => handleItemClick("Watches")}>
+              <ListItem
+                button
+                className="submenu-item"
+                onClick={() => handleItemClick("Watches")}
+              >
                 <ListItemText primary="Watches" />
               </ListItem>
-              <ListItem button className="submenu-item" onClick={() => handleItemClick("Hats & Caps")}>
+              <ListItem
+                button
+                className="submenu-item"
+                onClick={() => handleItemClick("Hats & Caps")}
+              >
                 <ListItemText primary="Hats & Caps" />
               </ListItem>
             </List>
@@ -456,7 +546,7 @@ function Headermenu() {
     debugger;
     console.log(e);
     if (e.key === "3") {
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       navigate("/");
       window.location.reload();
     } else {
@@ -491,7 +581,7 @@ function Headermenu() {
   };
 
   const handleKeyDown = (e) => {
-    debugger
+    debugger;
     if (e.key === "Enter") {
       handleSearch();
     }
@@ -530,21 +620,17 @@ function Headermenu() {
   /** wishlist component  */
 
   const handleWishListComponent = () => {
-    
-    if(!token){
+    if (!token) {
       showToastInfo("Please login first.");
       return;
     }
-    if(wishListValue === 0){
+    if (wishListValue === 0) {
       showToastInfo("No products in wishlist.");
       return;
-    }
-    else{
+    } else {
       navigate("/wishlist");
     }
-    
-    }
-  
+  };
 
   /** wishlist component  */
 
@@ -552,32 +638,79 @@ function Headermenu() {
 
   useEffect(() => {
     getWishListCount();
-  },[])
+  }, []);
 
   const getWishListCount = async () => {
     debugger;
-    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
-      setOpenLoader(false);
-        if(getLikeProducts?.data?.length){
-          // setCountOfLikeProducts(getLikeProducts?.data?.length);
-          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
-        
-      }
-  }
+    const getLikeProducts = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+      null,
+      token?.token
+    );
+    // setOpenLoader(false);
+    if (getLikeProducts?.data?.length) {
+      // setCountOfLikeProducts(getLikeProducts?.data?.length);
+      dispatch(
+        wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length })
+      );
+    }
+
+    const getAllCartValues = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/cart-item/get-all",
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
+    if (getAllCartValues?.data?.length) {
+      dispatch(
+        addToCartValueSuccess({ cartValue: getAllCartValues?.data?.length })
+      );
+    }
+  };
 
   /** wish list count */
 
+  /** Cart component */
+
+  const handleCartComponent = () => {
+    if (!token) {
+      showToastInfo("Please login first.");
+      return;
+    }
+    if (cartValue === 0) {
+      showToastInfo("No products in Cart.");
+      return;
+    } else {
+      setOpenCart(true);
+    }
+  };
+
+  const handleCloseCart = () => {
+    setOpenCart(false);
+  };
+
+  /** Cart component */
+
   return (
     <>
-
-       {/** loader code */}
-       <Backdrop
+      {/** loader code */}
+      <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-        >
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
-        {/** loader code */}
+      {/** loader code */}
+
+      {/** Cart Component */}
+
+      {openCart && (
+        <CartComponent openCart={openCart} close={handleCloseCart} />
+      )}
+
+      {/** Cart Component */}
 
       {/*  drawer work*/}
       <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
@@ -585,16 +718,15 @@ function Headermenu() {
       </Drawer>
 
       {/*  drawer work*/}
-      
+
       {/*  Chat component */}
 
-      <ChatComponent 
-      isShowModel={openChatComponent}
-      closeModal={setOpenChatComponent}
+      <ChatComponent
+        isShowModel={openChatComponent}
+        closeModal={setOpenChatComponent}
       />
 
       {/*  Chat component */}
-      
 
       {/* Signup/Login Modal */}
 
@@ -686,12 +818,15 @@ function Headermenu() {
                   horizontal: "right",
                 }}
               >
-                <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} onClick={handleWishListComponent} />
+                <FavoriteBorderIcon
+                  sx={{ color: "white", fontSize: "30px" }}
+                  onClick={handleWishListComponent}
+                />
               </StyledBadge>
 
               {/* will use later for login signup form open only*/}
               <StyledBadge
-                badgeContent={0}
+                badgeContent={cartValue}
                 color="error"
                 anchorOrigin={{
                   vertical: "bottom",
@@ -700,14 +835,15 @@ function Headermenu() {
               >
                 <ShoppingBagOutlinedIcon
                   sx={{ color: "white", fontSize: "30px" }}
+                  onClick={handleCartComponent}
                 />
               </StyledBadge>
 
               <QuestionAnswerOutlinedIcon
-                  sx={{ color: "white", fontSize: "30px" }}
-                  onClick={handleChatComponent}
-                />
-                {/* this is for logout*/}
+                sx={{ color: "white", fontSize: "30px" }}
+                onClick={handleChatComponent}
+              />
+              {/* this is for logout*/}
               {token !== undefined && token !== null ? (
                 <Dropdown
                   menu={{
@@ -751,10 +887,10 @@ function Headermenu() {
                 <FavoriteBorderIcon sx={{ color: "white", fontSize: "30px" }} />
               </Badge> */}
               <QuestionAnswerOutlinedIcon
-                  sx={{ color: "white", fontSize: "30px", paddingTop:"5px" }}
-                  onClick={handleChatComponent}
-                />
-                
+                sx={{ color: "white", fontSize: "30px", paddingTop: "5px" }}
+                onClick={handleChatComponent}
+              />
+
               {token !== undefined && token !== null ? (
                 <Dropdown
                   menu={{
