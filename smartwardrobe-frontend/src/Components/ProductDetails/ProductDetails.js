@@ -32,8 +32,8 @@ import { Input } from "antd";
 import { useLocation } from "react-router-dom";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
-import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
-import { useDispatch } from "react-redux";
+import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 
 const ProductDetails = () => {
@@ -50,6 +50,7 @@ const ProductDetails = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const imageUrl = productimages[currentImage];
+  const cartValue = useSelector((state) => state.homeData.cartValue);
 
   const VisuallyHiddenInput = styled("input")`
     clip: rect(0 0 0 0);
@@ -97,11 +98,26 @@ const ProductDetails = () => {
     }
     const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
       setOpenLoader(false);
-        if(getLikeProducts?.data?.length){
+        if(getLikeProducts.statusCode.text === "Success"){
           dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
       }
 
   };
+
+  const handleAddToCart = async () => {
+    debugger;
+    let data = {
+      productId: productimages?.id,
+      quantity: quantityvalue,
+    }
+    setOpenLoader(true);
+    const addToCart = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/cart-item/create", data, token?.token);
+    setOpenLoader(false);
+    if (addToCart.statusCode.text === "Success") {
+      dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+      
+    }
+  }
   
   useEffect(() => {
     debugger;
@@ -303,7 +319,7 @@ const ProductDetails = () => {
                     )}
                   </div>
                   <div className="cart-buttons-div">
-                    <Button className="cart-button">ADD TO CART</Button>
+                    <Button className="cart-button" onClick={handleAddToCart}>ADD TO CART</Button>
                     <Button className="buy-button">BUY NOW</Button>
                   </div>
                 </div>

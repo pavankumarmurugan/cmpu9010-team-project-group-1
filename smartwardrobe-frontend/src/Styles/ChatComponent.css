@@ -34,7 +34,7 @@
   display: flex;
   height: 90vh;
   width: 100%;
-  /* background-color: #f0f0f0; */
+  background-color: #f4f3f8;
   /* border: 1px solid #ccc; */
   border-radius: 8px;
   overflow: hidden;
@@ -42,7 +42,7 @@
 
 /* Left chat section (contacts) */
 .left-chat-section {
-  width: 30%;
+  width: 20%;
   /* background-color: #2e3b4e; */
   color: black;
   padding: 10px 20px 20px 0px;
@@ -54,12 +54,11 @@
   padding-top: 40px;
 }
 
-.left-chat-section h2 {
+/* .left-chat-section h2 {
   margin: 0;
   font-size: 1.5rem;
-  /* border-bottom: 1px solid #505e70; */
   padding-bottom: 10px;
-}
+} */
 
 .contact-name-and-last-msg{
   display: flex;
@@ -128,7 +127,7 @@
   padding-left: 8px;
 }
 .right-chat-section {
-  width: 70%;
+  width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -136,8 +135,8 @@
   padding-bottom: 15px;
   padding-left: 0px;
   padding-right: 0px;
-  background-color: #ffffff;
-  /* border: 5px solid #2e3b4e; */
+  background-color: #f4f3f8;
+  border: 1px solid lightgray;
   border-radius: 30px;
   margin-top: 30px;
   margin-bottom: 30px;
@@ -210,7 +209,7 @@
 .chat-input input {
   flex-grow: 1;
   padding: 10px 40px 10px 15px;
-  border-radius: 20px;
+  border-radius: 10px;
   /* border: 1px solid #2e3b4e; */
   border: none;
   height: 40px;
@@ -287,23 +286,16 @@
   letter-spacing: normal;
 }
 
-.back-icon{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-left: 20px;
-  cursor: pointer;
-}
 .chat-header{
   display: flex;
-  border-bottom: 1px solid #505e70;
+  border-bottom: 1px solid lightgray;
 }
 
 @media screen and (max-width: 950px) {
   .chat-container {
     /* flex-direction: column; */
-    height: 100%;
-    max-height: 600px;
+    height: 90vh;
+    /* max-height: 600px; */
     position: relative;
   }
   .notification-bar{
@@ -311,8 +303,8 @@
   }
   .left-chat-section {
     width: 100%;
-    height: 30%;
-    display: none;
+    height: 100%;
+    /* display: none; */
   }
   .right-chat-section {
     width: 95%;
@@ -324,7 +316,7 @@
   }
   .chat-messages {
     height: calc(100vh - 200px);
-    max-height: 50vh;
+    /* max-height: 50vh; */
     overflow-y: auto;
   }
   .chat-input {
@@ -350,6 +342,15 @@
   }
 }
 
+@media (min-width: 769px) and (max-width: 1200px){
+  .left-chat-section{
+    width: 30%;
+  }
+  .right-chat-section{
+    width: 70%;
+  }
+}
+
 /** seach input */
 .search-input {
   display: flex;
@@ -359,12 +360,14 @@
 
 .search-input input {
   flex-grow: 1;
-  background-color: #f7f8fa;
+  background-color: #e6e5ea;
   border: none;
   height: 35px;
-  padding: 10px 40px 10px 15px;
-  border-radius: 20px;
+  padding: 10px 00px 10px 15px;
+  border-radius: 10px;
   font-size: 1rem;
+  width: webkit-fill-available !important;
+  width: fill;
   /* height: 30px; */
 }
 
@@ -446,4 +449,82 @@
     max-width: 80%; /* Increase message width for smaller screens */
     font-size: 15px; /* Adjust font size for smaller screens */
   }
+}
+
+.new-converation-button{
+  width: 100%;
+  height: 50px;
+  background-color: white !important;
+  border: 1px solid lightgray !important;
+  text-transform: capitalize !important;
+}
+
+
+.hide-left{
+  display: none;
+}
+.hide-right{
+  display: inherit;
+}
+.show-left{
+  display: inherit;
+}
+.show-right{
+  display: inherit;
+}
+
+.back-icon{
+  display: none;
+}
+
+@media (max-width: 768px){
+  .hide-right{
+    display: none;
+  }
+  .back-icon{
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
+  cursor: pointer;
+  }
+}
+
+.custom-modal-new-chat .ant-modal-content{
+  background-color: white !important;
+}
+
+.newGroup-main-div{
+  margin-top: 30px;
+}
+
+.newGroup-list{
+  border-bottom: 1px solid lightgray;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  margin-bottom: 10px;
+}
+
+.newGroup-list-item-image-img{
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+}
+
+.newGroup-list-item-name{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding-left: 20px;
+  width: 100%;
+}
+
+.newGroup-list-item-name-text{
+  font-size: 18px;
+}
+
+.newGroup-list-item{
+  display: flex;
 }

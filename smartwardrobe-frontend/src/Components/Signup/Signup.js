@@ -1,5 +1,5 @@
 import { Button, Modal } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { FcGoogle } from "react-icons/fc";
 import { Flex, Input, Typography } from "antd";
@@ -39,6 +39,7 @@ function SignupModal(props) {
   });
   const draggleRef = useRef(null);
   const handleCancel = (e) => {
+    handleloginOrSignupChange("fromApi")
     props?.closeModal();
   };
   const onStart = (_event, uiData) => {

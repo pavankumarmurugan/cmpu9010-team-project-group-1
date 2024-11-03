@@ -1,0 +1,127 @@
+.cart-main{
+    /* display: flex; */
+}
+
+.cart-header{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.cart-item-main-div{
+  height: calc(100vh - 250px);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.mobile-menu-main-cart{
+  padding: 15px;
+}
+
+.cart-item-div{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    scrollbar-width: thin;
+}
+
+.seaparate-eachproduct{
+    display: flex;
+    margin-top: 20px;
+}
+
+.each-product-in-single-row{
+    display: flex;
+    flex-direction: row;
+}
+
+.cart-product-image{
+    width: 200px !important;
+    height: 200px !important;
+    cursor: pointer;
+}
+
+.cart-product-description{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding-left: 20px;
+}
+
+.product-text-div{
+    gap: 20px;
+}
+
+.cart-quantity-button{
+    height: 38px;
+    max-width: 100px;
+    border-radius: 0;
+    border: 1px solid black;
+    font-size: 16px;
+    cursor: none;
+    &:hover{
+      border: 1px solid black;
+      cursor: pointer;
+    }
+  }
+  .cart-quantity-button input{
+    align-items: center;
+    text-align: center;
+  }
+
+  .product-text{
+    font-size: 16px;
+    font-weight: 500;
+    padding-bottom: 10px;
+    width: 80%;
+    font-variant: petite-caps;
+  }
+
+  .cart-footer{
+    border-top: 1px solid #e0e0e0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .footer-heading{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+  }
+
+  .cartPage-buttons-div{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .checkout-button{
+    width: 100%;
+    min-height: 50px !important;
+    padding: 10px;
+    background-color: black !important;
+    letter-spacing: 0.3rem;
+    border-radius: 0px !important;
+    transition: 0.3s ease-in-out;
+    &:hover{
+      transform: scale(1.05);
+    }
+  }
+
+
+  .continue-shopping-button{
+    width: 100%;
+    min-height: 50px !important;
+    padding: 10px;
+    color: white !important;
+    background-color: gray !important;
+    letter-spacing: 0.1rem;
+    border-radius: 0px !important;
+    transition: 0.3s ease-in-out;
+    &:hover{
+      transform: scale(1.05);
+    }
+  }
