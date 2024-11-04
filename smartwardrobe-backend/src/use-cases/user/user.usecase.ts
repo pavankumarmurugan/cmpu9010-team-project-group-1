@@ -183,7 +183,10 @@ export class UserUsecase {
     }
   }
 
-  async searchUser(userId: number, searchKey: string) {
+  async searchUser(
+    userId: number,
+    searchKey: string,
+  ): Promise<IResponse<UserResDTO[]>> {
     try {
       const entities: FriendRequestsEntity[] =
         await this.databaseService.friendRequests.getAllByProperties({
@@ -192,6 +195,7 @@ export class UserUsecase {
 
       const userEntities: UserEntity[] =
         await this.databaseService.users.search(searchKey);
+
       const data: UserResDTO[] =
         this.userDtoConvertor.toUserResDTOFromEntityForSearch(
           entities,
