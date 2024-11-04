@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsObject, IsString } from 'class-validator';
 import { BaseDto } from '../base-dto/base.dto';
+import { UserResDTO } from '../user/user-res.dto';
 
 export class FriendRequestsResDto extends BaseDto {
   @ApiProperty({ example: 1, description: 'The ID of the friend request' })
@@ -21,4 +22,8 @@ export class FriendRequestsResDto extends BaseDto {
   })
   @IsString()
   status?: string;
+
+  @ApiProperty({ required: false })
+  @IsObject()
+  user?: UserResDTO;
 }

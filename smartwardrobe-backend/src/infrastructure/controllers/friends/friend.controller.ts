@@ -60,9 +60,14 @@ export class FriendsController {
   @Roles(ROLES.ADMIN, ROLES.USER)
   async delete(
     @Param('id', ParseIntPipe) friendId: number,
+    @Request() request: RequestWithUser,
   ): Promise<IResponse<null>> {
     try {
-      return await this.usecase.delete(friendId);
+      const {
+        user: { userId },
+      } = request;
+
+      return await this.usecase.delete(userId, friendId);
     } catch (error) {
       throw error;
     }
