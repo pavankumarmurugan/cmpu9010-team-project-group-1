@@ -20,78 +20,78 @@ export class CartUsecase {
     private cartItemConvertor: CartItemConvertor,
   ) {}
 
-  async create(
-    userId: number,
-    dto: CartReqDto,
-  ): Promise<IResponse<CartResDto>> {
-    try {
-      const cartEntity: CartEntity = this.convertor.toModelFromDto(dto);
-      const entity: CartEntity = await this.databaseService.cart.create({
-        ...cartEntity,
-        userId,
-      });
-      const data: CartResDto = this.convertor.toResDtoFromEntity(entity);
-      return {
-        data,
-        message: MESSAGES.CART.CREATE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async create(
+  //   userId: number,
+  //   dto: CartReqDto,
+  // ): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     const cartEntity: CartEntity = this.convertor.toModelFromDto(dto);
+  //     const entity: CartEntity = await this.databaseService.cart.create({
+  //       ...cartEntity,
+  //       userId,
+  //     });
+  //     const data: CartResDto = this.convertor.toResDtoFromEntity(entity);
+  //     return {
+  //       data,
+  //       message: MESSAGES.CART.CREATE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  async getAll(): Promise<IResponse<CartResDto[]>> {
-    try {
-      const entities: CartEntity[] = await this.databaseService.cart.getAll();
+  // async getAll(): Promise<IResponse<CartResDto[]>> {
+  //   try {
+  //     const entities: CartEntity[] = await this.databaseService.cart.getAll();
 
-      const data: CartResDto[] = this.convertor.toResDtoFromEntities(entities);
+  //     const data: CartResDto[] = this.convertor.toResDtoFromEntities(entities);
 
-      return {
-        data,
-        message: MESSAGES.CART.GET.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return {
+  //       data,
+  //       message: MESSAGES.CART.GET.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  async update(dto: UpdateCartReqDto): Promise<IResponse<CartResDto>> {
-    try {
-      const { id } = dto;
-      const entity: CartEntity = this.convertor.toUpdateModelFromDto(dto);
-      await this.databaseService.cart.update(id, entity);
-      return {
-        data: null,
-        message: MESSAGES.CART.UPDATE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async update(dto: UpdateCartReqDto): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     const { id } = dto;
+  //     const entity: CartEntity = this.convertor.toUpdateModelFromDto(dto);
+  //     await this.databaseService.cart.update(id, entity);
+  //     return {
+  //       data: null,
+  //       message: MESSAGES.CART.UPDATE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  async delete(id: number): Promise<IResponse<null>> {
-    try {
-      await this.databaseService.cart.delete(id);
-      return {
-        data: null,
-        message: MESSAGES.CART.DELETE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async delete(id: number): Promise<IResponse<null>> {
+  //   try {
+  //     await this.databaseService.cart.delete(id);
+  //     return {
+  //       data: null,
+  //       message: MESSAGES.CART.DELETE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  async getOne(id: number): Promise<IResponse<CartResDto>> {
-    try {
-      const data: CartEntity = await this.databaseService.cart.get({ id });
-      return {
-        data,
-        message: MESSAGES.CART.GET.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async getOne(id: number): Promise<IResponse<CartResDto>> {
+  //   try {
+  //     const data: CartEntity = await this.databaseService.cart.get({ id });
+  //     return {
+  //       data,
+  //       message: MESSAGES.CART.GET.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async getMyCart(id: number): Promise<IResponse<CartItemResDto[]>> {
     try {

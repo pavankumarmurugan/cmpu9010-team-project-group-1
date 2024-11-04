@@ -27,9 +27,8 @@ export class CartItemUsecase {
         id,
         dto,
       );
-      const entity: CartItemEntity = await this.databaseService.cartItem.create(
-        cartItemEntity,
-      );
+      const entity: CartItemEntity =
+        await this.databaseService.cartItem.create(cartItemEntity);
       const data: CartItemResDto = this.convertor.toResDtoFromEntity(entity);
       return {
         data,
@@ -85,17 +84,17 @@ export class CartItemUsecase {
     }
   }
 
-  async getOne(id: number): Promise<IResponse<CartItemResDto>> {
-    try {
-      const data: CartItemEntity = await this.databaseService.cartItem.get({
-        id,
-      });
-      return {
-        data,
-        message: MESSAGES.CART_ITEMS.GET.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async getOne(id: number): Promise<IResponse<CartItemResDto>> {
+  //   try {
+  //     const data: CartItemEntity = await this.databaseService.cartItem.get({
+  //       id,
+  //     });
+  //     return {
+  //       data,
+  //       message: MESSAGES.CART_ITEMS.GET.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

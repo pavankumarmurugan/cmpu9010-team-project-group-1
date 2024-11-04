@@ -25,11 +25,12 @@ import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-service
 import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
+import { v4 as uuid } from 'uuid';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
-
+  let accessToken: string;
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -94,6 +95,16 @@ describe('UserController (e2e)', () => {
     }
 
     await app.init();
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        username: 'string',
+        password: 'string',
+      })
+      .expect(201);
+
+    accessToken = loginResponse.body.data.token;
   });
 
   beforeEach(async () => {
@@ -113,18 +124,8 @@ describe('UserController (e2e)', () => {
     }
   });
 
-  it('should return the user profile when authenticated', async () => {
+  it('/users/get-my-profile (GET) should return the user profile when authenticated', async () => {
     try {
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'string',
-          password: 'string',
-        })
-        .expect(201);
-
-      const accessToken = loginResponse.body.data.token;
-
       const response = await request(app.getHttpServer())
         .get('/users/get-my-profile')
         .set('Authorization', `Bearer ${accessToken}`)
@@ -144,18 +145,8 @@ describe('UserController (e2e)', () => {
     }
   });
 
-  it('should update the user password when authenticated', async () => {
+  it('/users/update-password (PATCH) should update the user password when authenticated', async () => {
     try {
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'string',
-          password: 'string',
-        })
-        .expect(201);
-
-      const accessToken = loginResponse.body.data.token;
-
       await request(app.getHttpServer())
         .patch('/users/update-password')
         .set('Authorization', `Bearer ${accessToken}`)
@@ -169,18 +160,8 @@ describe('UserController (e2e)', () => {
     }
   });
 
-  it('should update the user profile when authenticated', async () => {
+  it('/users/update (PATCH) should update the user profile when authenticated', async () => {
     try {
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'string',
-          password: 'string',
-        })
-        .expect(201);
-
-      const accessToken = loginResponse.body.data.token;
-
       await request(app.getHttpServer())
         .patch('/users/update')
         .set('Authorization', `Bearer ${accessToken}`)
@@ -194,5 +175,85 @@ describe('UserController (e2e)', () => {
       console.error('Test Error:', error);
       throw error;
     }
+  });
+
+  it('/users/search/:query (GET) - should search for users by query string', async () => {
+    const query = 'str';
+
+    const response = await request(app.getHttpServer())
+      .get(`/users/search/${query}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(response.body).toHaveProperty('data');
+    expect(Array.isArray(response.body.data)).toBe(true);
+
+    response.body.data.forEach((user) => {
+      expect(user).toHaveProperty('firstname');
+      expect(user).toHaveProperty('lastname');
+      expect(user).toHaveProperty('username');
+      expect(user).toHaveProperty('userId');
+      expect(user).toHaveProperty('role');
+      expect(user).toHaveProperty('profilePic');
+
+      expect(typeof user.firstname).toBe('string');
+      expect(typeof user.lastname).toBe('string');
+      expect(typeof user.username).toBe('string');
+      expect(typeof user.userId).toBe('number');
+      expect(user.role).toBe('user');
+
+      if (user.profilePic) {
+        expect(typeof user.profilePic).toBe('string');
+      } else {
+        expect(user.profilePic).toBeNull();
+      }
+    });
+  });
+
+  it('/users/create (POST) - should create a new user and return user details', async () => {
+    const newUser = {
+      username: uuid(),
+      firstname: 'TestFirstName',
+      lastname: 'TestLastName',
+      password: 'TestPassword',
+      role: 'user',
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/users/create')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(newUser)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('data');
+
+    const userData = response.body.data;
+    expect(userData).toHaveProperty('firstname', newUser.firstname);
+    expect(userData).toHaveProperty('lastname', newUser.lastname);
+    expect(userData).toHaveProperty('username', newUser.username);
+    expect(userData).toHaveProperty('userId');
+    expect(typeof userData.userId).toBe('number');
+    expect(userData).toHaveProperty('refreshToken');
+    expect(userData).toHaveProperty('token');
+
+    expect(typeof userData.refreshToken).toBe('string');
+    expect(typeof userData.token).toBe('string');
+
+    const createdUserId = userData.userId;
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        username: 'admin',
+        password: 'admin',
+      })
+      .expect(201);
+
+    const adminAccessToken = loginResponse.body.data.token;
+
+    await request(app.getHttpServer())
+      .delete(`/users/delete/${createdUserId}`)
+      .set('Authorization', `Bearer ${adminAccessToken}`)
+      .expect(200);
   });
 });

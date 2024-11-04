@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { LikesConvertor } from 'src/core/convertors/likes/likes.convertor';
 import { LikesReqDto } from 'src/core/dto/likes/likes.req-dto';
-import { UpdateLikesReqDto } from 'src/core/dto/likes/likes.req-update-dto';
+// import { UpdateLikesReqDto } from 'src/core/dto/likes/likes.req-update-dto';
 import { LikesResDto } from 'src/core/dto/likes/likes.res-dto';
 import { LikesEntity } from 'src/core/entities/likes/likes.entity';
 import { ProductEntity } from 'src/core/entities/product/product.entity';
@@ -69,23 +69,23 @@ export class LikesUsecase {
     }
   }
 
-  async update(dto: UpdateLikesReqDto): Promise<IResponse<LikesResDto>> {
-    try {
-      const { id } = dto;
+  // async update(dto: UpdateLikesReqDto): Promise<IResponse<LikesResDto>> {
+  //   try {
+  //     const { id } = dto;
 
-      const productEntity: LikesEntity =
-        this.convertor.toLikesProductModelFromDto(dto);
+  //     const productEntity: LikesEntity =
+  //       this.convertor.toLikesProductModelFromDto(dto);
 
-      await this.databaseService.likes.update(id, productEntity);
+  //     await this.databaseService.likes.update(id, productEntity);
 
-      return {
-        data: null,
-        message: MESSAGES.LIKES.UPDATE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return {
+  //       data: null,
+  //       message: MESSAGES.LIKES.UPDATE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async delete(userId: number, productId: number): Promise<IResponse<null>> {
     try {
@@ -104,10 +104,21 @@ export class LikesUsecase {
 
   async getOne(id: number): Promise<IResponse<LikesResDto>> {
     try {
-      const data: LikesEntity = await this.databaseService.likes.get({ id });
+      const likesEntity: LikesEntity = await this.databaseService.likes.get({
+        id,
+      });
+      const productEntity: ProductEntity =
+        await this.databaseService.product.get({
+          id: likesEntity.productId,
+        });
+      const data: LikesResDto =
+        this.convertor.toOneLikesResDtoFromProductAndLikesEntities(
+          productEntity,
+          likesEntity,
+        );
       return {
         data,
-        message: MESSAGES.PRODUCT_INVENTORY.GET.SUCCESS,
+        message: MESSAGES.LIKES.GET.SUCCESS,
       };
     } catch (error) {
       throw error;

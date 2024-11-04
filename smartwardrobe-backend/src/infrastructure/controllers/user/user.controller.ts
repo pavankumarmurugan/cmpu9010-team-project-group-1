@@ -40,17 +40,17 @@ export class UserController {
     private uploadPicture: UploadProfilePictureService,
   ) {}
 
-  @Get('get-all')
-  @ApiBearerAuth()
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  @Roles(ROLES.ADMIN)
-  async getAll() {
-    try {
-      return await this.userUsecase.getAllUsers();
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Get('get-all')
+  // @ApiBearerAuth()
+  // @UseGuards(AccessTokenGuard, RolesGuard)
+  // @Roles(ROLES.ADMIN)
+  // async getAll() {
+  //   try {
+  //     return await this.userUsecase.getAllUsers();
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   @Post('create')
   @UseInterceptors(RefreshTokenUpdateInterceptor)
