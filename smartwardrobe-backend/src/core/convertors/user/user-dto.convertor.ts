@@ -3,8 +3,10 @@ import { RefreshTokenResDto } from 'src/core/dto/auth/refresh-token-dto.class';
 import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profile.dto';
 import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
 import { UserResDTO } from 'src/core/dto/user/user-res.dto';
+import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
 import { FriendsEntity } from 'src/core/entities/friends/friends';
 import { UserEntity } from 'src/core/entities/user/user.entity';
+import { FRIEND_REQUEST_STATUS } from 'src/infrastructure/common/enum.ts/friend-requests.enum';
 
 @Injectable()
 export class UserDtoConvertor {
@@ -130,5 +132,28 @@ export class UserDtoConvertor {
         friendId,
       };
     });
+  }
+  toUserResDTOFromEntityForSearch(
+    friendRequestsEntities: FriendRequestsEntity[],
+    entities: UserEntity[],
+  ): UserResDTO[] {
+    return entities.map(
+      ({ firstname, lastname, username, userId, role, profilePic }) => {
+        const hasSenderId = friendRequestsEntities.some(
+          (friendRequestsEntity) =>
+            friendRequestsEntity.receiverId === userId &&
+            friendRequestsEntity.status === FRIEND_REQUEST_STATUS.PENDING,
+        );
+        return {
+          firstname,
+          lastname,
+          username,
+          userId,
+          role,
+          profilePic,
+          status: hasSenderId ? FRIEND_REQUEST_STATUS.PENDING : null,
+        };
+      },
+    );
   }
 }

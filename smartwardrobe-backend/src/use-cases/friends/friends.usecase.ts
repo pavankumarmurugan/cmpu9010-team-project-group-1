@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { FriendsConvertor } from 'src/core/convertors/friends/friend.convertor';
 import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
@@ -68,13 +68,47 @@ export class FriendsUsecase {
     }
   }
 
-  async delete(friendId: number): Promise<IResponse<null>> {
+  async delete(userId: number, friendId: number): Promise<IResponse<null>> {
     try {
-      await this.databaseService.friends.delete(friendId);
-      return {
-        data: null,
-        message: MESSAGES.FRIENDS.DELETE.SUCCESS,
-      };
+      const friendsEntity: FriendsEntity =
+        await this.databaseService.friends.get({
+          friendId,
+        });
+
+      if (!friendsEntity) {
+        throw new ConflictException(MESSAGES.FRIENDS.DELETE.NOT_FOUND);
+      }
+      const { user1Id, user2Id } = friendsEntity;
+
+      if (userId === user1Id || userId === user2Id) {
+        const result1 = await this.databaseService.friendRequests.get({
+          senderId: user1Id,
+          receiverId: user2Id,
+        });
+
+        const result2 = await this.databaseService.friendRequests.get({
+          senderId: user2Id,
+          receiverId: user1Id,
+        });
+
+        if (result1) {
+          const { requestId } = result1;
+          await this.databaseService.friendRequests.delete(requestId);
+        }
+
+        if (result2) {
+          const { requestId } = result2;
+          await this.databaseService.friendRequests.delete(requestId);
+        }
+
+        await this.databaseService.friends.delete(friendId);
+        return {
+          data: null,
+          message: MESSAGES.FRIENDS.DELETE.SUCCESS,
+        };
+      }
+
+      throw new ConflictException(MESSAGES.FRIENDS.DELETE.NOT_AUTHORIZED);
     } catch (error) {
       throw error;
     }
