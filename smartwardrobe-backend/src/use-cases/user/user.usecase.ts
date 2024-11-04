@@ -20,21 +20,21 @@ export class UserUsecase {
     private bcryptService: BcryptService,
   ) {}
 
-  async getAllUsers(): Promise<IResponse<UserResDTO[]>> {
-    try {
-      const userLoginInfoEntities: UserEntity[] =
-        await this.databaseService.users.getAll();
-      const data: UserResDTO[] = this.userDtoConvertor.toUserResDTOFromEntity(
-        userLoginInfoEntities,
-      );
-      return {
-        data,
-        message: MESSAGES.USER.GET_ALL.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async getAllUsers(): Promise<IResponse<UserResDTO[]>> {
+  //   try {
+  //     const userLoginInfoEntities: UserEntity[] =
+  //       await this.databaseService.users.getAll();
+  //     const data: UserResDTO[] = this.userDtoConvertor.toUserResDTOFromEntity(
+  //       userLoginInfoEntities,
+  //     );
+  //     return {
+  //       data,
+  //       message: MESSAGES.USER.GET_ALL.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async create(userReqDTO: UserReqDTO): Promise<IResponse<UserResDTO>> {
     const hashPassword: string = await this.bcryptService.hash(
