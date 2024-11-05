@@ -6,7 +6,6 @@ import { UserResDTO } from 'src/core/dto/user/user-res.dto';
 import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
 import { FriendsEntity } from 'src/core/entities/friends/friends';
 import { UserEntity } from 'src/core/entities/user/user.entity';
-import { FRIEND_REQUEST_STATUS } from 'src/infrastructure/common/enum.ts/friend-requests.enum';
 
 @Injectable()
 export class UserDtoConvertor {
@@ -29,7 +28,7 @@ export class UserDtoConvertor {
       firstname,
       lastname,
       password: hashPassword,
-      username,
+      username: username.toLowerCase(),
       role,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -139,10 +138,8 @@ export class UserDtoConvertor {
   ): UserResDTO[] {
     return entities.map(
       ({ firstname, lastname, username, userId, role, profilePic }) => {
-        const hasSenderId = friendRequestsEntities.some(
-          (friendRequestsEntity) =>
-            friendRequestsEntity.receiverId === userId &&
-            friendRequestsEntity.status === FRIEND_REQUEST_STATUS.PENDING,
+        const user = friendRequestsEntities.find(
+          (friendRequestsEntity) => friendRequestsEntity.receiverId === userId,
         );
         return {
           firstname,
@@ -151,7 +148,7 @@ export class UserDtoConvertor {
           userId,
           role,
           profilePic,
-          status: hasSenderId ? FRIEND_REQUEST_STATUS.PENDING : null,
+          status: user ? user.status : null,
         };
       },
     );

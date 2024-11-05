@@ -198,6 +198,7 @@ export const MESSAGES = {
     GET_ONE: {
       SUCCESS: 'SUCCESSFULLY FETCHED GROUP',
     },
+    NOT_A_MEMBER: 'NOT A MEMBER OF THE GROUP',
   },
   GROUP_MEMBERS: {
     CREATE: {
@@ -213,6 +214,26 @@ export const MESSAGES = {
   VTO_IMAGE_SEARCH: {
     GET_ALL: {
       SUCCESS: 'SUCCESSFULLY FETCHED VTO IMAGE SEARCH',
+    },
+  },
+  FIREBASE: {
+    TYPES: {
+      NOTIFICATION: 'notification',
+      CHAT: 'chat',
+      FRIEND_REQUEST: 'friend_request',
+      FRIEND_REQUEST_ACCEPTED: 'friend_request_accepted',
+    },
+    NOTIFICATION: {
+      SUCCESS: 'SUCCESSFULLY ADDED NOTIFICATION',
+    },
+    FRIEND_REQUEST: {
+      RECEIVED: {
+        TITLE: 'Friend Request Received',
+        SUCCESS: 'You have a new friend request',
+      },
+      ACCEPTED: {
+        SUCCESS: 'Friend request accepted',
+      },
     },
   },
 };

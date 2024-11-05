@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/vector_search/controllers/image_search_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/vector_search/controllers/image_search_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vector_search/services/text_search_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/vector_search/services/text_search_service.py" afterDir="false" />
-    </list>
+    <list default="true" id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,19 +21,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "d23127255__jiaxin",
-    "last_opened_file_path": "/Users/janezhang/final--project/cmpu9010-team-project-group-1/smartwardrobe-AI/vector-search-v1",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;d23127255__jiaxin&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/janezhang/final--project/cmpu9010-team-project-group-1/smartwardrobe-AI/vector-search-v1&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -55,6 +52,7 @@
       <updated>1730309639558</updated>
       <workItem from="1730309640745" duration="1316000" />
       <workItem from="1730312898852" duration="18000" />
+      <workItem from="1730317382247" duration="4002000" />
     </task>
     <servers />
   </component>

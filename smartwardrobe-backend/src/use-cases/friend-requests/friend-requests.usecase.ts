@@ -11,12 +11,14 @@ import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { FRIEND_REQUEST_STATUS } from 'src/infrastructure/common/enum.ts/friend-requests.enum';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { FirebaseService } from 'src/infrastructure/services/firebase/firebase.service';
 
 @Injectable()
 export class FriendRequestsUsecase {
   constructor(
     private readonly databaseService: IDataServices,
     private readonly convertor: FriendRequestsConvertor,
+    private readonly firebaseService: FirebaseService,
   ) {}
 
   async create(
@@ -45,6 +47,47 @@ export class FriendRequestsUsecase {
         await this.databaseService.friendRequests.create(friendRequestsEntity);
       const data: FriendRequestsResDto =
         this.convertor.toFriendRequestsResDtoFromEntity(entity);
+
+      await this.firebaseService.addFriendRequestNotification(
+        userId,
+        data.receiverId,
+        data.requestId,
+        'senderName',
+      );
+
+      // await this.firebaseService.addFriendRequestNotification(
+      //   data.receiverId,
+      //   data.requestId,
+      //   {
+      //     senderId: data.senderId,
+      //     status: FRIEND_REQUEST_STATUS.PENDING,
+      //     createdAt: new Date().toISOString(),
+      //   },
+      // );
+
+      // await this.firebaseService.addNotification(data.receiverId, {
+      //   type: MESSAGES.FIREBASE.TYPES.FRIEND_REQUEST,
+      //   content: MESSAGES.FIREBASE.FRIEND_REQUEST.RECEIVED,
+      //   senderId: data.senderId,
+      //   receiverId: data.receiverId,
+      //   status: 'unread',
+      //   createdAt: new Date().toISOString(),
+      // });
+
+      const receiverToken = await this.firebaseService.getFcmToken(
+        data.receiverId,
+      );
+      if (receiverToken)
+        await this.firebaseService.sendBrowserNotification(
+          receiverToken,
+          MESSAGES.FIREBASE.FRIEND_REQUEST.RECEIVED.TITLE,
+          MESSAGES.FIREBASE.FRIEND_REQUEST.RECEIVED.SUCCESS,
+          {
+            type: MESSAGES.FIREBASE.TYPES.FRIEND_REQUEST,
+            senderId: data.senderId,
+          },
+        );
+
       return {
         data,
         message: MESSAGES.FRIEND_REQUEST.CREATE.SUCCESS,
@@ -115,6 +158,42 @@ export class FriendRequestsUsecase {
         user1Id: entity.senderId,
         user2Id: entity.receiverId,
       });
+
+      // const notificationData = {
+      //   content: MESSAGES.FIREBASE.FRIEND_REQUEST.ACCEPTED,
+      //   type: MESSAGES.FIREBASE.TYPES.FRIEND_REQUEST_ACCEPTED,
+      //   status: 'unread',
+      //   senderId: entity.senderId,
+      //   receiverId: entity.receiverId,
+      //   createdAt: new Date().toISOString(),
+      // };
+
+      // await this.firebaseService.addNotification(
+      //   entity.receiverId,
+      //   notificationData,
+      // );
+
+      await this.firebaseService.addFriendAcceptNotification(
+        entity.senderId,
+        entity.receiverId,
+        requestId,
+        'senderName',
+      );
+
+      const receiverToken = await this.firebaseService.getFcmToken(
+        entity.senderId,
+      );
+
+      if (receiverToken)
+        await this.firebaseService.sendBrowserNotification(
+          receiverToken,
+          MESSAGES.FIREBASE.FRIEND_REQUEST.RECEIVED.TITLE,
+          MESSAGES.FIREBASE.FRIEND_REQUEST.RECEIVED.SUCCESS,
+          {
+            type: MESSAGES.FIREBASE.TYPES.FRIEND_REQUEST,
+            senderId: entity.receiverId,
+          },
+        );
 
       return {
         data: null,

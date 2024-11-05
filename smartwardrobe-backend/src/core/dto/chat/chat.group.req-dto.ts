@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsNumber, IsString } from 'class-validator';
 
-export class ChatReqDto {
-  @ApiProperty({ example: 2, description: 'The ID of the receiver' })
-  @IsNumber()
-  receiverId?: number;
-
+export class ChatGroupReqDto {
   @ApiProperty({
     example: 'Hello, how are you?',
     description: 'The message content',
@@ -28,6 +24,5 @@ export class ChatReqDto {
     description: 'The ID of the group',
   })
   @IsNumber()
-  @IsOptional()
   groupId?: number;
 }
