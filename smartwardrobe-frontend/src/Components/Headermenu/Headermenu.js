@@ -47,6 +47,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import CartComponent from "../CartComponent/CartComponent";
+import Profile from "../Profile/Profile";
 
 function Headermenu() {
   {
@@ -68,6 +69,7 @@ function Headermenu() {
   const [openLoader, setOpenLoader] = useState(false);
   const [openAccessories, setOpenAccessories] = useState(false);
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
   const [openChatComponent, setOpenChatComponent] = useState(false);
   const [openCart, setOpenCart] = useState(false);
@@ -549,6 +551,10 @@ function Headermenu() {
       localStorage.removeItem("user");
       navigate("/");
       window.location.reload();
+    } else if(e.key === "2") {
+      setOpenProfile(true);
+    } else if(e.key === "1") {
+      return;
     } else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
@@ -562,6 +568,9 @@ function Headermenu() {
   const CloseLoginForm = () => {
     setCheckingLoginOrSignup("");
     setOpenLoginModal(false);
+  };
+  const CloseProfile = () => {
+    setOpenProfile(false);
   };
 
   const accountCreate = (e) => {
@@ -721,12 +730,21 @@ function Headermenu() {
 
       {/*  Chat component */}
 
-      <ChatComponent
+      {openChatComponent && <ChatComponent
         isShowModel={openChatComponent}
         closeModal={setOpenChatComponent}
-      />
+      />}
 
       {/*  Chat component */}
+
+      {/* Profile Modal */}
+
+        {openProfile &&
+      <Profile
+        isShowModel={openProfile}
+        closeModal={CloseProfile}
+      />}
+      {/*  Profile Modal */}
 
       {/* Signup/Login Modal */}
 
