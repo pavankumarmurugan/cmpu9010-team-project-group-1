@@ -9,6 +9,7 @@ import { GroupEntity } from 'src/core/entities/group/group';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { FirebaseService } from 'src/infrastructure/services/firebase/firebase.service';
 
 @Injectable()
 export class GroupUsecase {
@@ -16,6 +17,7 @@ export class GroupUsecase {
     private databaseService: IDataServices,
     private convertor: GroupConvertor,
     private userDtoConvertor: UserDtoConvertor,
+    private firebaseService: FirebaseService,
   ) {}
 
   async create(
@@ -31,6 +33,16 @@ export class GroupUsecase {
       const entity: GroupEntity =
         await this.databaseService.group.create(groupEntity);
       const data: GroupEntity = this.convertor.toEntity(entity);
+
+      // await this.firebaseService.addGroupChatNotification(
+      //   senderId,
+      //   receiverId,
+      //   chatId,
+      //   groupId,
+      //   groupName,
+      //   message,
+      // );
+
       return {
         data,
         message: MESSAGES.GROUP.CREATE.SUCCESS,

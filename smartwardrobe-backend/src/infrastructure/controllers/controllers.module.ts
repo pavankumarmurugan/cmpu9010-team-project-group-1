@@ -21,7 +21,6 @@ import { ServicesModule } from '../services/services.module';
 // import { ScriptController } from './script/script';
 import { LikesController } from './likes/likes.controller';
 import { ChatController } from './chat/chat.controller';
-import { ChatGateway } from './chat/chat-gateway.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { RecommendationController } from './recommendation/recommendation.controller';
 import { FriendRequestsController } from './friend-requests/friend-requests.controller';
@@ -79,7 +78,6 @@ import { VtoImageSearchController } from './vto/vto.controller';
     //   provide: APP_GUARD,
     //   useClass: ThrottlerGuard,
     // },
-    ChatGateway,
     JwtService,
   ],
 })

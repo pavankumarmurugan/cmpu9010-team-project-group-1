@@ -272,24 +272,6 @@ CREATE TABLE public.like (
 );
 
 
--- CREATE TABLE public.chat (
---   id SERIAL PRIMARY KEY,
---   sender_id INT NULL,
---   receiver_id INT NULL,
---   message TEXT NULL,
---   created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
---   updated_at TIMESTAMP NULL,
---   CONSTRAINT fk_sender_id
---     FOREIGN KEY (sender_id)
---     REFERENCES public.user (user_id)
---     ON DELETE CASCADE
---     ON UPDATE CASCADE,
---   CONSTRAINT fk_receiver_id
---     FOREIGN KEY (receiver_id)
---     REFERENCES public.user (user_id)
---     ON DELETE CASCADE
---     ON UPDATE CASCADE
--- );
 
 CREATE TABLE public.chat (
   id SERIAL PRIMARY KEY,

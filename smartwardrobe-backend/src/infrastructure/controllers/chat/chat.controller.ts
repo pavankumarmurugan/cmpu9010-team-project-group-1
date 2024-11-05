@@ -22,13 +22,12 @@ import { Roles } from 'src/infrastructure/decorators/roles.decorator';
 import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
 import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
 import { ChatUsecase } from 'src/use-cases/chat/chat.usecase';
-import { ChatGateway } from './chat-gateway.controller';
 
 @Controller('chat')
 @ApiTags('Chat')
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class ChatController {
-  constructor(private usecase: ChatUsecase, private chatGateway: ChatGateway) {}
+  constructor(private usecase: ChatUsecase) {}
 
   @Get('get-all-my-chats')
   @ApiBearerAuth()
@@ -58,7 +57,6 @@ export class ChatController {
         user: { userId },
       } = request;
       const response = await this.usecase.create(userId, dto);
-      this.chatGateway.sendMessageToRoom(userId.toString(), response.data);
       return response;
     } catch (error) {
       throw error;
