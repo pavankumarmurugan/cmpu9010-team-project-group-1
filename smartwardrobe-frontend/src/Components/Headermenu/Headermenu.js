@@ -32,7 +32,7 @@ import {
 } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Dropdown } from "antd";
+import { Carousel, Dropdown } from "antd";
 import { GenericDropdownMenu } from "../GenericCode/GenericCode";
 import SignupModal from "../Signup/Signup";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -47,7 +47,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import CartComponent from "../CartComponent/CartComponent";
-import Profile from "../Profile/Profile";
 
 function Headermenu() {
   {
@@ -69,7 +68,6 @@ function Headermenu() {
   const [openLoader, setOpenLoader] = useState(false);
   const [openAccessories, setOpenAccessories] = useState(false);
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
-  const [openProfile, setOpenProfile] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
   const [openChatComponent, setOpenChatComponent] = useState(false);
   const [openCart, setOpenCart] = useState(false);
@@ -80,6 +78,16 @@ function Headermenu() {
   {
     /*  Use State*/
   }
+
+  const contentStyle= {
+    margin: 0,
+    // height: '30px',
+    color: '#fff',
+    textAlign: 'center',
+    background: '#e8e4e0',
+    color: "black",
+    fontWeight: "500"
+  };
 
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
@@ -551,10 +559,6 @@ function Headermenu() {
       localStorage.removeItem("user");
       navigate("/");
       window.location.reload();
-    } else if(e.key === "2") {
-      setOpenProfile(true);
-    } else if(e.key === "1") {
-      return;
     } else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
@@ -568,9 +572,6 @@ function Headermenu() {
   const CloseLoginForm = () => {
     setCheckingLoginOrSignup("");
     setOpenLoginModal(false);
-  };
-  const CloseProfile = () => {
-    setOpenProfile(false);
   };
 
   const accountCreate = (e) => {
@@ -729,22 +730,13 @@ function Headermenu() {
       {/*  drawer work*/}
 
       {/*  Chat component */}
-
-      {openChatComponent && <ChatComponent
+      {openChatComponent &&
+      <ChatComponent
         isShowModel={openChatComponent}
         closeModal={setOpenChatComponent}
       />}
 
       {/*  Chat component */}
-
-      {/* Profile Modal */}
-
-        {openProfile &&
-      <Profile
-        isShowModel={openProfile}
-        closeModal={CloseProfile}
-      />}
-      {/*  Profile Modal */}
 
       {/* Signup/Login Modal */}
 
@@ -755,6 +747,18 @@ function Headermenu() {
         accountCreate={accountCreate}
       />
       {/*  Signup/Login Modal */}
+
+      <Carousel dotPosition="left" dots={false} infinite={false} autoplay={true} autoplaySpeed={1500} style={{maxHeight:"20px"}} >
+      <div>
+        <h3 style={contentStyle}>Collaborative Chat</h3>
+      </div>
+      <div>
+        <h3 style={contentStyle}>Virtual Try-On</h3>
+      </div>
+      <div>
+        <h3 style={contentStyle}>Customization option</h3>
+      </div>
+    </Carousel>
 
       <div className="header-main">
         <div className="header-conatiner page-width">

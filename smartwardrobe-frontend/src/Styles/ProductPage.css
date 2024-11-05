@@ -390,6 +390,39 @@
   }
 }
 
+.Input-Suggestion-main {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.Input-Suggestion-div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.input-suggestion-text {
+  padding: 10px;
+  border: 1px solid lightgray !important;
+  border-radius: 30px;
+  text-transform: capitalize;
+  font-size: 14px;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  &:hover{
+    transform: scale(1.01);
+    border: 1px solid gray !important;
+  }
+}
+
+
 .product-detailsimage-top-right-button {
   position: absolute;
   top: 10px; 

@@ -52,6 +52,7 @@
   border-radius: 20px;
   padding-left: 20px;
   padding-top: 40px;
+  margin-bottom: 30px;
 }
 
 /* .left-chat-section h2 {
@@ -75,16 +76,21 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: auto;
+  scrollbar-width: thin;
 }
 
 .contact-details-div {
   display: flex;
   padding: 5px;
   border-radius: 10px;
-  &:hover {
-    background-color: lightgray;
-    color: black;
-  }
+}
+
+.contact-details-div:hover,
+.contact-details-div:focus,
+.contact-details-div.active {
+  background-color: lightgray;
+  color: black;
 }
 
 .contact-Name-for-OpenChat {
@@ -259,9 +265,9 @@
   padding: 10px 20px 10px 20px;
   background-color: #2e3b4e;
   color: white;
-  border-top-left-radius: 50px;
-  border-bottom-left-radius: 50px;
-  border-top-right-radius: 50px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
   max-width: 60%;
   font-size: 17px;
   text-transform: capitalize;
@@ -279,10 +285,10 @@
 .chat_receiver p {
   padding: 10px 20px 10px 20px;
   /* background-color: #e9ecef; */
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
   background-color: white;
-  border-top-right-radius: 50px;
-  border-bottom-left-radius: 50px;
-  border-bottom-right-radius: 50px;
   max-width: 80%;
   font-size: 17px;
   text-transform: capitalize;
@@ -378,6 +384,7 @@
 .custom-textarea {
   border-color: gray;
   transition: border-color 0.3s;
+  text-transform: capitalize;
 }
 
 .custom-textarea:hover {
@@ -435,6 +442,7 @@
   align-items: center;
   padding-right: 20px;
   padding-top: 10px;
+  cursor: pointer;
 }
 
 .notification-bar {
@@ -452,7 +460,7 @@
 .chat-message {
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Center items vertically */
-  margin: 10px 0; /* Space between messages */
+  margin: 2px 0; /* Space between messages */
 }
 
 .receiver-message {
@@ -521,10 +529,14 @@
 
 .custom-modal-new-chat .ant-modal-content {
   background-color: white !important;
+  max-height: 500px;
 }
 
 .newGroup-main-div {
   margin-top: 30px;
+  overflow: auto;
+  scrollbar-width: thin;
+  max-height: 365px;
 }
 
 .newGroup-list {

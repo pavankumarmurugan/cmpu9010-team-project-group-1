@@ -39,6 +39,7 @@ function NewChatModal(props) {
   const [suggestions, setSuggestions] = useState([]);
   const [friendReqData, setFriendReqData] = useState([]);
   const [autocomplteAllData, setAutocomplteAllData] = useState([]);
+  const [addMemberToGroupList, setaddMemberToGroupList] = useState([]);
   // const [loading, setLoading] = useState(false);
 
   const [bounds, setBounds] = useState({
@@ -69,6 +70,44 @@ function NewChatModal(props) {
     debugger;
   };
 
+  const handleCheckboxForAddMemberInGroup = async (e, item) => {
+    debugger;
+    if (e?.target?.checked) {
+      addMemberToGroupList.push(item?.userId);
+    } else {
+      let filterCheckedOnly = addMemberToGroupList?.filter(
+        (i) => i !== item?.userId
+      );
+      setaddMemberToGroupList(filterCheckedOnly);
+    }
+  };
+
+  const handleAddMemberButton = async () => {
+    debugger;
+    if (addMemberToGroupList?.length > 0) {
+      const apiCalls = addMemberToGroupList.map((item) => {
+        const data = {
+          groupId: props?.chatInfo?.groupId,
+          userId: item,
+        };
+        return apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/group-members/create",
+          data,
+          token?.token
+        );
+      });
+      setOpenLoader(true);
+      const addMemberToGroup = await Promise.all(apiCalls);
+      setOpenLoader(false);
+      if (addMemberToGroup?.length > 0) {
+        showToastSuccess("Member Added Successfully");
+        handleCancel();
+        props?.reRenderComponent();
+      }
+    }
+  };
+
   const debounce = (func, delay) => {
     let timeoutId;
     return (...args) => {
@@ -79,30 +118,48 @@ function NewChatModal(props) {
     };
   };
 
-  // Fetch suggestions from the API
   const fetchSuggestions = async (query) => {
-    debugger;
+    debugger
     const trimmedQuery = query.trim();
-    if (trimmedQuery.trim().length < 3) {
-      // setSuggestions([]);
+    if (trimmedQuery.length < 3) {
+      setSuggestions([]);
       return;
     }
-    // setLoading(true);
+
     try {
-      // setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/users/search/${query}`,
+        `https://smartwardrobe-backend.azurewebsites.net/users/search/${trimmedQuery}`,
         null,
         token?.token
       );
-      // setOpenLoader(false);
+
       if (response?.data) {
         setAutocomplteAllData(response?.data);
-        const options = response.data.map((user) => ({
-          value: user.username,
-          label: user.username,
-        }));
+        const options = response.data
+          .filter((user) => user?.status !== "accepted")
+          .map((user) => ({
+            value: user?.username,
+            label: (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={
+                    user?.profilePic ||
+                    "https://www.w3schools.com/howto/img_avatar.png"
+                  }
+                  alt="user-image"
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: "50%",
+                    marginRight: 8,
+                  }}
+                />
+                <span>{user?.username}</span>
+              </div>
+            ),
+          }));
+
         setSuggestions(options);
       }
     } catch (error) {
@@ -157,6 +214,7 @@ function NewChatModal(props) {
         setOpenLoader(false);
         if (response) {
           showToastSuccess("Friend Added Successfully");
+          props?.reRenderComponent();
           props?.closeModal();
         }
       } catch (error) {
@@ -204,13 +262,14 @@ function NewChatModal(props) {
     }
 
     if (filterData?.length === 0) {
+      props?.reRenderComponent();
       props?.closeModal();
     }
   };
 
   const handleInputChangeGroup = (event) => {
     setGroupNameValue(event?.target?.value);
-  }
+  };
 
   const handleGroupCreate = async () => {
     debugger;
@@ -219,15 +278,21 @@ function NewChatModal(props) {
     }
     const sendObj = {
       groupName: groupNameValue,
-      };
+    };
     setOpenLoader(true);
-    const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/group/create", sendObj, token?.token);
+    const response = await apiCall(
+      "POST",
+      "https://smartwardrobe-backend.azurewebsites.net/group/create",
+      sendObj,
+      token?.token
+    );
     setOpenLoader(false);
-    if(response?.message === "SUCCESSFULLY CREATED GROUP") {
+    if (response?.message === "SUCCESSFULLY CREATED GROUP") {
       showToastSuccess(response?.message);
+      props?.reRenderComponent();
       props?.closeModal();
     }
-  }
+  };
 
   return (
     <>
@@ -260,6 +325,10 @@ function NewChatModal(props) {
           >
             {props?.showSection === "AddFriends"
               ? "Add New Friends"
+              : props?.showSection === "ShareProductsToFriends"
+              ? "Share Product with Friends"
+              : props?.showSection === "InviteFriendsToGroup"
+              ? "Invite Friends to Group"
               : props?.showSection === "ShareProductsToFriends"
               ? "Share Product with Friends"
               : "Create New Group"}
@@ -302,7 +371,10 @@ function NewChatModal(props) {
                 <AutoComplete
                   style={{ width: "100%", height: "40px" }}
                   value={inputValue}
-                  onChange={handleInputChange}
+                  onChange={(value) => {
+                    setInputValue(value);
+                    fetchSuggestions(value);
+                  }}
                   placeholder="Search Friends"
                   options={suggestions}
                 />
@@ -323,11 +395,11 @@ function NewChatModal(props) {
             <div className="search-contacts">
               <div className="search-input">
                 <input
-                type="text"
-                value={groupNameValue}
-                onChange={handleInputChangeGroup}
-                placeholder="Enter Group Name"
-            />
+                  type="text"
+                  value={groupNameValue}
+                  onChange={handleInputChangeGroup}
+                  placeholder="Enter Group Name"
+                />
               </div>
               <div className="create-button-div">
                 <Button
@@ -342,38 +414,51 @@ function NewChatModal(props) {
           )}
 
           {props?.showSection === "InviteFriendsToGroup" && (
-            <div className="newGroup-main-div">
-              {props?.friends?.map((item, index) => (
-                <div className="newGroup-list">
-                  <div className="newGroup-list-item">
-                    <div className="newGroup-list-item-image">
-                      <img
-                        src={
-                          item?.profilePic
-                            ? item?.profilePic
-                            : "https://www.w3schools.com/howto/img_avatar.png"
-                        }
-                        alt=""
-                        className="newGroup-list-item-image-img"
-                      />
-                    </div>
-                    <div className="newGroup-list-item-name">
-                      <div className="newGroup-list-item-name-text">
-                        <p>{item?.username}</p>
+            <>
+              <div className="newGroup-main-div">
+                {props?.friends?.map(
+                  (item, index) =>
+                    item?.username && (
+                      <div className="newGroup-list">
+                        <div className="newGroup-list-item">
+                          <div className="newGroup-list-item-image">
+                            <img
+                              src={
+                                item?.profilePic
+                                  ? item?.profilePic
+                                  : "https://www.w3schools.com/howto/img_avatar.png"
+                              }
+                              alt=""
+                              className="newGroup-list-item-image-img"
+                            />
+                          </div>
+                          <div className="newGroup-list-item-name">
+                            <div className="newGroup-list-item-name-text">
+                              <p>{item?.username}</p>
+                            </div>
+                            <div className="checkbox-div">
+                              <Checkbox
+                                onChange={(e) =>
+                                  handleCheckboxForAddMemberInGroup(e, item)
+                                }
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="checkbox-div">
-                        <Checkbox onChange={(e) => handleCheckbox(e)} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                    )
+                )}
+              </div>
               <div className="create-button-div">
-                <Button className="Create-Button" color="default">
-                  Create
+                <Button
+                  className="Create-Button"
+                  color="default"
+                  onClick={handleAddMemberButton}
+                >
+                  Add
                 </Button>
               </div>
-            </div>
+            </>
           )}
 
           {props?.showSection === "ShareProductsToFriends" && (

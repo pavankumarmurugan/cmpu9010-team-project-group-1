@@ -615,6 +615,19 @@ const ProductPage = () => {
               </FormControl>
               {/* </div> */}
             </div>
+            <div className="Input-Suggestion-main">
+            <div className="Input-Suggestion-div">
+                  <div className="Input-Suggestion">
+                    <p className="input-suggestion-text">Red shirt under the price of $50</p>
+                  </div>
+                  <div className="Input-Suggestion">
+                    <p className="input-suggestion-text">Red shirt under the price of $50</p>
+                  </div>
+                  <div className="Input-Suggestion">
+                    <p className="input-suggestion-text">Red shirt under the price of $50</p>
+                  </div>
+                  </div>
+            </div>
             <div
               style={{
                 width: "100%",
@@ -764,98 +777,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-
-{
-  /* <div className="chat">
-            <div className="chat-content">
-              <ChatSection />
-            </div>
-
-            <div className="search-input-container">
-              <FormControl
-                sx={{ m: 1, width: "100%", maxWidth: "800px" }}
-                variant="outlined"
-              >
-                <InputLabel
-                  sx={{
-                    color: "black",
-                    letterSpacing: "normal",
-                    textTransform: "capitalize",
-                    "&.Mui-focused": {
-                      color: "black",
-                      fontSize: "18px",
-                    },
-                  }}
-                  htmlFor="outlined-adornment-password"
-                >
-                  Search
-                </InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={"text"}
-                  style={{ width: "100%", backgroundColor: "#e9ecef" }}
-                  className="productsearch-input"
-                  autoComplete="off"
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <Button
-                        component="label"
-                        role={undefined}
-                        tabIndex={-1}
-                        variant="outlined"
-                        color="neutral"
-                        style={{
-                          border: "none",
-                          width: "10px",
-                          borderRadius: "50%",
-                        }}
-                        startDecorator={
-                          <SvgIcon>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                              />
-                            </svg>
-                          </SvgIcon>
-                        }
-                      >
-                        <VisuallyHiddenInput
-                          type="file"
-                          onChange={imageUpload}
-                        />
-                      </Button>
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        edge="end"
-                      >
-                        <SearchIcon style={{ color: "black" }} />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                  sx={{
-                    height: "50px",
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "transparent",
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "rgba(0, 0, 0, 0.5)",
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "black",
-                      borderWidth: "2px",
-                    },
-                  }}
-                />
-              </FormControl>
-            </div>
-          </div> */
-}
