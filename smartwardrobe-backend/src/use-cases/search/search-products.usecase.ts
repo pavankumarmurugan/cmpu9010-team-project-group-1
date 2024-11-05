@@ -77,7 +77,7 @@ export class SearchProductUsecase {
         );
       });
 
-      const pages = unique.slice(page * limit, (page + 1) * limit);
+      const pages = unique.slice((page - 1) * limit, page * limit);
 
       const entities = await Promise.all(
         pages.map(async ({ image_name }) =>
