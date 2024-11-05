@@ -11,6 +11,8 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ChatGroupReqDto } from 'src/core/dto/chat/chat.group.req-dto';
+import { ChatGroupResDto } from 'src/core/dto/chat/chat.group.res-dto';
 import { ChatReqDto } from 'src/core/dto/chat/chat.req-dto';
 import { UpdateChatReqDto } from 'src/core/dto/chat/chat.req-update-dto';
 import { ChatResDto } from 'src/core/dto/chat/chat.res-dto';
@@ -29,23 +31,58 @@ import { ChatUsecase } from 'src/use-cases/chat/chat.usecase';
 export class ChatController {
   constructor(private usecase: ChatUsecase) {}
 
-  @Get('get-all-my-chats')
+  // @Get('get-all-my-chats')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN, ROLES.USER)
+  // async getAll(
+  //   @Request() request: RequestWithUser,
+  // ): Promise<IResponse<ChatResDto[]>> {
+  //   try {
+  //     const {
+  //       user: { userId },
+  //     } = request;
+  //     return await this.usecase.getAll(userId);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  @Get('get-all-my-chats-by-friend-id/:friendId')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
   async getAll(
+    @Param('friendId', ParseIntPipe) friendId: number,
     @Request() request: RequestWithUser,
   ): Promise<IResponse<ChatResDto[]>> {
     try {
       const {
         user: { userId },
       } = request;
-      return await this.usecase.getAll(userId);
+      return await this.usecase.getAllMyChatByFriendId(userId, friendId);
     } catch (error) {
       throw error;
     }
   }
 
-  @Post('create')
+  @Get('get-all-my-chats-by-group-id/:groupId')
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async getAllByGroupId(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Request() request: RequestWithUser,
+  ): Promise<IResponse<ChatGroupResDto[]>> {
+    try {
+      const {
+        user: { userId },
+      } = request;
+
+      return await this.usecase.getAllMyChatByByGroupId(groupId, userId);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('create/send-message-to-friend')
   @ApiBearerAuth()
   @Roles(ROLES.ADMIN, ROLES.USER)
   async create(
@@ -57,6 +94,24 @@ export class ChatController {
         user: { userId },
       } = request;
       const response = await this.usecase.create(userId, dto);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('create/send-message-to-group')
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async createSendMessageToGroup(
+    @Request() request: RequestWithUser,
+    @Body() dto: ChatGroupReqDto,
+  ): Promise<IResponse<ChatGroupResDto>> {
+    try {
+      const {
+        user: { userId },
+      } = request;
+      const response = await this.usecase.createSendMessageToGroup(userId, dto);
       return response;
     } catch (error) {
       throw error;
@@ -99,4 +154,10 @@ export class ChatController {
       throw error;
     }
   }
+
+  //TODO -
+  // Get all my chats
+  // Get all chats for one user
+  // Get all chats for one group
+  // should not be able to add frineds to a group chat if already in a group chat
 }

@@ -198,6 +198,7 @@ export const MESSAGES = {
     GET_ONE: {
       SUCCESS: 'SUCCESSFULLY FETCHED GROUP',
     },
+    NOT_A_MEMBER: 'NOT A MEMBER OF THE GROUP',
   },
   GROUP_MEMBERS: {
     CREATE: {
