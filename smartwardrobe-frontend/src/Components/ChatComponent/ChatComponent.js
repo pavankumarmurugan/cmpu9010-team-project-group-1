@@ -1,24 +1,46 @@
 import { Modal } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { FaPlus } from "react-icons/fa";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
-import { Backdrop, Button, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { showToastSuccess } from "../GenericToasters/GenericToasters";
-import { IoMdChatboxes } from "react-icons/io";
+import {
+  Backdrop,
+  Badge,
+  Button,
+  CircularProgress,
+  IconButton,
+  Menu,
+  MenuItem,
+  styled,
+} from "@mui/material";
 import "../../Styles/ChatComponent.css";
 import { FaPaperPlane } from "react-icons/fa6";
 import { IoExitOutline } from "react-icons/io5";
 import chatbackgroundimage from "../../Assets/chatbackgroundimage.jpg";
 import { Search } from "@mui/icons-material";
 import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NewChatModal from "../NewChatModal/NewChatModal";
+import TextArea from "antd/es/input/TextArea";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import { LiaUserFriendsSolid } from "react-icons/lia";
+import { showToastInfo } from "../GenericToasters/GenericToasters";
+// import { FreiendRequestsValueSuccess } from "../../redux/slices/HomeDataSlice";
 
 function ChatComponent(props) {
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const [disabled, setDisabled] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const [openLoader, setOpenLoader] = useState(false);
+  const [addNewFriendorGroup, setaddNewFriendorGroup] = useState("");
+  const [friendReqCount, setFriendReqCount] = useState([]);
+  const [friends, setFriends] = useState([]);
+  const [friendReqCountToShow, setFriendReqCountToShow] = useState(0);
   const [hideLeftSection, sethideLeftSection] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
   const [messages, setMessages] = useState([
@@ -39,6 +61,12 @@ function ChatComponent(props) {
     { sender: "user", text: "Can you tell me about the weather?" },
     { sender: "bot", text: "Sure! It looks sunny and warm today." },
   ]);
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    "& .MuiBadge-badge": {
+      color: "white",
+      backgroundColor: "black",
+    },
+  }));
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
@@ -62,7 +90,47 @@ function ChatComponent(props) {
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const [showChat, setShowChat] = useState(false);
+
+  /** get all friend requests */
+
+  useEffect(() => {
+    getAllFriendandFriendRequests();
+  }, []);
+
+  const getAllFriendandFriendRequests = async () => {
+    debugger;
+    setOpenLoader(true);
+    const getFriendReqList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/friend-requests/get-all-my-received-requests",
+      null,
+      token?.token
+    );
+    if (getFriendReqList?.data?.length > 0) {
+      setFriendReqCountToShow(getFriendReqList?.data?.length);
+      setFriendReqCount(getFriendReqList?.data);
+      setaddNewFriendorGroup("friendReq");
+    }
+
+    const getGroupsList = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups", null, token?.token);
+    if (getGroupsList?.data?.length > 0) {
+      setFriends(getGroupsList?.data);
+    }
+
+    const getFriendsList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+      null,
+      token?.token
+    );
+    if (getFriendsList?.data?.length > 0) {
+      setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+    }
+    setOpenLoader(false);
+  };
+
+  /** get all friend requests */
+
   const chatHandler = () => {
     props?.closeModal();
   };
@@ -72,63 +140,76 @@ function ChatComponent(props) {
     sethideLeftSection(false);
   };
 
-  const handleShowChat = () => {
-    // debugger
-    if(window.innerWidth < 768){
+  const handleShowChat = (event) => {
+    debugger
+    if (window.innerWidth < 768) {
       sethideLeftSection(true);
     }
-  }
+  };
 
   const closeNewChat = () => {
     setShowNewChat(false);
+  };
+
+  /** more options menu */
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (e) => {
+    debugger;
+    if (e === "AddFriends") {
+      setaddNewFriendorGroup("AddFriends");
+      setShowNewChat(true);
+    } else if (e === "CreateGroup") {
+      setaddNewFriendorGroup("CreateGroup");
+      setShowNewChat(true);
+    }
+    setAnchorEl(null);
+  };
+  /** more options menu */
+
+  /** open friend requests modal */
+
+  const handleFriendRequests = () => {
+    if(friendReqCountToShow !== 0){
+      setaddNewFriendorGroup("friendReq");
+      setShowNewChat(true);
+    }else{
+      showToastInfo("No friend requests to show");
+    }
   }
 
-  const handleNewChat = () => {
-    setShowNewChat(true);
-  }
+  /** open friend requests modal */
 
   return (
     <>
-      {/* <div>
-        <Button
-          className="Chat-button"
-          aria-label="Scroll to top"
-          onClick={chatHandler}
-        >
-          <IoMdChatboxes style={{color:"white"}} />
-        </Button>
-      </div> */}
-      
+      {/** loader code */}
+      <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      {/** loader code */}
+
       {/** new chat component */}
 
-        {showNewChat && 
+      {showNewChat && (
         <NewChatModal
-        isShowModel={showNewChat}
-        closeModal={closeNewChat} />
-      }
+          isShowModel={showNewChat}
+          closeModal={closeNewChat}
+          showSection={addNewFriendorGroup}
+          friendReqCount={friendReqCount}
+          friends={friends}
+          setFriendReqCountToShow={setFriendReqCountToShow}
+        />
+      )}
 
       {/** new chat component */}
+
       <Modal
-        // title={
-        //   <div
-        //     style={{
-        //       width: "100%",
-        //       cursor: "move",
-        //     }}
-        //     onMouseOver={() => {
-        //       if (disabled) {
-        //         setDisabled(false);
-        //       }
-        //     }}
-        //     onMouseOut={() => {
-        //       setDisabled(true);
-        //     }}
-        //     onFocus={() => {}}
-        //     onBlur={() => {}}
-        //   >
-        //     {/* {props?.title} */}
-        //   </div>
-        // }
         open={props?.isShowModel}
         width={"80%"}
         style={{ top: 20 }}
@@ -148,10 +229,18 @@ function ChatComponent(props) {
       >
         <div className="modal-container-chat">
           <div className="chat-container">
-            <div className={`left-chat-section ${hideLeftSection ? "hide-left" : "show-left"}`} >
-              <div className="new-conversation-div">
+            <div
+              className={`left-chat-section ${
+                hideLeftSection ? "hide-left" : "show-left"
+              }`}
+            >
+              {/* <div className="new-conversation-div">
                 <div className="new-conversation">
-                  <Button className="new-converation-button" color="default" onClick={handleNewChat}>
+                  <Button
+                    className="new-converation-button"
+                    color="default"
+                    onClick={handleNewChat}
+                  >
                     <FaPlus
                       style={{
                         width: "20px",
@@ -163,8 +252,53 @@ function ChatComponent(props) {
                     New Conversation
                   </Button>
                 </div>
+              </div> */}
+              <div className="chat-moreoptions-icon">
+                <h2>Chats</h2>
+                <div className="moreoptions-div">
+                  <StyledBadge
+                    badgeContent={friendReqCountToShow}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                  >
+                    <PeopleOutlinedIcon style={{ cursor: "pointer" }} onClick={handleFriendRequests} />
+                  </StyledBadge>
+                  <IconButton
+                    aria-label="more"
+                    aria-controls="kebab-menu"
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    id="kebab-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    MenuListProps={{
+                      "aria-labelledby": "more-button",
+                    }}
+                  >
+                    <MenuItem onClick={() => handleClose("AddFriends")}>
+                      Add Friends
+                    </MenuItem>
+                    <MenuItem onClick={(e) => handleClose("CreateGroup")}>
+                      Create Group
+                    </MenuItem>
+                  </Menu>
+                </div>
               </div>
-              <h2>Chats</h2>
               <div className="search-contacts">
                 <div className="search-input">
                   <input type="text" placeholder="Search Friends" />
@@ -177,59 +311,35 @@ function ChatComponent(props) {
                 <b style={{ paddingLeft: "10px" }}>GROUPS</b>
               </h4> */}
               <div className="contact-list">
-                <div className="contact-details-div" onClick={handleShowChat}>
+                {friends?.map((friend, index) => (
+                <div className="contact-details-div" onClick={() => handleShowChat(friend)}>
                   <img
-                    src={chatbackgroundimage}
-                    alt="Alice"
-                    className="contact-image"
-                  />
-                  <div className="contact-name-and-last-msg" >
-                    <div className="contact-Name">Alice</div>
-                    <div className="contact-last-msg">Hi, how are you?</div>
-                  </div>
-                </div>
-                <div className="contact-details-div">
-                  <img
-                    src={chatbackgroundimage}
+                    src={
+                      friend?.profilePic
+                        ? friend?.profilePic
+                        : chatbackgroundimage
+                    }
                     alt="Alice"
                     className="contact-image"
                   />
                   <div className="contact-name-and-last-msg">
-                    <div className="contact-Name">Salil</div>
+                    <div className="contact-Name">{friend?.groupName ? friend?.groupName : friend?.username}</div>
                     <div className="contact-last-msg">Hi, how are you?</div>
                   </div>
-                </div>
-              </div>
-              {/* <h4>
-                <b style={{ paddingLeft: "10px" }}>CONTACTS</b>
-              </h4> */}
-              <div className="contact-list">
-                <div className="contact-details-div">
-                  <img
-                    src={chatbackgroundimage}
-                    alt="Alice"
-                    className="contact-image"
-                  />
-                  <div className="contact-name-and-last-msg">
-                    <div className="contact-Name">Pavan</div>
-                    <div className="contact-last-msg">Hi, how are you?</div>
-                  </div>
-                </div>
-                <div className="contact-details-div">
-                  <img
-                    src={chatbackgroundimage}
-                    alt="Alice"
-                    className="contact-image"
-                  />
-                  <div className="contact-name-and-last-msg">
-                    <div className="contact-Name">Jane</div>
-                    <div className="contact-last-msg">Hi, how are you?</div>
-                  </div>
-                </div>
+                </div>))}
+                {
+                  friends?.length === 0 && (
+                    <div className="no-friends">
+                      <h4>No Friends</h4>
+                    </div>
+                  )
+                }
               </div>
             </div>
             <div
-              className={`right-chat-section ${hideLeftSection ? "show-right" : "hide-right"}`} 
+              className={`right-chat-section ${
+                hideLeftSection ? "show-right" : "hide-right"
+              }`}
               style={{
                 // backgroundImage: `url(${chatbackgroundimage})`,
                 backgroundColor: "#f4f3f8",
@@ -301,7 +411,13 @@ function ChatComponent(props) {
               </div>
 
               <div className="chat-input">
-                <input type="text" placeholder="Type a message..." />
+                {/* <input type="text" placeholder="Type a message..." /> */}
+                <TextArea
+                  style={{ paddingRight: "7%" }}
+                  placeholder="Type a message..."
+                  autoSize={{ minRows: 2 }}
+                  className="custom-textarea"
+                />
                 <button className="send-button">
                   <FaPaperPlane style={{ color: "2e3b4e" }} />
                 </button>

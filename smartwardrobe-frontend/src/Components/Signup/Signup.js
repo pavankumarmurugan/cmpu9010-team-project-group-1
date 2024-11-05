@@ -82,7 +82,7 @@ function SignupModal(props) {
         }));
         showerror = true;
       } 
-      if (formData.lastname.trim() === "") {
+      if (formData?.lastname?.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
           lastname: true,
@@ -90,14 +90,14 @@ function SignupModal(props) {
         showerror = true;
       }
       // if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
-      if (formData.username.trim() === "") {
+      if (formData?.username?.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
           username: true,
         }));
         showerror = true;
       }
-      if (formData.password.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
+      if (formData?.password?.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
         setValidationField((prev) => ({
           ...prev,
           password: true,
@@ -106,14 +106,14 @@ function SignupModal(props) {
       }
     }else{
       // if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
-      if (formData.username.trim() === "") {
+      if (formData?.username?.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
           username: true,
         }));
         showerror = true;
       }
-      if (formData.password.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
+      if (formData?.password?.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
         setValidationField((prev) => ({
           ...prev,
           password: true,

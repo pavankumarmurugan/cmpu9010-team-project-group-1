@@ -35,6 +35,7 @@ import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
+import NewChatModal from "../NewChatModal/NewChatModal";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const ProductDetails = () => {
   const [productimages, setProductImages] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
+  const [showFriendsForShare, setShowFriendsForShare] = useState(false);
   const imageUrl = productimages[currentImage];
   const cartValue = useSelector((state) => state.homeData.cartValue);
 
@@ -156,6 +158,15 @@ const ProductDetails = () => {
     setOpenTryOnModal(true);
   }
 
+  const handleShare = (data) => {
+    debugger;
+    setShowFriendsForShare(true);
+  }
+
+  const closeNewChat = () => {
+    setShowFriendsForShare(false);
+  };
+
   const closeTryOnModal = () => {
     setOpenTryOnModal(false);
   };
@@ -163,6 +174,14 @@ const ProductDetails = () => {
 
   return (
     <div>
+      {showFriendsForShare && (
+        <NewChatModal
+          isShowModel={showFriendsForShare}
+          closeModal={closeNewChat}
+          showSection={'ShareProductsToFriends'}
+          data={null}
+        />
+      )}
       {/** Virtual Tryon Component */}
 
       {openTryOnModal && 
@@ -207,6 +226,9 @@ const ProductDetails = () => {
                   alt="Product Image"
                   className="product-details-main-image"
                 />
+                <button className="product-detailsimage-top-left-button" onClick={() => handleShare(productimages)}>
+                  Share
+                </button>
                 <button className="product-detailsimage-top-right-button" onClick={() => handleTryon(productimages)}>
                   Try Out
                 </button>
