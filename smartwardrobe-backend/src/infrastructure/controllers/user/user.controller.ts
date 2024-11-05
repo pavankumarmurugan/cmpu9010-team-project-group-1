@@ -172,9 +172,15 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard, RolesGuard)
   @Roles(ROLES.ADMIN, ROLES.USER)
-  async searchUser(@Param('searchKey') searchKey: string) {
+  async searchUser(
+    @Param('searchKey') searchKey: string,
+    @Request() request: RequestWithUser,
+  ) {
     try {
-      return await this.userUsecase.searchUser(searchKey);
+      const {
+        user: { userId },
+      } = request;
+      return await this.userUsecase.searchUser(userId, searchKey);
     } catch (error) {
       throw error;
     }
