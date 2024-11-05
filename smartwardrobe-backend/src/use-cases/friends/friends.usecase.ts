@@ -38,10 +38,16 @@ export class FriendsUsecase {
 
   async getAll(userId: number): Promise<IResponse<UserResDTO[]>> {
     try {
-      const entities: FriendsEntity[] =
-        await this.databaseService.friends.getAll();
+      const results = await Promise.all([
+        this.databaseService.friends.getAllByProperties({
+          user1Id: userId,
+        }),
+        this.databaseService.friends.getAllByProperties({
+          user2Id: userId,
+        }),
+      ]);
 
-      const friendsEntity: number[] = entities.map((entity) => {
+      const friendsEntity: number[] = results.flat().map((entity) => {
         if (entity.user1Id !== userId) {
           return entity.user1Id;
         }
@@ -55,7 +61,7 @@ export class FriendsUsecase {
       );
 
       const data = this.userConvertor.toUserResDTOFromFriendsEntity(
-        entities,
+        results.flat(),
         userEntity,
       );
 

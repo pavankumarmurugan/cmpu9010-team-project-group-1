@@ -8,6 +8,7 @@ import { ImageClusterModel } from '../frameworks/data-services/model/image-clust
 import { DataServicesModule } from './data-services/data-service.module';
 import { UploadSearchPictureService } from './uploadProfilePicture/upload-search-picture';
 import { CacheService } from './cache/cache.service';
+import { FirebaseService } from './firebase/firebase.service';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CacheService } from './cache/cache.service';
     FaissService,
     UploadSearchPictureService,
     CacheService,
+    FirebaseService,
   ],
   exports: [
     SearchProductsService,
@@ -28,6 +30,7 @@ import { CacheService } from './cache/cache.service';
     FaissService,
     UploadSearchPictureService,
     CacheService,
+    FirebaseService,
   ],
 })
 export class ServicesModule {}

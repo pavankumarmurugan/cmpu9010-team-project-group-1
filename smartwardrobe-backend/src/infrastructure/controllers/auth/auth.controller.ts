@@ -80,4 +80,21 @@ export class AuthController {
       throw error;
     }
   }
+
+  @Post('save-fcm-token')
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  async saveFcmToken(
+    @Request() request: RequestWithUser,
+    @Body('fcmToken') fcmToken: string,
+  ): Promise<IResponse<null>> {
+    try {
+      const {
+        user: { userId },
+      } = request;
+      return await this.loginUsecase.saveFcmToken(userId, fcmToken);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -139,10 +139,8 @@ export class UserDtoConvertor {
   ): UserResDTO[] {
     return entities.map(
       ({ firstname, lastname, username, userId, role, profilePic }) => {
-        const hasSenderId = friendRequestsEntities.some(
-          (friendRequestsEntity) =>
-            friendRequestsEntity.receiverId === userId &&
-            friendRequestsEntity.status === FRIEND_REQUEST_STATUS.PENDING,
+        const user = friendRequestsEntities.find(
+          (friendRequestsEntity) => friendRequestsEntity.receiverId === userId,
         );
         return {
           firstname,
@@ -151,7 +149,7 @@ export class UserDtoConvertor {
           userId,
           role,
           profilePic,
-          status: hasSenderId ? FRIEND_REQUEST_STATUS.PENDING : null,
+          status: user ? user.status : null,
         };
       },
     );

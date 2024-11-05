@@ -14,6 +14,7 @@ import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { BcryptService } from 'src/infrastructure/frameworks/bcrypt/bcrypt.service';
 import { JWTDataService } from 'src/infrastructure/frameworks/jwt/jwt.data-service';
+import { FirebaseService } from 'src/infrastructure/services/firebase/firebase.service';
 
 @Injectable()
 export class LoginUsecase {
@@ -22,6 +23,7 @@ export class LoginUsecase {
     private jwtDataService: JWTDataService,
     private bcryptService: BcryptService,
     private authDtoConvertor: AuthDtoConvertor,
+    private firebaseService: FirebaseService,
   ) {}
 
   async login(
@@ -54,6 +56,8 @@ export class LoginUsecase {
         userEntity.userId,
       );
 
+      await this.firebaseService.getOrCreateFirebaseUid(userEntity.userId);
+
       const data: AuthLoginResDto =
         this.authDtoConvertor.toAuthLoginResDtoFromUserEntity(
           userEntity,
@@ -77,5 +81,16 @@ export class LoginUsecase {
   }
   catch(error) {
     throw new InternalServerErrorException(error);
+  }
+
+  async saveFcmToken(
+    userId: number,
+    fcmToken: string,
+  ): Promise<IResponse<null>> {
+    await this.firebaseService.saveFcmToken(userId, fcmToken);
+    return {
+      data: null,
+      message: MESSAGES.TOKEN.SUCCESS,
+    };
   }
 }
