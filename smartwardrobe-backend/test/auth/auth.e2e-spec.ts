@@ -28,6 +28,13 @@ import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/li
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let accessToken: string;
+  let refreshToken: string;
+  let loginResponse: request.Response;
+  const loginCredentials = {
+    username: 'string',
+    password: 'string',
+  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -95,6 +102,17 @@ describe('AuthController (e2e)', () => {
     }
 
     await app.init();
+
+    loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        username: 'string',
+        password: 'string',
+      })
+      .expect(201);
+
+    accessToken = loginResponse.body.data.token;
+    refreshToken = loginResponse.body.data.refreshToken;
   });
 
   beforeEach(async () => {
@@ -116,38 +134,27 @@ describe('AuthController (e2e)', () => {
 
   describe('Authentication', () => {
     it('/auth/login (POST) - should login successfully with valid credentials', async () => {
-      const loginCredentials = {
-        username: 'string',
-        password: 'string',
-      };
-
-      const response = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send(loginCredentials)
-        .expect(201);
-
-      expect(response.body).toHaveProperty('data');
-      expect(response.body.data).toHaveProperty('token');
-      expect(response.body.data).toHaveProperty('refreshToken');
-      expect(response.body.data).toHaveProperty('userId');
-      expect(response.body.data).toHaveProperty(
+      expect(loginResponse.body).toHaveProperty('data');
+      expect(loginResponse.body.data).toHaveProperty('token');
+      expect(loginResponse.body.data).toHaveProperty('refreshToken');
+      expect(loginResponse.body.data).toHaveProperty('userId');
+      expect(loginResponse.body.data).toHaveProperty(
         'username',
         loginCredentials.username,
       );
-      expect(response.body.data).toHaveProperty('role');
+      expect(loginResponse.body.data).toHaveProperty('role');
+    });
+
+    it('/auth/verify-token (GET) - should verify the token and return a valid response', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/auth/verify-token')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200);
+
+      expect(response.body).toHaveProperty('data', null);
     });
 
     it('/auth/refresh (GET) - should successfully refresh token', async () => {
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'string',
-          password: 'string',
-        })
-        .expect(201);
-
-      const refreshToken = loginResponse.body.data.refreshToken;
-
       const refreshResponse = await request(app.getHttpServer())
         .get('/auth/refresh')
         .set('Authorization', `Bearer ${refreshToken}`)
@@ -158,16 +165,6 @@ describe('AuthController (e2e)', () => {
     });
 
     it('/auth/logout (POST) - should successfully log out the user', async () => {
-      const loginResponse = await request(app.getHttpServer())
-        .post('/auth/login')
-        .send({
-          username: 'string',
-          password: 'string',
-        })
-        .expect(201);
-
-      const accessToken = loginResponse.body.data.token;
-
       const logoutResponse = await request(app.getHttpServer())
         .post('/auth/logout')
         .set('Authorization', `Bearer ${accessToken}`)

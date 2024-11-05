@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
+import { FriendRequestsConvertor } from 'src/core/convertors/friend-requests/friend-requests.convertor';
 import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
 import { UpdatePasswordUserReqDTO } from 'src/core/dto/user/user-req-update-profile-password.dto';
 import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profile.dto';
 import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
 import { UserResDTO } from 'src/core/dto/user/user-res.dto';
+import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
@@ -18,23 +20,24 @@ export class UserUsecase {
     private jwtDataService: JWTDataService,
     private userDtoConvertor: UserDtoConvertor,
     private bcryptService: BcryptService,
+    private readonly convertor: FriendRequestsConvertor,
   ) {}
 
-  async getAllUsers(): Promise<IResponse<UserResDTO[]>> {
-    try {
-      const userLoginInfoEntities: UserEntity[] =
-        await this.databaseService.users.getAll();
-      const data: UserResDTO[] = this.userDtoConvertor.toUserResDTOFromEntity(
-        userLoginInfoEntities,
-      );
-      return {
-        data,
-        message: MESSAGES.USER.GET_ALL.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async getAllUsers(): Promise<IResponse<UserResDTO[]>> {
+  //   try {
+  //     const userLoginInfoEntities: UserEntity[] =
+  //       await this.databaseService.users.getAll();
+  //     const data: UserResDTO[] = this.userDtoConvertor.toUserResDTOFromEntity(
+  //       userLoginInfoEntities,
+  //     );
+  //     return {
+  //       data,
+  //       message: MESSAGES.USER.GET_ALL.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async create(userReqDTO: UserReqDTO): Promise<IResponse<UserResDTO>> {
     const hashPassword: string = await this.bcryptService.hash(
@@ -180,12 +183,20 @@ export class UserUsecase {
     }
   }
 
-  async searchUser(searchKey: string) {
+  async searchUser(userId: number, searchKey: string) {
     try {
+      const entities: FriendRequestsEntity[] =
+        await this.databaseService.friendRequests.getAllByProperties({
+          senderId: userId,
+        });
+
       const userEntities: UserEntity[] =
         await this.databaseService.users.search(searchKey);
       const data: UserResDTO[] =
-        this.userDtoConvertor.toUserResDTOFromEntity(userEntities);
+        this.userDtoConvertor.toUserResDTOFromEntityForSearch(
+          entities,
+          userEntities,
+        );
       return {
         data,
         message: MESSAGES.USER.GET_ALL.SUCCESS,

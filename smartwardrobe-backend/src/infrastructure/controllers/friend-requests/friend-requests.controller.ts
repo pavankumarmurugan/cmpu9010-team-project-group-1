@@ -29,7 +29,7 @@ import { FriendRequestsUsecase } from 'src/use-cases/friend-requests/friend-requ
 export class FriendRequestsController {
   constructor(private usecase: FriendRequestsUsecase) {}
 
-  @Get('get-all-my-requests')
+  @Get('get-all-my-received-requests')
   @ApiBearerAuth()
   async getAll(
     @Request() request: RequestWithUser,
@@ -66,10 +66,14 @@ export class FriendRequestsController {
   @Roles(ROLES.ADMIN, ROLES.USER)
   async update(
     @Body() dto: UpdateFriendRequestsReqDto,
+    @Request() request: RequestWithUser,
   ): Promise<IResponse<FriendRequestsResDto>> {
     try {
+      const {
+        user: { userId },
+      } = request;
       const { requestId } = dto;
-      return await this.usecase.update(requestId, dto);
+      return await this.usecase.update(userId, requestId, dto);
     } catch (error) {
       throw error;
     }
@@ -80,24 +84,29 @@ export class FriendRequestsController {
   @Roles(ROLES.ADMIN, ROLES.USER)
   async delete(
     @Param('id', ParseIntPipe) requestId: number,
+    @Request() request: RequestWithUser,
   ): Promise<IResponse<null>> {
     try {
-      return await this.usecase.delete(requestId);
+      const {
+        user: { userId },
+      } = request;
+
+      return await this.usecase.delete(userId, requestId);
     } catch (error) {
       throw error;
     }
   }
 
-  @Get('get-one/:id')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN, ROLES.USER)
-  async getOne(
-    @Param('id', ParseIntPipe) requestId: number,
-  ): Promise<IResponse<FriendRequestsResDto>> {
-    try {
-      return await this.usecase.getOne(requestId);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Get('get-one/:id')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN, ROLES.USER)
+  // async getOne(
+  //   @Param('id', ParseIntPipe) requestId: number,
+  // ): Promise<IResponse<FriendRequestsResDto>> {
+  //   try {
+  //     return await this.usecase.getOne(requestId);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

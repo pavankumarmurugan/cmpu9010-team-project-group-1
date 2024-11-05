@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsString } from 'class-validator';
 
 export class UserResDTO {
   @ApiProperty({ required: true })
@@ -45,4 +45,8 @@ export class UserResDTO {
   @ApiProperty({ required: false })
   @IsNumber()
   readonly friendId?: number;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  readonly status?: string;
 }
