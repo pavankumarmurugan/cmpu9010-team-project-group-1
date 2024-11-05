@@ -27,40 +27,27 @@ import TextArea from "antd/es/input/TextArea";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
-// import { FreiendRequestsValueSuccess } from "../../redux/slices/HomeDataSlice";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+    const messagesEndRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [openLoader, setOpenLoader] = useState(false);
   const [addNewFriendorGroup, setaddNewFriendorGroup] = useState("");
+  const [textValue, settextValue] = useState("");
   const [friendReqCount, setFriendReqCount] = useState([]);
+  const [activeFriend, setActiveFriend] = useState(null);
+  const [chatInfo, setChatInfo] = useState({});
   const [friends, setFriends] = useState([]);
+  const [friendsDataForFilter, setFriendsDataForFilter] = useState([]);
   const [friendReqCountToShow, setFriendReqCountToShow] = useState(0);
   const [hideLeftSection, sethideLeftSection] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
-  const [messages, setMessages] = useState([
-    { sender: "user", text: "Hello, how are you?" },
-    { sender: "bot", text: "I'm good! How can I assist you today?" },
-    { sender: "user", text: "Can you tell me about the weather?" },
-    { sender: "bot", text: "Sure! It looks sunny and warm today." },
-    { sender: "user", text: "Hello, how are you?" },
-    { sender: "bot", text: "I'm good! How can I assist you today?" },
-    { sender: "user", text: "Can you tell me about the weather?" },
-    { sender: "bot", text: "Sure! It looks sunny and warm today." },
-    { sender: "user", text: "Hello, how are you?" },
-    { sender: "bot", text: "I'm good! How can I assist you today?" },
-    { sender: "user", text: "Can you tell me about the weather?" },
-    { sender: "bot", text: "Sure! It looks sunny and warm today." },
-    { sender: "user", text: "Hello, how are you?" },
-    { sender: "bot", text: "I'm good! How can I assist you today?" },
-    { sender: "user", text: "Can you tell me about the weather?" },
-    { sender: "bot", text: "Sure! It looks sunny and warm today." },
-  ]);
+  const [messages, setMessages] = useState([]);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       color: "white",
@@ -112,9 +99,15 @@ function ChatComponent(props) {
       setaddNewFriendorGroup("friendReq");
     }
 
-    const getGroupsList = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups", null, token?.token);
+    const getGroupsList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+      null,
+      token?.token
+    );
     if (getGroupsList?.data?.length > 0) {
       setFriends(getGroupsList?.data);
+      setFriendsDataForFilter(getGroupsList?.data);
     }
 
     const getFriendsList = await apiCall(
@@ -125,6 +118,10 @@ function ChatComponent(props) {
     );
     if (getFriendsList?.data?.length > 0) {
       setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+      setFriendsDataForFilter((prevFriends) => [
+        ...prevFriends,
+        ...getFriendsList.data,
+      ]);
     }
     setOpenLoader(false);
   };
@@ -140,8 +137,39 @@ function ChatComponent(props) {
     sethideLeftSection(false);
   };
 
-  const handleShowChat = (event) => {
-    debugger
+  const handleShowChat = async (event) => {
+    debugger;
+    setActiveFriend(event);
+    setChatInfo(event);
+
+    if(event?.userId){
+    const getMessages = await apiCall(
+      "GET",
+      `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-friend-id/${event?.userId}`,
+      null,
+      token?.token
+    );
+
+    if (getMessages?.data?.length > 0) {
+      const sortedMessages = getMessages?.data.sort((a, b) => a.id - b.id);
+      setMessages(sortedMessages);
+    }
+  }
+
+  if(event?.groupId){
+    const getGroupMessages = await apiCall(
+      "GET",
+      `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-group-id/${event?.groupId}`,
+      null,
+      token?.token
+    );
+
+    if (getGroupMessages?.data?.length > 0) {
+      const sortedMessages = getGroupMessages?.data.sort((a, b) => a.id - b.id);
+      setMessages(sortedMessages);
+    }
+  }
+
     if (window.innerWidth < 768) {
       sethideLeftSection(true);
     }
@@ -173,15 +201,156 @@ function ChatComponent(props) {
   /** open friend requests modal */
 
   const handleFriendRequests = () => {
-    if(friendReqCountToShow !== 0){
+    if (friendReqCountToShow !== 0) {
       setaddNewFriendorGroup("friendReq");
       setShowNewChat(true);
-    }else{
+    } else {
       showToastInfo("No friend requests to show");
     }
-  }
+  };
 
   /** open friend requests modal */
+
+  /** handle friend search */
+
+  const handleFriendsSearch = (event) => {
+    debugger;
+    let searchValue = event?.target?.value;
+    if (searchValue.trim() !== "") {
+      let filteredFriends = friendsDataForFilter.filter((friend) => {
+        const usernameMatches = friend?.username
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase());
+        const groupNameMatches = friend?.groupName
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase());
+        return usernameMatches || groupNameMatches; // Match either username or groupName
+      });
+      setFriends(filteredFriends);
+    } else {
+      setFriends(friendsDataForFilter);
+    }
+  };
+
+  /** handle friend search */
+
+  /** Re-render Component */
+
+  const rerenderComponent = () => {
+    getAllFriendandFriendRequests();
+  };
+
+  /** Re-render Component */
+
+  /** handle Invite friend to group */
+
+  const handleInviteFriendsToGroup = () => {
+    debugger;
+    setaddNewFriendorGroup("InviteFriendsToGroup");
+    setShowNewChat(true);
+  };
+
+  /** handle Invite friend to group */
+
+  /** handle send messages */
+
+  const handleInput = (event) => {
+    if (chatInfo?.userId || chatInfo?.groupName) {
+      settextValue(event.target.value);
+    }
+  };
+
+  const handleSendMessage = async (event) => {
+    if (event.key === "Enter" && textValue.trim() !== "") {
+      event.preventDefault();
+      if (chatInfo?.userId) {
+        let message = {
+          message: textValue,
+          receiverId: chatInfo?.userId,
+          messageType: "text"
+        };
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { 
+            message: textValue,
+            receiverId: chatInfo?.userId,
+            messageType: "text"
+           },
+        ]);
+        settextValue("");
+        const sendMessage = await apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+          message,
+          token?.token
+        );
+        if (sendMessage) {
+          console.log(sendMessage);
+        }
+      }
+      if (chatInfo?.groupId) {
+        let message = {
+          message: textValue,
+          groupId: chatInfo?.groupId,
+          messageType: "text"
+        };
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { 
+            message: textValue,
+            groupId: chatInfo?.groupId,
+            messageType: "text"
+           },
+        ]);
+        settextValue("");
+        const sendMessage = await apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
+          message,
+          token?.token
+        );
+        if (sendMessage) {
+          console.log(sendMessage);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const sendMessageFromIcon = async () => {
+    if (textValue.trim() !== "") {
+      if (chatInfo?.userId) {
+        let message = {
+          receiverId: chatInfo?.userId,
+          message: textValue,
+          messageType: "text",
+        };
+        // setMessages((prevMessages) => [
+        //   ...prevMessages,
+        //   { sender: "user", text: textValue },
+        // ]);
+        // settextValue("");
+        const sendMessage = await apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+          message,
+          token?.token
+        );
+        if (sendMessage) {
+          console.log(sendMessage);
+        }
+      }
+      if (chatInfo?.groupName) {
+      }
+    }
+  };
+
+  /** handle send messages */
 
   return (
     <>
@@ -204,6 +373,8 @@ function ChatComponent(props) {
           friendReqCount={friendReqCount}
           friends={friends}
           setFriendReqCountToShow={setFriendReqCountToShow}
+          reRenderComponent={getAllFriendandFriendRequests}
+          chatInfo={chatInfo}
         />
       )}
 
@@ -234,25 +405,6 @@ function ChatComponent(props) {
                 hideLeftSection ? "hide-left" : "show-left"
               }`}
             >
-              {/* <div className="new-conversation-div">
-                <div className="new-conversation">
-                  <Button
-                    className="new-converation-button"
-                    color="default"
-                    onClick={handleNewChat}
-                  >
-                    <FaPlus
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        paddingRight: "10px",
-                        paddingBottom: "3px",
-                      }}
-                    />
-                    New Conversation
-                  </Button>
-                </div>
-              </div> */}
               <div className="chat-moreoptions-icon">
                 <h2>Chats</h2>
                 <div className="moreoptions-div">
@@ -263,7 +415,10 @@ function ChatComponent(props) {
                       horizontal: "left",
                     }}
                   >
-                    <PeopleOutlinedIcon style={{ cursor: "pointer" }} onClick={handleFriendRequests} />
+                    <PeopleOutlinedIcon
+                      style={{ cursor: "pointer" }}
+                      onClick={handleFriendRequests}
+                    />
                   </StyledBadge>
                   <IconButton
                     aria-label="more"
@@ -301,7 +456,11 @@ function ChatComponent(props) {
               </div>
               <div className="search-contacts">
                 <div className="search-input">
-                  <input type="text" placeholder="Search Friends" />
+                  <input
+                    type="text"
+                    placeholder="Search Friends"
+                    onChange={handleFriendsSearch}
+                  />
                   <button className="search-button">
                     <Search style={{ color: "2e3b4e" }} />
                   </button>
@@ -312,28 +471,38 @@ function ChatComponent(props) {
               </h4> */}
               <div className="contact-list">
                 {friends?.map((friend, index) => (
-                <div className="contact-details-div" onClick={() => handleShowChat(friend)}>
-                  <img
-                    src={
-                      friend?.profilePic
-                        ? friend?.profilePic
-                        : chatbackgroundimage
-                    }
-                    alt="Alice"
-                    className="contact-image"
-                  />
-                  <div className="contact-name-and-last-msg">
-                    <div className="contact-Name">{friend?.groupName ? friend?.groupName : friend?.username}</div>
-                    <div className="contact-last-msg">Hi, how are you?</div>
-                  </div>
-                </div>))}
-                {
-                  friends?.length === 0 && (
-                    <div className="no-friends">
-                      <h4>No Friends</h4>
+                  <div
+                    key={friend.id} // Assuming each friend has a unique `id`
+                    className={`contact-details-div ${
+                      activeFriend === friend ? "active" : ""
+                    }`}
+                    onClick={() => handleShowChat(friend)}
+                    tabIndex="0" // Makes it focusable
+                  >
+                    <img
+                      src={
+                        friend?.profilePic
+                          ? friend?.profilePic
+                          : "https://www.w3schools.com/howto/img_avatar.png"
+                      }
+                      alt="Alice"
+                      className="contact-image"
+                    />
+                    <div className="contact-name-and-last-msg">
+                      <div className="contact-Name">
+                        {friend?.groupName
+                          ? friend?.groupName
+                          : friend?.username}
+                      </div>
+                      <div className="contact-last-msg">Hi, how are you?</div>
                     </div>
-                  )
-                }
+                  </div>
+                ))}
+                {friends?.length === 0 && (
+                  <div className="no-friends">
+                    <h4>No Friends</h4>
+                  </div>
+                )}
               </div>
             </div>
             <div
@@ -368,30 +537,39 @@ function ChatComponent(props) {
                     />
                     <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
                   </div>
-                  <div className="Invite-Friends">
-                    <FaPlus
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        paddingRight: "10px",
-                        paddingBottom: "3px",
-                      }}
-                    />
-                    <h3 className="invite-friends-text">Invite Friends</h3>
-                  </div>
+                  {chatInfo && chatInfo?.groupName && (
+                    <div
+                      className="Invite-Friends"
+                      onClick={handleInviteFriendsToGroup}
+                    >
+                      <FaPlus
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          paddingRight: "10px",
+                          paddingBottom: "3px",
+                        }}
+                      />
+                      <h3 className="invite-friends-text">Invite Friends</h3>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="chat-messages">
-                <div className="message-container">
-                  {messages.map((msg, index) => (
+                {chatInfo?.userId && 
+                <div className="message-container" ref={messagesEndRef}>
+                  {messages?.map((msg, index) => (
+                    <>
                     <div
                       key={index}
                       className={`chat-message ${
-                        msg.sender === "user" ? "chat_sender" : "chat_receiver"
+                        (msg.receiverId === chatInfo?.userId)
+                          ? "chat_sender"
+                          : "chat_receiver"
                       }`}
                     >
-                      {msg.sender === "user" ? (
-                        <p>{msg.text}</p>
+                      {msg.receiverId === chatInfo?.userId ? (
+                        <p>{msg.message}</p>
                       ) : (
                         <div className="receiver-message">
                           <img
@@ -400,26 +578,72 @@ function ChatComponent(props) {
                             className="receiver-image"
                           />
                           <p>
-                            <strong>{msg?.sender}</strong> <br />
-                            {msg.text}
+                            <strong>
+                              {chatInfo?.userId
+                                ? chatInfo?.username
+                                : msg?.username}{" "}
+                            </strong>{" "}
+                            <br />
+                            {msg.message}
                           </p>
                         </div>
                       )}
                     </div>
+                    <div ref={messagesEndRef}></div></>
                   ))}
-                </div>
+                </div>}
+                {chatInfo?.groupId &&
+                <div className="message-container" ref={messagesEndRef}>
+                  {messages?.map((msg, index) => (
+                    <>
+                    <div
+                      key={index}
+                      className={`chat-message ${
+                        (msg?.senderId !== chatInfo?.createdBy)
+                          ? "chat_sender"
+                          : "chat_receiver"
+                      }`}
+                    >
+                      {msg?.senderId !== chatInfo?.createdBy ? (
+                        <p>{msg.message}</p>
+                      ) : (
+                        <div className="receiver-message">
+                          <img
+                            src={chatbackgroundimage}
+                            alt={msg.sender}
+                            className="receiver-image"
+                          />
+                          <p>
+                            <strong>
+                              {msg?.userDetails?.username}
+                            </strong>
+                            <br />
+                            {msg.message}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    <div ref={messagesEndRef}></div></>
+                  ))}
+                </div>}
               </div>
 
               <div className="chat-input">
-                {/* <input type="text" placeholder="Type a message..." /> */}
                 <TextArea
                   style={{ paddingRight: "7%" }}
                   placeholder="Type a message..."
                   autoSize={{ minRows: 2 }}
                   className="custom-textarea"
+                  value={textValue}
+                  onChange={handleInput}
+                  onKeyDown={handleSendMessage}
+                  disabled={!chatInfo?.userId && !chatInfo?.groupName}
                 />
                 <button className="send-button">
-                  <FaPaperPlane style={{ color: "2e3b4e" }} />
+                  <FaPaperPlane
+                    style={{ color: "2e3b4e", cursor: "pointer" }}
+                    onClick={sendMessageFromIcon}
+                  />
                 </button>
               </div>
             </div>

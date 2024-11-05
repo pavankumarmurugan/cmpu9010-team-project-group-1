@@ -97,7 +97,7 @@ function SignupModal(props) {
         }));
         showerror = true;
       }
-      if (formData?.password?.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
+      if (formData?.password?.trim().length < 5) {
         setValidationField((prev) => ({
           ...prev,
           password: true,
@@ -113,7 +113,7 @@ function SignupModal(props) {
         }));
         showerror = true;
       }
-      if (formData?.password?.trim() === "" || !(/^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8}/).test(formData?.password)) {
+      if (formData?.password?.trim().length < 5) {
         setValidationField((prev) => ({
           ...prev,
           password: true,
