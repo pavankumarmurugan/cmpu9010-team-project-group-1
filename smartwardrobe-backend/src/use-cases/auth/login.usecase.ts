@@ -31,9 +31,8 @@ export class LoginUsecase {
   ): Promise<IResponse<AuthLoginResDto>> {
     try {
       const { username, password } = authLoginReqDto;
-
       const userEntity: UserEntity = await this.databaseService.users.get({
-        username,
+        username: username.toLowerCase(),
       });
       if (userEntity == null)
         throw new NotFoundException(MESSAGES.USER.USER_NOT_FOUND);

@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { ChatConvertor } from 'src/core/convertors/chat/chat.convertor';
+import { ChatGroupReqDto } from 'src/core/dto/chat/chat.group.req-dto';
+import { ChatGroupResDto } from 'src/core/dto/chat/chat.group.res-dto';
 import { ChatReqDto } from 'src/core/dto/chat/chat.req-dto';
 import { UpdateChatReqDto } from 'src/core/dto/chat/chat.req-update-dto';
 import { ChatResDto } from 'src/core/dto/chat/chat.res-dto';
 import { ChatEntity } from 'src/core/entities/chat/chat.entity';
+import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
+import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { FirebaseService } from 'src/infrastructure/services/firebase/firebase.service';
@@ -73,6 +77,62 @@ export class ChatUsecase {
     }
   }
 
+  async createSendMessageToGroup(
+    userId: number,
+    dto: ChatGroupReqDto,
+  ): Promise<IResponse<ChatGroupResDto>> {
+    try {
+      const groupMembersEntity: GroupMembersEntity =
+        await this.databaseService.groupMembers.get({
+          groupId: dto.groupId,
+          userId,
+        });
+      if (groupMembersEntity) {
+        const entity: ChatEntity =
+          this.convertor.toChatModelFromChatGroupReqDto(userId, dto);
+        const chatEntity: ChatEntity =
+          await this.databaseService.chat.create(entity);
+
+        if (chatEntity.receiverId) {
+          const receiverToken = await this.firebaseService.getFcmToken(
+            chatEntity.receiverId,
+          );
+
+          await this.firebaseService.addChatNotification(
+            userId,
+            chatEntity.receiverId,
+            chatEntity.id,
+            this.createMessagePreview(chatEntity.message),
+          );
+
+          if (receiverToken) {
+            await this.firebaseService.sendBrowserNotification(
+              receiverToken,
+              'New Message',
+              this.createMessagePreview(chatEntity.message),
+              {
+                type: 'chat',
+                messageId: String(chatEntity.id),
+                senderId: String(userId),
+                clickAction: 'OPEN_CHAT',
+              },
+            );
+          }
+        }
+
+        const data: ChatResDto =
+          this.convertor.toChatResDtoFromEntity(chatEntity);
+        return {
+          data,
+          message: MESSAGES.CHATS.CREATE.SUCCESS,
+        };
+      }
+      throw new BadRequestException(MESSAGES.GROUP.NOT_A_MEMBER);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   private createMessagePreview(message: string): string {
     const maxLength = 50;
     if (message.length <= maxLength) return message;
@@ -98,12 +158,23 @@ export class ChatUsecase {
   //   }
   // }
 
-  async getAll(userId: number): Promise<IResponse<ChatResDto[]>> {
+  async getAllMyChatByFriendId(
+    userId: number,
+    friendId: number,
+  ): Promise<IResponse<ChatResDto[]>> {
     try {
-      const entities: ChatEntity[] =
-        await this.databaseService.chat.getAllByProperties({
-          senderId: userId,
-        });
+      const entities: ChatEntity[] = (
+        await Promise.all([
+          this.databaseService.chat.getAllByProperties({
+            receiverId: userId,
+            senderId: friendId,
+          }),
+          this.databaseService.chat.getAllByProperties({
+            receiverId: friendId,
+            senderId: userId,
+          }),
+        ])
+      ).flat();
       const data: ChatResDto[] =
         this.convertor.toChatResDtoFromEntities(entities);
       return {
@@ -113,6 +184,31 @@ export class ChatUsecase {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getAllMyChatByByGroupId(
+    groupId: number,
+    userId: number,
+  ): Promise<IResponse<ChatGroupResDto[]>> {
+    const groupMembersEntity: GroupMembersEntity =
+      await this.databaseService.groupMembers.get({ groupId, userId });
+    if (groupMembersEntity) {
+      const entities: ChatEntity[] =
+        await this.databaseService.chat.getAllByProperties({ groupId });
+
+      const senders = entities.map(({ senderId }) => senderId);
+
+      const users: UserEntity[] =
+        await this.databaseService.users.getAllByIdsIn(senders, 'userId');
+
+      const data: ChatGroupResDto[] =
+        this.convertor.toChatGroupResDtoFromEntities(users, entities);
+      return {
+        data,
+        message: MESSAGES.CHATS.GET.SUCCESS,
+      };
+    }
+    throw new BadRequestException(MESSAGES.GROUP.NOT_A_MEMBER);
   }
 
   async update(dto: UpdateChatReqDto): Promise<IResponse<ChatResDto>> {
