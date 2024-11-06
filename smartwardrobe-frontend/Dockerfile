@@ -1,33 +1,22 @@
-# Step 1: Build React app
+# Step 1: Build React App
 FROM node:alpine3.18 as build
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Install dependencies and build
 COPY package.json .
 RUN npm install
-
-# Copy all source files
 COPY . .
-
-# Build the React app
-RUN npm run build
+RUN npm run build  # Generates the /app/build directory
 
 # Step 2: Serve with Nginx
 FROM nginx:1.23-alpine
 
-# Copy favicon.ico along with the build output to Nginx's default folder
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy custom Nginx configuration (updated for SSL and redirect)
+# Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy the React build files from the build stage to Nginx's root directory
-WORKDIR /usr/share/nginx/html
-RUN rm -rf *
-COPY --from=build /app/build .
+# Copy build files, including favicon.ico, to the Nginx root directory
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose port 80 and 443 for HTTP and HTTPS traffic
-EXPOSE 80 443
-
-# Start Nginx
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# Expose port 80 and start Nginx
+EXPOSE 80
+ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
