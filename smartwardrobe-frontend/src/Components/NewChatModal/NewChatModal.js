@@ -66,8 +66,49 @@ function NewChatModal(props) {
     });
   };
 
-  const handleCheckbox = (e) => {
+  const handleCheckboxForShareProducts = async (event,item) => {
     debugger;
+    console.log(event)
+    console.log(item)
+
+    if(event?.target?.checked){
+      if (item?.userId) {
+        let message = {
+          message: props?.productUrl,
+          receiverId: item?.userId,
+          messageType: "text"
+        };
+        setOpenLoader(true);
+        const sendMessage = await apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+          message,
+          token?.token
+        );
+        setOpenLoader(false);
+        if (sendMessage) {
+          console.log(sendMessage);
+        }
+      }
+      if (item?.groupId) {
+        let message = {
+          message: props?.productUrl,
+          groupId: item?.groupId,
+          messageType: "text"
+        };
+        setOpenLoader(true);
+        const sendMessage = await apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
+          message,
+          token?.token
+        );
+        setOpenLoader(false);
+        if (sendMessage) {
+          console.log(sendMessage);
+        }
+      }
+    }
   };
 
   const handleCheckboxForAddMemberInGroup = async (e, item) => {
@@ -466,49 +507,34 @@ function NewChatModal(props) {
 
           {props?.showSection === "ShareProductsToFriends" && (
             <div className="newGroup-main-div">
+              {props?.friendsListForShare?.map( (item, index) => (
+                
               <div className="newGroup-list">
                 <div className="newGroup-list-item">
                   <div className="newGroup-list-item-image">
                     <img
-                      src="https://www.w3schools.com/howto/img_avatar.png"
+                      src={item?.profilePic || "https://www.w3schools.com/howto/img_avatar.png"} 
                       alt=""
                       className="newGroup-list-item-image-img"
                     />
                   </div>
                   <div className="newGroup-list-item-name">
-                    <div className="newGroup-list-item-name-text">
-                      <p>Alice Steven</p>
+                    <div className="newGroup-list-item-name-text" style={{textTransform: "capitalize"}}>
+                      <p>{item?.groupName || item?.username} </p>
                     </div>
                     <div className="checkbox-div">
-                      <Checkbox onChange={(e) => handleCheckbox(e)} />
+                      <Checkbox onChange={(e) => handleCheckboxForShareProducts(e,item)} />
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="newGroup-list">
-                <div className="newGroup-list-item">
-                  <div className="newGroup-list-item-image">
-                    <img
-                      src="https://www.w3schools.com/howto/img_avatar.png"
-                      alt=""
-                      className="newGroup-list-item-image-img"
-                    />
-                  </div>
-                  <div className="newGroup-list-item-name">
-                    <div className="newGroup-list-item-name-text">
-                      <p>Alice Steven</p>
-                    </div>
-                    <div className="checkbox-div">
-                      <Checkbox onChange={(e) => handleCheckbox(e)} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="create-button-div">
+              ))}
+
+              {/* <div className="create-button-div">
                 <Button className="Create-Button" color="default">
                   Share
                 </Button>
-              </div>
+              </div> */}
             </div>
           )}
 
