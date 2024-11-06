@@ -15,6 +15,9 @@ RUN npm run build
 # Step 2: Serve with Nginx
 FROM nginx:1.23-alpine
 
+# Copy favicon.ico along with the build output to Nginx's default folder
+COPY --from=build /app/build /usr/share/nginx/html
+
 # Copy custom Nginx configuration (updated for SSL and redirect)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
