@@ -261,8 +261,8 @@ function ChatComponent(props) {
     }
   };
 
-  const handleSendMessage = async (event) => {
-    if ((event.key === "Enter" && textValue.trim() !== "") || (textValue.trim() !== "" && event === "fromIcon")) {
+  const handleSendMessage = async (event,from) => {
+    if ((event.key === "Enter" && textValue.trim() !== "") || (textValue.trim() !== "" && from === "fromIcon")) {
       event.preventDefault();
       if (chatInfo?.userId) {
         let message = {
@@ -571,6 +571,7 @@ function ChatComponent(props) {
                       }`}
                     >
                       {msg.receiverId === chatInfo?.userId ? (
+                        
                         <p>{msg.message}</p>
                       ) : (
                         <div className="receiver-message">

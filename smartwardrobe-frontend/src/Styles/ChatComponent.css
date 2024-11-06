@@ -620,3 +620,35 @@
   width: fit-content !important;
   margin-left: 8px !important;
 }
+
+
+.link-preview {
+  display: flex;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+}
+
+.link-preview img {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.link-preview-text {
+  flex: 1;
+}
+
+.link-preview-text h4 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.link-preview-text p {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #555;
+}
