@@ -130,8 +130,7 @@ const ProductDetails = () => {
 
   const callApiForModels = async () => {
     debugger;
-    let getId = id.split(":");
-    let numberString = Number(getId[1]);
+    let numberString = Number(id);
 
     // let number = parseInt(numberString);
       setOpenLoader(true);
