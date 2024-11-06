@@ -25,16 +25,6 @@ CREATE TABLE "user" (
   PRIMARY KEY (`id`)
   );
 
-  --   CREATE TABLE "product_category" (
-  --   "id" SERIAL PRIMARY KEY,
-  --   "name" VARCHAR(255) NULL,
-  --   "desc" TEXT NULL,
-  --   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  --   "updated_at" TIMESTAMP NULL,
-  --   "deleted_at" TIMESTAMP NULL
-  -- );
-  
-  
 
 CREATE TABLE `product_inventory` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -51,125 +41,24 @@ CREATE TABLE `product_inventory` (
     ON UPDATE CASCADE
 );
 
--- Create the trigger function
 CREATE OR REPLACE FUNCTION create_product_inventory()
 RETURNS TRIGGER AS $$
 DECLARE
     new_inventory_id INT;
 BEGIN
-    -- Insert a new record into the product_inventory table with a default value of 100
     INSERT INTO product_inventory (quantity) VALUES (100) RETURNING id INTO new_inventory_id;
 
-    -- Update the product table to set the inventory_id with the newly created product_inventory ID
     UPDATE product SET inventory_id = new_inventory_id WHERE id = NEW.id;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Create the trigger
 CREATE TRIGGER after_product_insert
 AFTER INSERT ON product
 FOR EACH ROW
 EXECUTE FUNCTION create_product_inventory();
 
--- CREATE TABLE "product_inventory" (
---     "id" SERIAL PRIMARY KEY,
---     "quantity" INT NULL,
---     "product_id" INT NULL,
---     "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
---     "updated_at" TIMESTAMP NULL,
---     "deleted_at" TIMESTAMP NULL,  
---     CONSTRAINT "fk_product_inventory_on_product_id"
---       FOREIGN KEY ("product_id")
---       REFERENCES "smartwardrobe"."product" ("id")
---       ON DELETE CASCADE
---       ON UPDATE CASCADE
---   );
-
---    CREATE TABLE `product` (
---     `id` INT NOT NULL AUTO_INCREMENT,
---     `article_id` VARCHAR(255) NULL,
---     `product_code` VARCHAR(255) NULL,
---     `prod_name` VARCHAR(255) NULL,
---     `product_type_no` INT NULL,
---     `product_type_name` VARCHAR(255) NULL,
---     `product_group_name` VARCHAR(255) NULL,
---     `graphical_appearance_no` INT NULL,
---     `graphical_appearance_name` VARCHAR(255) NULL,
---     `colour_group_code` VARCHAR(255) NULL,
---     `colour_group_name` VARCHAR(255) NULL,
---     `perceived_colour_value_id` INT NULL,
---     `perceived_colour_value_name` VARCHAR(255) NULL,
---     `perceived_colour_master_id` INT NULL,
---     `perceived_colour_master_name` VARCHAR(255) NULL,
---     `department_no` INT NULL,
---     `department_name` VARCHAR(255) NULL,
---     `index_code` VARCHAR(255) NULL,
---     `index_name` VARCHAR(255) NULL,
---     `index_group_no` INT NULL,
---     `index_group_name` VARCHAR(255) NULL,
---     `section_no` INT NULL,
---     `section_name` VARCHAR(255) NULL,
---     `garment_group_no` INT NULL,
---     `garment_group_name` VARCHAR(255) NULL,
---     `detail_desc` TEXT NULL,
---     `sku` VARCHAR(255) NULL,
---     `category_id` INT NULL,
---     `inventory_id` INT NULL,
---     `price` DECIMAL NULL,
---     `discount_id` INT NULL,
---     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     `updated_at` TIMESTAMP NULL,
---     `deleted_at` TIMESTAMP NULL,
---     PRIMARY KEY (`id`),
---     CONSTRAINT `fk_product_on_category_id`
---       FOREIGN KEY (`category_id`)
---       REFERENCES `smartwardrobe`.`product_category` (`id`)
---       ON UPDATE CASCADE
--- );
-
--- CREATE TABLE product (
---     id SERIAL PRIMARY KEY,
---     article_id VARCHAR(255) NULL,
---     product_code VARCHAR(255) NULL,
---     prod_name VARCHAR(255) NULL,
---     product_type_no INT NULL,
---     product_type_name VARCHAR(255) NULL,
---     product_group_name VARCHAR(255)  NULL,
---     graphical_appearance_no INT  NULL,
---     graphical_appearance_name VARCHAR(255)  NULL,
---     colour_group_code VARCHAR(255)  NULL,
---     colour_group_name VARCHAR(255)  NULL,
---     perceived_colour_value_id INT  NULL,
---     perceived_colour_value_name VARCHAR(255)  NULL,
---     perceived_colour_master_id INT  NULL,
---     perceived_colour_master_name VARCHAR(255)  NULL,
---     department_no INT  NULL,
---     department_name VARCHAR(255)  NULL,
---     index_code VARCHAR(255)  NULL,
---     index_name VARCHAR(255)  NULL,
---     index_group_no INT  NULL,
---     index_group_name VARCHAR(255)  NULL,
---     section_no INT  NULL,
---     section_name VARCHAR(255)  NULL,
---     garment_group_no INT  NULL,
---     garment_group_name VARCHAR(255)  NULL,
---     detail_desc TEXT  NULL,
---     sku VARCHAR(255) NULL, -- Made nullable
---     category_id INT NULL, -- Made nullable
---     inventory_id INT NULL, -- Made nullable
---     price DECIMAL NULL, -- Made nullable
---     discount_id INT NULL, -- Made nullable
---     image_url VARCHAR(255), 
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     updated_at TIMESTAMP,
---     deleted_at TIMESTAMP,
---     CONSTRAINT fk_product_on_category_id
---       FOREIGN KEY (category_id)
---       REFERENCES product_category (id)
---       ON UPDATE CASCADE
--- );
 
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
@@ -365,7 +254,6 @@ CREATE TABLE public.group_members (
 CREATE OR REPLACE FUNCTION add_group_creator_as_member()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- Insert a new row into group_members with the created group's ID and creator's user ID
   INSERT INTO public.group_members (group_id, user_id, joined_at)
   VALUES (NEW.group_id, NEW.created_by, NOW());
 
@@ -423,3 +311,52 @@ CREATE TABLE image_info_image_search (
     "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NULL
 );
+
+
+CREATE OR REPLACE FUNCTION notify_friend_request_change()
+RETURNS TRIGGER AS $$
+DECLARE
+    notification JSON;
+BEGIN
+
+    notification = json_build_object(
+        'request_id', NEW.request_id,
+        'sender_id', NEW.sender_id,
+        'receiver_id', NEW.receiver_id,
+        'status', NEW.status,
+        'event_type', TG_OP,  
+        'timestamp', CURRENT_TIMESTAMP
+    );
+
+    
+    PERFORM pg_notify('friend_request_change', notification::text);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_notify_friend_requests_change_event
+AFTER INSERT OR UPDATE ON public.friend_requests
+FOR EACH ROW
+EXECUTE FUNCTION notify_friend_requests_change_event();
+
+CREATE OR REPLACE FUNCTION update_friend_requests_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_friend_requests_updated_at
+BEFORE UPDATE ON public.friend_requests
+FOR EACH ROW
+WHEN (OLD.status IS DISTINCT FROM NEW.status)
+EXECUTE FUNCTION update_friend_requests_updated_at_column();
+
+DROP TRIGGER IF EXISTS trigger_notify_friend_requests_change_event ON public.friend_requests;
+DROP TRIGGER IF EXISTS trigger_update_friend_requests_updated_at ON public.friend_requests;
+
+DROP FUNCTION IF EXISTS notify_friend_request_change();
+DROP FUNCTION IF EXISTS update_friend_requests_updated_at_column();
+

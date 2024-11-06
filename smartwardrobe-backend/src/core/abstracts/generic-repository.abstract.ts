@@ -13,4 +13,8 @@ export abstract class IGenericRepository<T> {
     page: number,
     limit: number,
   ): Promise<{ data: T[]; total: number }>;
+  abstract pollForChanges(
+    lastChecked: Date,
+    propertyName: string,
+  ): Promise<T[]>;
 }
