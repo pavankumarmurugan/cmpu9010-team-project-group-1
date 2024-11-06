@@ -36,6 +36,7 @@ import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/
 import { useDispatch, useSelector } from "react-redux";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import NewChatModal from "../NewChatModal/NewChatModal";
+import { Helmet } from "react-helmet";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -194,6 +195,23 @@ const ProductDetails = () => {
 
   return (
     <div>
+
+<Helmet>
+        <title>{productimages?.type || "Product Details"}</title>
+        <meta name="description" content={productimages?.description || "Product description goes here."} />
+        {/* OpenGraph Tags */}
+        <meta property="og:title" content={productimages?.type || "Product Title"} />
+        <meta property="og:description" content={productimages?.description || "Product description goes here."} />
+        <meta property="og:image" content={productimages?.imageUrl || "default-image-url.jpg"} />
+        <meta property="og:url" content={`${window.location.origin}${location.pathname}${location.search}`} />
+        <meta property="og:type" content="product" />
+        {/* Twitter Cards */}
+        <meta name="twitter:title" content={productimages?.type || "Product Title"} />
+        <meta name="twitter:description" content={productimages?.description || "Product description goes here."} />
+        <meta name="twitter:image" content={productimages?.imageUrl || "default-image-url.jpg"} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Helmet>
+
       {showFriendsForShare && (
         <NewChatModal
           isShowModel={showFriendsForShare}
