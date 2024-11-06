@@ -74,6 +74,7 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
         { username: Like(`%${searchCriteria}%`) },
         { firstname: Like(`%${searchCriteria}%`) },
         { lastname: Like(`%${searchCriteria}%`) },
+        { email: Like(`%${searchCriteria}%`) },
       ] as any,
     });
   }
