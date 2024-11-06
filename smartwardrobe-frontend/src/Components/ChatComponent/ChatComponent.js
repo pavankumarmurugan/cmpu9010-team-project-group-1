@@ -535,7 +535,7 @@ function ChatComponent(props) {
                       alt="Alice"
                       className="contact-image"
                     />
-                    <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
+                    <h2 className="contact-Name-for-OpenChat">{chatInfo?.groupName || chatInfo?.username}</h2>
                   </div>
                   {chatInfo && chatInfo?.groupName && (
                     <div
