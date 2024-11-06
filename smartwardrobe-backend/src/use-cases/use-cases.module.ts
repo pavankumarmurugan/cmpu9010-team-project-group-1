@@ -26,6 +26,7 @@ import { FriendsUsecase } from './friends/friends.usecase';
 import { GroupUsecase } from './group/group.usecase';
 import { GroupMemberUsecase } from './group-members/group-members.usecase';
 import { VtoImageSearchUsecase } from './vto/vto.usecase';
+import { ConfigUsecase } from './config/config.usecase';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { VtoImageSearchUsecase } from './vto/vto.usecase';
     GroupUsecase,
     GroupMemberUsecase,
     VtoImageSearchUsecase,
+    ConfigUsecase,
   ],
   exports: [
     ProductInventoryUsecase,
@@ -77,6 +79,7 @@ import { VtoImageSearchUsecase } from './vto/vto.usecase';
     GroupUsecase,
     GroupMemberUsecase,
     VtoImageSearchUsecase,
+    ConfigUsecase,
   ],
 })
 export class UseCasesModule {}
