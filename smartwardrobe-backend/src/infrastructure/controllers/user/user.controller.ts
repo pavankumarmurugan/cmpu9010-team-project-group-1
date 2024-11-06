@@ -180,7 +180,7 @@ export class UserController {
       const {
         user: { userId },
       } = request;
-      return await this.userUsecase.searchUser(userId, searchKey);
+      return await this.userUsecase.searchUser(userId, searchKey.toLowerCase());
     } catch (error) {
       throw error;
     }

@@ -117,20 +117,23 @@ export class UserDtoConvertor {
     friendEntities: FriendsEntity[],
     entities: UserEntity[],
   ): UserResDTO[] {
-    return entities.map(({ firstname, lastname, username, userId, role }) => {
-      const { friendId } = friendEntities.find(
-        (friendEntity) =>
-          friendEntity.user1Id === userId || friendEntity.user2Id === userId,
-      );
-      return {
-        firstname,
-        lastname,
-        username,
-        userId,
-        role,
-        friendId,
-      };
-    });
+    return entities.map(
+      ({ firstname, lastname, username, userId, role, profilePic }) => {
+        const { friendId } = friendEntities.find(
+          (friendEntity) =>
+            friendEntity.user1Id === userId || friendEntity.user2Id === userId,
+        );
+        return {
+          firstname,
+          lastname,
+          username,
+          userId,
+          role,
+          friendId,
+          profilePic,
+        };
+      },
+    );
   }
   toUserResDTOFromEntityForSearch(
     friendRequestsEntities: FriendRequestsEntity[],
