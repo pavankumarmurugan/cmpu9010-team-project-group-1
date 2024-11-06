@@ -134,9 +134,10 @@ export class FriendRequestsUsecase {
     dto: UpdateFriendRequestsReqDto,
   ): Promise<IResponse<FriendRequestsResDto>> {
     try {
-      const { receiverId }: FriendRequestsEntity =
+      const result: FriendRequestsEntity =
         await this.databaseService.friendRequests.get({ requestId });
-      if (userId !== receiverId) {
+
+      if (!result || userId !== result.receiverId) {
         throw new ConflictException(
           MESSAGES.FRIEND_REQUEST.UPDATE.NOT_AUTHORIZED,
         );

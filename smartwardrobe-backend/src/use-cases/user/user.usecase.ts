@@ -198,6 +198,7 @@ export class UserUsecase {
 
       const data: UserResDTO[] =
         this.userDtoConvertor.toUserResDTOFromEntityForSearch(
+          userId,
           entities,
           userEntities,
         );

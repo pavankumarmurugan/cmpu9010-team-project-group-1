@@ -117,27 +117,32 @@ export class UserDtoConvertor {
     friendEntities: FriendsEntity[],
     entities: UserEntity[],
   ): UserResDTO[] {
-    return entities.map(({ firstname, lastname, username, userId, role }) => {
-      const { friendId } = friendEntities.find(
-        (friendEntity) =>
-          friendEntity.user1Id === userId || friendEntity.user2Id === userId,
-      );
-      return {
-        firstname,
-        lastname,
-        username,
-        userId,
-        role,
-        friendId,
-      };
-    });
+    return entities.map(
+      ({ firstname, lastname, username, userId, role, profilePic }) => {
+        const { friendId } = friendEntities.find(
+          (friendEntity) =>
+            friendEntity.user1Id === userId || friendEntity.user2Id === userId,
+        );
+        return {
+          firstname,
+          lastname,
+          username,
+          userId,
+          role,
+          friendId,
+          profilePic,
+        };
+      },
+    );
   }
   toUserResDTOFromEntityForSearch(
+    id: number,
     friendRequestsEntities: FriendRequestsEntity[],
     entities: UserEntity[],
   ): UserResDTO[] {
-    return entities.map(
-      ({ firstname, lastname, username, userId, role, profilePic }) => {
+    return entities
+      .filter(({ userId }) => userId !== id)
+      .map(({ firstname, lastname, username, userId, role, profilePic }) => {
         const user = friendRequestsEntities.find(
           (friendRequestsEntity) => friendRequestsEntity.receiverId === userId,
         );
@@ -150,7 +155,6 @@ export class UserDtoConvertor {
           profilePic,
           status: user ? user.status : null,
         };
-      },
-    );
+      });
   }
 }

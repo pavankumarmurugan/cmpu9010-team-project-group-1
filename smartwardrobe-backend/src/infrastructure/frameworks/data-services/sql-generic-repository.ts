@@ -1,5 +1,5 @@
 import { IGenericRepository } from 'src/core/abstracts';
-import { Between, Like, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Like, MoreThan, Repository } from 'typeorm';
 import { In } from 'typeorm';
 
 export class SQLGenericRepository<T> implements IGenericRepository<T> {
@@ -71,9 +71,10 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
   search(searchCriteria: any): Promise<T[]> {
     return this._repository.find({
       where: [
-        { email: Like(`%${searchCriteria}%`) },
+        { username: Like(`%${searchCriteria}%`) },
         { firstname: Like(`%${searchCriteria}%`) },
         { lastname: Like(`%${searchCriteria}%`) },
+        { email: Like(`%${searchCriteria}%`) },
       ] as any,
     });
   }
@@ -86,6 +87,16 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
           price: Between(0, price),
         },
       ] as any,
+    });
+  }
+
+  async pollForChanges(lastChecked: Date, propertyName: string): Promise<T[]> {
+    const query = {
+      [propertyName]: MoreThan(lastChecked),
+    } as unknown as FindOptionsWhere<T>;
+
+    return this._repository.find({
+      where: query,
     });
   }
 }
