@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 // import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 // import { APP_GUARD } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
@@ -29,10 +29,14 @@ import { GroupController } from './group/group.controller';
 import { GroupMemberController } from './group-members/group-members.controller';
 import { CacheModule } from '@nestjs/cache-manager';
 import { VtoImageSearchController } from './vto/vto.controller';
+import { OriginMiddleware } from '../middleware/origin.middleware';
+import { ConfigController } from './config/config.controller';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({}),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TerminusModule,
     // ThrottlerModule.forRoot({
     //   ttl: +process.env.THROTTLER_TTL,
@@ -72,6 +76,7 @@ import { VtoImageSearchController } from './vto/vto.controller';
     GroupController,
     GroupMemberController,
     VtoImageSearchController,
+    ConfigController,
   ],
   providers: [
     // {
@@ -81,4 +86,8 @@ import { VtoImageSearchController } from './vto/vto.controller';
     JwtService,
   ],
 })
-export class ControllersModule {}
+export class ControllersModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(OriginMiddleware).forRoutes(ConfigController);
+  }
+}
