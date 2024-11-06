@@ -30,7 +30,7 @@ const HomeProductSection = (props) => { /** will remove this component when data
       const handleImgaeClick = (item) => {
         debugger
         SaveVisitedProduct(item);
-        navigate(`/productdetails/:${item?.id}`, { state: { item } });
+        navigate(`/productdetails/${item?.id}`, { state: { item } });
       }
 
       const handleAllProducts = () => {
