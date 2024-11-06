@@ -141,6 +141,7 @@ function ChatComponent(props) {
     debugger;
     setActiveFriend(event);
     setChatInfo(event);
+    setMessages([]);
 
     if(event?.userId){
     const getMessages = await apiCall(
@@ -261,7 +262,7 @@ function ChatComponent(props) {
   };
 
   const handleSendMessage = async (event) => {
-    if (event.key === "Enter" && textValue.trim() !== "") {
+    if ((event.key === "Enter" && textValue.trim() !== "") || (textValue.trim() !== "" && event === "fromIcon")) {
       event.preventDefault();
       if (chatInfo?.userId) {
         let message = {
@@ -299,7 +300,8 @@ function ChatComponent(props) {
           { 
             message: textValue,
             groupId: chatInfo?.groupId,
-            messageType: "text"
+            messageType: "text",
+            senderId: token?.userId
            },
         ]);
         settextValue("");
@@ -596,7 +598,7 @@ function ChatComponent(props) {
                 <div className="message-container" ref={messagesEndRef}>
                   {messages?.map((msg, index) => (
                     <>
-                    <div
+                    {/* <div
                       key={index}
                       className={`chat-message ${
                         (msg?.senderId !== chatInfo?.createdBy)
@@ -622,6 +624,20 @@ function ChatComponent(props) {
                           </p>
                         </div>
                       )}
+                    </div> */}
+
+                    <div
+                    key={index}
+                    className={`chat-message ${msg?.senderId === token?.userId ? "chat_sender" : "chat_receiver"} `}
+                    >
+                      {msg?.senderId === token?.userId ? 
+                      <p>{msg.message}</p>
+                      :
+                      <div className="receiver-message">
+                        <img src={chatbackgroundimage} alt={msg.sender} className="receiver-image" />
+                        <p><strong>{msg?.userDetails?.username}</strong><br />{msg.message}</p>
+                      </div>}
+
                     </div>
                     <div ref={messagesEndRef}></div></>
                   ))}
@@ -636,13 +652,13 @@ function ChatComponent(props) {
                   className="custom-textarea"
                   value={textValue}
                   onChange={handleInput}
-                  onKeyDown={handleSendMessage}
+                  onKeyDown={(event) => handleSendMessage(event,"fromEnter")}
                   disabled={!chatInfo?.userId && !chatInfo?.groupName}
                 />
                 <button className="send-button">
                   <FaPaperPlane
                     style={{ color: "2e3b4e", cursor: "pointer" }}
-                    onClick={sendMessageFromIcon}
+                    onClick={(event) => handleSendMessage(event,"fromIcon")}
                   />
                 </button>
               </div>
