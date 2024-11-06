@@ -1,7 +1,5 @@
-import { Controller, Post } from '@nestjs/common';
-
+import { Controller, Get } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
-import { AuthLoginResDto } from 'src/core/dto/auth/auth-res-dto.class';
 import { IResponse } from 'src/core/interface/response.interface';
 import { ConfigUsecase } from 'src/use-cases/config/config.usecase';
 
@@ -10,9 +8,9 @@ import { ConfigUsecase } from 'src/use-cases/config/config.usecase';
 export class ConfigController {
   constructor(private configUsecase: ConfigUsecase) {}
 
-  @Post('get')
+  @Get('get')
   @ApiExcludeEndpoint()
-  async login(): Promise<IResponse<any>> {
+  async config(): Promise<IResponse<any>> {
     return await this.configUsecase.get();
   }
 }
