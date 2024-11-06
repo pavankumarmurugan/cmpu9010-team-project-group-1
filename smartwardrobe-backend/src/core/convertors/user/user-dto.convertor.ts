@@ -136,11 +136,13 @@ export class UserDtoConvertor {
     );
   }
   toUserResDTOFromEntityForSearch(
+    id: number,
     friendRequestsEntities: FriendRequestsEntity[],
     entities: UserEntity[],
   ): UserResDTO[] {
-    return entities.map(
-      ({ firstname, lastname, username, userId, role, profilePic }) => {
+    return entities
+      .filter(({ userId }) => userId !== id)
+      .map(({ firstname, lastname, username, userId, role, profilePic }) => {
         const user = friendRequestsEntities.find(
           (friendRequestsEntity) => friendRequestsEntity.receiverId === userId,
         );
@@ -153,7 +155,6 @@ export class UserDtoConvertor {
           profilePic,
           status: user ? user.status : null,
         };
-      },
-    );
+      });
   }
 }
