@@ -21,6 +21,7 @@ import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/r
 import { LoginUsecase } from 'src/use-cases/auth/login.usecase';
 import { LogoutUsecase } from 'src/use-cases/auth/logout.usecase';
 import { RefreshTokenUsecase } from 'src/use-cases/auth/refresh-token.usecase';
+import { FCMReqDto } from 'src/core/dto/auth/fcm-token-dto.class';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -86,13 +87,15 @@ export class AuthController {
   @UseGuards(AccessTokenGuard)
   async saveFcmToken(
     @Request() request: RequestWithUser,
-    @Body('fcmToken') fcmToken: string,
+    @Body() fcm: FCMReqDto,
   ): Promise<IResponse<null>> {
     try {
       const {
         user: { userId },
       } = request;
-      return await this.loginUsecase.saveFcmToken(userId, fcmToken);
+
+      const { token } = fcm;
+      return await this.loginUsecase.saveFcmToken(userId, token);
     } catch (error) {
       throw error;
     }
