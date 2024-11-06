@@ -134,7 +134,7 @@ function NewChatModal(props) {
         token?.token
       );
 
-      if (response?.data) {
+      if (response?.data?.length > 0) {
         setAutocomplteAllData(response?.data);
         const options = response.data
           .filter((user) => user?.status !== "accepted")
@@ -161,6 +161,7 @@ function NewChatModal(props) {
           }));
 
         setSuggestions(options);
+        props?.reRenderComponent();
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
@@ -373,6 +374,8 @@ function NewChatModal(props) {
                   value={inputValue}
                   onChange={(value) => {
                     setInputValue(value);
+                  }}
+                  onSelect={(value) => {
                     fetchSuggestions(value);
                   }}
                   placeholder="Search Friends"
