@@ -27,7 +27,7 @@ jobs:
       - name: Delete Old Container
         run: docker rm -f reactContainer
       - name: Run docker container
-        run: docker run -d -p 80:80 -p 443:443 --name reactContainer d23124670/smartwardrobe-frontend:latest
+        run: docker run -d -p 8080:80 -p 8443:443 --name reactContainer d23124670/smartwardrobe-frontend:latest
       - name: Update Nginx configuration for HTTPS
         run: |
           # Ensure Nginx is reloaded to apply changes
