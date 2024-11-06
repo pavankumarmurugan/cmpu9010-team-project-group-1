@@ -95,8 +95,7 @@ API
 
 Sample:
 
-![](media/image1.png){width="6.268055555555556in"
-height="1.698611111111111in"}
+![image](https://github.com/user-attachments/assets/cebf1f46-2929-4127-9933-1a5da561901c)
 
 Notebook : Features_openai_image.ipynb
 
