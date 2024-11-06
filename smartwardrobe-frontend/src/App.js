@@ -24,7 +24,7 @@ function App() {
             {/* <Route path="/" element={<Headermenu />} /> */}
             <Route path="/" element={<Homepage />} />
             <Route path="/products" element={<ProductPage />} />
-            <Route path="/productdetails" element={<ProductDetails />} />
+            <Route path="/productdetails/:id" element={<ProductDetails />} />
             <Route path="/wishlist" element={<WishListComponent />} />
           </Routes>
         </BrowserRouter>

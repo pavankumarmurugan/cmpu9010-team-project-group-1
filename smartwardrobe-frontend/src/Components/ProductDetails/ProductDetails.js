@@ -29,7 +29,7 @@ import Accordion from "@mui/joy/Accordion";
 import AccordionDetails from "@mui/joy/AccordionDetails";
 import AccordionSummary from "@mui/joy/AccordionSummary";
 import { Input } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
@@ -41,6 +41,7 @@ const ProductDetails = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   let {state} = location;
+  const { id } = useParams();
   let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   console.log(state?.item?.imageName, "productData");
   const [quantityvalue, setQuantityValue] = useState(1);
@@ -48,6 +49,7 @@ const ProductDetails = () => {
   const [openLoader, setOpenLoader] = useState(false);
   const [selectedSize, setSelectedSize] = useState(1);
   const [productimages, setProductImages] = useState([]);
+  const [friendsListForShare, setFriendsListForShare] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [showFriendsForShare, setShowFriendsForShare] = useState(false);
@@ -128,7 +130,9 @@ const ProductDetails = () => {
 
   const callApiForModels = async () => {
     debugger;
-    let numberString = state?.item?.id;
+    let getId = id.split(":");
+    let numberString = Number(getId[1]);
+
     // let number = parseInt(numberString);
       setOpenLoader(true);
       const getModels = await apiCall(
@@ -144,7 +148,7 @@ const ProductDetails = () => {
       const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
       setOpenLoader(false);
       if (getLikeProducts) {
-        let check = getLikeProducts?.data?.find((item) => (item?.productId === state?.item?.id) || (item?.productId === productimages?.id));
+        let check = getLikeProducts?.data?.find((item) => (item?.productId === numberString) || (item?.productId === productimages?.id));
         if(check){
           setShowHideWishlist(false);
         }
@@ -158,8 +162,25 @@ const ProductDetails = () => {
     setOpenTryOnModal(true);
   }
 
-  const handleShare = (data) => {
+  const handleShare = async (data) => {
     debugger;
+    setOpenLoader(true);
+    const getGroupsList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+      null,
+      token?.token
+    );
+
+    const getFriendsList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
+    setFriendsListForShare([...getGroupsList?.data, ...getFriendsList?.data]);
+    console.log([...getGroupsList?.data, ...getFriendsList?.data], "friendsListForShare");
     setShowFriendsForShare(true);
   }
 
@@ -180,6 +201,8 @@ const ProductDetails = () => {
           closeModal={closeNewChat}
           showSection={'ShareProductsToFriends'}
           data={null}
+          friendsListForShare={friendsListForShare}
+          productUrl={`${window.location.origin}${location.pathname}${location.search}`}
         />
       )}
       {/** Virtual Tryon Component */}

@@ -196,7 +196,7 @@ export const ProductPageCards = ({data,handleTryon}) => {
   const handleProductDetails = (item) => {
     debugger;
     SaveVisitedProduct(item);
-    navigate("/productdetails", { state: { item } });
+    navigate(`/productdetails/:${item?.id}`, { state: { item } });
   }
 
   return (
