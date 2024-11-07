@@ -27,6 +27,7 @@ import TextArea from "antd/es/input/TextArea";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
+import WhatsAppStylePreview from "../GenericCode/GenericCode";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
@@ -41,7 +42,7 @@ function ChatComponent(props) {
   const [textValue, settextValue] = useState("");
   const [friendReqCount, setFriendReqCount] = useState([]);
   const [activeFriend, setActiveFriend] = useState(null);
-  const [chatInfo, setChatInfo] = useState({});
+  const [chatInfo, setChatInfo] = useState(null);
   const [friends, setFriends] = useState([]);
   const [friendsDataForFilter, setFriendsDataForFilter] = useState([]);
   const [friendReqCountToShow, setFriendReqCountToShow] = useState(0);
@@ -519,6 +520,7 @@ function ChatComponent(props) {
                 backgroundRepeat: "no-repeat",
               }}
             >
+              {chatInfo !== null ?
               <div className="chat-header">
                 <div className="back-icon">
                   <ChevronLeftOutlinedIcon
@@ -530,6 +532,7 @@ function ChatComponent(props) {
                   <div className="back-icon">
                 <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}} onclick={toggleChatSection} />
                 </div>)} */}
+                
                 <div className="Chat-Icon-and-Name-div">
                   <div className="Chat-Icon-and-Name">
                     <img
@@ -537,7 +540,7 @@ function ChatComponent(props) {
                       alt="Alice"
                       className="contact-image"
                     />
-                    <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
+                    <h2 className="contact-Name-for-OpenChat">{chatInfo && (chatInfo?.username || chatInfo?.groupName )}</h2>
                   </div>
                   {chatInfo && chatInfo?.groupName && (
                     <div
@@ -557,9 +560,13 @@ function ChatComponent(props) {
                   )}
                 </div>
               </div>
+              :
+              <div className="rightside-div-when-Nocontact-selected" style={{height:"100%"}}>
+                  <h2 style={{display:"flex", justifyContent:"center", alignItems:"center", textAlign:"center", height:"100%"}}>Start a conversation by choosing a contact from the list.</h2>
+                </div>}
               <div className="chat-messages">
                 {chatInfo?.userId && 
-                <div className="message-container" ref={messagesEndRef}>
+                <div className="message-container" >
                   {messages?.map((msg, index) => (
                     <>
                     <div
@@ -571,8 +578,8 @@ function ChatComponent(props) {
                       }`}
                     >
                       {msg.receiverId === chatInfo?.userId ? (
-                        
-                        <p>{msg.message}</p>
+                        // <p>{msg.message}</p>
+                        <WhatsAppStylePreview message={msg?.message} />
                       ) : (
                         <div className="receiver-message">
                           <img
@@ -587,7 +594,7 @@ function ChatComponent(props) {
                                 : msg?.username}{" "}
                             </strong>{" "}
                             <br />
-                            {msg.message}
+                            <WhatsAppStylePreview message={msg?.message} />
                           </p>
                         </div>
                       )}
@@ -632,11 +639,11 @@ function ChatComponent(props) {
                     className={`chat-message ${msg?.senderId === token?.userId ? "chat_sender" : "chat_receiver"} `}
                     >
                       {msg?.senderId === token?.userId ? 
-                      <p>{msg.message}</p>
+                      <WhatsAppStylePreview message={msg?.message} />
                       :
                       <div className="receiver-message">
                         <img src={chatbackgroundimage} alt={msg.sender} className="receiver-image" />
-                        <p><strong>{msg?.userDetails?.username}</strong><br />{msg.message}</p>
+                        <p><strong>{msg?.userDetails?.username}</strong><br /><WhatsAppStylePreview message={msg?.message} /></p>
                       </div>}
 
                     </div>
@@ -644,7 +651,7 @@ function ChatComponent(props) {
                   ))}
                 </div>}
               </div>
-
+                  {chatInfo !== null && 
               <div className="chat-input">
                 <TextArea
                   style={{ paddingRight: "7%" }}
@@ -662,7 +669,7 @@ function ChatComponent(props) {
                     onClick={(event) => handleSendMessage(event,"fromIcon")}
                   />
                 </button>
-              </div>
+              </div>}
             </div>
           </div>
         </div>

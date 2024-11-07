@@ -101,6 +101,7 @@
   font-size: 20px !important;
   padding-top: 10px;
   margin-left: 10px;
+  text-transform: capitalize;
 }
 .contact-Name {
   display: flex;
@@ -651,4 +652,106 @@
   font-size: 12px;
   margin-top: 5px;
   color: #555;
+}
+
+
+
+
+
+/** Link preview */
+
+/* Container styling */
+.preview-container {
+  background-color: #ffffff; /* bg-white */
+  border-radius: 1rem; /* rounded-xl */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* shadow-sm */
+  overflow: hidden;
+  transition: box-shadow 0.2s; /* hover:shadow-md */
+}
+
+.preview-container:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06); /* hover:shadow-md */
+}
+
+/* Image styling */
+.preview-image {
+  width: 100%;
+  height: 12rem; /* h-48 */
+  object-fit: cover; /* object-cover */
+  background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+/* Loading skeleton */
+.skeleton {
+  background-color: #e5e7eb; /* bg-gray-200 */
+  animation: pulse 1.5s infinite; /* animate-pulse */
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Padding for text */
+/* Container styling */
+.preview-container {
+  background-color: #ffffff; /* bg-white */
+  border-radius: 1rem; /* rounded-xl */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* shadow-sm */
+  overflow: hidden;
+  transition: box-shadow 0.2s; /* hover:shadow-md */
+  width: 50%;
+}
+
+.preview-container:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06); /* hover:shadow-md */
+}
+
+/* Image styling */
+.preview-image {
+  width: 100%;
+  height: 12rem; /* h-48 */
+  object-fit: cover; /* object-cover */
+  background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+.image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Padding for text */
+.preview-content {
+  padding: 1rem; /* p-4 */
+}
+
+.preview-title {
+  font-weight: 600; /* font-semibold */
+  color: #1f2937; /* text-gray-900 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* line-clamp-2 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.preview-description {
+  font-size: 0.875rem;
+  color: #4b5563;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.preview-site-name {
+  font-size: 0.875rem; /* text-sm */
+  color: black !important;
+  background-color: white !important; /* text-gray-500 */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.05em; /* tracking-wide */
 }
