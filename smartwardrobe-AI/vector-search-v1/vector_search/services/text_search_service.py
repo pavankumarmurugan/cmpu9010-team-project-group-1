@@ -50,11 +50,18 @@ Ensure the responses are in valid JSON format, structured as follows:
         try:
             expanded_queries = json.loads(cleaned_response)
             print("Expanded queries:", expanded_queries)
-            return expanded_queries
+            # Convert to target structure
+            transformed_data = [
+                {"query": query} for query in expanded_queries.values()
+            ]
+
+            # Print JSON
+            print(json.dumps(transformed_data, indent=4))
+            return transformed_data
         except json.JSONDecodeError as e:
             print("Error decoding JSON:", e)
             return []
-        return expanded_queries
+        return transformed_data
 
 
     except Exception as e:
