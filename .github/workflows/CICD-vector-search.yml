@@ -30,4 +30,4 @@ jobs:
       - name: Delete Old Container
         run: docker rm -f vector-search
       - name: Run docker container
-        run: docker run -d -p 5000:5000 --name CN-vector-search d23124670/vector-search:latest
+        run: docker run -d -p 5000:5000 --name CN-vector-search -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} d23124670/vector-search:latest
