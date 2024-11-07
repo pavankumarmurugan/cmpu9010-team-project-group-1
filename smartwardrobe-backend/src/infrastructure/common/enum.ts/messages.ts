@@ -236,4 +236,7 @@ export const MESSAGES = {
       },
     },
   },
+  CONFIG: {
+    SUCCESS: 'SUCCESSFULLY FETCHED CONFIG',
+  },
 };
