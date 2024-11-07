@@ -11,7 +11,9 @@ import { GroupMembersEntity } from 'src/core/entities/group-members/group-member
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { SOCKET_MESSAGE_CONSTANTS } from 'src/infrastructure/common/enum.ts/socket.enum';
 import { FirebaseService } from 'src/infrastructure/services/firebase/firebase.service';
+import { WebSocketGatewayService } from 'src/infrastructure/services/web-sockets/friend-requests/websocket.gateway.service';
 
 @Injectable()
 export class ChatUsecase {
@@ -19,9 +21,10 @@ export class ChatUsecase {
     private databaseService: IDataServices,
     private convertor: ChatConvertor,
     private firebaseService: FirebaseService,
+    private websocketGateway: WebSocketGatewayService,
   ) {}
 
-  async create(
+  async createSendMessageToUser(
     userId: number,
     dto: ChatReqDto,
   ): Promise<IResponse<ChatResDto>> {
@@ -30,17 +33,28 @@ export class ChatUsecase {
       const chatEntity: ChatEntity =
         await this.databaseService.chat.create(entity);
 
+      const data: ChatResDto =
+        this.convertor.toChatResDtoFromEntity(chatEntity);
+
       if (chatEntity.receiverId) {
+        const roomId = `room_${Math.min(userId, chatEntity.receiverId)}_${Math.max(userId, chatEntity.receiverId)}`;
+
+        this.websocketGateway.emitToChatRoom(
+          roomId,
+          SOCKET_MESSAGE_CONSTANTS.SEND_MESSAGE_TO_OTHER_USER,
+          data,
+        );
+
         const receiverToken = await this.firebaseService.getFcmToken(
           chatEntity.receiverId,
         );
 
-        await this.firebaseService.addChatNotification(
-          userId,
-          chatEntity.receiverId,
-          chatEntity.id,
-          this.createMessagePreview(chatEntity.message),
-        );
+        // await this.firebaseService.addChatNotification(
+        //   userId,
+        //   chatEntity.receiverId,
+        //   chatEntity.id,
+        //   this.createMessagePreview(chatEntity.message),
+        // );
 
         if (receiverToken) {
           await this.firebaseService.sendBrowserNotification(
@@ -54,20 +68,9 @@ export class ChatUsecase {
               clickAction: 'OPEN_CHAT',
             },
           );
-
-          // await this.firebaseService.addNotification(chatEntity.receiverId, {
-          //   type: 'chat',
-          //   content: this.createMessagePreview(chatEntity.message),
-          //   sender_id: userId,
-          //   chat_id: chatEntity.id,
-          //   status: 'unread',
-          //   timestamp: new Date().getTime(),
-          // });
         }
       }
 
-      const data: ChatResDto =
-        this.convertor.toChatResDtoFromEntity(chatEntity);
       return {
         data,
         message: MESSAGES.CHATS.CREATE.SUCCESS,
@@ -87,23 +90,32 @@ export class ChatUsecase {
           groupId: dto.groupId,
           userId,
         });
+
       if (groupMembersEntity) {
         const entity: ChatEntity =
           this.convertor.toChatModelFromChatGroupReqDto(userId, dto);
         const chatEntity: ChatEntity =
           await this.databaseService.chat.create(entity);
 
+        const messageData = this.convertor.toChatResDtoFromEntity(chatEntity);
+
+        this.websocketGateway.emitToGroup(
+          dto.groupId,
+          SOCKET_MESSAGE_CONSTANTS.SEND_MESSAGE_TO_GROUP,
+          messageData,
+        );
+
         if (chatEntity.receiverId) {
           const receiverToken = await this.firebaseService.getFcmToken(
             chatEntity.receiverId,
           );
 
-          await this.firebaseService.addChatNotification(
-            userId,
-            chatEntity.receiverId,
-            chatEntity.id,
-            this.createMessagePreview(chatEntity.message),
-          );
+          // await this.firebaseService.addChatNotification(
+          //   userId,
+          //   chatEntity.receiverId,
+          //   chatEntity.id,
+          //   this.createMessagePreview(chatEntity.message),
+          // );
 
           if (receiverToken) {
             await this.firebaseService.sendBrowserNotification(
@@ -138,25 +150,6 @@ export class ChatUsecase {
     if (message.length <= maxLength) return message;
     return message.substring(0, maxLength - 3) + '...';
   }
-
-  // async markAsRead(userId: number, chatId: number): Promise<IResponse<null>> {
-  //   try {
-  //     await this.databaseService.chat.update(chatId, { status: 'read' });
-
-  //     await this.firebaseService.updateNotificationStatus(
-  //       userId,
-  //       chatId,
-  //       'read',
-  //     );
-
-  //     return {
-  //       data: null,
-  //       message: MESSAGES.CHATS.UPDATE.SUCCESS,
-  //     };
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 
   async getAllMyChatByFriendId(
     userId: number,

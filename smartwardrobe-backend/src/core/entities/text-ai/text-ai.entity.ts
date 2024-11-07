@@ -1,16 +1,22 @@
 class SearchTextResults {
   image_name: string;
 }
+export class SearchTextQueryResults {
+  query: string;
+}
 
 export class TextResultsEntity {
   constructor() {}
-  readonly search_results?: SearchTextResults;
+  readonly expanded_queries: SearchTextQueryResults[] = [];
+  readonly search_results: SearchTextResults[] = [];
 }
 
 export function createTextResultsEntity(
   init?: Partial<TextResultsEntity>,
 ): TextResultsEntity {
-  return {
-    ...init,
-  };
+  const entity = new TextResultsEntity();
+  if (init) {
+    Object.assign(entity, init);
+  }
+  return entity;
 }
