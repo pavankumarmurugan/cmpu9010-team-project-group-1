@@ -10,6 +10,10 @@ import { SearchImageSimilarProductResDto } from 'src/core/dto/search/search-imag
 import { AxiosResponse } from 'axios';
 import { ProductEntity } from 'src/core/entities/product/product.entity';
 import { CacheService } from 'src/infrastructure/services/cache/cache.service';
+import {
+  createTextResultsEntity,
+  TextResultsEntity,
+} from 'src/core/entities/text-ai/text-ai.entity';
 
 @Injectable()
 export class SearchProductUsecase {
@@ -46,14 +50,13 @@ export class SearchProductUsecase {
           headers: {},
           config: null,
         };
-      let textSearchResults: AxiosResponse<SearchImageSimilarProductResDto[]> =
-        {
-          data: [],
-          status: 200,
-          statusText: 'OK',
-          headers: {},
-          config: null,
-        };
+      let textSearchResults: AxiosResponse<TextResultsEntity> = {
+        data: createTextResultsEntity(),
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: null,
+      };
 
       if (filePath !== '') {
         imageSearchResults = await await firstValueFrom(
@@ -68,7 +71,7 @@ export class SearchProductUsecase {
       }
 
       const results: SearchImageSimilarProductResDto[] =
-        imageSearchResults.data.concat(textSearchResults.data);
+        imageSearchResults.data.concat(textSearchResults.data.search_results);
 
       const unique = results.filter((v, i, a) => {
         const seen = new Set();
