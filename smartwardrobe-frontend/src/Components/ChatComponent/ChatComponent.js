@@ -49,6 +49,7 @@ function ChatComponent(props) {
   const [hideLeftSection, sethideLeftSection] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [groupMemberList, setGroupMemberList] = useState([]);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       color: "white",
@@ -170,6 +171,19 @@ function ChatComponent(props) {
       const sortedMessages = getGroupMessages?.data.sort((a, b) => a.id - b.id);
       setMessages(sortedMessages);
     }
+
+    const getAllGroupMembers = await apiCall('GET', `https://smartwardrobe-backend.azurewebsites.net/group/get-all-members-in-group/${event?.groupId}`, null, token?.token);
+    if(getAllGroupMembers?.data?.length > 0){
+      console.log(getAllGroupMembers);
+      let setGroupMembers = [];
+      let aa = getAllGroupMembers?.data?.forEach((x) => setGroupMembers?.push(x?.username));
+      const formattedNames = setGroupMembers?.map(name => {
+        // Capitalize the first letter of each name
+        return name?.charAt(0).toUpperCase() + name?.slice(1);
+      }).join(', ');
+      setGroupMemberList(formattedNames);
+    }
+
   }
 
     if (window.innerWidth < 768) {
@@ -540,7 +554,14 @@ function ChatComponent(props) {
                       alt="Alice"
                       className="contact-image"
                     />
+                    <div className="groupName-and-member-div">
                     <h2 className="contact-Name-for-OpenChat">{chatInfo && (chatInfo?.username || chatInfo?.groupName )}</h2>
+                    <div className="members-div">
+                          <div className="member-div">
+                            <span>OsamaNoor, OsamaNoor, OsamaNoor</span>
+                            </div>
+                      </div>
+                    </div>
                   </div>
                   {chatInfo && chatInfo?.groupName && (
                     <div

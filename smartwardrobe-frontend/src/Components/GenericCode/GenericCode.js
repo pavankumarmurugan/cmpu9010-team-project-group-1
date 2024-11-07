@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import "../../Styles/ChatComponent.css";
 import { useSelector } from "react-redux";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import { Backdrop, CircularProgress } from "@mui/material";
 
 
 const renderMenuItems = (items) => {
@@ -408,6 +409,7 @@ export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
 const WhatsAppStylePreview = ({ message }) => {
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState(null);
+  const [openLoader, setOpenLoader] = useState(false);
   const homeData = useSelector((state) => state.homeData.homeData);
 
   // Function to fetch metadata from a URL
@@ -415,6 +417,7 @@ const WhatsAppStylePreview = ({ message }) => {
     debugger
     try {
       const id = url.split('/').pop();
+      setOpenLoader(true);
       const response = await apiCall(
         "GET",
         `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${Number(id)}`, null
@@ -432,6 +435,9 @@ const WhatsAppStylePreview = ({ message }) => {
     } catch (err) {
       console.error("Error fetching metadata:", err);
       return null;
+    }
+    finally {
+      setOpenLoader(false); // Hide loader
     }
   };
 
@@ -476,6 +482,16 @@ const WhatsAppStylePreview = ({ message }) => {
   }
   return (
     <>
+    <Backdrop
+        sx={{
+          color: "#fff",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: "rgba(0, 0, 0, 0.2)" // Adjust opacity for a lighter effect
+        }}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {preview ? (
         <a href={preview?.siteName} target="_blank" rel="noopener noreferrer" class="preview-container">
         {preview?.image && (

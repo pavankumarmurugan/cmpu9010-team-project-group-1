@@ -647,7 +647,9 @@ function Headermenu() {
   /** wish list count */
 
   useEffect(() => {
-    getWishListCount();
+    if(token?.token){
+      getWishListCount();
+    }
   }, []);
 
   const getWishListCount = async () => {
