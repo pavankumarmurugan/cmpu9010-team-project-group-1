@@ -2,16 +2,17 @@
 import {
   Controller,
   Post,
-  Get,
   Delete,
   Param,
   Body,
   ParseIntPipe,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GroupMemberReqDto } from 'src/core/dto/group-members/group.req-dto';
 import { GroupMemberResDto } from 'src/core/dto/group-members/group.res-dto';
+import { RequestWithUser } from 'src/core/interface/request.interface';
 
 import { IResponse } from 'src/core/interface/response.interface';
 import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
@@ -31,18 +32,13 @@ export class GroupMemberController {
   @Roles(ROLES.ADMIN, ROLES.USER)
   async create(
     @Body() dto: GroupMemberReqDto,
+    @Request() request: RequestWithUser,
   ): Promise<IResponse<GroupMemberResDto>> {
-    return await this.usecase.create(dto);
+    const {
+      user: { userId },
+    } = request;
+    return await this.usecase.create(userId, dto);
   }
-
-  // @Get('get-all/:groupId')
-  // @ApiBearerAuth()
-  // @Roles(ROLES.ADMIN, ROLES.USER)
-  // async getAll(
-  //   @Param('groupId', ParseIntPipe) groupId: number,
-  // ): Promise<IResponse<GroupMemberResDto[]>> {
-  //   return await this.usecase.getAll(groupId);
-  // }
 
   @Delete('delete/:membershipId')
   @ApiBearerAuth()
