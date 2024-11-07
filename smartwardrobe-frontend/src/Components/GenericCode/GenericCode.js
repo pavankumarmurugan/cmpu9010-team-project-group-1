@@ -10,6 +10,9 @@ import imageCompression from 'browser-image-compression';
 import { IoMdChatboxes } from "react-icons/io";
 import ChatComponent from "../ChatComponent/ChatComponent";
 import { useNavigate } from "react-router-dom";
+import "../../Styles/ChatComponent.css";
+import { useSelector } from "react-redux";
+import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 
 
 const renderMenuItems = (items) => {
@@ -399,3 +402,128 @@ export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
 
   return filteredData;
 };
+
+
+
+const WhatsAppStylePreview = ({ message }) => {
+  const [preview, setPreview] = useState(null);
+  const [error, setError] = useState(null);
+  const homeData = useSelector((state) => state.homeData.homeData);
+
+  // Function to fetch metadata from a URL
+  const fetchImageMetadata = async (url) => {
+    debugger
+    try {
+      const id = url.split('/').pop();
+      const response = await apiCall(
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${Number(id)}`, null
+      );
+      console.log(response?.data);
+      const data = await response?.data
+      
+      // const product = homeData?.find(x => x.id === +id);
+      return {
+        title: data?.type,
+        description: data.description,
+        image: data?.imageUrl,
+        siteName: url,
+      };
+    } catch (err) {
+      console.error("Error fetching metadata:", err);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const processMessage = async () => {
+      debugger
+      // Check if the message contains a URL (http or https)
+      if (message.includes("http://3.249.157.70:3000/productdetails/") || message.includes("https://3.249.157.70:3000/productdetails/")) {
+
+        try {
+          const metadata = await fetchImageMetadata(message); // Fetch metadata for the URL
+          if (metadata) {
+            setPreview(metadata); // Update state with metadata if successfully fetched
+          } else {
+            setError("Failed to fetch metadata");
+          }
+        } catch (err) {
+          setError("Error fetching metadata");
+        } finally {
+        }
+      } else {
+        // If it's not a URL, set the preview to null and stop loading
+        setPreview(null);
+      }
+    };
+
+    processMessage();
+  }, [message]); // Runs whenever the message changes
+
+  if (error) {
+    return (
+      <a
+        href={message}
+        target="_blank"
+        rel="noopener noreferrer"
+        className=""
+        style={{display: "contents"}}
+      >
+        <p>{message}</p>
+      </a>
+    );
+  }
+  return (
+    <>
+      {preview ? (
+        <a href={preview?.siteName} target="_blank" rel="noopener noreferrer" class="preview-container">
+        {preview?.image && (
+          <div class="preview-image">
+            <img
+              src={preview.image}
+              alt="{preview.title || 'Website preview'}"
+              class="image"
+            />
+          </div>
+        )}
+      
+        <div class="preview-content">
+          {/* {preview?.siteName && (
+            <p class="preview-site-name">
+              {preview.siteName}
+            </p>
+          )} */}
+          
+          {preview?.title && (
+            <h3 class="preview-title">
+              {preview.title}
+            </h3>
+          )}
+          
+          {preview?.description && (
+            <span class="preview-description">
+              {preview.description}
+            </span>
+          )}
+        </div>
+      </a>
+      
+      ) : (
+        message.includes("http") ?
+        <a
+        href={message}
+        target="_blank"
+        rel="noopener noreferrer"
+        className=""
+        style={{display: "contents", fontSize: "10px"}}
+      >
+        <p>{message}</p>
+      </a> :
+        <p>{message}</p> // If not a URL, return the exact same message
+      )}
+    </>
+  );
+};
+
+export default WhatsAppStylePreview;
