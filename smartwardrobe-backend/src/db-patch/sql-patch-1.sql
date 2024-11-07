@@ -92,31 +92,20 @@ CREATE TABLE public."cart" (
     ON UPDATE CASCADE
 );
 
-DELIMITER //
 
-CREATE TRIGGER `create_cart_after_user_insert`
-AFTER INSERT ON `smartwardrobe`.`user`
-FOR EACH ROW
+CREATE OR REPLACE FUNCTION create_cart_after_user_insert()
+RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO `smartwardrobe`.`cart` (`user_id`, `created_at`, `updated_at`)
-  VALUES (NEW.`user_id`, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-END //
+  INSERT INTO "public"."cart" ("user_id", "created_at", "updated_at")
+  VALUES (NEW."user_id", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-DELIMITER ;
-
--- CREATE OR REPLACE FUNCTION create_cart_after_user_insert()
--- RETURNS TRIGGER AS $$
--- BEGIN
---   INSERT INTO "smartwardrobe"."cart" ("user_id", "created_at", "updated_at")
---   VALUES (NEW."user_id", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
---   RETURN NEW;
--- END;
--- $$ LANGUAGE plpgsql;
-
--- CREATE TRIGGER create_cart_after_user_insert
--- AFTER INSERT ON "smartwardrobe"."user"
--- FOR EACH ROW
--- EXECUTE FUNCTION create_cart_after_user_insert();
+CREATE TRIGGER create_cart_after_user_insert
+AFTER INSERT ON "public"."user"
+FOR EACH ROW
+EXECUTE FUNCTION create_cart_after_user_insert();
 
 
 

@@ -14,13 +14,15 @@ import {
   createTextResultsEntity,
   TextResultsEntity,
 } from 'src/core/entities/text-ai/text-ai.entity';
+import { SearchImageSimilarProductsConvertor } from 'src/core/convertors/search/search-image-similar-products.convertor';
+import { SearchImageSimilarProductResDtoV2 } from 'src/core/dto/search/search-image-similar-products-res_v2-dto';
 
 @Injectable()
 export class SearchProductUsecase {
   constructor(
     private readonly services: SearchProductsService,
     private readonly databaseService: IDataServices,
-    private readonly productConvertor: ProductConvertor,
+    private readonly convertor: SearchImageSimilarProductsConvertor,
     private readonly cacheService: CacheService,
   ) {}
 
@@ -29,11 +31,13 @@ export class SearchProductUsecase {
     query: string,
     page: number = 1,
     limit: number = 10,
-  ): Promise<IResponse<ProductResDto[]>> {
+  ): Promise<IResponse<SearchImageSimilarProductResDtoV2>> {
     const cacheKey = `similarProducts:${filePath.trim()}:${query.trim()}:${page}:${limit}`;
 
     const cachedData =
-      await this.cacheService.getFromCache<ProductResDto[]>(cacheKey);
+      await this.cacheService.getFromCache<SearchImageSimilarProductResDtoV2>(
+        cacheKey,
+      );
     if (cachedData) {
       return {
         data: cachedData,
@@ -91,10 +95,16 @@ export class SearchProductUsecase {
         (entity) => entity !== null,
       );
 
-      const data: ProductResDto[] =
-        this.productConvertor.toProductResDtoFromEntities(productEntities);
+      const data: SearchImageSimilarProductResDtoV2 =
+        this.convertor.toProductResDtoFromEntitiesForSearchResults(
+          textSearchResults.data,
+          productEntities,
+        );
 
-      await this.cacheService.setToCache<ProductResDto[]>(cacheKey, data);
+      await this.cacheService.setToCache<SearchImageSimilarProductResDtoV2>(
+        cacheKey,
+        data,
+      );
 
       return {
         data,

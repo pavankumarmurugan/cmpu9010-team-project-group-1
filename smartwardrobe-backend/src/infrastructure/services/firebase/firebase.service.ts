@@ -96,7 +96,6 @@ export class FirebaseService implements OnModuleInit {
       content: message,
       status: 'unread',
     };
-
     return this.addNotification(notification);
   }
 
@@ -119,7 +118,6 @@ export class FirebaseService implements OnModuleInit {
       content: `New message in ${groupName}`,
       status: 'unread',
     };
-
     return this.addNotification(notification);
   }
 
@@ -137,7 +135,6 @@ export class FirebaseService implements OnModuleInit {
       content: `${senderName} sent you a friend request`,
       status: 'unread',
     };
-
     return this.addNotification(notification);
   }
 
@@ -155,7 +152,6 @@ export class FirebaseService implements OnModuleInit {
       content: `${senderName} accepted your friend request`,
       status: 'unread',
     };
-
     return this.addNotification(notification);
   }
 
