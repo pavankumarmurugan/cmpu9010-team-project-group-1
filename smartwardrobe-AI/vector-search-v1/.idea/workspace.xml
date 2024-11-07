@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../.github/workflows/CICD-vector-search.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.github/workflows/CICD-vector-search.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vector_search/services/text_search_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/vector_search/services/text_search_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +57,7 @@
       <workItem from="1730317382247" duration="4002000" />
       <workItem from="1730911936616" duration="8000" />
       <workItem from="1730980418787" duration="37000" />
+      <workItem from="1730985082927" duration="30000" />
     </task>
     <servers />
   </component>
