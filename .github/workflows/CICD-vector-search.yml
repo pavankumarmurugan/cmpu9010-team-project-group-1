@@ -28,6 +28,8 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull d23124670/vector-search:latest
       - name: Delete Old Container
-        run: docker rm -f vector-search
+        run: docker rm -f CN-vector-search
+      - name: Delete Old Image
+        run: docker rmi -f d23124670/vector-search:latest
       - name: Run docker container
         run: docker run -d -p 5000:5000 --name CN-vector-search -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} d23124670/vector-search:latest
