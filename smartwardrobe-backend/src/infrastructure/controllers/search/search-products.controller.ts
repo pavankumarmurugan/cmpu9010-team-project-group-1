@@ -15,6 +15,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadSearchPictureService } from 'src/infrastructure/services/uploadProfilePicture/upload-search-picture';
 import { SearchImageSimilarProductReqDto } from 'src/core/dto/search/search-image-similar-products-req-dto';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { SearchImageSimilarProductResDtoV2 } from 'src/core/dto/search/search-image-similar-products-res_v2-dto';
+import { IResponse } from 'src/core/interface/response.interface';
 
 @Controller('search')
 @ApiTags('Search')
@@ -49,7 +51,7 @@ export class SearchSimilarProductsController {
     @Body() dto: SearchImageSimilarProductReqDto,
     @Param('page', ParseIntPipe) page: number = 1,
     @Param('limit', ParseIntPipe) limit: number = 10,
-  ) {
+  ): Promise<IResponse<SearchImageSimilarProductResDtoV2>> {
     const { query } = dto;
     let fileUrl = '';
     if (file === undefined && query === '') {

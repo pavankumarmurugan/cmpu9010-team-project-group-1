@@ -93,7 +93,7 @@ export class ChatController {
       const {
         user: { userId },
       } = request;
-      const response = await this.usecase.create(userId, dto);
+      const response = await this.usecase.createSendMessageToUser(userId, dto);
       return response;
     } catch (error) {
       throw error;
@@ -154,10 +154,4 @@ export class ChatController {
       throw error;
     }
   }
-
-  //TODO -
-  // Get all my chats
-  // Get all chats for one user
-  // Get all chats for one group
-  // should not be able to add frineds to a group chat if already in a group chat
 }

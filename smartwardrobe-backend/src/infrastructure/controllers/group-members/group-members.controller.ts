@@ -1,4 +1,3 @@
-// src/infrastructure/controllers/group-members/group-member.controller.ts
 import {
   Controller,
   Post,
