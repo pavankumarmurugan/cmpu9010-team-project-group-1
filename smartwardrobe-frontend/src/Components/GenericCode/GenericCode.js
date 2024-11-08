@@ -499,7 +499,7 @@ const WhatsAppStylePreview = ({ message }) => {
             <img
               src={preview.image}
               alt="{preview.title || 'Website preview'}"
-              class="image"
+              class="preview-image-class"
             />
           </div>
         )}

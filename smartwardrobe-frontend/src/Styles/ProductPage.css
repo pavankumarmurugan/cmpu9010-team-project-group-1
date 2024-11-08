@@ -416,6 +416,7 @@
   letter-spacing: 0.1rem;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  text-transform: capitalize;
   &:hover{
     transform: scale(1.01);
     border: 1px solid gray !important;

@@ -9,14 +9,20 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { addToCartValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const CartComponent = (props) => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+    const navigate = useNavigate();
     const dispatch = useDispatch();
   const [cartData, setCartData] = useState([]);
   const [openLoader, setOpenLoader] = useState(false);
+
+  const handleContinueShopping = () => {
+    navigate("/products");
+  }
 
   const DrawerList = (
     <Box
@@ -70,7 +76,7 @@ const CartComponent = (props) => {
             </div>
             <div className="cartPage-buttons-div">
               <Button className="checkout-button">CHECKOUT</Button>
-              <Button className="continue-shopping-button">CONTINUE SHOPPING</Button>
+              <Button className="continue-shopping-button" onClick={handleContinueShopping}>CONTINUE SHOPPING</Button>
             </div>
           </div>
         </div>
