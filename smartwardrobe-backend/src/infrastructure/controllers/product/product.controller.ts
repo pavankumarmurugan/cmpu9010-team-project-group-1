@@ -38,47 +38,47 @@ export class ProductController {
     }
   }
 
-  @Post('create')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  async create(
-    @Body() productReqDto: ProductReqDto,
-  ): Promise<IResponse<ProductResDto>> {
-    try {
-      return await this.productUsecase.create(productReqDto);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Post('create')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // @UseGuards(AccessTokenGuard, RolesGuard)
+  // async create(
+  //   @Body() productReqDto: ProductReqDto,
+  // ): Promise<IResponse<ProductResDto>> {
+  //   try {
+  //     return await this.productUsecase.create(productReqDto);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  @Patch('update')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  async update(
-    @Body() productReqUpdateDto: ProductReqUpdateDto,
-  ): Promise<IResponse<ProductResDto>> {
-    try {
-      return await this.productUsecase.update(productReqUpdateDto);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Patch('update')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // @UseGuards(AccessTokenGuard, RolesGuard)
+  // async update(
+  //   @Body() productReqUpdateDto: ProductReqUpdateDto,
+  // ): Promise<IResponse<ProductResDto>> {
+  //   try {
+  //     return await this.productUsecase.update(productReqUpdateDto);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  @Delete('delete/:id')
-  @ApiBearerAuth()
-  @Roles(ROLES.ADMIN)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  async delete(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<IResponse<ProductResDto>> {
-    try {
-      return await this.productUsecase.delete(id);
-    } catch (error) {
-      throw error;
-    }
-  }
+  // @Delete('delete/:id')
+  // @ApiBearerAuth()
+  // @Roles(ROLES.ADMIN)
+  // @UseGuards(AccessTokenGuard, RolesGuard)
+  // async delete(
+  //   @Param('id', ParseIntPipe) id: number,
+  // ): Promise<IResponse<ProductResDto>> {
+  //   try {
+  //     return await this.productUsecase.delete(id);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   @Get('get-one/:id')
   @Roles(ROLES.USER, ROLES.ADMIN)

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { ProductInventoryUsecase } from './product-inventory/product-inventory.usecase';
+// import { ProductInventoryUsecase } from './product-inventory/product-inventory.usecase';
 import { ConvertorsModule } from 'src/core/convertors/convertors.module';
 import { DataServicesModule } from 'src/infrastructure/services/data-services/data-service.module';
 import { ProductCategoryUsecase } from './product-category/product-category.usecase';
@@ -39,7 +39,7 @@ import { ConfigUsecase } from './config/config.usecase';
     TypeOrmModule.forFeature([ImageClusterModel]),
   ],
   providers: [
-    ProductInventoryUsecase,
+    // ProductInventoryUsecase,
     ProductCategoryUsecase,
     UserUsecase,
     LoginUsecase,
@@ -61,7 +61,7 @@ import { ConfigUsecase } from './config/config.usecase';
     ConfigUsecase,
   ],
   exports: [
-    ProductInventoryUsecase,
+    // ProductInventoryUsecase,
     ProductCategoryUsecase,
     UserUsecase,
     LoginUsecase,

@@ -17,25 +17,25 @@ export class ProductUsecase {
     private readonly cacheService: CacheService,
   ) {}
 
-  async create(
-    productReqDto: ProductReqDto,
-  ): Promise<IResponse<ProductResDto>> {
-    try {
-      const productEntity: ProductEntity =
-        this.productConvertor.toProductModelFromDto(productReqDto);
-      const entity: ProductEntity =
-        await this.databaseService.product.create(productEntity);
-      const data: ProductResDto =
-        this.productConvertor.toProductResDtoFromEntity(entity);
+  // async create(
+  //   productReqDto: ProductReqDto,
+  // ): Promise<IResponse<ProductResDto>> {
+  //   try {
+  //     const productEntity: ProductEntity =
+  //       this.productConvertor.toProductModelFromDto(productReqDto);
+  //     const entity: ProductEntity =
+  //       await this.databaseService.product.create(productEntity);
+  //     const data: ProductResDto =
+  //       this.productConvertor.toProductResDtoFromEntity(entity);
 
-      return {
-        data,
-        message: MESSAGES.PRODUCT.CREATE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return {
+  //       data,
+  //       message: MESSAGES.PRODUCT.CREATE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async getAllProduct(
     page: number,
@@ -70,37 +70,37 @@ export class ProductUsecase {
     }
   }
 
-  async update(
-    productReqUpdateDto: ProductReqUpdateDto,
-  ): Promise<IResponse<ProductResDto>> {
-    try {
-      const { id } = productReqUpdateDto;
+  // async update(
+  //   productReqUpdateDto: ProductReqUpdateDto,
+  // ): Promise<IResponse<ProductResDto>> {
+  //   try {
+  //     const { id } = productReqUpdateDto;
 
-      const productEntity: ProductEntity =
-        this.productConvertor.toUpdateProductModelFromDto(productReqUpdateDto);
+  //     const productEntity: ProductEntity =
+  //       this.productConvertor.toUpdateProductModelFromDto(productReqUpdateDto);
 
-      await this.databaseService.product.update(id, productEntity);
+  //     await this.databaseService.product.update(id, productEntity);
 
-      return {
-        data: null,
-        message: MESSAGES.PRODUCT.UPDATE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return {
+  //       data: null,
+  //       message: MESSAGES.PRODUCT.UPDATE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
-  async delete(id: number): Promise<IResponse<ProductResDto>> {
-    try {
-      await this.databaseService.product.delete(id);
-      return {
-        data: null,
-        message: MESSAGES.PRODUCT.DELETE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async delete(id: number): Promise<IResponse<ProductResDto>> {
+  //   try {
+  //     await this.databaseService.product.delete(id);
+  //     return {
+  //       data: null,
+  //       message: MESSAGES.PRODUCT.DELETE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async getOne(id: number): Promise<IResponse<ProductResDto>> {
     try {
