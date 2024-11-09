@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserDtoConvertor } from './user/user-dto.convertor';
 import { AuthDtoConvertor } from './auth/auth-dto.convertor';
 import { ProductCategoryConvertor } from './product-category/product-category.convertor';
-import { ProductInventoryConvertor } from './product-inventory/product-inventory.convertor';
+// import { ProductInventoryConvertor } from './product-inventory/product-inventory.convertor';
 import { ProductConvertor } from './product/product.convertor';
 import { CartItemConvertor } from './cart-item/cart-item.convertor';
 import { CartConvertor } from './cart/cart.convertor';
@@ -20,7 +20,7 @@ import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
     UserDtoConvertor,
     AuthDtoConvertor,
     ProductCategoryConvertor,
-    ProductInventoryConvertor,
+    // ProductInventoryConvertor,
     ProductConvertor,
     CartItemConvertor,
     CartConvertor,
@@ -37,7 +37,7 @@ import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
     UserDtoConvertor,
     AuthDtoConvertor,
     ProductCategoryConvertor,
-    ProductInventoryConvertor,
+    // ProductInventoryConvertor,
     ProductConvertor,
     CartItemConvertor,
     CartConvertor,

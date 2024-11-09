@@ -6,31 +6,31 @@ import { ProductEntity } from 'src/core/entities/product/product.entity';
 
 @Injectable()
 export class ProductConvertor {
-  toProductResDtoFromEntity(data: ProductEntity): ProductResDto {
-    return { ...data };
-  }
+  // toProductResDtoFromEntity(data: ProductEntity): ProductResDto {
+  //   return { ...data };
+  // }
 
   toProductResDtoFromEntities(data: ProductEntity[]): ProductResDto[] {
     return data.map((item) => ({ ...item }));
   }
 
-  toProductModelFromDto(productReqDto: ProductReqDto): ProductEntity {
-    return {
-      ...productReqDto,
-      id: undefined,
-      // inventory: {
-      //   quantity: 100,
-      // },
-    };
-  }
+  // toProductModelFromDto(productReqDto: ProductReqDto): ProductEntity {
+  //   return {
+  //     ...productReqDto,
+  //     id: undefined,
+  //     // inventory: {
+  //     //   quantity: 100,
+  //     // },
+  //   };
+  // }
 
-  toUpdateProductModelFromDto(
-    productReqUpdateDto: ProductReqUpdateDto,
-  ): ProductEntity {
-    return {
-      ...productReqUpdateDto,
-      id: undefined,
-      updatedAt: new Date(),
-    };
-  }
+  // toUpdateProductModelFromDto(
+  //   productReqUpdateDto: ProductReqUpdateDto,
+  // ): ProductEntity {
+  //   return {
+  //     ...productReqUpdateDto,
+  //     id: undefined,
+  //     updatedAt: new Date(),
+  //   };
+  // }
 }
