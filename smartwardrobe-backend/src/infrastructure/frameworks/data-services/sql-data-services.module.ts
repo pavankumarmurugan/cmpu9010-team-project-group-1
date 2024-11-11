@@ -17,6 +17,7 @@ import { FriendsModel } from './model/friends.model';
 import { GroupModel } from './model/group.model';
 import { GroupMembersModel } from './model/group-members.model';
 import { VtoImageSearchModel } from './model/vto.model';
+import { UserLikedModels } from './model/user-liked-models';
 
 @Module({
   imports: [
@@ -27,7 +28,23 @@ import { VtoImageSearchModel } from './model/vto.model';
       port: +process.env.DATABASE_PORT,
       username: process.env.DATABASE_USERNAME,
       database: process.env.DATABASE_NAME,
-      entities: [__dirname + '/../**/*.model.js'],
+      entities: [
+        UserModel,
+        ProductCategoryModel,
+        ProductInventoryModel,
+        ProductModel,
+        CartItemModel,
+        CartModel,
+        LikesModel,
+        ChatModel,
+        ImageClusterModel,
+        FriendsRequestsModel,
+        FriendsModel,
+        GroupModel,
+        GroupMembersModel,
+        VtoImageSearchModel,
+        UserLikedModels,
+      ],
       password: process.env.DATABASE_PASSWORD,
       // logging: ['query', 'error'],
       ssl: true,
@@ -52,6 +69,7 @@ import { VtoImageSearchModel } from './model/vto.model';
       GroupModel,
       GroupMembersModel,
       VtoImageSearchModel,
+      UserLikedModels,
     ]),
   ],
   providers: [
