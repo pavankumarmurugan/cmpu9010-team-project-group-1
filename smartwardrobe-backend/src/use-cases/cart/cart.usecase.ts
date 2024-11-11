@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { CartItemConvertor } from 'src/core/convertors/cart-item/cart-item.convertor';
-import { CartConvertor } from 'src/core/convertors/cart/cart.convertor';
+// import { CartConvertor } from 'src/core/convertors/cart/cart.convertor';
 import { CartItemResDto } from 'src/core/dto/cart-item/cart-item-res-dto';
 import { CartReqDto } from 'src/core/dto/cart/cart-req-dto';
 import { UpdateCartReqDto } from 'src/core/dto/cart/cart-req-update-dto';
@@ -16,7 +16,7 @@ import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 export class CartUsecase {
   constructor(
     private databaseService: IDataServices,
-    private convertor: CartConvertor,
+    // private convertor: CartConvertor,
     private cartItemConvertor: CartItemConvertor,
   ) {}
 
