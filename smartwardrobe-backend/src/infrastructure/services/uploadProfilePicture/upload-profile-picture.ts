@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { v4 as uuid } from 'uuid';
 import { File as MulterFile } from 'multer';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UploadProfilePictureService {
@@ -18,7 +19,8 @@ export class UploadProfilePictureService {
   }
   async uploadFile(file: MulterFile, userId: number): Promise<string> {
     const fileExtension = file.originalname.split('.').pop();
-    const fileName = `profile-pictures/${userId}-${uuid()}.${fileExtension}`;
+    const fileHash = crypto.createHash('md5').update(file.buffer).digest('hex');
+    const fileName = `profile-pictures/${userId}-${fileHash}.${fileExtension}`;
 
     const params: AWS.S3.PutObjectRequest = {
       Bucket: this.bucketName,

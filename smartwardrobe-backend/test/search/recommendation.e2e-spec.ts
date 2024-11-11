@@ -1,29 +1,29 @@
-import { ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
+import request from 'supertest';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
+import { JwtModule } from '@nestjs/jwt';
+import { SQLDataServiceModule } from 'src/infrastructure/frameworks/data-services/sql-data-services.module';
 import { ControllersModule } from 'src/infrastructure/controllers/controllers.module';
-import { BcryptService } from 'src/infrastructure/frameworks/bcrypt/bcrypt.service';
+import { RecommendationsReqDto } from 'src/core/dto/recommendations/recommendations-req-dto';
 import { CartItemModel } from 'src/infrastructure/frameworks/data-services/model/cart-items.model';
 import { CartModel } from 'src/infrastructure/frameworks/data-services/model/cart.model';
+import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
+import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
+import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
+import { GroupMembersModel } from 'src/infrastructure/frameworks/data-services/model/group-members.model';
+import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 import { ProductCategoryModel } from 'src/infrastructure/frameworks/data-services/model/product-category.model';
 import { ProductInventoryModel } from 'src/infrastructure/frameworks/data-services/model/product-inventory.model';
 import { ProductModel } from 'src/infrastructure/frameworks/data-services/model/product.model';
 import { UserModel } from 'src/infrastructure/frameworks/data-services/model/user.model';
-import { SQLDataServiceModule } from 'src/infrastructure/frameworks/data-services/sql-data-services.module';
-import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.guard';
-import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
-import { INestApplication } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import request from 'supertest';
-import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
-import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
-import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
-import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
-import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
+import { VtoImageSearchModel } from 'src/infrastructure/frameworks/data-services/model/vto.model';
 
-describe('CartController (e2e)', () => {
+describe('SearchProductsController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -36,7 +36,12 @@ describe('CartController (e2e)', () => {
           host: process.env.DATABASE_HOST,
           port: +process.env.DATABASE_PORT,
           username: process.env.DATABASE_USERNAME,
+          password: process.env.DATABASE_PASSWORD,
           database: process.env.DATABASE_NAME,
+          ssl: true,
+          extra: {
+            ssl: { rejectUnauthorized: false },
+          },
           entities: [
             UserModel,
             ProductCategoryModel,
@@ -49,57 +54,25 @@ describe('CartController (e2e)', () => {
             ImageClusterModel,
             FriendsRequestsModel,
             FriendsModel,
+            GroupModel,
+            GroupMembersModel,
+            VtoImageSearchModel,
           ],
-          password: process.env.DATABASE_PASSWORD,
-          ssl: true,
-          extra: {
-            ssl: {
-              rejectUnauthorized: false,
-            },
-          },
         }),
-        TypeOrmModule.forFeature([
-          UserModel,
-          ProductCategoryModel,
-          ProductInventoryModel,
-          ProductModel,
-          CartItemModel,
-          CartModel,
-          LikesModel,
-          ChatModel,
-          ImageClusterModel,
-          FriendsRequestsModel,
-          FriendsModel,
-        ]),
         JwtModule.register({}),
         SQLDataServiceModule,
         ControllersModule,
       ],
-      providers: [
-        RefreshTokenUpdateInterceptor,
-        RefreshTokenGuard,
-        BcryptService,
-        UserDtoConvertor,
-      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
-
     dataSource = moduleFixture.get<DataSource>(DataSource);
 
     if (!dataSource.isInitialized) {
       await dataSource.initialize();
     }
 
-    app.init();
-  });
-
-  beforeEach(async () => {
-    await dataSource.query('BEGIN');
-  });
-
-  afterEach(async () => {
-    await dataSource.query('ROLLBACK');
+    await app.init();
   });
 
   afterAll(async () => {
@@ -111,36 +84,22 @@ describe('CartController (e2e)', () => {
     }
   });
 
-  it('GET /cart/get-my-cart', async () => {
-    const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        username: 'string',
-        password: 'string',
-      })
-      .expect(201);
-
-    const accessToken = loginResponse.body.data.token;
+  it('/recommend/similar-products (POST) - should return similar products for a given image', async () => {
+    const requestPayload: RecommendationsReqDto = {
+      imageName: '00057_00.jpg',
+      topN: 5,
+    };
 
     const response = await request(app.getHttpServer())
-      .get('/cart/get-my-cart')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .expect(200);
+      .post('/recommend/similar-products')
+      .send(requestPayload)
+      .expect(201);
 
     expect(response.body).toHaveProperty('data');
     expect(Array.isArray(response.body.data)).toBe(true);
-    expect(response.body.data.length).toBeGreaterThan(0);
+    expect(response.body.data.length).toBeLessThanOrEqual(requestPayload.topN);
 
-    response.body.data.forEach((cartItem) => {
-      expect(cartItem).toHaveProperty('id');
-      expect(cartItem).toHaveProperty('cartId');
-      expect(cartItem).toHaveProperty('productId');
-      expect(cartItem).toHaveProperty('quantity');
-      expect(cartItem).toHaveProperty('createdAt');
-      expect(cartItem).toHaveProperty('updatedAt');
-
-      expect(cartItem).toHaveProperty('product');
-      const product = cartItem.product;
+    response.body.data.forEach((product) => {
       expect(product).toHaveProperty('id');
       expect(product).toHaveProperty('imageName');
       expect(product).toHaveProperty('name');
@@ -155,6 +114,22 @@ describe('CartController (e2e)', () => {
       expect(product).toHaveProperty('price');
       expect(product).toHaveProperty('imageUrl');
       expect(product).toHaveProperty('trail');
+
+      // Check types of specific fields
+      expect(typeof product.id).toBe('number');
+      expect(typeof product.imageName).toBe('string');
+      expect(typeof product.name).toBe('string');
+      expect(typeof product.type).toBe('string');
+      expect(typeof product.pattern).toBe('string');
+      expect(typeof product.color).toBe('string');
+      expect(typeof product.colorShade).toBe('string');
+      expect(typeof product.material).toBe('string');
+      expect(typeof product.occasion).toBe('string');
+      expect(typeof product.applicableSeason).toBe('string');
+      expect(typeof product.description).toBe('string');
+      expect(typeof product.price).toBe('string');
+      expect(typeof product.imageUrl).toBe('string');
+      expect(typeof product.trail).toBe('boolean');
     });
   });
 });

@@ -2,9 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
 import { ControllersModule } from 'src/infrastructure/controllers/controllers.module';
-import { BcryptService } from 'src/infrastructure/frameworks/bcrypt/bcrypt.service';
 import { CartItemModel } from 'src/infrastructure/frameworks/data-services/model/cart-items.model';
 import { CartModel } from 'src/infrastructure/frameworks/data-services/model/cart.model';
 import { ProductCategoryModel } from 'src/infrastructure/frameworks/data-services/model/product-category.model';
@@ -12,8 +10,6 @@ import { ProductInventoryModel } from 'src/infrastructure/frameworks/data-servic
 import { ProductModel } from 'src/infrastructure/frameworks/data-services/model/product.model';
 import { UserModel } from 'src/infrastructure/frameworks/data-services/model/user.model';
 import { SQLDataServiceModule } from 'src/infrastructure/frameworks/data-services/sql-data-services.module';
-import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.guard';
-import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import request from 'supertest';
@@ -23,9 +19,10 @@ import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 
-describe('CartController (e2e)', () => {
+describe('CartItemController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
+  let accessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -37,6 +34,9 @@ describe('CartController (e2e)', () => {
           port: +process.env.DATABASE_PORT,
           username: process.env.DATABASE_USERNAME,
           database: process.env.DATABASE_NAME,
+          password: process.env.DATABASE_PASSWORD,
+          ssl: true,
+          extra: { ssl: { rejectUnauthorized: false } },
           entities: [
             UserModel,
             ProductCategoryModel,
@@ -50,48 +50,27 @@ describe('CartController (e2e)', () => {
             FriendsRequestsModel,
             FriendsModel,
           ],
-          password: process.env.DATABASE_PASSWORD,
-          ssl: true,
-          extra: {
-            ssl: {
-              rejectUnauthorized: false,
-            },
-          },
         }),
-        TypeOrmModule.forFeature([
-          UserModel,
-          ProductCategoryModel,
-          ProductInventoryModel,
-          ProductModel,
-          CartItemModel,
-          CartModel,
-          LikesModel,
-          ChatModel,
-          ImageClusterModel,
-          FriendsRequestsModel,
-          FriendsModel,
-        ]),
         JwtModule.register({}),
         SQLDataServiceModule,
         ControllersModule,
       ],
-      providers: [
-        RefreshTokenUpdateInterceptor,
-        RefreshTokenGuard,
-        BcryptService,
-        UserDtoConvertor,
-      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
-
     dataSource = moduleFixture.get<DataSource>(DataSource);
 
     if (!dataSource.isInitialized) {
       await dataSource.initialize();
     }
 
-    app.init();
+    await app.init();
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ username: 'string', password: 'string' })
+      .expect(201);
+    accessToken = loginResponse.body.data.token;
   });
 
   beforeEach(async () => {
@@ -111,50 +90,83 @@ describe('CartController (e2e)', () => {
     }
   });
 
-  it('GET /cart/get-my-cart', async () => {
-    const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        username: 'string',
-        password: 'string',
-      })
+  it('should create, update, and delete a cart item sequentially', async () => {
+    // Step 1: Create a cart item
+    const createDto = {
+      productId: 1,
+      quantity: 2,
+    };
+
+    const createResponse = await request(app.getHttpServer())
+      .post('/cart-item/create')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Content-Type', 'application/json')
+      .send(createDto)
       .expect(201);
 
-    const accessToken = loginResponse.body.data.token;
+    expect(createResponse.body).toHaveProperty('data');
+    expect(createResponse.body.data).toHaveProperty(
+      'productId',
+      createDto.productId,
+    );
+    expect(createResponse.body.data).toHaveProperty(
+      'quantity',
+      createDto.quantity,
+    );
+    expect(createResponse.body.data).toHaveProperty('cartId');
+    expect(createResponse.body.data).toHaveProperty('id');
 
+    const createdItemId = createResponse.body.data.id;
+
+    // Step 2: Update the quantity of the created cart item
+    const updateDto = {
+      id: createdItemId,
+      quantity: 3,
+    };
+
+    const updateResponse = await request(app.getHttpServer())
+      .patch('/cart-item/update')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Content-Type', 'application/json')
+      .send(updateDto)
+      .expect(200);
+
+    expect(updateResponse.body).toHaveProperty('data', null);
+
+    // Step 3: Delete the updated cart item
+    const deleteResponse = await request(app.getHttpServer())
+      .delete(`/cart-item/delete/${createdItemId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(deleteResponse.body).toHaveProperty('data', null);
+  });
+
+  it('/cart-item/get-all (GET) - should retrieve all items in the cart', async () => {
     const response = await request(app.getHttpServer())
-      .get('/cart/get-my-cart')
+      .get('/cart-item/get-all')
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
 
     expect(response.body).toHaveProperty('data');
     expect(Array.isArray(response.body.data)).toBe(true);
-    expect(response.body.data.length).toBeGreaterThan(0);
 
-    response.body.data.forEach((cartItem) => {
-      expect(cartItem).toHaveProperty('id');
-      expect(cartItem).toHaveProperty('cartId');
-      expect(cartItem).toHaveProperty('productId');
-      expect(cartItem).toHaveProperty('quantity');
-      expect(cartItem).toHaveProperty('createdAt');
-      expect(cartItem).toHaveProperty('updatedAt');
+    response.body.data.forEach((item) => {
+      expect(item).toHaveProperty('id');
+      expect(item).toHaveProperty('cartId');
+      expect(item).toHaveProperty('productId');
+      expect(item).toHaveProperty('quantity');
+      expect(item).toHaveProperty('createdAt');
+      expect(item).toHaveProperty('updatedAt');
 
-      expect(cartItem).toHaveProperty('product');
-      const product = cartItem.product;
-      expect(product).toHaveProperty('id');
-      expect(product).toHaveProperty('imageName');
-      expect(product).toHaveProperty('name');
-      expect(product).toHaveProperty('type');
-      expect(product).toHaveProperty('pattern');
-      expect(product).toHaveProperty('color');
-      expect(product).toHaveProperty('colorShade');
-      expect(product).toHaveProperty('material');
-      expect(product).toHaveProperty('occasion');
-      expect(product).toHaveProperty('applicableSeason');
-      expect(product).toHaveProperty('description');
-      expect(product).toHaveProperty('price');
-      expect(product).toHaveProperty('imageUrl');
-      expect(product).toHaveProperty('trail');
+      expect(typeof item.id).toBe('number');
+      expect(typeof item.cartId).toBe('number');
+      expect(typeof item.productId).toBe('number');
+      expect(typeof item.quantity).toBe('number');
+      expect(typeof item.createdAt).toBe('string');
+      if (item.updatedAt !== null) {
+        expect(typeof item.updatedAt).toBe('string');
+      }
     });
   });
 });

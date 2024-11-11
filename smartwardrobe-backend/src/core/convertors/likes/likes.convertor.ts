@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { LikesReqDto } from 'src/core/dto/likes/likes.req-dto';
-import { UpdateLikesReqDto } from 'src/core/dto/likes/likes.req-update-dto';
 import { LikesResDto } from 'src/core/dto/likes/likes.res-dto';
 import { LikesEntity } from 'src/core/entities/likes/likes.entity';
 import { ProductEntity } from 'src/core/entities/product/product.entity';

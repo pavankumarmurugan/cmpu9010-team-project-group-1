@@ -10,15 +10,15 @@ export class CartItemResDto extends BaseDto {
 
   @ApiProperty({ required: true })
   @IsNumber()
-  readonly cartId: number;
+  readonly cartId?: number;
 
   @ApiProperty({ required: true })
   @IsNumber()
-  readonly productId: number;
+  readonly productId?: number;
 
   @ApiProperty({ required: true })
   @IsNumber()
-  readonly quantity: number;
+  readonly quantity?: number;
 
   @ApiProperty({ required: true })
   @IsNumber()
