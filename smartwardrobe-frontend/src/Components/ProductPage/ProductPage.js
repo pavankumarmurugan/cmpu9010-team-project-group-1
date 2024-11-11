@@ -269,7 +269,7 @@ const ProductPage = () => {
       searchValue: query,
     }));
     handleSearch(query);
-  }
+  };
 
   const handleSearch = async (event) => {
     debugger;
@@ -300,16 +300,19 @@ const ProductPage = () => {
           showToastError(errorData?.message || response.statusText);
         }
         const result = await response.json();
-        removeImage();
+        // removeImage();
         // setInputSuggestions()
-        if(result?.data?.expectedQueries?.length > 0){
-          setInputSuggestions(result?.data?.expectedQueries)
+        if (result?.data?.expectedQueries?.length > 0) {
+          setInputSuggestions(result?.data?.expectedQueries);
         }
         if (imagePagination?.current === 1) {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
         } else {
-          setProducts((prevProducts) => [...prevProducts, ...result?.data?.products]);
+          setProducts((prevProducts) => [
+            ...prevProducts,
+            ...result?.data?.products,
+          ]);
           setProductsDataForFilter((prevProducts) => [
             ...prevProducts,
             ...result?.data?.products,
@@ -551,8 +554,11 @@ const ProductPage = () => {
                             position: "relative",
                             display: "flex",
                             alignItems: "center",
+                            cursor: "pointer", // Make sure the entire area is interactive
                           }}
+                          className="thumbnail-container" // Add a class for styling hover
                         >
+                          {/* Thumbnail Image */}
                           <img
                             src={formData?.imagePreview}
                             alt="Uploaded preview"
@@ -562,7 +568,18 @@ const ProductPage = () => {
                               borderRadius: "5px",
                               marginRight: "8px",
                             }}
+                            className="thumbnail-image"
                           />
+
+                          {/* Hover to enlarge the image */}
+                          <div className="image-preview-container">
+                            <img
+                              src={formData?.imagePreview}
+                              alt="Uploaded preview"
+                              className="hover-image"
+                            />
+                          </div>
+
                           <IconButton
                             onClick={removeImage}
                             size="small"
@@ -635,16 +652,22 @@ const ProductPage = () => {
                   }}
                 />
               </FormControl>
+
               {/* </div> */}
             </div>
             {inputSuggestions?.length > 0 && (
               <div className="Input-Suggestion-main">
                 <div className="Input-Suggestion-div">
-                {inputSuggestions.map((suggestion, index) => (
-                  <div key={index} className="Input-Suggestion">
-                    <p className="input-suggestion-text" onClick={() => handleSuggestionQuery(suggestion?.query)}>{suggestion?.query}</p>
-                  </div>
-                ))}
+                  {inputSuggestions.map((suggestion, index) => (
+                    <div key={index} className="Input-Suggestion">
+                      <p
+                        className="input-suggestion-text"
+                        onClick={() => handleSuggestionQuery(suggestion?.query)}
+                      >
+                        {suggestion?.query}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

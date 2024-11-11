@@ -584,6 +584,24 @@
     padding-left: 20px;
     cursor: pointer;
   }
+  /* .details-chat-section {
+    width: 100%;
+  } */
+}
+
+.unread-badge{
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.unread-msg-count{
+  background-color: gray;
+  padding: 5px;
+  color: white;
+  border-radius: 50%;
 }
 
 .custom-modal-new-chat .ant-modal-content {

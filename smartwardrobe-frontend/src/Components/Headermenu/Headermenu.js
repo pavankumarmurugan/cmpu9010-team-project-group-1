@@ -12,6 +12,7 @@ import {
   InputLabel,
   OutlinedInput,
   styled,
+  SvgIcon,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -32,7 +33,7 @@ import {
 } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Carousel, Dropdown } from "antd";
+import { Button, Carousel, Dropdown } from "antd";
 import { GenericDropdownMenu } from "../GenericCode/GenericCode";
 import SignupModal from "../Signup/Signup";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -47,8 +48,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import CartComponent from "../CartComponent/CartComponent";
+import { io } from "socket.io-client";
+import { toast } from "react-toastify";
+
+const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
 
 function Headermenu() {
+  console.log("rendered header");
   {
     /*  Use State*/
   }
@@ -75,9 +81,116 @@ function Headermenu() {
   const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
   const wishListValue = useSelector((state) => state.homeData.wishListValue);
   const cartValue = useSelector((state) => state.homeData.cartValue);
+  const [file, setFile] = useState(null);
   {
     /*  Use State*/
   }
+
+  let userId = token?.userId;
+  // State for friend and group IDs
+const [friendIds, setFriendIds] = useState([]);
+const [groupIds, setGroupIds] = useState([]);
+const [socket, setSocket] = useState(null);
+
+// Mock API call to get friend IDs and group IDs (replace with actual API call)
+const fetchFriendAndGroupIds = async () => {
+  // Simulate an API call
+  debugger
+  const getFriendsList = await apiCall(
+    "GET",
+    "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+    null,
+    token?.token
+  );
+  if(getFriendsList?.data?.length > 0){
+    setFriendIds(getFriendsList.data.map((x) => x.userId));
+  }
+  console.log(getFriendsList);
+  const getGroupsList = await apiCall(
+    "GET",
+    "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+    null,
+    token?.token
+  );
+  if(getGroupsList?.data?.length > 0){
+    setGroupIds(getGroupsList.data.map((x) => x.groupId));
+  }
+  console.log(getGroupsList);
+  console.log(friendIds);
+  console.log(groupIds);
+};
+
+useEffect(() => {
+  // Fetch friend and group IDs when component mounts
+  if(token){
+    fetchFriendAndGroupIds();
+  }
+}, []);
+
+useEffect(() => {
+  debugger
+  if (friendIds.length === 0 && groupIds.length === 0) return; // Only initialize socket if we have IDs
+
+  // Initialize WebSocket connection
+  const newSocket = io(backendUrl, {
+    withCredentials: true,
+    reconnection: true, // enables automatic reconnection
+    reconnectionAttempts: Infinity, // retry indefinitely
+    reconnectionDelay: 2000, // time before the first retry in milliseconds
+    reconnectionDelayMax: 10000, // maximum time delay between retries
+    timeout: 20000, // connection timeout before trying to reconnect
+  });
+  setSocket(newSocket);
+
+  newSocket.on("connect", () => {
+    console.log("Connected to WebSocket server with id:", newSocket.id);
+
+    // Dynamically join friend chat rooms
+    friendIds.forEach((friendId) => {
+      const roomId = `room_${Math.min(userId, friendId)}_${Math.max(
+        userId,
+        friendId
+      )}`;
+      newSocket.emit("joinChatRoom", { roomId, userId });
+      console.log(`User ${userId} joined friend chat room: ${roomId}`);
+    });
+
+    // Dynamically join group chat rooms
+    groupIds.forEach((groupId) => {
+      newSocket.emit("joinGroupRoom", { groupId, userId });
+      console.log(`User ${userId} joined group chat room: group_${groupId}`);
+    });
+  });
+
+  // Listener for friend messages
+  newSocket.on("newMessage", (data) => {
+    console.log("New friend message received:", data);
+    if(data?.senderId !== userId){
+    showToastInfo('New friend message received');
+    }
+  });
+
+  // Listener for group messages
+  newSocket.on("newGroupMessage", (data) => {
+    console.log("New group message received:", data);
+    if(data?.senderId !== userId){
+      showToastInfo('New group message received');
+
+    }
+    // Display a notification or update UI with the new group message
+  });
+
+  // Handle disconnection
+  newSocket.on("disconnect", () => {
+    console.log("Disconnected from WebSocket server");
+  });
+
+  // Clean up WebSocket connection when the component unmounts
+  return () => {
+    newSocket.disconnect();
+  };
+}, [userId, friendIds, groupIds]); // Re-run effect when friendIds or groupIds change
+
 
   const contentStyle= {
     margin: 0,
@@ -623,6 +736,7 @@ function Headermenu() {
   };
   const CloseChatComponent = () => {
     setOpenChatComponent(!openChatComponent);
+    fetchFriendAndGroupIds();
   };
 
   /** handle dropdown click */
@@ -654,6 +768,9 @@ function Headermenu() {
 
   const getWishListCount = async () => {
     debugger;
+    if(token?.token){
+
+    
     const getLikeProducts = await apiCall(
       "GET",
       "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
@@ -679,7 +796,7 @@ function Headermenu() {
       dispatch(
         addToCartValueSuccess({ cartValue: getAllCartValues?.data?.length })
       );
-    }
+    }}
   };
 
   /** wish list count */
@@ -704,6 +821,19 @@ function Headermenu() {
   };
 
   /** Cart component */
+
+  const imageUpload = async (e) => {
+    debugger;
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file);
+      // setFormData((prevData) => ({
+      //   ...prevData,
+      //   imagePreview: URL.createObjectURL(file),
+      // }));
+    }
+    // console.log(formData.image);
+  };
 
   return (
     <>
@@ -735,7 +865,7 @@ function Headermenu() {
       {openChatComponent &&
       <ChatComponent
         isShowModel={openChatComponent}
-        closeModal={setOpenChatComponent}
+        closeModal={CloseChatComponent}
       />}
 
       {/*  Chat component */}
@@ -786,7 +916,7 @@ function Headermenu() {
                   }}
                   htmlFor="outlined-adornment-password"
                 >
-                  Search
+                Search
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
@@ -799,6 +929,35 @@ function Headermenu() {
                   autoComplete="off"
                   endAdornment={
                     <InputAdornment position="end">
+                      {/* <Button
+                        component="label"
+                        variant="outlined"
+                        color="neutral"
+                        style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}
+                      >
+                        <SvgIcon>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            style={{ color: "white" }}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                            />
+                          </svg>
+                        </SvgIcon>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={imageUpload}
+                          style={{ display: "none" }}
+                        />
+                      </Button> */}
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={handleSearch}
@@ -977,6 +1136,12 @@ function Headermenu() {
                   autoComplete="off"
                   endAdornment={
                     <InputAdornment position="end">
+                      <input
+                          type="file"
+                          accept="image/*"
+                          onChange={imageUpload}
+                          style={{ display: "none" }}
+                        />
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={handleSearch}

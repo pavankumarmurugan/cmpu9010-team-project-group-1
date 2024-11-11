@@ -101,12 +101,15 @@ const ProductDetails = () => {
         setShowHideWishlist(true);
       }
     }
+    // if(token?.token){
+      
     const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
       setOpenLoader(false);
         if(getLikeProducts.statusCode.text === "Success"){
           dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
       }
 
+    // }
   };
 
   const handleAddToCart = async () => {
@@ -327,9 +330,10 @@ const ProductDetails = () => {
                 ))}
                 </div> */}
                     <div class="size-container">
-                      <Button className="size-options">8</Button>
-                      <Button className="size-options">9</Button>
-                      <Button className="size-options">10</Button>
+                      <Button className="size-options">S</Button>
+                      <Button className="size-options">M</Button>
+                      <Button className="size-options">L</Button>
+                      <Button className="size-options">XL</Button>
                     </div>
                   </div>
                   <div className="quantity-contianer">

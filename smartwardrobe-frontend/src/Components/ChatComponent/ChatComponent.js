@@ -33,14 +33,20 @@ import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
-import { IoIosInformationCircleOutline, IoMdContacts, IoMdExit } from "react-icons/io";
+import {
+  IoIosInformationCircleOutline,
+  IoMdContacts,
+  IoMdExit,
+} from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
-
+import { io, Socket } from "socket.io-client";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+  let userId = token?.userId;
+  const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
   const messagesEndRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -60,6 +66,9 @@ function ChatComponent(props) {
   const [messages, setMessages] = useState([]);
   const [groupMemberList, setGroupMemberList] = useState([]);
   const [memberListForDetails, setMemberListForDetails] = useState([]);
+  const [friendIds, setFriendIds] = useState([]);
+  const [groupIds, setGroupIds] = useState([]);
+  const [socket, setSocket] = useState(null);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       color: "white",
@@ -94,6 +103,10 @@ function ChatComponent(props) {
 
   useEffect(() => {
     getAllFriendandFriendRequests();
+
+    return () => {
+      chatInfoRef.current = null;
+    }
   }, []);
 
   const getAllFriendandFriendRequests = async () => {
@@ -120,6 +133,7 @@ function ChatComponent(props) {
     if (getGroupsList?.data?.length > 0) {
       setFriends(getGroupsList?.data);
       setFriendsDataForFilter(getGroupsList?.data);
+      setGroupIds(getGroupsList.data.map((x) => x.groupId));
     }
 
     const getFriendsList = await apiCall(
@@ -130,6 +144,7 @@ function ChatComponent(props) {
     );
     if (getFriendsList?.data?.length > 0) {
       setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+      setFriendIds(getFriendsList.data.map((x) => x.userId));
       setFriendsDataForFilter((prevFriends) => [
         ...prevFriends,
         ...getFriendsList.data,
@@ -153,6 +168,7 @@ function ChatComponent(props) {
     debugger;
     setActiveFriend(event);
     setChatInfo(event);
+    chatInfoRef.current = event;
     setMessages([]);
 
     if (event?.userId) {
@@ -195,7 +211,7 @@ function ChatComponent(props) {
         let aa = getAllGroupMembers?.data?.forEach((x) =>
           setGroupMembers?.push(x?.username)
         );
-        setMemberListForDetails(getAllGroupMembers?.data)
+        setMemberListForDetails(getAllGroupMembers?.data);
         const formattedNames = setGroupMembers
           ?.map((name) => {
             // Capitalize the first letter of each name
@@ -362,39 +378,85 @@ function ChatComponent(props) {
     }
   }, [messages]);
 
-  const sendMessageFromIcon = async () => {
-    if (textValue.trim() !== "") {
-      if (chatInfo?.userId) {
-        let message = {
-          receiverId: chatInfo?.userId,
-          message: textValue,
-          messageType: "text",
-        };
-        // setMessages((prevMessages) => [
-        //   ...prevMessages,
-        //   { sender: "user", text: textValue },
-        // ]);
-        // settextValue("");
-        const sendMessage = await apiCall(
-          "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
-          message,
-          token?.token
-        );
-        if (sendMessage) {
-          console.log(sendMessage);
-        }
-      }
-      if (chatInfo?.groupName) {
-      }
-    }
-  };
-
   /** handle send messages */
 
   const handleClickMember = () => {
     setOpenMemberList(!openMemberList);
-  }
+  };
+
+  const chatInfoRef = useRef(null);
+
+// Update the ref whenever chatInfo changes
+
+  useEffect(() => {
+    debugger;
+    if (friendIds?.length === 0 && groupIds?.length === 0) return;
+
+    // Initialize WebSocket connection
+    const newSocket = io(backendUrl, {
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
+      timeout: 20000,
+    });
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server with id:", newSocket.id);
+
+      friendIds.forEach((friendId) => {
+        const roomId = `room_${Math.min(userId, friendId)}_${Math.max(
+          userId,
+          friendId
+        )}`;
+        newSocket.emit("joinChatRoom", { roomId, userId });
+        console.log(`User ${userId} joined friend chat room: ${roomId}`);
+      });
+
+      groupIds.forEach((groupId) => {
+        newSocket.emit("joinGroupRoom", { groupId, userId });
+        console.log(`User ${userId} joined group chat room: group_${groupId}`);
+      });
+    });
+
+    // Listener for friend messages
+    newSocket.on("newMessage", (data) => {
+      console.log("New friend message received:", data);
+      console.log(chatInfoRef.current);
+        setChatInfo(chatInfoRef.current);
+        if (data?.senderId === chatInfoRef?.current?.userId) {
+          setMessages((prevMessages) => [...prevMessages, data]);
+          
+        }
+    });
+
+    // Listener for group messages
+    newSocket.on("newGroupMessage", (data) => {
+      console.log("New group message received:", data);
+      if (data?.senderId !== userId) {
+        // showToastInfo("New group message received");
+        console.log(chatInfoRef.current);
+        setChatInfo(chatInfoRef.current);
+        if (data?.groupId === chatInfoRef?.current?.groupId) {
+          setMessages((prevMessages) => [...prevMessages, data]);
+          
+        }
+      }
+      // Display a notification or update UI with the new group message
+    });
+
+    // Handle disconnection
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from WebSocket server");
+    });
+
+    // Clean up WebSocket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [userId, friendIds, groupIds]); // Re-run effect when friendIds or groupIds change
 
   return (
     <>
@@ -541,6 +603,9 @@ function ChatComponent(props) {
                       {/* <div className="contact-last-msg">Hi, how are you?</div> */}{" "}
                       {/** uncomment this to show latest msg and .contact-name-and-last-msg uncomment flex-direction:coulmn in this class */}
                     </div>
+                    {/* <div className="unread-badge">
+                      <span className="unread-msg-count">1</span>
+                    </div> */}
                   </div>
                 ))}
                 {friends?.length === 0 && (
@@ -599,18 +664,22 @@ function ChatComponent(props) {
                         className="Invite-Friends"
                         onClick={handleInviteFriendsToGroup}
                       >
-                        <div style={{display:"flex"}}>
-                        <FaPlus
-                          style={{
-                            width: "20px",
-                            height: "20px",
-                            paddingRight: "10px",
-                            paddingBottom: "3px",
-                          }}
-                        />
-                        <h3 className="invite-friends-text">Invite Friends</h3>
+                        <div style={{ display: "flex" }}>
+                          <FaPlus
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              paddingRight: "10px",
+                              paddingBottom: "3px",
+                            }}
+                          />
+                          <h3 className="invite-friends-text">
+                            Invite Friends
+                          </h3>
                         </div>
-                        <IoIosInformationCircleOutline style={{width: "30px", height: "30px"}} />
+                        <IoIosInformationCircleOutline
+                          style={{ width: "30px", height: "30px" }}
+                        />
                       </div>
                     )}
                   </div>
@@ -757,8 +826,7 @@ function ChatComponent(props) {
                 </div>
               )}
             </div>
-            
-            
+
             {/* <div
               className={`details-chat-section ${
                 hideLeftSection ? "details-show" : "details-hide"
@@ -771,51 +839,64 @@ function ChatComponent(props) {
                 backgroundRepeat: "no-repeat",
               }}
             >
-             
-              <div className="details-header" style={{borderBottom:"1px solid lightgray"}}>
+              <div
+                className="details-header"
+                style={{ borderBottom: "1px solid lightgray" }}
+              >
                 <h2>Contact Information</h2>
-                <IoMdClose style={{width: "20px", height:"20px"}}/>
+                <IoMdClose style={{ width: "20px", height: "20px" }} />
               </div>
 
               <div className="details-body">
                 <div className="details-image-div">
-                  <img src={chatbackgroundimage} alt="details-iamge"  className="details-image"/>
+                  <img
+                    src={chatbackgroundimage}
+                    alt="details-iamge"
+                    className="details-image"
+                  />
                   <h3>Group Name</h3>
                 </div>
                 <div className="member-list-div">
                   <List
-                  sx={{ width: '100%', maxWidth: 360, borderTop: "1px solid lightgray", borderBottom: "1px solid lightgray" }}
-                  component="nav"
-                  aria-labelledby="nested-list-subheader"
-                  
-                >
-                  <ListItemButton onClick={handleClickMember}>
-                  <ListItemIcon>
-                  <IoMdContacts style={{width:"30px", height:"30px"}} />
-                  </ListItemIcon>
-                    <ListItemText primary="Members" />
-                    {openMemberList ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={openMemberList} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {memberListForDetails?.map((member, index) => (
-                        <ListItemButton key={index} sx={{ pl: 4 }}>
-                          <ListItemText primary={member?.username} style={{textTransform:"capitalize"}} />
-                        </ListItemButton>
-                      ))}
-                    </List>
-                  </Collapse>
-                  <ListItemButton>
-                  <ListItemIcon>
-                  <IoMdExit style={{width:"30px", height:"30px"}} />
-                  </ListItemIcon>
-                  <ListItemText primary="Leave Group" />
-                </ListItemButton>
-                </List>
+                    sx={{
+                      width: "100%",
+                      maxWidth: 360,
+                      borderTop: "1px solid lightgray",
+                      borderBottom: "1px solid lightgray",
+                    }}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader"
+                  >
+                    <ListItemButton onClick={handleClickMember}>
+                      <ListItemIcon>
+                        <IoMdContacts
+                          style={{ width: "30px", height: "30px" }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary="Members" />
+                      {openMemberList ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={openMemberList} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {memberListForDetails?.map((member, index) => (
+                          <ListItemButton key={index} sx={{ pl: 4 }}>
+                            <ListItemText
+                              primary={member?.username}
+                              style={{ textTransform: "capitalize" }}
+                            />
+                          </ListItemButton>
+                        ))}
+                      </List>
+                    </Collapse>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <IoMdExit style={{ width: "30px", height: "30px" }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Leave Group" />
+                    </ListItemButton>
+                  </List>
                 </div>
               </div>
-              
-
             </div> */}
           </div>
         </div>

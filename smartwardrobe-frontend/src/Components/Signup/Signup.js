@@ -170,7 +170,7 @@ function SignupModal(props) {
         const data = response?.data;
         setTimeout(() => {
           navigate("/", { state: { data } });
-          
+          window.location.reload();
         }, 1000);
       }
       

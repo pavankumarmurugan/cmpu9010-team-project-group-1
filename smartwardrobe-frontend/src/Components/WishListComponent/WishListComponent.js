@@ -7,8 +7,8 @@ import image from "../../Assets/Homeproductimage_3.jpg";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { Backdrop, CircularProgress } from "@mui/material";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
-import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
-import { useDispatch } from "react-redux";
+import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Clear } from "@mui/icons-material";
 
@@ -20,6 +20,8 @@ function WishListComponent() {
   const dispatch = useDispatch();
   const [likeProducts, setLikeProducts] = useState([]);
   const [openLoader, setOpenLoader] = useState(false);
+  const cartValue = useSelector((state) => state.homeData.cartValue);
+  const wishListValue = useSelector((state) => state.homeData.wishListValue);
 
   useEffect(() => {
     getLikeProducts();
@@ -74,6 +76,35 @@ function WishListComponent() {
         dispatch(wishListValueSuccess({ wishListValue: 0 }));
         navigate("/");
         }
+    }
+
+    const handleAddToCart = async (items) => {
+      debugger;
+      let data = {
+        productId: items?.product?.id,
+        quantity: 1,
+      }
+      setOpenLoader(true);
+      const addToCart = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/cart-item/create", data, token?.token);
+      setOpenLoader(false);
+      if (addToCart.statusCode.text === "Success") {
+        dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+        let filterRemainingProducts = likeProducts?.filter(
+          (item) => item?.product?.id !== items?.product?.id
+        );
+        setLikeProducts(filterRemainingProducts);
+        setOpenLoader(true);
+        const deleteCartItem = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${data?.productId}`, null, token?.token);
+        setOpenLoader(false);
+        if(deleteCartItem.statusCode.text === "Success"){
+          dispatch(
+            wishListValueSuccess({ wishListValue: wishListValue - 1 })
+          );
+        }
+        if (filterRemainingProducts?.length === 0) {
+          navigate("/");
+        }
+      }
     }
 
   return (
@@ -132,11 +163,12 @@ function WishListComponent() {
                       <Button
                         className="wishlist-heading-buttons"
                         color="default"
-                        //   onClick={handleLoadMoreProducts}
+                        onClick={() => handleAddToCart(items)}
                       >
                         <MdOutlineShoppingBag
                           className="icons"
                           style={{ paddingRight: "10px", color: "white" }}
+                          
                         />
                         Add to Cart
                       </Button>
