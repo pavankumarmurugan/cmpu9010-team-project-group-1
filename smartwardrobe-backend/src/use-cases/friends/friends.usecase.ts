@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
-import { FriendsConvertor } from 'src/core/convertors/friends/friend.convertor';
+// import { FriendsConvertor } from 'src/core/convertors/friends/friend.convertor';
 import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
 
 import { FriendsReqDto } from 'src/core/dto/friends/friends.req-dto';
@@ -15,26 +15,26 @@ import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 export class FriendsUsecase {
   constructor(
     private readonly databaseService: IDataServices,
-    private readonly convertor: FriendsConvertor,
+    // private readonly convertor: FriendsConvertor,
     private readonly userConvertor: UserDtoConvertor,
   ) {}
 
-  async create(dto: FriendsReqDto): Promise<IResponse<FriendsResDto>> {
-    try {
-      const friendsEntity: FriendsEntity =
-        this.convertor.toFriendsModelFromDto(dto);
-      const entity: FriendsEntity =
-        await this.databaseService.friends.create(friendsEntity);
-      const data: FriendsResDto =
-        this.convertor.toFriendsResDtoFromEntity(entity);
-      return {
-        data,
-        message: MESSAGES.FRIENDS.CREATE.SUCCESS,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // async create(dto: FriendsReqDto): Promise<IResponse<FriendsResDto>> {
+  //   try {
+  //     const friendsEntity: FriendsEntity =
+  //       this.convertor.toFriendsModelFromDto(dto);
+  //     const entity: FriendsEntity =
+  //       await this.databaseService.friends.create(friendsEntity);
+  //     const data: FriendsResDto =
+  //       this.convertor.toFriendsResDtoFromEntity(entity);
+  //     return {
+  //       data,
+  //       message: MESSAGES.FRIENDS.CREATE.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async getAll(userId: number): Promise<IResponse<UserResDTO[]>> {
     try {
