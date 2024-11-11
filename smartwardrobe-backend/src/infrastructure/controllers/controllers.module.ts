@@ -31,6 +31,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { VtoImageSearchController } from './vto/vto.controller';
 import { OriginMiddleware } from '../middleware/origin.middleware';
 import { ConfigController } from './config/config.controller';
+import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { ConfigController } from './config/config.controller';
     GroupMemberController,
     VtoImageSearchController,
     ConfigController,
+    UserLikedModelController,
   ],
   providers: [
     // {

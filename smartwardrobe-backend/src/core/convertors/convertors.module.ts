@@ -14,6 +14,7 @@ import { FriendRequestsConvertor } from './friend-requests/friend-requests.conve
 import { GroupConvertor } from './group/group.convertor';
 import { GroupMemberConvertor } from './group-members/group-members.convertor';
 import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
+import { UserLikedModelConverter } from './user-liked-models/user-liked-models.convertor';
 
 @Module({
   providers: [
@@ -32,6 +33,7 @@ import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
     GroupConvertor,
     GroupMemberConvertor,
     VtoImageSearchConvertor,
+    UserLikedModelConverter,
   ],
   exports: [
     UserDtoConvertor,
@@ -49,6 +51,7 @@ import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
     GroupConvertor,
     GroupMemberConvertor,
     VtoImageSearchConvertor,
+    UserLikedModelConverter,
   ],
 })
 export class ConvertorsModule {}
