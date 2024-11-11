@@ -112,8 +112,11 @@ debugger
       token?.token
     );
     setOpenLoader(false);
-    if (getAllCartValues?.data?.length) {
+    if (getAllCartValues?.message === "SUCCESSFULLY FETCHED CART") {
       setCartData(getAllCartValues?.data);
+      if(getAllCartValues?.data?.length === 0){
+        props?.close();
+      }
     }
   };
 

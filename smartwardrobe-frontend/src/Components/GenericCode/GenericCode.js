@@ -414,7 +414,6 @@ const WhatsAppStylePreview = ({ message }) => {
 
   // Function to fetch metadata from a URL
   const fetchImageMetadata = async (url) => {
-    debugger
     try {
       const id = url.split('/').pop();
       setOpenLoader(true);
@@ -443,9 +442,8 @@ const WhatsAppStylePreview = ({ message }) => {
 
   useEffect(() => {
     const processMessage = async () => {
-      debugger
       // Check if the message contains a URL (http or https)
-      if (message.includes("http://3.249.157.70:3000/productdetails/") || message.includes("https://3.249.157.70:3000/productdetails/")) {
+      if (message.includes("http://3.251.4.90:3000/productdetails/") || message.includes("http://3.251.4.90:3000/productdetails/")) {
 
         try {
           const metadata = await fetchImageMetadata(message); // Fetch metadata for the URL
