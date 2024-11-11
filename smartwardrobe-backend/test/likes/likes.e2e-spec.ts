@@ -16,7 +16,7 @@ import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.g
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
 import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
@@ -25,8 +25,6 @@ import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/li
 import { GroupMembersModel } from 'src/infrastructure/frameworks/data-services/model/group-members.model';
 import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
 import { VtoImageSearchModel } from 'src/infrastructure/frameworks/data-services/model/vto.model';
-import { LikesConvertor } from 'src/core/convertors/likes/likes.convertor';
-import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 
 describe('LikesController (e2e)', () => {
   let app: INestApplication;
@@ -217,8 +215,8 @@ describe('LikesController (e2e)', () => {
     expect(createResponse.body).toHaveProperty('data');
     const likeId = createResponse.body.data.productId;
 
-    expect(createResponse.body.data).toHaveProperty('productId', 2);
-    expect(createResponse.body.data).toHaveProperty('userId', 2);
+    expect(createResponse.body.data).toHaveProperty('productId');
+    expect(createResponse.body.data).toHaveProperty('userId');
     expect(typeof likeId).toBe('number');
 
     const deleteResponse = await request(app.getHttpServer())

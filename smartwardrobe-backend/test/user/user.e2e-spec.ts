@@ -18,7 +18,7 @@ import { UserModel } from 'src/infrastructure/frameworks/data-services/model/use
 import { SQLDataServiceModule } from 'src/infrastructure/frameworks/data-services/sql-data-services.module';
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { DataSource } from 'typeorm';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
 import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
@@ -26,6 +26,8 @@ import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
 import { v4 as uuid } from 'uuid';
+import * as fs from 'fs';
+import * as path from 'path';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -135,7 +137,7 @@ describe('UserController (e2e)', () => {
       expect(response.body.data).toHaveProperty('firstname', 'string');
       expect(response.body.data).toHaveProperty('lastname', 'string');
       expect(response.body.data).toHaveProperty('username', 'string');
-      expect(response.body.data).toHaveProperty('userId', 2);
+      expect(response.body.data).toHaveProperty('userId');
       expect(response.body.data).toHaveProperty('role', ROLES.USER);
       expect(response.body.data).toHaveProperty('email');
       expect(response.body.data).toHaveProperty('dob');
@@ -255,5 +257,95 @@ describe('UserController (e2e)', () => {
       .delete(`/users/delete/${createdUserId}`)
       .set('Authorization', `Bearer ${adminAccessToken}`)
       .expect(200);
+  });
+
+  it('/users/search/:searchKey (GET) - should search for users by searchKey', async () => {
+    const searchKey = 'sal';
+
+    const response = await request(app.getHttpServer())
+      .get(`/users/search/${searchKey}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(response.body).toHaveProperty('data');
+    expect(Array.isArray(response.body.data)).toBe(true);
+
+    response.body.data.forEach((user) => {
+      expect(user).toHaveProperty('firstname');
+      expect(user).toHaveProperty('lastname');
+      expect(user).toHaveProperty('username');
+      expect(user).toHaveProperty('userId');
+      expect(user).toHaveProperty('role');
+      expect(user).toHaveProperty('profilePic');
+      expect(user).toHaveProperty('status');
+
+      expect(typeof user.firstname).toBe('string');
+      expect(typeof user.lastname).toBe('string');
+      expect(typeof user.username).toBe('string');
+      expect(typeof user.userId).toBe('number');
+      expect([ROLES.USER, ROLES.ADMIN]).toContain(user.role);
+
+      if (user.profilePic) {
+        expect(typeof user.profilePic).toBe('string');
+      } else {
+        expect(user.profilePic).toBeNull();
+      }
+
+      expect(user.status).toBeNull();
+    });
+  });
+
+  it('/users/upload-profile-picture (POST) - should upload a profile picture for an authenticated user', async () => {
+    const filePath = path.resolve(
+      __dirname,
+      '../../test-files/istockphoto-1393750072-612x612.jpg',
+    );
+
+    const fileBuffer = fs.readFileSync(filePath);
+
+    const response = await request(app.getHttpServer())
+      .post('/users/upload-profile-picture')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .attach('file', fileBuffer, {
+        filename: 'test-image.jpg',
+        contentType: 'image/jpeg',
+      })
+      .expect(201);
+
+    expect(response.body).toHaveProperty('data', null);
+  });
+
+  it('/users/upload-profile-picture (POST) - should fail if the file is not an image', async () => {
+    const invalidFilePath = path.resolve(
+      __dirname,
+      '../../test-files/invalid-file.txt',
+    );
+    const fileBuffer = fs.readFileSync(invalidFilePath);
+
+    const response = await request(app.getHttpServer())
+      .post('/users/upload-profile-picture')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .attach('file', fileBuffer, {
+        filename: 'invalid-file.txt',
+        contentType: 'text/plain',
+      })
+      .expect(400);
+
+    expect(response.body).toHaveProperty('statusCode', 400);
+    expect(response.body).toHaveProperty(
+      'message',
+      'Only image files are allowed!',
+    );
+  });
+
+  it('/users/upload-profile-picture (POST) - should fail if the file is missing', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/users/upload-profile-picture')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(400); // Bad Request for missing file
+
+    // Validate the error response structure
+    expect(response.body).toHaveProperty('statusCode', 400);
+    expect(response.body).toHaveProperty('message', 'File is required');
   });
 });

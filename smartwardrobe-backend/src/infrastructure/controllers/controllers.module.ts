@@ -10,8 +10,8 @@ import { ConvertorsModule } from '../../core/convertors/convertors.module';
 import { UserController } from './user/user.controller';
 import { AuthController } from './auth/auth.controller';
 import { ConfigModule } from '@nestjs/config';
-import { ProductCategoryController } from './product-category/product-category.controller';
-import { ProductInventoryController } from './product-inventory/product-inventory.controller';
+// import { ProductCategoryController } from './product-category/product-category.controller';
+// import { ProductInventoryController } from './product-inventory/product-inventory.controller';
 import { UseCasesModule } from 'src/use-cases/use-cases.module';
 import { ProductController } from './product/product.controller';
 import { CartItemController } from './cart-item/cart-item.controller';
@@ -31,6 +31,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { VtoImageSearchController } from './vto/vto.controller';
 import { OriginMiddleware } from '../middleware/origin.middleware';
 import { ConfigController } from './config/config.controller';
+import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
 
 @Module({
   imports: [
@@ -62,8 +63,8 @@ import { ConfigController } from './config/config.controller';
     HealthController,
     AuthController,
     ProductController,
-    ProductCategoryController,
-    ProductInventoryController,
+    // ProductCategoryController,
+    // ProductInventoryController,
     CartItemController,
     CartController,
     SearchSimilarProductsController,
@@ -77,6 +78,7 @@ import { ConfigController } from './config/config.controller';
     GroupMemberController,
     VtoImageSearchController,
     ConfigController,
+    UserLikedModelController,
   ],
   providers: [
     // {

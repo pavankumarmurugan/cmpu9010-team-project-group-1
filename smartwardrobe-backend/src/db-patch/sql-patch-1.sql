@@ -92,31 +92,20 @@ CREATE TABLE public."cart" (
     ON UPDATE CASCADE
 );
 
-DELIMITER //
 
-CREATE TRIGGER `create_cart_after_user_insert`
-AFTER INSERT ON `smartwardrobe`.`user`
-FOR EACH ROW
+CREATE OR REPLACE FUNCTION create_cart_after_user_insert()
+RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO `smartwardrobe`.`cart` (`user_id`, `created_at`, `updated_at`)
-  VALUES (NEW.`user_id`, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-END //
+  INSERT INTO "public"."cart" ("user_id", "created_at", "updated_at")
+  VALUES (NEW."user_id", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-DELIMITER ;
-
--- CREATE OR REPLACE FUNCTION create_cart_after_user_insert()
--- RETURNS TRIGGER AS $$
--- BEGIN
---   INSERT INTO "smartwardrobe"."cart" ("user_id", "created_at", "updated_at")
---   VALUES (NEW."user_id", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
---   RETURN NEW;
--- END;
--- $$ LANGUAGE plpgsql;
-
--- CREATE TRIGGER create_cart_after_user_insert
--- AFTER INSERT ON "smartwardrobe"."user"
--- FOR EACH ROW
--- EXECUTE FUNCTION create_cart_after_user_insert();
+CREATE TRIGGER create_cart_after_user_insert
+AFTER INSERT ON "public"."user"
+FOR EACH ROW
+EXECUTE FUNCTION create_cart_after_user_insert();
 
 
 
@@ -359,4 +348,20 @@ DROP TRIGGER IF EXISTS trigger_update_friend_requests_updated_at ON public.frien
 
 DROP FUNCTION IF EXISTS notify_friend_request_change();
 DROP FUNCTION IF EXISTS update_friend_requests_updated_at_column();
+
+
+CREATE TABLE public.user_liked_models (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    model_image_name VARCHAR(255) NOT NULL,
+    model_image_url VARCHAR(255) DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id)
+        REFERENCES public.user (user_id)
+        ON DELETE CASCADE,
+    CONSTRAINT unique_user_model
+        UNIQUE (user_id, model_image_name)
+);
 

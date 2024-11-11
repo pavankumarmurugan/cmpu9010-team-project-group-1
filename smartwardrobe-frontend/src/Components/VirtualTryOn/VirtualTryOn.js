@@ -1,8 +1,9 @@
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import "../../Styles/VirtualTryOn.css";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
 import {
@@ -14,40 +15,122 @@ import {
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
 import Carousel from "react-multi-carousel";
+import { showToastInfo } from "../GenericToasters/GenericToasters";
+import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch } from "react-redux";
 
 const VirtualTryOn = (props) => {
+  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  const dispatch = useDispatch();
   let DataClicked = JSON.parse(localStorage.getItem("VTOData")) || {};
   const [disabled, setDisabled] = useState(true);
   // const [currentImage, setCurrentImage] = useState(-1);
   const [resultImage, setResultImage] = useState(DataClicked?.imageUrl);
   const [openLoader, setOpenLoader] = useState(false);
   const [modelsDataFromApi, setModelsDataFromApi] = useState([]);
+  const [similarProductsClick, setSimilarProductsClick] = useState({});
+  const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [similarProductsData, setSimilarProductsData] = useState([]);
-  console.log(DataClicked, "DataClicked");
+  const [personalizeModels, setPersonalizeModels] = useState(false);
+  const [selectedCustomModels, setSelectedCustomModels] = useState([]);
   const [dummyData, setDummyData] = useState([
     {
       image_id: "01066_00",
       url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
     },
     {
-      image_id: "00034_00",
+      image_id: "00035_00",
       url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
     },
     {
-      image_id: "00034_00",
+      image_id: "00071_00",
       url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
     },
     {
-      image_id: "00034_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00135_00.jpg",
-    },
-    {
-      image_id: "00034_00",
+      image_id: "00373_00",
       url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
     },
     {
-      image_id: "00034_00",
+      image_id: "00814_00",
       url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+    },
+    {
+      image_id: "06206_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+    },
+  ]);
+  const [customModels, setcustomModels] = useState([
+    {
+      image_id: "00279_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00279_00.jpg",
+    },
+    {
+      image_id: "00491_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00491_00.jpg",
+    },
+    {
+      image_id: "00548_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00548_00.jpg",
+    },
+    {
+      image_id: "02732_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/02732_00.jpg",
+    },
+    {
+      image_id: "00373_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+    },
+    {
+      image_id: "00814_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+    },
+    {
+      image_id: "03085_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/03085_00.jpg",
+    },
+    {
+      image_id: "00071_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+    },
+    {
+      image_id: "05576_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05576_00.jpg",
+    },
+    {
+      image_id: "05941_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05941_00.jpg",
+    },
+    {
+      image_id: "06206_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+    },
+    {
+      image_id: "08137_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08137_00.jpg",
+    },
+    {
+      image_id: "08151_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08151_00.jpg",
+    },
+    {
+      image_id: "09958_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/09958_00.jpg",
+    },
+    {
+      image_id: "10228_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/10228_00.jpg",
+    },
+    {
+      image_id: "01066_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
+    },
+    {
+      image_id: "00035_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+    },
+    {
+      image_id: "11486_00",
+      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/11486_00.jpg",
     },
   ]);
   const responsive = {
@@ -105,10 +188,10 @@ const VirtualTryOn = (props) => {
   }));
 
   useEffect(() => {
-    callApiForModels(null,null);
+    callApiForModels(null, null);
   }, []);
 
-  const callApiForModels = async (from,imageName) => {
+  const callApiForModels = async (from, imageName) => {
     debugger;
     if (!modelsDataFromApi?.length || from === "fromSimilarProducts") {
       const data = imageName ? imageName : DataClicked?.imageName;
@@ -139,17 +222,78 @@ const VirtualTryOn = (props) => {
 
   const changeModalOnModelClick = (index) => {
     // setCurrentImage(-1);
-    debugger
-    setResultImage(modelsDataFromApi?.[index].vtoS3Url);
+    debugger;
+    if (modelsDataFromApi?.length && !personalizeModels) {
+      setResultImage(modelsDataFromApi?.[index].vtoS3Url);
+    }
+
+    if (personalizeModels) {
+      setResultImage(customModels?.[index].url);
+    }
   };
 
   const handleSimilarProductsClick = (item) => {
     debugger;
-    console.log(item);
+    setShowHideWishlist(true)
+    setSimilarProductsClick(item);
     setResultImage(item?.imageUrl);
     callApiForModels("fromSimilarProducts", item?.imageName);
   };
 
+  const handleSelectCustomModelCheckbox = (e, item) => {
+    debugger;
+
+    if(selectedCustomModels?.length >= 6 && e.target.checked){
+      showToastInfo("You can select only 6 custom models");
+      e.target.checked = false;
+      return;
+    }
+
+    if(e.target.checked){
+      setSelectedCustomModels([...selectedCustomModels, item]);
+    }else{
+      setSelectedCustomModels(selectedCustomModels.filter((x) => x !== item));
+    }
+  };
+
+  const handleCustomModels = () => {
+    debugger;
+    setPersonalizeModels(true);
+  };
+
+  const handleWishlist = async (e) => {
+    debugger;
+    if(!token){
+      showToastInfo("Please login to add to wishlist");
+      return;
+    }
+    let data = {
+      productId: similarProductsClick?.id ? similarProductsClick?.id : DataClicked?.id
+    };
+    if (e === "add") {
+      setOpenLoader(true);
+      let addWishlist = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/likes/create", data, token?.token);
+      if (addWishlist?.statusCode?.text === "Success") {
+        setShowHideWishlist(false);
+      }
+    } else {
+      setOpenLoader(true);
+      let addWishlist = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${data?.productId}`, data, token?.token);
+      if (addWishlist?.statusCode?.text === "Success") {
+        setShowHideWishlist(true);
+      }
+    }
+    // if(token?.token){
+      
+    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
+      setOpenLoader(false);
+        if(getLikeProducts.statusCode.text === "Success"){
+          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
+      }
+
+    // }
+  };
+  
   return (
     <div>
       <Backdrop
@@ -198,46 +342,55 @@ const VirtualTryOn = (props) => {
         <div className="modal-container">
           {/* <h1> </h1> */}
           <h1 className="vto-heading">
-            Find your fit: choose a model and let the virtual magic begin!
+          {!personalizeModels ? "Find your fit: choose a model and let the virtual magic begin!" : "Select your custom models"}
           </h1>
           <div className="Models-separation-div">
             <div className="model-result">
+              {showHideWishlist ? 
               <FavoriteBorderIcon
-                className="hover-icon"
-                sx={{
-                  color: "black",
-                  fontSize: "40px",
-                  position: "absolute",
-                  top: "10px",
-                  left: "10px",
-                  transition: "transform 0.3s, color 0.3s",
-                  "&:hover": {
-                    cursor: "pointer",
-                    transform: "scale(1.2)",
-                  },
-                }}
+              className="hover-icon"
+              sx={{
+                color: "black",
+                fontSize: "40px",
+                position: "absolute",
+                top: "10px",
+                left: "10px",
+                transition: "transform 0.3s, color 0.3s",
+                "&:hover": {
+                  cursor: "pointer",
+                  transform: "scale(1.2)",
+                },
+              }}
+              onClick={() => handleWishlist("add")}
+            /> :
+            <FavoriteOutlinedIcon 
+              className="hover-icon"
+              sx={{
+                color: "black",
+                fontSize: "40px",
+                position: "absolute",
+                top: "10px",
+                left: "10px",
+                transition: "transform 0.3s, color 0.3s",
+                "&:hover": {
+                  cursor: "pointer",
+                  transform: "scale(1.2)",
+                },
+              }}
+              onClick={() => handleWishlist("remove")}
               />
-              <ShoppingBagOutlinedIcon
-                className="hover-icon"
-                sx={{
-                  color: "black",
-                  fontSize: "40px",
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  transition: "transform 0.3s, color 0.3s",
-                  "&:hover": {
-                    cursor: "pointer",
-                    // color: "#ffcc00",
-                    transform: "scale(1.2)",
-                  },
-                }}
-              />
+            }
+              <button
+                className="Select-Custom-Model-button"
+                onClick={handleCustomModels}
+              >
+                {personalizeModels ? "Done" : "Custom Demo Models"}
+              </button>
               <img
                 className="Result-Image"
                 loading="lazy"
                 src={resultImage}
-                alt="product image"
+                alt="result_image"
               />
             </div>
             <div className="predefined-models">
@@ -245,19 +398,46 @@ const VirtualTryOn = (props) => {
                     <h1 style={{marginBottom:"15px", marginTop:"15px"}}>Choose a Model</h1>
                 </div> */}
               <div className="Model-Images-div">
-                {dummyData?.map((item, index) => (
-                  <div className="VTO-card">
-                    <div className="VTO-image-container">
-                      <img
-                        className="VTO-model--image"
-                        loading="lazy"
-                        src={item?.url}
-                        alt="product image"
-                        onClick={() => changeModalOnModelClick(index)}
-                      />
-                    </div>
-                  </div>
-                ))}
+                {personalizeModels ? (
+                  <>
+                    {customModels?.map((item, index) => (
+                      <div className="VTO-card">
+                        <div className="VTO-image-container">
+                          <img
+                            className="VTO-model--image"
+                            loading="lazy"
+                            src={item?.url}
+                            alt="models_images"
+                            onClick={() => changeModalOnModelClick(index)}
+                          />
+                          <input
+                            type="checkbox"
+                            className="custom-model-checkbox"
+                            onClick={(e) =>
+                              handleSelectCustomModelCheckbox(e, item)
+                            }
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {dummyData?.map((item, index) => (
+                      <div className="VTO-card">
+                        <div className="VTO-image-container">
+                          <img
+                            className="VTO-model--image"
+                            loading="lazy"
+                            src={item?.url}
+                            alt="models_images"
+                            onClick={() => changeModalOnModelClick(index)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
             </div>
             <div className="Mobile-models-div">
@@ -288,9 +468,11 @@ const VirtualTryOn = (props) => {
                         alt="product image"
                         onClick={() => handleSimilarProductsClick(items)}
                       />
-                      <h3 style={{fontSize:"18px"}}>{items?.name}</h3>
-                      <p className="description" >{items?.type}</p>
-                      <p className="price" style={{fontSize:"15px"}}>{items?.price}</p>
+                      <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>
+                      <p className="description">{items?.type}</p>
+                      <p className="price" style={{ fontSize: "15px" }}>
+                        {items?.price}
+                      </p>
                     </div>
                   ))}
                 </Carousel>

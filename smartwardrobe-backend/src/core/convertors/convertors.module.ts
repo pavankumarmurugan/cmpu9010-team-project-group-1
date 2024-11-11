@@ -1,54 +1,57 @@
 import { Module } from '@nestjs/common';
 import { UserDtoConvertor } from './user/user-dto.convertor';
 import { AuthDtoConvertor } from './auth/auth-dto.convertor';
-import { ProductCategoryConvertor } from './product-category/product-category.convertor';
-import { ProductInventoryConvertor } from './product-inventory/product-inventory.convertor';
+// import { ProductCategoryConvertor } from './product-category/product-category.convertor';
+// import { ProductInventoryConvertor } from './product-inventory/product-inventory.convertor';
 import { ProductConvertor } from './product/product.convertor';
 import { CartItemConvertor } from './cart-item/cart-item.convertor';
-import { CartConvertor } from './cart/cart.convertor';
+// import { CartConvertor } from './cart/cart.convertor';
 import { SearchImageSimilarProductsConvertor } from './search/search-image-similar-products.convertor';
 import { LikesConvertor } from './likes/likes.convertor';
 import { ChatConvertor } from './chat/chat.convertor';
 import { FriendRequestsConvertor } from './friend-requests/friend-requests.convertor';
-import { FriendsConvertor } from './friends/friend.convertor';
+// import { FriendsConvertor } from './friends/friend.convertor';
 import { GroupConvertor } from './group/group.convertor';
 import { GroupMemberConvertor } from './group-members/group-members.convertor';
 import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
+import { UserLikedModelConverter } from './user-liked-models/user-liked-models.convertor';
 
 @Module({
   providers: [
     UserDtoConvertor,
     AuthDtoConvertor,
-    ProductCategoryConvertor,
-    ProductInventoryConvertor,
+    // ProductCategoryConvertor,
+    // ProductInventoryConvertor,
     ProductConvertor,
     CartItemConvertor,
-    CartConvertor,
+    // CartConvertor,
     SearchImageSimilarProductsConvertor,
     LikesConvertor,
     ChatConvertor,
     FriendRequestsConvertor,
-    FriendsConvertor,
+    // FriendsConvertor,
     GroupConvertor,
     GroupMemberConvertor,
     VtoImageSearchConvertor,
+    UserLikedModelConverter,
   ],
   exports: [
     UserDtoConvertor,
     AuthDtoConvertor,
-    ProductCategoryConvertor,
-    ProductInventoryConvertor,
+    // ProductCategoryConvertor,
+    // ProductInventoryConvertor,
     ProductConvertor,
     CartItemConvertor,
-    CartConvertor,
+    // CartConvertor,
     SearchImageSimilarProductsConvertor,
     LikesConvertor,
     ChatConvertor,
     FriendRequestsConvertor,
-    FriendsConvertor,
+    // FriendsConvertor,
     GroupConvertor,
     GroupMemberConvertor,
     VtoImageSearchConvertor,
+    UserLikedModelConverter,
   ],
 })
 export class ConvertorsModule {}

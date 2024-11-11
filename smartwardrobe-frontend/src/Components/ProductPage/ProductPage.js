@@ -36,7 +36,10 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
-import { headerSearchValueSuccess, homeDataSuccess } from "../../redux/slices/HomeDataSlice";
+import {
+  headerSearchValueSuccess,
+  homeDataSuccess,
+} from "../../redux/slices/HomeDataSlice";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
 
@@ -52,7 +55,9 @@ const ProductPage = () => {
   const pagination = useRef(1);
   const imagePagination = useRef(1);
   const homeData = useSelector((state) => state.homeData.homeData);
-  const headerSearchValue = useSelector((state) => state.homeData.headerSearchValue);
+  const headerSearchValue = useSelector(
+    (state) => state.homeData.headerSearchValue
+  );
   console.log(homeData, "homeDataproducts");
   // let virtualTryOnClickedData = {};
   // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
@@ -60,6 +65,7 @@ const ProductPage = () => {
   const [openLoader, setOpenLoader] = useState(false);
   const [hideLoadMoreButton, sethideLoadMoreButton] = useState(false);
   const [productsDataForFilter, setProductsDataForFilter] = useState([]);
+  const [inputSuggestions, setInputSuggestions] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -256,6 +262,15 @@ const ProductPage = () => {
     // console.log(formData.image);
   };
 
+  const handleSuggestionQuery = (query) => {
+    debugger;
+    setFormData((prevState) => ({
+      ...prevState,
+      searchValue: query,
+    }));
+    handleSearch(query);
+  };
+
   const handleSearch = async (event) => {
     debugger;
     let searchValue = event === null ? formData?.searchValue : event;
@@ -285,15 +300,25 @@ const ProductPage = () => {
           showToastError(errorData?.message || response.statusText);
         }
         const result = await response.json();
-        removeImage();
-        if (imagePagination?.current === 1) {
-          setProducts(result?.data);
-          setProductsDataForFilter(result?.data);
-        } else {
-          setProducts((prevProducts) => [...prevProducts, ...result?.data]);
-          setProductsDataForFilter((prevProducts) => [...prevProducts, ...result?.data]);
+        // removeImage();
+        // setInputSuggestions()
+        if (result?.data?.expectedQueries?.length > 0) {
+          setInputSuggestions(result?.data?.expectedQueries);
         }
-        if (result?.data?.length === 0) {
+        if (imagePagination?.current === 1) {
+          setProducts(result?.data?.products);
+          setProductsDataForFilter(result?.data?.products);
+        } else {
+          setProducts((prevProducts) => [
+            ...prevProducts,
+            ...result?.data?.products,
+          ]);
+          setProductsDataForFilter((prevProducts) => [
+            ...prevProducts,
+            ...result?.data?.products,
+          ]);
+        }
+        if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
       } catch (error) {
@@ -529,8 +554,11 @@ const ProductPage = () => {
                             position: "relative",
                             display: "flex",
                             alignItems: "center",
+                            cursor: "pointer", // Make sure the entire area is interactive
                           }}
+                          className="thumbnail-container" // Add a class for styling hover
                         >
+                          {/* Thumbnail Image */}
                           <img
                             src={formData?.imagePreview}
                             alt="Uploaded preview"
@@ -540,7 +568,18 @@ const ProductPage = () => {
                               borderRadius: "5px",
                               marginRight: "8px",
                             }}
+                            className="thumbnail-image"
                           />
+
+                          {/* Hover to enlarge the image */}
+                          <div className="image-preview-container">
+                            <img
+                              src={formData?.imagePreview}
+                              alt="Uploaded preview"
+                              className="hover-image"
+                            />
+                          </div>
+
                           <IconButton
                             onClick={removeImage}
                             size="small"
@@ -613,21 +652,25 @@ const ProductPage = () => {
                   }}
                 />
               </FormControl>
+
               {/* </div> */}
             </div>
-            <div className="Input-Suggestion-main">
-            <div className="Input-Suggestion-div">
-                  <div className="Input-Suggestion">
-                    <p className="input-suggestion-text">Red shirt under the price of $50</p>
-                  </div>
-                  <div className="Input-Suggestion">
-                    <p className="input-suggestion-text">Red shirt under the price of $50</p>
-                  </div>
-                  <div className="Input-Suggestion">
-                    <p className="input-suggestion-text">Red shirt under the price of $50</p>
-                  </div>
-                  </div>
-            </div>
+            {inputSuggestions?.length > 0 && (
+              <div className="Input-Suggestion-main">
+                <div className="Input-Suggestion-div">
+                  {inputSuggestions.map((suggestion, index) => (
+                    <div key={index} className="Input-Suggestion">
+                      <p
+                        className="input-suggestion-text"
+                        onClick={() => handleSuggestionQuery(suggestion?.query)}
+                      >
+                        {suggestion?.query}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div
               style={{
                 width: "100%",
@@ -661,8 +704,8 @@ const ProductPage = () => {
                       width: "100%",
                       letterSpacing: "0.1rem",
                       textTransform: "capitalize",
-                      borderRadius:"5px",
-                      height: "30px"
+                      borderRadius: "5px",
+                      height: "30px",
                     }}
                     placeholder="Price"
                     name={formData?.Price}

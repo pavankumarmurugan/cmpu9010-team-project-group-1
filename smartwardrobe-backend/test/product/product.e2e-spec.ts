@@ -16,7 +16,7 @@ import { RefreshTokenGuard } from 'src/infrastructure/guards/auth/refreshToken.g
 import { RefreshTokenUpdateInterceptor } from 'src/infrastructure/interceptors/refresh-token-update.interceptor';
 import { INestApplication } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
 import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';

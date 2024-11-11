@@ -10,7 +10,12 @@ import {
   Badge,
   Button,
   CircularProgress,
+  Collapse,
   IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
   styled,
@@ -19,7 +24,7 @@ import "../../Styles/ChatComponent.css";
 import { FaPaperPlane } from "react-icons/fa6";
 import { IoExitOutline } from "react-icons/io5";
 import chatbackgroundimage from "../../Assets/chatbackgroundimage.jpg";
-import { Search } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, Search } from "@mui/icons-material";
 import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NewChatModal from "../NewChatModal/NewChatModal";
@@ -27,27 +32,43 @@ import TextArea from "antd/es/input/TextArea";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
+import WhatsAppStylePreview from "../GenericCode/GenericCode";
+import {
+  IoIosInformationCircleOutline,
+  IoMdContacts,
+  IoMdExit,
+} from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
+import { io, Socket } from "socket.io-client";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-    const messagesEndRef = useRef(null);
+  let userId = token?.userId;
+  const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
+  const messagesEndRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [openMemberList, setOpenMemberList] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
   const [addNewFriendorGroup, setaddNewFriendorGroup] = useState("");
   const [textValue, settextValue] = useState("");
   const [friendReqCount, setFriendReqCount] = useState([]);
   const [activeFriend, setActiveFriend] = useState(null);
-  const [chatInfo, setChatInfo] = useState({});
+  const [chatInfo, setChatInfo] = useState(null);
   const [friends, setFriends] = useState([]);
   const [friendsDataForFilter, setFriendsDataForFilter] = useState([]);
   const [friendReqCountToShow, setFriendReqCountToShow] = useState(0);
   const [hideLeftSection, sethideLeftSection] = useState(false);
   const [showNewChat, setShowNewChat] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [groupMemberList, setGroupMemberList] = useState([]);
+  const [memberListForDetails, setMemberListForDetails] = useState([]);
+  const [friendIds, setFriendIds] = useState([]);
+  const [groupIds, setGroupIds] = useState([]);
+  const [socket, setSocket] = useState(null);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       color: "white",
@@ -82,6 +103,10 @@ function ChatComponent(props) {
 
   useEffect(() => {
     getAllFriendandFriendRequests();
+
+    return () => {
+      chatInfoRef.current = null;
+    }
   }, []);
 
   const getAllFriendandFriendRequests = async () => {
@@ -108,6 +133,7 @@ function ChatComponent(props) {
     if (getGroupsList?.data?.length > 0) {
       setFriends(getGroupsList?.data);
       setFriendsDataForFilter(getGroupsList?.data);
+      setGroupIds(getGroupsList.data.map((x) => x.groupId));
     }
 
     const getFriendsList = await apiCall(
@@ -118,6 +144,7 @@ function ChatComponent(props) {
     );
     if (getFriendsList?.data?.length > 0) {
       setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+      setFriendIds(getFriendsList.data.map((x) => x.userId));
       setFriendsDataForFilter((prevFriends) => [
         ...prevFriends,
         ...getFriendsList.data,
@@ -141,35 +168,59 @@ function ChatComponent(props) {
     debugger;
     setActiveFriend(event);
     setChatInfo(event);
+    chatInfoRef.current = event;
     setMessages([]);
 
-    if(event?.userId){
-    const getMessages = await apiCall(
-      "GET",
-      `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-friend-id/${event?.userId}`,
-      null,
-      token?.token
-    );
+    if (event?.userId) {
+      const getMessages = await apiCall(
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-friend-id/${event?.userId}`,
+        null,
+        token?.token
+      );
 
-    if (getMessages?.data?.length > 0) {
-      const sortedMessages = getMessages?.data.sort((a, b) => a.id - b.id);
-      setMessages(sortedMessages);
+      if (getMessages?.data?.length > 0) {
+        const sortedMessages = getMessages?.data.sort((a, b) => a.id - b.id);
+        setMessages(sortedMessages);
+      }
     }
-  }
 
-  if(event?.groupId){
-    const getGroupMessages = await apiCall(
-      "GET",
-      `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-group-id/${event?.groupId}`,
-      null,
-      token?.token
-    );
+    if (event?.groupId) {
+      const getGroupMessages = await apiCall(
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-group-id/${event?.groupId}`,
+        null,
+        token?.token
+      );
 
-    if (getGroupMessages?.data?.length > 0) {
-      const sortedMessages = getGroupMessages?.data.sort((a, b) => a.id - b.id);
-      setMessages(sortedMessages);
+      if (getGroupMessages?.data?.length > 0) {
+        const sortedMessages = getGroupMessages?.data.sort(
+          (a, b) => a.id - b.id
+        );
+        setMessages(sortedMessages);
+      }
+
+      const getAllGroupMembers = await apiCall(
+        "GET",
+        `https://smartwardrobe-backend.azurewebsites.net/group/get-all-members-in-group/${event?.groupId}`,
+        null,
+        token?.token
+      );
+      if (getAllGroupMembers?.data?.length > 0) {
+        let setGroupMembers = [];
+        let aa = getAllGroupMembers?.data?.forEach((x) =>
+          setGroupMembers?.push(x?.username)
+        );
+        setMemberListForDetails(getAllGroupMembers?.data);
+        const formattedNames = setGroupMembers
+          ?.map((name) => {
+            // Capitalize the first letter of each name
+            return name?.charAt(0).toUpperCase() + name?.slice(1);
+          })
+          .join(", ");
+        setGroupMemberList(formattedNames);
+      }
     }
-  }
 
     if (window.innerWidth < 768) {
       sethideLeftSection(true);
@@ -261,22 +312,25 @@ function ChatComponent(props) {
     }
   };
 
-  const handleSendMessage = async (event,from) => {
-    if ((event.key === "Enter" && textValue.trim() !== "") || (textValue.trim() !== "" && from === "fromIcon")) {
+  const handleSendMessage = async (event, from) => {
+    if (
+      (event.key === "Enter" && textValue.trim() !== "") ||
+      (textValue.trim() !== "" && from === "fromIcon")
+    ) {
       event.preventDefault();
       if (chatInfo?.userId) {
         let message = {
           message: textValue,
           receiverId: chatInfo?.userId,
-          messageType: "text"
+          messageType: "text",
         };
         setMessages((prevMessages) => [
           ...prevMessages,
-          { 
+          {
             message: textValue,
             receiverId: chatInfo?.userId,
-            messageType: "text"
-           },
+            messageType: "text",
+          },
         ]);
         settextValue("");
         const sendMessage = await apiCall(
@@ -293,16 +347,16 @@ function ChatComponent(props) {
         let message = {
           message: textValue,
           groupId: chatInfo?.groupId,
-          messageType: "text"
+          messageType: "text",
         };
         setMessages((prevMessages) => [
           ...prevMessages,
-          { 
+          {
             message: textValue,
             groupId: chatInfo?.groupId,
             messageType: "text",
-            senderId: token?.userId
-           },
+            senderId: token?.userId,
+          },
         ]);
         settextValue("");
         const sendMessage = await apiCall(
@@ -320,39 +374,89 @@ function ChatComponent(props) {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
-  const sendMessageFromIcon = async () => {
-    if (textValue.trim() !== "") {
-      if (chatInfo?.userId) {
-        let message = {
-          receiverId: chatInfo?.userId,
-          message: textValue,
-          messageType: "text",
-        };
-        // setMessages((prevMessages) => [
-        //   ...prevMessages,
-        //   { sender: "user", text: textValue },
-        // ]);
-        // settextValue("");
-        const sendMessage = await apiCall(
-          "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
-          message,
-          token?.token
-        );
-        if (sendMessage) {
-          console.log(sendMessage);
-        }
-      }
-      if (chatInfo?.groupName) {
-      }
-    }
+  /** handle send messages */
+
+  const handleClickMember = () => {
+    setOpenMemberList(!openMemberList);
   };
 
-  /** handle send messages */
+  const chatInfoRef = useRef(null);
+
+// Update the ref whenever chatInfo changes
+
+  useEffect(() => {
+    debugger;
+    if (friendIds?.length === 0 && groupIds?.length === 0) return;
+
+    // Initialize WebSocket connection
+    const newSocket = io(backendUrl, {
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 2000,
+      reconnectionDelayMax: 10000,
+      timeout: 20000,
+    });
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server with id:", newSocket.id);
+
+      friendIds.forEach((friendId) => {
+        const roomId = `room_${Math.min(userId, friendId)}_${Math.max(
+          userId,
+          friendId
+        )}`;
+        newSocket.emit("joinChatRoom", { roomId, userId });
+        console.log(`User ${userId} joined friend chat room: ${roomId}`);
+      });
+
+      groupIds.forEach((groupId) => {
+        newSocket.emit("joinGroupRoom", { groupId, userId });
+        console.log(`User ${userId} joined group chat room: group_${groupId}`);
+      });
+    });
+
+    // Listener for friend messages
+    newSocket.on("newMessage", (data) => {
+      console.log("New friend message received:", data);
+      console.log(chatInfoRef.current);
+        setChatInfo(chatInfoRef.current);
+        if (data?.senderId === chatInfoRef?.current?.userId) {
+          setMessages((prevMessages) => [...prevMessages, data]);
+          
+        }
+    });
+
+    // Listener for group messages
+    newSocket.on("newGroupMessage", (data) => {
+      console.log("New group message received:", data);
+      if (data?.senderId !== userId) {
+        // showToastInfo("New group message received");
+        console.log(chatInfoRef.current);
+        setChatInfo(chatInfoRef.current);
+        if (data?.groupId === chatInfoRef?.current?.groupId) {
+          setMessages((prevMessages) => [...prevMessages, data]);
+          
+        }
+      }
+      // Display a notification or update UI with the new group message
+    });
+
+    // Handle disconnection
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from WebSocket server");
+    });
+
+    // Clean up WebSocket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [userId, friendIds, groupIds]); // Re-run effect when friendIds or groupIds change
 
   return (
     <>
@@ -474,12 +578,12 @@ function ChatComponent(props) {
               <div className="contact-list">
                 {friends?.map((friend, index) => (
                   <div
-                    key={friend.id} // Assuming each friend has a unique `id`
+                    key={friend.id}
                     className={`contact-details-div ${
                       activeFriend === friend ? "active" : ""
                     }`}
                     onClick={() => handleShowChat(friend)}
-                    tabIndex="0" // Makes it focusable
+                    tabIndex="0"
                   >
                     <img
                       src={
@@ -496,8 +600,12 @@ function ChatComponent(props) {
                           ? friend?.groupName
                           : friend?.username}
                       </div>
-                      <div className="contact-last-msg">Hi, how are you?</div>
+                      {/* <div className="contact-last-msg">Hi, how are you?</div> */}{" "}
+                      {/** uncomment this to show latest msg and .contact-name-and-last-msg uncomment flex-direction:coulmn in this class */}
                     </div>
+                    {/* <div className="unread-badge">
+                      <span className="unread-msg-count">1</span>
+                    </div> */}
                   </div>
                 ))}
                 {friends?.length === 0 && (
@@ -519,87 +627,126 @@ function ChatComponent(props) {
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <div className="chat-header">
-                <div className="back-icon">
-                  <ChevronLeftOutlinedIcon
-                    style={{ width: "30px", height: "30px" }}
-                    onClick={toggleChatSection}
-                  />
-                </div>
-                {/* {hideLeftSection && (
+              {chatInfo !== null ? (
+                <div className="chat-header">
+                  <div className="back-icon">
+                    <ChevronLeftOutlinedIcon
+                      style={{ width: "30px", height: "30px" }}
+                      onClick={toggleChatSection}
+                    />
+                  </div>
+                  {/* {hideLeftSection && (
                   <div className="back-icon">
                 <ChevronLeftOutlinedIcon style={{width:"30px", height:"30px"}} onclick={toggleChatSection} />
                 </div>)} */}
-                <div className="Chat-Icon-and-Name-div">
-                  <div className="Chat-Icon-and-Name">
-                    <img
-                      src={chatbackgroundimage}
-                      alt="Alice"
-                      className="contact-image"
-                    />
-                    <h2 className="contact-Name-for-OpenChat">TUD Group</h2>
-                  </div>
-                  {chatInfo && chatInfo?.groupName && (
-                    <div
-                      className="Invite-Friends"
-                      onClick={handleInviteFriendsToGroup}
-                    >
-                      <FaPlus
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          paddingRight: "10px",
-                          paddingBottom: "3px",
-                        }}
+
+                  <div className="Chat-Icon-and-Name-div">
+                    <div className="Chat-Icon-and-Name">
+                      <img
+                        src={chatbackgroundimage}
+                        alt="Alice"
+                        className="contact-image"
                       />
-                      <h3 className="invite-friends-text">Invite Friends</h3>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="chat-messages">
-                {chatInfo?.userId && 
-                <div className="message-container" ref={messagesEndRef}>
-                  {messages?.map((msg, index) => (
-                    <>
-                    <div
-                      key={index}
-                      className={`chat-message ${
-                        (msg.receiverId === chatInfo?.userId)
-                          ? "chat_sender"
-                          : "chat_receiver"
-                      }`}
-                    >
-                      {msg.receiverId === chatInfo?.userId ? (
-                        
-                        <p>{msg.message}</p>
-                      ) : (
-                        <div className="receiver-message">
-                          <img
-                            src={chatbackgroundimage}
-                            alt={msg.sender}
-                            className="receiver-image"
-                          />
-                          <p>
-                            <strong>
-                              {chatInfo?.userId
-                                ? chatInfo?.username
-                                : msg?.username}{" "}
-                            </strong>{" "}
-                            <br />
-                            {msg.message}
-                          </p>
+                      <div className="groupName-and-member-div">
+                        <h2 className="contact-Name-for-OpenChat">
+                          {chatInfo &&
+                            (chatInfo?.username || chatInfo?.groupName)}
+                        </h2>
+                        <div className="members-div">
+                          <div className="member-div">
+                            <span>{groupMemberList}</span>
+                          </div>
                         </div>
-                      )}
+                      </div>
                     </div>
-                    <div ref={messagesEndRef}></div></>
-                  ))}
-                </div>}
-                {chatInfo?.groupId &&
-                <div className="message-container" ref={messagesEndRef}>
-                  {messages?.map((msg, index) => (
-                    <>
-                    {/* <div
+                    {chatInfo && chatInfo?.groupName && (
+                      <div
+                        className="Invite-Friends"
+                        onClick={handleInviteFriendsToGroup}
+                      >
+                        <div style={{ display: "flex" }}>
+                          <FaPlus
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              paddingRight: "10px",
+                              paddingBottom: "3px",
+                            }}
+                          />
+                          <h3 className="invite-friends-text">
+                            Invite Friends
+                          </h3>
+                        </div>
+                        <IoIosInformationCircleOutline
+                          style={{ width: "30px", height: "30px" }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="rightside-div-when-Nocontact-selected"
+                  style={{ height: "100%" }}
+                >
+                  <h2
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      height: "100%",
+                    }}
+                  >
+                    Start a conversation by choosing a contact from the list.
+                  </h2>
+                </div>
+              )}
+              <div className="chat-messages">
+                {chatInfo?.userId && (
+                  <div className="message-container">
+                    {messages?.map((msg, index) => (
+                      <>
+                        <div
+                          key={index}
+                          className={`chat-message ${
+                            msg.receiverId === chatInfo?.userId
+                              ? "chat_sender"
+                              : "chat_receiver"
+                          }`}
+                        >
+                          {msg.receiverId === chatInfo?.userId ? (
+                            // <p>{msg.message}</p>
+                            <WhatsAppStylePreview message={msg?.message} />
+                          ) : (
+                            <div className="receiver-message">
+                              <img
+                                src={chatbackgroundimage}
+                                alt={msg.sender}
+                                className="receiver-image"
+                              />
+                              <p>
+                                <strong>
+                                  {chatInfo?.userId
+                                    ? chatInfo?.username
+                                    : msg?.username}{" "}
+                                </strong>{" "}
+                                <br />
+                                <WhatsAppStylePreview message={msg?.message} />
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div ref={messagesEndRef}></div>
+                      </>
+                    ))}
+                  </div>
+                )}
+                {chatInfo?.groupId && (
+                  <div className="message-container" ref={messagesEndRef}>
+                    {messages?.map((msg, index) => (
+                      <>
+                        {/* <div
                       key={index}
                       className={`chat-message ${
                         (msg?.senderId !== chatInfo?.createdBy)
@@ -627,43 +774,130 @@ function ChatComponent(props) {
                       )}
                     </div> */}
 
-                    <div
-                    key={index}
-                    className={`chat-message ${msg?.senderId === token?.userId ? "chat_sender" : "chat_receiver"} `}
-                    >
-                      {msg?.senderId === token?.userId ? 
-                      <p>{msg.message}</p>
-                      :
-                      <div className="receiver-message">
-                        <img src={chatbackgroundimage} alt={msg.sender} className="receiver-image" />
-                        <p><strong>{msg?.userDetails?.username}</strong><br />{msg.message}</p>
-                      </div>}
-
-                    </div>
-                    <div ref={messagesEndRef}></div></>
-                  ))}
-                </div>}
+                        <div
+                          key={index}
+                          className={`chat-message ${
+                            msg?.senderId === token?.userId
+                              ? "chat_sender"
+                              : "chat_receiver"
+                          } `}
+                        >
+                          {msg?.senderId === token?.userId ? (
+                            <WhatsAppStylePreview message={msg?.message} />
+                          ) : (
+                            <div className="receiver-message">
+                              <img
+                                src={chatbackgroundimage}
+                                alt={msg.sender}
+                                className="receiver-image"
+                              />
+                              <p>
+                                <strong>{msg?.userDetails?.username}</strong>
+                                <br />
+                                <WhatsAppStylePreview message={msg?.message} />
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div ref={messagesEndRef}></div>
+                      </>
+                    ))}
+                  </div>
+                )}
               </div>
-
-              <div className="chat-input">
-                <TextArea
-                  style={{ paddingRight: "7%" }}
-                  placeholder="Type a message..."
-                  autoSize={{ minRows: 2 }}
-                  className="custom-textarea"
-                  value={textValue}
-                  onChange={handleInput}
-                  onKeyDown={(event) => handleSendMessage(event,"fromEnter")}
-                  disabled={!chatInfo?.userId && !chatInfo?.groupName}
-                />
-                <button className="send-button">
-                  <FaPaperPlane
-                    style={{ color: "2e3b4e", cursor: "pointer" }}
-                    onClick={(event) => handleSendMessage(event,"fromIcon")}
+              {chatInfo !== null && (
+                <div className="chat-input">
+                  <TextArea
+                    style={{ paddingRight: "7%" }}
+                    placeholder="Type a message..."
+                    autoSize={{ minRows: 2 }}
+                    className="custom-textarea"
+                    value={textValue}
+                    onChange={handleInput}
+                    onKeyDown={(event) => handleSendMessage(event, "fromEnter")}
+                    disabled={!chatInfo?.userId && !chatInfo?.groupName}
                   />
-                </button>
-              </div>
+                  <button className="send-button">
+                    <FaPaperPlane
+                      style={{ color: "2e3b4e", cursor: "pointer" }}
+                      onClick={(event) => handleSendMessage(event, "fromIcon")}
+                    />
+                  </button>
+                </div>
+              )}
             </div>
+
+            {/* <div
+              className={`details-chat-section ${
+                hideLeftSection ? "details-show" : "details-hide"
+              }`}
+              style={{
+                // backgroundImage: `url(${chatbackgroundimage})`,
+                backgroundColor: "#f4f3f8",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            >
+              <div
+                className="details-header"
+                style={{ borderBottom: "1px solid lightgray" }}
+              >
+                <h2>Contact Information</h2>
+                <IoMdClose style={{ width: "20px", height: "20px" }} />
+              </div>
+
+              <div className="details-body">
+                <div className="details-image-div">
+                  <img
+                    src={chatbackgroundimage}
+                    alt="details-iamge"
+                    className="details-image"
+                  />
+                  <h3>Group Name</h3>
+                </div>
+                <div className="member-list-div">
+                  <List
+                    sx={{
+                      width: "100%",
+                      maxWidth: 360,
+                      borderTop: "1px solid lightgray",
+                      borderBottom: "1px solid lightgray",
+                    }}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader"
+                  >
+                    <ListItemButton onClick={handleClickMember}>
+                      <ListItemIcon>
+                        <IoMdContacts
+                          style={{ width: "30px", height: "30px" }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary="Members" />
+                      {openMemberList ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={openMemberList} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {memberListForDetails?.map((member, index) => (
+                          <ListItemButton key={index} sx={{ pl: 4 }}>
+                            <ListItemText
+                              primary={member?.username}
+                              style={{ textTransform: "capitalize" }}
+                            />
+                          </ListItemButton>
+                        ))}
+                      </List>
+                    </Collapse>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <IoMdExit style={{ width: "30px", height: "30px" }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Leave Group" />
+                    </ListItemButton>
+                  </List>
+                </div>
+              </div>
+            </div> */}
           </div>
         </div>
       </Modal>
