@@ -21,10 +21,10 @@ async function bootstrap() {
   app.use(helmet());
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('Smart Wardrobe MS')
+    .setTitle('Smart Wardrobe')
     .setDescription('This is Smart Wardrobe ms API description')
     .setVersion('1.0')
-    .addTag('Smart Wardrobe MS')
+    .addTag('Smart Wardrobe')
     .setExternalDoc('Postman Collection', '../api-json')
     .build();
   const document = SwaggerModule.createDocument(app, config);
