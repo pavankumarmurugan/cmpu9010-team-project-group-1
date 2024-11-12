@@ -21,7 +21,7 @@ import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { UserLikedModelUsecase } from 'src/use-cases/user-liked-models/user-liked-models.usecase';
 
 @Controller('user-liked-models')
-@ApiTags('UserLikedModels')
+@ApiTags('User Liked Models')
 export class UserLikedModelController {
   constructor(private readonly userLikedModelUsecase: UserLikedModelUsecase) {}
 
