@@ -349,3 +349,19 @@ DROP TRIGGER IF EXISTS trigger_update_friend_requests_updated_at ON public.frien
 DROP FUNCTION IF EXISTS notify_friend_request_change();
 DROP FUNCTION IF EXISTS update_friend_requests_updated_at_column();
 
+
+CREATE TABLE public.user_liked_models (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    model_image_name VARCHAR(255) NOT NULL,
+    model_image_url VARCHAR(255) DEFAULT NULL,
+    updated_at DATE DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id)
+        REFERENCES public.user (user_id)
+        ON DELETE CASCADE,
+    CONSTRAINT unique_user_model
+        UNIQUE (user_id, model_image_name)
+);
+
