@@ -25,6 +25,22 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
     return { data, total };
   }
 
+  async getAllPaginatedWithWhere(
+    page: number,
+    limit: number,
+    where: any = {},
+  ): Promise<{ data: any; total: number }> {
+    const options: any = {
+      take: limit,
+      where,
+    };
+    if (page > 1) {
+      options.skip = (page - 1) * limit;
+    }
+    const [data, total] = await this._repository.findAndCount(options);
+    return { data, total };
+  }
+
   create(item: T): Promise<T> {
     return this._repository.save(item);
   }

@@ -28,6 +28,7 @@ import { GroupMemberUsecase } from './group-members/group-members.usecase';
 import { VtoImageSearchUsecase } from './vto/vto.usecase';
 import { ConfigUsecase } from './config/config.usecase';
 import { UserLikedModelUsecase } from './user-liked-models/user-liked-models.usecase';
+import { ProductCategoryUsecase } from './product-category/product-category.usecase';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { UserLikedModelUsecase } from './user-liked-models/user-liked-models.use
   ],
   providers: [
     // ProductInventoryUsecase,
-    // ProductCategoryUsecase,
+    ProductCategoryUsecase,
     UserUsecase,
     LoginUsecase,
     LogoutUsecase,
@@ -64,7 +65,7 @@ import { UserLikedModelUsecase } from './user-liked-models/user-liked-models.use
   ],
   exports: [
     // ProductInventoryUsecase,
-    // ProductCategoryUsecase,
+    ProductCategoryUsecase,
     UserUsecase,
     LoginUsecase,
     LogoutUsecase,
