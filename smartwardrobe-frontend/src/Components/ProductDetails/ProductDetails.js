@@ -37,6 +37,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import NewChatModal from "../NewChatModal/NewChatModal";
 import { Helmet } from "react-helmet";
+import sizeChartImage from "../../Assets/sizeChartImage.webp";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -101,7 +102,7 @@ const ProductDetails = () => {
         setShowHideWishlist(true);
       }
     }
-    // if(token?.token){
+    if(token?.token){
       
     const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
       setOpenLoader(false);
@@ -109,11 +110,17 @@ const ProductDetails = () => {
           dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
       }
 
-    // }
+    }
   };
 
   const handleAddToCart = async () => {
     debugger;
+
+    if(!token){
+      showToastInfo("Please login to add to cart");
+      return;
+    }
+
     let data = {
       productId: productimages?.id,
       quantity: quantityvalue,
@@ -142,12 +149,13 @@ const ProductDetails = () => {
         "GET",
         `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`, null
       );
-      // setOpenLoader(false);
+      setOpenLoader(false);
       if (getModels) {
         console.log(getModels?.data, 'details')
         setProductImages(getModels?.data);
       }
-
+      if(token?.token){
+        setOpenLoader(true);
       const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
       setOpenLoader(false);
       if (getLikeProducts) {
@@ -156,6 +164,7 @@ const ProductDetails = () => {
           setShowHideWishlist(false);
         }
       }
+    }
   };
 
   /** this is to handle tryon modal */
@@ -266,14 +275,14 @@ const ProductDetails = () => {
                 <img
                   src={productimages?.imageUrl}
                   loading="lazy"
-                  alt="Product Image"
+                  alt="ProductImage"
                   className="product-details-main-image"
                 />
                 <button className="product-detailsimage-top-left-button" onClick={() => handleShare(productimages)}>
                   Share
                 </button>
                 <button className="product-detailsimage-top-right-button" onClick={() => handleTryon(productimages)}>
-                  Try Out
+                  Try On
                 </button>
                 {/* <button className="product-detailsimage-bottom-right-button">
                   Create Your Avatar
@@ -441,9 +450,7 @@ const ProductDetails = () => {
                         textTransform: "capitalize",
                         letterSpacing:"0.1rem"
                       }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua.
+                        <img src={sizeChartImage} alt="size chart" />
                       </AccordionDetails>
                     </Accordion>
                   </AccordionGroup>

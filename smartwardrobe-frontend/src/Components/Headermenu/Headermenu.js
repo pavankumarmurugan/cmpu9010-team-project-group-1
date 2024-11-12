@@ -728,11 +728,11 @@ useEffect(() => {
   };
 
   const handleChatComponent = () => {
-    // if(token !== undefined && token !== null){ /** will uncomment after login signup setup to email */
+    if(token !== undefined && token !== null){ /** will uncomment after login signup setup to email */
     setOpenChatComponent(true);
-    // }else{
-    //   showToastInfo("Please login first to chat with your friends.");
-    // }
+    }else{
+      showToastInfo("Please login first to chat with your friends.");
+    }
   };
   const CloseChatComponent = () => {
     setOpenChatComponent(!openChatComponent);
@@ -880,7 +880,7 @@ useEffect(() => {
       />
       {/*  Signup/Login Modal */}
 
-      {/* <Carousel dotPosition="left" dots={false} infinite={false} autoplay={true} autoplaySpeed={1500} style={{maxHeight:"20px"}} >
+      <Carousel dotPosition="left" dots={false} infinite={false} autoplay={true} autoplaySpeed={1500} style={{maxHeight:"20px"}} >
       <div>
         <h3 style={contentStyle}>Collaborative Chat</h3>
       </div>
@@ -890,7 +890,7 @@ useEffect(() => {
       <div>
         <h3 style={contentStyle}>Customization option</h3>
       </div>
-    </Carousel> */}
+    </Carousel>
 
       <div className="header-main">
         <div className="header-conatiner page-width">

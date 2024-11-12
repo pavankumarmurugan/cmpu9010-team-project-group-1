@@ -107,6 +107,11 @@ function WishListComponent() {
       }
     }
 
+    const handleShowProduct = (items) => {
+      debugger
+      navigate(`/productdetails/${items?.product?.id}`, { state: { items } });
+    }
+
   return (
     <>
       {/** loader code */}
@@ -144,8 +149,8 @@ function WishListComponent() {
                       className="product--image"
                       loading="lazy"
                       src={items?.product?.imageUrl}
-                      alt="product image"
-                      // onClick={() => handleSimilarProductsClick(items)}
+                      alt="wishlist_productimage"
+                      onClick={() => handleShowProduct(items)}
                     />
                     {/* <h3 style={{ fontSize: "18px" }}>{items?.product?.imageUrl}</h3> */}
                     <p className="description">{items?.product?.type}</p>
