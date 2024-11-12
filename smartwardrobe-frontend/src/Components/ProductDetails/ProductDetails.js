@@ -281,9 +281,10 @@ const ProductDetails = () => {
                 <button className="product-detailsimage-top-left-button" onClick={() => handleShare(productimages)}>
                   Share
                 </button>
+                {productimages?.trail && 
                 <button className="product-detailsimage-top-right-button" onClick={() => handleTryon(productimages)}>
                   Try On
-                </button>
+                </button>}
                 {/* <button className="product-detailsimage-bottom-right-button">
                   Create Your Avatar
                 </button> */}
