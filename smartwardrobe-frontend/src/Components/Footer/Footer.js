@@ -42,10 +42,10 @@ function Footer() {
         <div>
           <h3>Get in touch</h3>
           <a href="/">
-            Whatsapp: <u>+029123416</u>
+            Whatsapp: <u>+353894447599</u>
           </a>
           <a href="/">
-            Email: <u>smartwardrobe@gmail.com</u>
+            Email: <u>smartwardrobe.store@gmail.com</u>
           </a>
         </div>
       </div>

@@ -145,8 +145,8 @@ function SignupModal(props) {
         handleCancel();
         const data = response?.data;
         setTimeout(() => {
-          navigate("/", { state: { data } });
-          
+          // navigate("/", { state: { data } });
+          window.location.reload();
         }, 1000);
       }
     } else {
@@ -169,7 +169,7 @@ function SignupModal(props) {
         handleCancel();
         const data = response?.data;
         setTimeout(() => {
-          navigate("/", { state: { data } });
+          // navigate("/", { state: { data } });
           window.location.reload();
         }, 1000);
       }
