@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { ProductCategoryConvertor } from 'src/core/convertors/product-category/product-category.convertor';
-import { ProductCategoryReqDto } from 'src/core/dto/product-category/product-category-req-dto';
-import { UpdateProductCategoryReqDto } from 'src/core/dto/product-category/product-category-req-update-dto';
 import { ProductCategoryResDto } from 'src/core/dto/product-category/product-category-res-dto';
-import { ProductCategoryEntity } from 'src/core/entities/product-category/product-category.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+import { CacheService } from 'src/infrastructure/services/cache/cache.service';
 
 @Injectable()
 export class ProductCategoryUsecase {
   constructor(
     private databaseService: IDataServices,
     private convertor: ProductCategoryConvertor,
+    private cacheService: CacheService,
   ) {}
 
   //   async create(
@@ -38,11 +37,35 @@ export class ProductCategoryUsecase {
 
   async getAll(): Promise<IResponse<ProductCategoryResDto[]>> {
     try {
-      const entities: ProductCategoryEntity[] =
-        await this.databaseService.productCategory.getAll();
+      // const entities: ProductCategoryEntity[] =
+      //   await this.databaseService.productCategory.getAll();
+
+      // const productSubcategoryEntities: ProductSubcategoryEntity[] =
+      //   await this.databaseService.productSubcategory.getAll();
+
+      const cacheKey = 'product-category';
+
+      const cachedData =
+        await this.cacheService.getFromCache<ProductCategoryResDto[]>(cacheKey);
+      if (cachedData) {
+        return {
+          data: cachedData,
+          message: MESSAGES.PRODUCT.GET.SUCCESS + ' (from cache)',
+        };
+      }
+
+      const [entities, productSubcategoryEntities] = await Promise.all([
+        this.databaseService.productCategory.getAll(),
+        this.databaseService.productSubcategory.getAll(),
+      ]);
 
       const data: ProductCategoryResDto[] =
-        this.convertor.toProductResDtoFromEntities(entities);
+        this.convertor.toProductResDtoFromEntities(
+          entities,
+          productSubcategoryEntities,
+        );
+
+      await this.cacheService.setToCache(cacheKey, data);
 
       return {
         data,

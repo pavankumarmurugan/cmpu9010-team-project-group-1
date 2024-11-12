@@ -38,6 +38,26 @@ export class ProductController {
     }
   }
 
+  @Get('get-all-v2/:page/:limit/:category/:subcategory')
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async getProductBySubCategory(
+    @Param('page', ParseIntPipe) page: number = 1,
+    @Param('limit', ParseIntPipe) limit: number = 10,
+    @Param('category') category: string,
+    @Param('subcategory') subcategory: string,
+  ): Promise<IResponse<ProductResDto[]>> {
+    try {
+      return await this.productUsecase.getAllProductCategoryAndSubCategory(
+        page,
+        limit,
+        category,
+        subcategory,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // @Post('create')
   // @ApiBearerAuth()
   // @Roles(ROLES.ADMIN)

@@ -24,6 +24,36 @@ CREATE TABLE product_category (
   deleted_at TIMESTAMP
 );
 
+CREATE TABLE product_subcategory (
+  id SERIAL PRIMARY KEY,
+  category_id INT REFERENCES product_category(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP
+);
+
+
+WITH unique_types AS (
+    SELECT DISTINCT type, category
+    FROM products
+    WHERE type IS NOT NULL AND category IS NOT NULL
+),
+type_with_category_id AS (
+    SELECT ut.type, pc.id AS category_id
+    FROM unique_types ut
+    JOIN product_category pc ON ut.category = pc.name
+)
+INSERT INTO product_subcategory (category_id, name)
+SELECT category_id, type
+FROM type_with_category_id
+WHERE (category_id, type) NOT IN (
+    SELECT category_id, name
+    FROM product_subcategory
+);
+
+
 
 CREATE TABLE `product_inventory` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -79,7 +109,10 @@ CREATE TABLE products (
     "updated_at" TIMESTAMP NULL
 );
 
- ALTER TABLE products
+CREATE INDEX idx_products_category_type ON products (category, type);
+
+
+ALTER TABLE products
 ADD COLUMN category VARCHAR(100);
 
 CREATE TABLE public."cart" (
