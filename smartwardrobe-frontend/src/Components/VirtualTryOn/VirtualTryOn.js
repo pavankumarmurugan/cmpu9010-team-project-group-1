@@ -32,31 +32,34 @@ const VirtualTryOn = (props) => {
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [similarProductsData, setSimilarProductsData] = useState([]);
   const [personalizeModels, setPersonalizeModels] = useState(false);
+  const [deletePersonalizeModels, setDeletePersonalizeModels] = useState(false);
+  const [deleteButtonText, setDeleteButtonText] = useState("Delete Demo Models");
+  const [userModels, setUserModels] = useState(0);
   const [selectedCustomModels, setSelectedCustomModels] = useState([]);
   const [dummyData, setDummyData] = useState([
     {
-      image_id: "01066_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
+      modelImageName: "01066_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
     },
     {
-      image_id: "00035_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+      modelImageName: "00035_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
     },
     {
-      image_id: "00071_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+      modelImageName: "00071_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
     },
     {
-      image_id: "00373_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+      modelImageName: "00373_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
     },
     {
-      image_id: "00814_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+      modelImageName: "00814_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
     },
     {
-      image_id: "06206_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+      modelImageName: "06206_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
     },
   ]);
   const [customModels, setcustomModels] = useState([
@@ -193,17 +196,18 @@ const VirtualTryOn = (props) => {
 
   const callApiForModels = async (from, imageName) => {
     debugger;
+      let data;
     if (!modelsDataFromApi?.length || from === "fromSimilarProducts") {
-      const data = imageName ? imageName : DataClicked?.imageName;
+      data = imageName ? imageName : DataClicked?.imageName;
       setOpenLoader(true);
-      const getModels = await apiCall(
-        "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all/${data}`,
-        null
-      );
-      if (getModels) {
-        setModelsDataFromApi(getModels?.data);
-      }
+      // const getModels = await apiCall(
+      //   "GET",
+      //   `https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all/${data}`,
+      //   null
+      // );
+      // if (getModels) {
+      //   setModelsDataFromApi(getModels?.data);
+      // }
       let similarProductsHeaders = {
         topN: 10,
         imageName: DataClicked?.imageName,
@@ -217,6 +221,33 @@ const VirtualTryOn = (props) => {
       if (getSimilarProducts) {
         setSimilarProductsData(getSimilarProducts?.data);
       }
+    }
+    let createDataForVTOModels = {
+      modelImageName: [],
+      imageName: data,
+    }
+    setOpenLoader(true);
+    if(token?.token){
+    const getLikedModels = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/user-liked-models/user-liked-models", null, token?.token);
+    if(getLikedModels?.data?.length > 0){
+      setDummyData(getLikedModels?.data);
+      setUserModels(getLikedModels?.data?.length);
+      getLikedModels?.data?.map((item) => {
+        createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
+        setDeletePersonalizeModels(true);
+      }
+      );
+    }
+  }
+
+    dummyData?.map((item) => {
+      createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
+    })
+
+    const getModelsAccordingTOImage = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2", createDataForVTOModels, token?.token);
+    setOpenLoader(false);
+    if(getModelsAccordingTOImage){
+      setModelsDataFromApi(getModelsAccordingTOImage?.data);
     }
   };
 
@@ -256,10 +287,88 @@ const VirtualTryOn = (props) => {
     }
   };
 
-  const handleCustomModels = () => {
+  const handleCustomModels = async (e) => {
     debugger;
-    setPersonalizeModels(true);
+    if(deleteButtonText === "Done"){
+      return;
+    }
+    if(e?.target?.innerHTML === "Custom Demo Models"){
+      if(!token){
+        showToastInfo("Please login to add custom models");
+        return;
+      }
+      setPersonalizeModels(true);
+    }else{
+      if(selectedCustomModels?.length > 0){
+        if(userModels >= 6){
+          showToastInfo("You already have selected 6 custom models, Delete some to add new ones");
+          setPersonalizeModels(false);
+          return;
+        }
+        const apiCalls = selectedCustomModels.map((item) => {
+          const data = {
+            modelImageName: item?.image_id,
+            modelImageUrl: item?.url,
+          };
+          return apiCall(
+            "POST",
+            "https://smartwardrobe-backend.azurewebsites.net/user-liked-models/create",
+            data,
+            token?.token
+          );
+        });
+        setOpenLoader(true);
+        const addCustomModels = await Promise.all(apiCalls);
+        setOpenLoader(false);
+        if(addCustomModels){
+          setPersonalizeModels(false);
+          showToastInfo("Custom models added successfully");
+          let updatedData = addCustomModels.map((item) => item?.data);
+          setDummyData([...dummyData, ...updatedData]);
+          setSelectedCustomModels([]);
+        }
+      }else{
+        setPersonalizeModels(false);
+      }
+    }
   };
+
+  const handleCustomModelsDelete = async (e) => {
+    debugger;
+    if(personalizeModels){
+      return;
+    }
+
+    if(e?.target?.innerHTML === "Delete Demo Models"){
+      setDeletePersonalizeModels(true);
+      setDeleteButtonText("Done");
+      return;
+    }else{
+      // setDeletePersonalizeModels(false);
+      setDeleteButtonText("Delete Demo Models");
+    }
+
+    if(selectedCustomModels?.length > 0){
+      const apiCalls = selectedCustomModels.map((item) => {
+        return apiCall(
+          "DELETE",
+          `https://smartwardrobe-backend.azurewebsites.net/user-liked-models/delete/${item?.id}`,
+          null,
+          token?.token
+        );
+      });
+      setOpenLoader(true);
+      const deleteCustomModels = await Promise.all(apiCalls);
+      setOpenLoader(false);
+      if(deleteCustomModels?.length > 0){
+        setUserModels(userModels - deleteCustomModels?.length);
+        showToastInfo("Custom models deleted successfully");
+        let filterDummyData = dummyData.filter((item) => !selectedCustomModels.includes(item));
+        setDummyData(filterDummyData);
+        setSelectedCustomModels([]);
+      }   
+    }
+  }
 
   const handleWishlist = async (e) => {
     debugger;
@@ -386,6 +495,14 @@ const VirtualTryOn = (props) => {
               >
                 {personalizeModels ? "Done" : "Custom Demo Models"}
               </button>
+              {deletePersonalizeModels &&
+              <button
+                className="Delete-Custom-Model-button"
+                onClick={handleCustomModelsDelete}
+              >
+                {deleteButtonText} 
+              </button>
+              }
               <img
                 className="Result-Image"
                 loading="lazy"
@@ -429,10 +546,19 @@ const VirtualTryOn = (props) => {
                           <img
                             className="VTO-model--image"
                             loading="lazy"
-                            src={item?.url}
+                            src={item?.modelImageUrl}
                             alt="models_images"
                             onClick={() => changeModalOnModelClick(index)}
                           />
+                          {deleteButtonText === "Done" && 
+                          <input
+                          type="checkbox"
+                          className="custom-model-checkbox"
+                          onClick={(e) =>
+                            handleSelectCustomModelCheckbox(e, item)
+                          }
+                        />
+                          }
                         </div>
                       </div>
                     ))}
@@ -444,7 +570,7 @@ const VirtualTryOn = (props) => {
               <div className="mobile-model-image-div">
                 {dummyData?.map((item, index) => (
                   <img
-                    src={item?.url}
+                    src={item?.modelImageUrl}
                     loading="lazy"
                     alt="Product Imgae"
                     className="mobile-model-images"
@@ -465,7 +591,7 @@ const VirtualTryOn = (props) => {
                         className="product--image"
                         loading="lazy"
                         src={items?.imageUrl}
-                        alt="product image"
+                        alt="Similar_productimage"
                         onClick={() => handleSimilarProductsClick(items)}
                       />
                       <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>

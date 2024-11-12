@@ -242,6 +242,25 @@
   }
 }
 
+.Delete-Custom-Model-button {
+  position: absolute;
+  bottom: 25px;
+  right: 10px;
+  padding: 8px 12px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 2;
+  &:hover{
+    background-color: black;
+    color: white !important;
+    transform: scale(1.05);
+    border: 1px solid #cbcbcb !important;
+  }
+}
+
 .custom-model-checkbox {
   position: absolute;
   top: 10px; /* Adjust the spacing from the top */
