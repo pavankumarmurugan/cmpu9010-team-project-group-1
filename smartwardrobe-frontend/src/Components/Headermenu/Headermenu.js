@@ -880,7 +880,7 @@ useEffect(() => {
       />
       {/*  Signup/Login Modal */}
 
-      <Carousel dotPosition="left" dots={false} infinite={false} autoplay={true} autoplaySpeed={1500} style={{maxHeight:"20px"}} >
+      <Carousel dotPosition="left" dots={false} infinite={true} autoplay={true} autoplaySpeed={2500} style={{maxHeight:"20px"}} >
       <div>
         <h3 style={contentStyle}>Collaborative Chat</h3>
       </div>

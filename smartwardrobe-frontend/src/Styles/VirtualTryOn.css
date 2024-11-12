@@ -103,6 +103,9 @@
   .vto-heading {
     font-size: 20px !important;
   }
+  .Similar-Products-div .product--image{
+    height: auto;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1000px) {
