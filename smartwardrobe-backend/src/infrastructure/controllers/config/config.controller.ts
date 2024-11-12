@@ -8,9 +8,9 @@ import { ConfigUsecase } from 'src/use-cases/config/config.usecase';
 export class ConfigController {
   constructor(private configUsecase: ConfigUsecase) {}
 
-  @Get('get')
-  @ApiExcludeEndpoint()
-  async config(): Promise<IResponse<any>> {
-    return await this.configUsecase.get();
-  }
+  // @Get('get')
+  // @ApiExcludeEndpoint()
+  // async config(): Promise<IResponse<any>> {
+  //   return await this.configUsecase.get();
+  // }
 }
