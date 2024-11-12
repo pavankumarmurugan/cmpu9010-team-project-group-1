@@ -10,7 +10,7 @@ import { ConvertorsModule } from '../../core/convertors/convertors.module';
 import { UserController } from './user/user.controller';
 import { AuthController } from './auth/auth.controller';
 import { ConfigModule } from '@nestjs/config';
-// import { ProductCategoryController } from './product-category/product-category.controller';
+import { ProductCategoryController } from './product-category/product-category.controller';
 // import { ProductInventoryController } from './product-inventory/product-inventory.controller';
 import { UseCasesModule } from 'src/use-cases/use-cases.module';
 import { ProductController } from './product/product.controller';
@@ -63,7 +63,7 @@ import { UserLikedModelController } from './user-liked-models/user-liked-models.
     HealthController,
     AuthController,
     ProductController,
-    // ProductCategoryController,
+    ProductCategoryController,
     // ProductInventoryController,
     CartItemController,
     CartController,
