@@ -33,6 +33,8 @@ import { VtoImageSearchEntity } from 'src/core/entities/vto/vto.entity';
 import { VtoImageSearchModel } from './model/vto.model';
 import { UserLikedModelsEntity } from 'src/core/entities/user-liked-model/user-liked-model.entity';
 import { UserLikedModels } from './model/user-liked-models';
+import { ProductSubcategoryEntity } from 'src/core/entities/product-subcategory/product-subcategory.entity';
+import { ProductSubcategoryModel } from './model/product-subcategory.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -51,6 +53,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   groupMembers: IGenericRepository<GroupMembersEntity>;
   vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
   userLikedModel: IGenericRepository<UserLikedModelsEntity>;
+  productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -83,6 +86,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private vtoImageSearchRepository: Repository<VtoImageSearchEntity>,
     @InjectRepository(UserLikedModels)
     private userLikedModelRepository: Repository<UserLikedModelsEntity>,
+    @InjectRepository(ProductSubcategoryModel)
+    private productSubcategoryRepository: Repository<ProductSubcategoryEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -121,5 +126,9 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     this.userLikedModel = new SQLGenericRepository<UserLikedModelsEntity>(
       this.userLikedModelRepository,
     );
+    this.productSubcategory =
+      new SQLGenericRepository<ProductSubcategoryEntity>(
+        this.productSubcategoryRepository,
+      );
   }
 }

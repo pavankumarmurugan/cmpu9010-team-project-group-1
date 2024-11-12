@@ -50,4 +50,7 @@ export class ProductModel extends BaseModel {
 
   @Column({ name: 'trail', default: true, nullable: true })
   readonly trail?: boolean;
+
+  @Column({ name: 'category', nullable: true })
+  readonly category?: string;
 }

@@ -15,4 +15,5 @@ export class ProductEntity extends BaseEntity {
   readonly price?: number;
   readonly imageUrl?: string;
   readonly trail?: boolean;
+  readonly category?: string;
 }
