@@ -15,15 +15,14 @@ CREATE TABLE "user" (
 );
 
 
-  CREATE TABLE `product_category` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
-  `desc` TEXT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  `deleted_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`)
-  );
+CREATE TABLE product_category (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP
+);
 
 
 CREATE TABLE `product_inventory` (
@@ -36,7 +35,7 @@ CREATE TABLE `product_inventory` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_product_inventory_on_product_id`
     FOREIGN KEY (`product_id`)
-    REFERENCES `smartwardrobe`.`product` (`id`)
+    REFERENCES `public`.`product` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -70,6 +69,7 @@ CREATE TABLE products (
     color_shade VARCHAR(50) NULL,
     material VARCHAR(100) NULL,
     occasion VARCHAR(100) NULL,
+    category VARCHAR(100),
     applicable_season VARCHAR(100) NULL,
     description TEXT NULL,
     price NUMERIC(10, 2) CHECK (price >= 0) NULL,
@@ -78,6 +78,9 @@ CREATE TABLE products (
     "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NULL
 );
+
+ ALTER TABLE products
+ADD COLUMN category VARCHAR(100);
 
 CREATE TABLE public."cart" (
   "id" SERIAL PRIMARY KEY,
@@ -109,7 +112,7 @@ EXECUTE FUNCTION create_cart_after_user_insert();
 
 
 
-CREATE TABLE "smartwardrobe"."cart_item" (
+CREATE TABLE "public"."cart_item" (
   "id" SERIAL PRIMARY KEY,
   "cart_id" INT NULL,
   "product_id" INT NULL,
@@ -118,12 +121,12 @@ CREATE TABLE "smartwardrobe"."cart_item" (
   "updated_at" TIMESTAMP NULL,
   CONSTRAINT "fk_product_id"
     FOREIGN KEY ("product_id")
-    REFERENCES "smartwardrobe"."product" ("id")
+    REFERENCES "public"."product" ("id")
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT "fk_cart_item_on_cart_id"
     FOREIGN KEY ("cart_id")
-    REFERENCES "smartwardrobe"."cart" ("id")
+    REFERENCES "public"."cart" ("id")
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );

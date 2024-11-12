@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserDtoConvertor } from './user/user-dto.convertor';
 import { AuthDtoConvertor } from './auth/auth-dto.convertor';
-// import { ProductCategoryConvertor } from './product-category/product-category.convertor';
+import { ProductCategoryConvertor } from './product-category/product-category.convertor';
 // import { ProductInventoryConvertor } from './product-inventory/product-inventory.convertor';
 import { ProductConvertor } from './product/product.convertor';
 import { CartItemConvertor } from './cart-item/cart-item.convertor';
@@ -20,7 +20,7 @@ import { UserLikedModelConverter } from './user-liked-models/user-liked-models.c
   providers: [
     UserDtoConvertor,
     AuthDtoConvertor,
-    // ProductCategoryConvertor,
+    ProductCategoryConvertor,
     // ProductInventoryConvertor,
     ProductConvertor,
     CartItemConvertor,
@@ -38,7 +38,7 @@ import { UserLikedModelConverter } from './user-liked-models/user-liked-models.c
   exports: [
     UserDtoConvertor,
     AuthDtoConvertor,
-    // ProductCategoryConvertor,
+    ProductCategoryConvertor,
     // ProductInventoryConvertor,
     ProductConvertor,
     CartItemConvertor,

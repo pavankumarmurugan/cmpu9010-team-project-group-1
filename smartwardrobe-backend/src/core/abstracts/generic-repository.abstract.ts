@@ -13,6 +13,11 @@ export abstract class IGenericRepository<T> {
     page: number,
     limit: number,
   ): Promise<{ data: T[]; total: number }>;
+  abstract getAllPaginatedWithWhere(
+    page: number,
+    limit: number,
+    where: any,
+  ): Promise<{ data: any; total: number }>;
   abstract pollForChanges(
     lastChecked: Date,
     propertyName: string,

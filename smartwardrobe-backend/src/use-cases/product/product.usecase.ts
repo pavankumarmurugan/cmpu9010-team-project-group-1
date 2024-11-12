@@ -54,7 +54,13 @@ export class ProductUsecase {
       }
 
       const { data: entities }: { data: ProductEntity[]; total: number } =
-        await this.databaseService.product.getAllPaginated(page, limit);
+        await this.databaseService.product.getAllPaginatedWithWhere(
+          page,
+          limit,
+          {
+            trail: true,
+          },
+        );
 
       const data: ProductResDto[] =
         this.productConvertor.toProductResDtoFromEntities(entities);
