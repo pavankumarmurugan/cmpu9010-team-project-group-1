@@ -12,6 +12,7 @@ import { IResponse } from 'src/core/interface/response.interface';
 import { FRIEND_REQUEST_STATUS } from 'src/infrastructure/common/enum.ts/friend-requests.enum';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { FirebaseService } from 'src/infrastructure/services/firebase/firebase.service';
+import { WebSocketGatewayService } from 'src/infrastructure/services/web-sockets/friend-requests/websocket.gateway.service';
 
 @Injectable()
 export class FriendRequestsUsecase {
@@ -19,6 +20,7 @@ export class FriendRequestsUsecase {
     private readonly databaseService: IDataServices,
     private readonly convertor: FriendRequestsConvertor,
     private readonly firebaseService: FirebaseService,
+    private websocketGateway: WebSocketGatewayService,
   ) {}
 
   async create(
@@ -54,6 +56,12 @@ export class FriendRequestsUsecase {
         data.requestId,
         'senderName',
       );
+
+      this.websocketGateway.emitToUser(receiverId, 'friendRequestCreated', {
+        senderId: userId,
+        requestId: data.requestId,
+        status: FRIEND_REQUEST_STATUS.PENDING,
+      });
 
       // await this.firebaseService.addFriendRequestNotification(
       //   data.receiverId,
@@ -159,6 +167,16 @@ export class FriendRequestsUsecase {
         user1Id: entity.senderId,
         user2Id: entity.receiverId,
       });
+
+      this.websocketGateway.emitToUser(
+        entity.senderId,
+        'friendRequestUpdated',
+        {
+          receiverId: userId,
+          requestId: requestId,
+          status: FRIEND_REQUEST_STATUS.ACCEPTED, // assuming status is part of the dto
+        },
+      );
 
       // const notificationData = {
       //   content: MESSAGES.FIREBASE.FRIEND_REQUEST.ACCEPTED,

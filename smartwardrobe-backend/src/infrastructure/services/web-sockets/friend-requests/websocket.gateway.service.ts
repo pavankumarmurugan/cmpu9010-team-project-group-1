@@ -49,6 +49,19 @@ export class WebSocketGatewayService
     this.logger.log(`User ${userId} joined chat room: ${roomId}`);
   }
 
+  @SubscribeMessage('joinNotificationRoom')
+  handleJoinNotificationRoom(
+    @MessageBody() data: { userId: number },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { userId } = data;
+    const notificationRoom = `user_${userId}`;
+    client.join(notificationRoom);
+    this.logger.log(
+      `User ${userId} joined notification room: ${notificationRoom}`,
+    );
+  }
+
   /**
    * Handle user joining a group chat room.
    * Group chat rooms are identified by `group_{groupId}`.

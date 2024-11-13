@@ -9,6 +9,7 @@ import { ImageClusterEntity } from '../entities/image-cluster/image-cluster.enti
 import { LikesEntity } from '../entities/likes/likes.entity';
 import { ProductCategoryEntity } from '../entities/product-category/product-category.entity';
 import { ProductInventoryEntity } from '../entities/product-inventory/product-inventory.entity';
+import { ProductSubcategoryEntity } from '../entities/product-subcategory/product-subcategory.entity';
 import { ProductEntity } from '../entities/product/product.entity';
 import { UserLikedModelsEntity } from '../entities/user-liked-model/user-liked-model.entity';
 import { UserEntity } from '../entities/user/user.entity';
@@ -31,4 +32,5 @@ export abstract class IDataServices {
   abstract groupMembers: IGenericRepository<GroupMembersEntity>;
   abstract vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
   abstract userLikedModel: IGenericRepository<UserLikedModelsEntity>;
+  abstract productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
 }
