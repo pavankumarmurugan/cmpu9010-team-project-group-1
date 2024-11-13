@@ -94,4 +94,44 @@ describe('VtoImageSearchController (e2e)', () => {
     expect(response.body).toHaveProperty('data');
     expect(response.body.data).toEqual([]);
   });
+
+  it('/vto-image-search/get-all-v2 (POST) - should return VTO images for provided model and main images', async () => {
+    const requestPayload = {
+      modelImageName: [
+        '01066_00.jpg',
+        '00035_00.jpg',
+        '00071_00.jpg',
+        '00135_00.jpg',
+        '00373_00.jpg',
+        '00814_00.jpg',
+      ],
+      imageName: '00006_00.jpg',
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/vto-image-search/get-all-v2')
+      .send(requestPayload)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('data');
+    expect(Array.isArray(response.body.data)).toBe(true);
+
+    response.body.data.forEach((item) => {
+      expect(item).toHaveProperty('id');
+      expect(item).toHaveProperty('modelImageName');
+      expect(item).toHaveProperty('imageName');
+      expect(item).toHaveProperty('vtoS3Url');
+      expect(item).toHaveProperty('createdAt');
+      expect(item).toHaveProperty('updatedAt');
+
+      expect(typeof item.id).toBe('number');
+      expect(typeof item.modelImageName).toBe('string');
+      expect(typeof item.imageName).toBe('string');
+      expect(typeof item.vtoS3Url).toBe('string');
+      expect(typeof item.createdAt).toBe('string');
+      if (item.updatedAt !== null) {
+        expect(typeof item.updatedAt).toBe('string');
+      }
+    });
+  });
 });
