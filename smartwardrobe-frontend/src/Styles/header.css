@@ -195,7 +195,7 @@
 .HomeShoppingCollectioncollection-buttons {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: 1rem;
     justify-content: center; 
     margin-bottom: 50px;
 }

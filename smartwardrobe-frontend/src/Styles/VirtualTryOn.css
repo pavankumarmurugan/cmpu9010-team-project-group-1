@@ -103,6 +103,9 @@
   .vto-heading {
     font-size: 20px !important;
   }
+  .Similar-Products-div .product--image{
+    height: auto;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1000px) {
@@ -130,7 +133,8 @@
     margin-top: 10px;
     object-fit: fill;
     margin-right: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
+    position: relative;
   }
   .Mobile-models-div {
     display: block !important;
@@ -139,10 +143,21 @@
     display: flex;
     flex-direction: row;
     overflow: auto;
-    max-height: 200px;
+    /* max-height: 200px; */
     max-width: 100%;
     /* margin-left: 10px; */
     scrollbar-width: none;
+  }
+  .Select-Custom-Model-button{
+    font-size: 10px !important;
+  }
+  .Similar-Products-Images{
+    padding: 0px !important;
+  }
+  .similar-products-heading{
+    font-size: 24px !important;
+    padding-left: 15px !important;
+    padding-bottom: 10px !important;
   }
 }
 
@@ -265,5 +280,16 @@
   position: absolute;
   top: 10px; /* Adjust the spacing from the top */
   right: 15px; /* Adjust the spacing from the right */
+  z-index: 1; /* Ensure it appears above the image */
+}
+
+.mobile-custom-models-container{
+  position: relative;
+}
+
+.custom-model-checkbox-mobile {
+  position: absolute;
+  top: 20px; /* Adjust the spacing from the top */
+  right: 35px; /* Adjust the spacing from the right */
   z-index: 1; /* Ensure it appears above the image */
 }

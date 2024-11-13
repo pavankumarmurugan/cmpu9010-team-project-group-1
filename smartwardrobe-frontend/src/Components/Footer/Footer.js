@@ -6,7 +6,7 @@ function Footer() {
     <div className="footer">
       <div className="top">
         <div>
-          <h1>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
+          <h2>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h2>
         </div>
         {/* <div>
           <a href="/" aria-label="Visit our Facebook page">
@@ -26,26 +26,26 @@ function Footer() {
       <div className="bottom">
         <div>
           <h3>Store</h3>
-          <a href="/">New In</a>
-          <a href="/">Men Clothing</a>
-          <a href="/">Women Clothing</a>
-          <a href="/">Footwear</a>
-          <a href="/">Accessories</a>
+          <a>New In</a>
+          <a>Men Clothing</a>
+          <a>Women Clothing</a>
+          <a>Footwear</a>
+          <a>Accessories</a>
         </div>
         <div>
           <h3>Information</h3>
-          <a href="/">About us</a>
-          <a href="/">Privacy policy</a>
-          <a href="/">Terms and conditions</a>
-          <a href="/">Careers</a>
+          <a >About us</a>
+          <a >Privacy policy</a>
+          <a >Terms and conditions</a>
+          <a >Careers</a>
         </div>
         <div>
           <h3>Get in touch</h3>
-          <a href="/">
-            Whatsapp: <u>+353894447599</u>
+          <a >
+            Whatsapp: +353894447599
           </a>
-          <a href="/">
-            Email: <u>smartwardrobe.store@gmail.com</u>
+          <a >
+            Email: smartwardrobe.store@gmail.com
           </a>
         </div>
       </div>

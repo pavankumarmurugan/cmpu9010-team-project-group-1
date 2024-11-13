@@ -106,7 +106,7 @@ export const HomeProductSection = (props) => {
             <p className="description">{item?.description}</p>
             <p className="price">{item?.price}</p>
             <p className="button-container">
-              <Button className="View-Product-Button" color="default">
+              <Button className="View-Product-Button" color="default" aria-hidden="true">
                 More Like this
               </Button>
             </p>
@@ -218,7 +218,7 @@ export const ProductPageCards = ({ data, handleTryon }) => {
               className="productspage-product--image"
               loading="lazy"
               src={item?.imageUrl}
-              alt="product image"
+              alt={item?.description.length > 70 ? item?.description.slice(0, 70) + "..." : item?.description}
               onClick={() => handleProductDetails(item)}
             />
           </div>

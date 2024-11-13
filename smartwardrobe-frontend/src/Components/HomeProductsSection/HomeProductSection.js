@@ -45,7 +45,7 @@ const HomeProductSection = (props) => { /** will remove this component when data
     >
       {props?.data?.map((items, index) => (
         <div className="card">
-        <img className="product--image" loading="lazy" src={items?.imageUrl} alt="product image" onClick={() => handleImgaeClick(items)}/>
+        <img className="product--image" loading="lazy" src={items?.imageUrl} alt={items?.description.length > 70 ? items?.description.slice(0, 70) + "..." : items?.description} onClick={() => handleImgaeClick(items)}/>
         <h3>{items?.name}</h3>
         <p className="description">{items?.type}</p>
         <p className="price">&euro;{Number(items?.price)}</p>
@@ -56,6 +56,8 @@ const HomeProductSection = (props) => { /** will remove this component when data
               color="default"
               // variant="filled"
               onClick={handleAllProducts}
+              aria-hidden="true"
+              tabindex="-1"
             >
               More Like this
             </Button>

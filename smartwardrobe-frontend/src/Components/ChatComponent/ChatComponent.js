@@ -106,7 +106,7 @@ function ChatComponent(props) {
 
     return () => {
       chatInfoRef.current = null;
-    }
+    };
   }, []);
 
   const getAllFriendandFriendRequests = async () => {
@@ -386,7 +386,7 @@ function ChatComponent(props) {
 
   const chatInfoRef = useRef(null);
 
-// Update the ref whenever chatInfo changes
+  // Update the ref whenever chatInfo changes
 
   useEffect(() => {
     debugger;
@@ -425,11 +425,10 @@ function ChatComponent(props) {
     newSocket.on("newMessage", (data) => {
       console.log("New friend message received:", data);
       console.log(chatInfoRef.current);
-        setChatInfo(chatInfoRef.current);
-        if (data?.senderId === chatInfoRef?.current?.userId) {
-          setMessages((prevMessages) => [...prevMessages, data]);
-          
-        }
+      setChatInfo(chatInfoRef.current);
+      if (data?.senderId === chatInfoRef?.current?.userId) {
+        setMessages((prevMessages) => [...prevMessages, data]);
+      }
     });
 
     // Listener for group messages
@@ -441,10 +440,33 @@ function ChatComponent(props) {
         setChatInfo(chatInfoRef.current);
         if (data?.groupId === chatInfoRef?.current?.groupId) {
           setMessages((prevMessages) => [...prevMessages, data]);
-          
         }
       }
       // Display a notification or update UI with the new group message
+    });
+
+    newSocket.emit("joinNotificationRoom", { userId });
+    console.log(
+      `User ${userId} joined their notification room user_${userId}`
+    );
+
+  // To get notifications
+
+    // Friend request event listeners
+    newSocket.on("friendRequestCreated", (data) => {
+      debugger
+      console.log("New friend request received in Chat:", data);
+      // Display a notification or update UI with new friend request
+      handleFriendRequest();
+    });
+
+    newSocket.on("friendRequestUpdated", (data) => {
+      debugger
+      console.log("Friend request updated:", data);
+      if(data.status === "accepted"){
+        getAllFriendandFriendRequests()
+      }
+      // Display a notification or update UI with friend request update
     });
 
     // Handle disconnection
@@ -457,6 +479,23 @@ function ChatComponent(props) {
       newSocket.disconnect();
     };
   }, [userId, friendIds, groupIds]); // Re-run effect when friendIds or groupIds change
+
+  const handleFriendRequest = async () => {
+    debugger;
+    setOpenLoader(true);
+    const getFriendReqList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/friend-requests/get-all-my-received-requests",
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
+    if (getFriendReqList?.data?.length > 0) {
+      setFriendReqCountToShow(getFriendReqList?.data?.length);
+      setFriendReqCount(getFriendReqList?.data);
+      setaddNewFriendorGroup("friendReq");
+    }
+  };
 
   return (
     <>

@@ -32,7 +32,10 @@ import { Input } from "antd";
 import { useLocation, useParams } from "react-router-dom";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
-import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import {
+  addToCartValueSuccess,
+  wishListValueSuccess,
+} from "../../redux/slices/HomeDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import NewChatModal from "../NewChatModal/NewChatModal";
@@ -42,9 +45,11 @@ import sizeChartImage from "../../Assets/sizeChartImage.webp";
 const ProductDetails = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  let {state} = location;
+  let { state } = location;
   const { id } = useParams();
-  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   console.log(state?.item?.imageName, "productData");
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
@@ -80,43 +85,58 @@ const ProductDetails = () => {
     }
   };
 
-  const handleWishlist = async (e,productimages) => {
+  const handleWishlist = async (e, productimages) => {
     debugger;
-    if(!token){
+    if (!token) {
       showToastInfo("Please login to add to wishlist");
       return;
     }
     let data = {
-      productId: productimages?.id
+      productId: productimages?.id,
     };
     if (e === "add") {
       setOpenLoader(true);
-      let addWishlist = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/likes/create", data, token?.token);
+      let addWishlist = await apiCall(
+        "POST",
+        "https://smartwardrobe-backend.azurewebsites.net/likes/create",
+        data,
+        token?.token
+      );
       if (addWishlist?.statusCode?.text === "Success") {
         setShowHideWishlist(false);
       }
     } else {
       setOpenLoader(true);
-      let addWishlist = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${productimages?.id}`, data, token?.token);
+      let addWishlist = await apiCall(
+        "DELETE",
+        `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${productimages?.id}`,
+        data,
+        token?.token
+      );
       if (addWishlist?.statusCode?.text === "Success") {
         setShowHideWishlist(true);
       }
     }
-    if(token?.token){
-      
-    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
+    if (token?.token) {
+      const getLikeProducts = await apiCall(
+        "GET",
+        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        null,
+        token?.token
+      );
       setOpenLoader(false);
-        if(getLikeProducts.statusCode.text === "Success"){
-          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
+      if (getLikeProducts.statusCode.text === "Success") {
+        dispatch(
+          wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length })
+        );
       }
-
     }
   };
 
   const handleAddToCart = async () => {
     debugger;
 
-    if(!token){
+    if (!token) {
       showToastInfo("Please login to add to cart");
       return;
     }
@@ -124,16 +144,20 @@ const ProductDetails = () => {
     let data = {
       productId: productimages?.id,
       quantity: quantityvalue,
-    }
+    };
     setOpenLoader(true);
-    const addToCart = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/cart-item/create", data, token?.token);
+    const addToCart = await apiCall(
+      "POST",
+      "https://smartwardrobe-backend.azurewebsites.net/cart-item/create",
+      data,
+      token?.token
+    );
     setOpenLoader(false);
     if (addToCart.statusCode.text === "Success") {
       dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
-      
     }
-  }
-  
+  };
+
   useEffect(() => {
     debugger;
     callApiForModels();
@@ -144,23 +168,33 @@ const ProductDetails = () => {
     let numberString = Number(id);
 
     // let number = parseInt(numberString);
+    setOpenLoader(true);
+    const getModels = await apiCall(
+      "GET",
+      `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`,
+      null
+    );
+    setOpenLoader(false);
+    if (getModels) {
+      console.log(getModels?.data, "details");
+      setProductImages(getModels?.data);
+    }
+    if (token?.token) {
       setOpenLoader(true);
-      const getModels = await apiCall(
+      const getLikeProducts = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`, null
+        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        null,
+        token?.token
       );
       setOpenLoader(false);
-      if (getModels) {
-        console.log(getModels?.data, 'details')
-        setProductImages(getModels?.data);
-      }
-      if(token?.token){
-        setOpenLoader(true);
-      const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
-      setOpenLoader(false);
       if (getLikeProducts) {
-        let check = getLikeProducts?.data?.find((item) => (item?.productId === numberString) || (item?.productId === productimages?.id));
-        if(check){
+        let check = getLikeProducts?.data?.find(
+          (item) =>
+            item?.productId === numberString ||
+            item?.productId === productimages?.id
+        );
+        if (check) {
           setShowHideWishlist(false);
         }
       }
@@ -170,9 +204,9 @@ const ProductDetails = () => {
   /** this is to handle tryon modal */
   const handleTryon = (data) => {
     debugger;
-    localStorage.setItem('VTOData', JSON.stringify(data));
+    localStorage.setItem("VTOData", JSON.stringify(data));
     setOpenTryOnModal(true);
-  }
+  };
 
   const handleShare = async (data) => {
     debugger;
@@ -192,9 +226,12 @@ const ProductDetails = () => {
     );
     setOpenLoader(false);
     setFriendsListForShare([...getGroupsList?.data, ...getFriendsList?.data]);
-    console.log([...getGroupsList?.data, ...getFriendsList?.data], "friendsListForShare");
+    console.log(
+      [...getGroupsList?.data, ...getFriendsList?.data],
+      "friendsListForShare"
+    );
     setShowFriendsForShare(true);
-  }
+  };
 
   const closeNewChat = () => {
     setShowFriendsForShare(false);
@@ -205,22 +242,55 @@ const ProductDetails = () => {
   };
   /** this is to handle tryon modal */
 
+  const handleButtonClick = (size) => {
+    setSelectedSize(size);
+  };
+
   return (
     <div>
-
-<Helmet>
+      <Helmet>
         <title>{productimages?.type || "Product Details"}</title>
-        <meta name="description" content={productimages?.description || "Product description goes here."} />
+        <meta
+          name="description"
+          content={
+            productimages?.description || "Product description goes here."
+          }
+        />
         {/* OpenGraph Tags */}
-        <meta property="og:title" content={productimages?.type || "Product Title"} />
-        <meta property="og:description" content={productimages?.description || "Product description goes here."} />
-        <meta property="og:image" content={productimages?.imageUrl || "default-image-url.jpg"} />
-        <meta property="og:url" content={`${window.location.origin}${location.pathname}${location.search}`} />
+        <meta
+          property="og:title"
+          content={productimages?.type || "Product Title"}
+        />
+        <meta
+          property="og:description"
+          content={
+            productimages?.description || "Product description goes here."
+          }
+        />
+        <meta
+          property="og:image"
+          content={productimages?.imageUrl || "default-image-url.jpg"}
+        />
+        <meta
+          property="og:url"
+          content={`${window.location.origin}${location.pathname}${location.search}`}
+        />
         <meta property="og:type" content="product" />
         {/* Twitter Cards */}
-        <meta name="twitter:title" content={productimages?.type || "Product Title"} />
-        <meta name="twitter:description" content={productimages?.description || "Product description goes here."} />
-        <meta name="twitter:image" content={productimages?.imageUrl || "default-image-url.jpg"} />
+        <meta
+          name="twitter:title"
+          content={productimages?.type || "Product Title"}
+        />
+        <meta
+          name="twitter:description"
+          content={
+            productimages?.description || "Product description goes here."
+          }
+        />
+        <meta
+          name="twitter:image"
+          content={productimages?.imageUrl || "default-image-url.jpg"}
+        />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
@@ -228,7 +298,7 @@ const ProductDetails = () => {
         <NewChatModal
           isShowModel={showFriendsForShare}
           closeModal={closeNewChat}
-          showSection={'ShareProductsToFriends'}
+          showSection={"ShareProductsToFriends"}
           data={null}
           friendsListForShare={friendsListForShare}
           productUrl={`${window.location.origin}${location.pathname}${location.search}`}
@@ -236,22 +306,23 @@ const ProductDetails = () => {
       )}
       {/** Virtual Tryon Component */}
 
-      {openTryOnModal && 
-      <VirtualTryOn
-      isShowModel={openTryOnModal}
-      closeModal={closeTryOnModal}
-      />}
+      {openTryOnModal && (
+        <VirtualTryOn
+          isShowModel={openTryOnModal}
+          closeModal={closeTryOnModal}
+        />
+      )}
 
       {/** Virtual Tryon Component */}
-      
+
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-        >
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
-        {/** loader code */}
+      {/** loader code */}
       <Headermenu />
       <div className="SearchedContent-div product-details-content">
         <div className="products">
@@ -275,16 +346,23 @@ const ProductDetails = () => {
                 <img
                   src={productimages?.imageUrl}
                   loading="lazy"
-                  alt="ProductImage"
+                  alt={productimages?.description?.length > 70 ? productimages?.description.slice(0, 70) + "..." : productimages?.description}
                   className="product-details-main-image"
                 />
-                <button className="product-detailsimage-top-left-button" onClick={() => handleShare(productimages)}>
+                <button
+                  className="product-detailsimage-top-left-button"
+                  onClick={() => handleShare(productimages)}
+                >
                   Share
                 </button>
-                {productimages?.trail && 
-                <button className="product-detailsimage-top-right-button" onClick={() => handleTryon(productimages)}>
-                  Try On
-                </button>}
+                {productimages?.trail && (
+                  <button
+                    className="product-detailsimage-top-right-button"
+                    onClick={() => handleTryon(productimages)}
+                  >
+                    Try On
+                  </button>
+                )}
                 {/* <button className="product-detailsimage-bottom-right-button">
                   Create Your Avatar
                 </button> */}
@@ -292,7 +370,7 @@ const ProductDetails = () => {
               <div className="Products-Details-div">
                 <div>
                   <h1>{productimages?.type}</h1>
-                  <h3>&#8364;{ Number(productimages?.price)}</h3>
+                  <h3>&#8364;{Number(productimages?.price)}</h3>
                 </div>
                 <div>
                   <div className="colour-div">
@@ -340,10 +418,17 @@ const ProductDetails = () => {
                 ))}
                 </div> */}
                     <div class="size-container">
-                      <Button className="size-options">S</Button>
-                      <Button className="size-options">M</Button>
-                      <Button className="size-options">L</Button>
-                      <Button className="size-options">XL</Button>
+                      {["S", "M", "L", "XL"].map((size) => (
+                        <button
+                          key={size}
+                          className={`size-options ${
+                            selectedSize === size ? "selected" : ""
+                          }`}
+                          onClick={() => handleButtonClick(size)}
+                        >
+                          {size}
+                        </button>
+                      ))}
                     </div>
                   </div>
                   <div className="quantity-contianer">
@@ -351,6 +436,7 @@ const ProductDetails = () => {
                     <div className="quantity-input-div">
                       <Input
                         className="quantity-button"
+                        aria-label="quantity"
                         prefix={
                           <RiSubtractFill
                             onClick={(e) => handleQuantityChange("sub")}
@@ -376,7 +462,7 @@ const ProductDetails = () => {
                             height: "25px",
                             cursor: "pointer",
                           }}
-                          onClick={() => handleWishlist("add",productimages)}
+                          onClick={() => handleWishlist("add", productimages)}
                         />
                         <p className="wishlist-text">Add to Wishlist</p>
                       </>
@@ -388,14 +474,18 @@ const ProductDetails = () => {
                             height: "25px",
                             cursor: "pointer",
                           }}
-                          onClick={() => handleWishlist("remove",productimages)}
+                          onClick={() =>
+                            handleWishlist("remove", productimages)
+                          }
                         />
                         <p className="wishlist-text">Remove from Wishlist</p>
                       </>
                     )}
                   </div>
                   <div className="cart-buttons-div">
-                    <Button className="cart-button" onClick={handleAddToCart}>ADD TO CART</Button>
+                    <Button className="cart-button" onClick={handleAddToCart}>
+                      ADD TO CART
+                    </Button>
                     <Button className="buy-button">BUY NOW</Button>
                   </div>
                 </div>
@@ -410,11 +500,12 @@ const ProductDetails = () => {
                     >
                       <AccordionSummary>DESCRIPTION</AccordionSummary>
                       <AccordionDetails
-                      sx={{
-                        fontSize:"smaller",
-                        textTransform: "capitalize",
-                        letterSpacing:"0.1rem"
-                      }}>
+                        sx={{
+                          fontSize: "smaller",
+                          textTransform: "capitalize",
+                          letterSpacing: "0.1rem",
+                        }}
+                      >
                         {productimages?.description}
                       </AccordionDetails>
                     </Accordion>
@@ -429,11 +520,12 @@ const ProductDetails = () => {
                         FABRIC & HOW TO LOOK AFTER ME
                       </AccordionSummary>
                       <AccordionDetails
-                      sx={{
-                        fontSize:"smaller",
-                        textTransform: "capitalize",
-                        letterSpacing:"0.1rem"
-                      }}>
+                        sx={{
+                          fontSize: "smaller",
+                          textTransform: "capitalize",
+                          letterSpacing: "0.1rem",
+                        }}
+                      >
                         {`${productimages?.material} Wash in cold water, tumble dry low, and iron as needed for best care.`}
                       </AccordionDetails>
                     </Accordion>
@@ -446,11 +538,12 @@ const ProductDetails = () => {
                     >
                       <AccordionSummary>SIZE GUIDE</AccordionSummary>
                       <AccordionDetails
-                      sx={{
-                        fontSize:"smaller",
-                        textTransform: "capitalize",
-                        letterSpacing:"0.1rem"
-                      }}>
+                        sx={{
+                          fontSize: "smaller",
+                          textTransform: "capitalize",
+                          letterSpacing: "0.1rem",
+                        }}
+                      >
                         <img src={sizeChartImage} alt="size chart" />
                       </AccordionDetails>
                     </Accordion>

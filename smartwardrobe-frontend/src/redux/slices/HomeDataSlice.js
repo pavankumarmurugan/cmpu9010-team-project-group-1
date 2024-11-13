@@ -5,6 +5,7 @@ const HomeDataSlice = createSlice({
   initialState: {
     homeData: [],
     headerSearchValue:"",
+    categoryValue:"",
     wishListValue:0,
     cartValue:0,
     user: null,
@@ -31,9 +32,14 @@ const HomeDataSlice = createSlice({
       state.user = action.payload;
       state.error = null;
     },
+    categoryValueSuccess: (state, action) => {
+      state.categoryValue = action.payload.categoryValue;
+      state.user = action.payload;
+      state.error = null;
+    },
   },
 });
 
-export const { homeDataSuccess, headerSearchValueSuccess, wishListValueSuccess, addToCartValueSuccess } = HomeDataSlice.actions;
+export const { homeDataSuccess, headerSearchValueSuccess, wishListValueSuccess, addToCartValueSuccess, categoryValueSuccess } = HomeDataSlice.actions;
 
 export default HomeDataSlice.reducer;
