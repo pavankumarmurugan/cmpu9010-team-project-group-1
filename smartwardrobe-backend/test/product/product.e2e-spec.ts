@@ -159,4 +159,53 @@ describe('ProductController (e2e)', () => {
     expect(response.body.data).toHaveProperty('imageUrl');
     expect(response.body.data).toHaveProperty('trail');
   });
+
+  it('/product/get-all-v2/:page/:limit/:category/:type (GET) - should return filtered products by category and type', async () => {
+    const page = 1;
+    const limit = 10;
+    const category = 'Ladieswear';
+    const type = 'T-shirt';
+
+    const response = await request(app.getHttpServer())
+      .get(`/product/get-all-v2/${page}/${limit}/${category}/${type}`)
+      .expect(200);
+
+    expect(response.body).toHaveProperty('data');
+    expect(Array.isArray(response.body.data)).toBe(true);
+
+    expect(response.body.data.length).toBeLessThanOrEqual(limit);
+
+    response.body.data.forEach((product) => {
+      expect(product).toHaveProperty('id');
+      expect(product).toHaveProperty('imageName');
+      expect(product).toHaveProperty('name');
+      expect(product).toHaveProperty('type', 'T-shirt');
+      expect(product).toHaveProperty('category', 'Ladieswear');
+      expect(product).toHaveProperty('pattern');
+      expect(product).toHaveProperty('color');
+      expect(product).toHaveProperty('colorShade');
+      expect(product).toHaveProperty('material');
+      expect(product).toHaveProperty('occasion');
+      expect(product).toHaveProperty('applicableSeason');
+      expect(product).toHaveProperty('description');
+      expect(product).toHaveProperty('price');
+      expect(product).toHaveProperty('imageUrl');
+      expect(product).toHaveProperty('trail');
+
+      // Verify data types for each property
+      expect(typeof product.id).toBe('number');
+      expect(typeof product.imageName).toBe('string');
+      expect(typeof product.name).toBe('string');
+      expect(typeof product.pattern).toBe('string');
+      expect(typeof product.color).toBe('string');
+      expect(typeof product.colorShade).toBe('string');
+      expect(typeof product.material).toBe('string');
+      expect(typeof product.occasion).toBe('string');
+      expect(typeof product.applicableSeason).toBe('string');
+      expect(typeof product.description).toBe('string');
+      expect(typeof product.price).toBe('string');
+      expect(typeof product.imageUrl).toBe('string');
+      expect(typeof product.trail).toBe('boolean');
+    });
+  });
 });
