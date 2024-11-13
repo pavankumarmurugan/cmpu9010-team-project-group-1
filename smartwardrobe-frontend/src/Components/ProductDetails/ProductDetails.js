@@ -346,7 +346,7 @@ const ProductDetails = () => {
                 <img
                   src={productimages?.imageUrl}
                   loading="lazy"
-                  alt="ProductImage"
+                  alt={productimages?.description?.length > 70 ? productimages?.description.slice(0, 70) + "..." : productimages?.description}
                   className="product-details-main-image"
                 />
                 <button
@@ -436,6 +436,7 @@ const ProductDetails = () => {
                     <div className="quantity-input-div">
                       <Input
                         className="quantity-button"
+                        aria-label="quantity"
                         prefix={
                           <RiSubtractFill
                             onClick={(e) => handleQuantityChange("sub")}

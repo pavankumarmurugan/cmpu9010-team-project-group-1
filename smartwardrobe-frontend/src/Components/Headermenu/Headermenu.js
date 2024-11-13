@@ -41,6 +41,7 @@ import ChatComponent from "../ChatComponent/ChatComponent";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import {
   addToCartValueSuccess,
+  categoryValueSuccess,
   headerSearchValue,
   headerSearchValueSuccess,
   wishListValueSuccess,
@@ -78,6 +79,7 @@ function Headermenu() {
   const [openChatComponent, setOpenChatComponent] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [categoryData, setCategoryData] = useState([]);
   const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
   const wishListValue = useSelector((state) => state.homeData.wishListValue);
   const cartValue = useSelector((state) => state.homeData.cartValue);
@@ -178,6 +180,29 @@ useEffect(() => {
 
     }
     // Display a notification or update UI with the new group message
+  });
+
+  
+  newSocket.emit("joinNotificationRoom", { userId });
+  console.log(
+    `User ${userId} joined their notification room user_${userId}`
+  );
+
+  // To get notifications
+
+  // Friend request event listeners
+  newSocket.on("friendRequestCreated", (data) => {
+  console.log("New friend request received:", data);
+  // Display a notification or update UI with new friend request
+  showToastInfo("You have a new friend request.");
+  });
+
+  newSocket.on("friendRequestUpdated", (data) => {
+  console.log("Friend request updated:", data);
+  // Display a notification or update UI with friend request update
+  showToastInfo(
+    `Your friend request status with user ${data.receiverId} is now ${data.status}`
+  );
   });
 
   // Handle disconnection
@@ -577,89 +602,219 @@ useEffect(() => {
   const menuData = [
     {
       label: "Women",
-      key: "Women",
+      key: "Ladieswear",
       children: [
-        { label: "Dress", key: "Women Dress" },
-        { label: "Tops", key: "Women Tops" },
-        { label: "Bottoms", key: "Women Bottoms" },
-        { label: "Skirts", key: "Women Skirts" },
-        { label: "Pants", key: "Women Pants" },
-        { label: "Trousers", key: "Women Trousers" },
-        { label: "Outwear", key: "Women Outwear" },
+        // Define children for the Footwear category
+        {
+          label: "Dress",
+          key: "Ladieswear//Dress",
+        },
+        {
+          label: "Top",
+          key: "Ladieswear Tops submenu",
+          children: [
+            { label: "T-shirt", key: "Ladieswear//T-shirt" },
+            { label: "Long-sleeve top", key: "Ladieswear//Long-sleeve top" },
+            { label: "Crop top and skirt", key: "Ladieswear//Crop top and skirt" },
+            { label: "Tank top", key: "Ladieswear//Tank top" },
+            { label: "Vest top", key: "Ladieswear//Vest top" },
+            { label: "Casual top", key: "Ladieswear//Casual top" },
+          ],
+        },
+        {
+          label: "Bottoms",
+          key: "Ladieswear Bottoms submenu",
+          children: [
+            { label: "Outdoor trousers", key: "Ladieswear//Outdoor trousers" },
+            { label: "Skirt", key: "Ladieswear//Skirt" },
+            { label: "Shorts", key: "Ladieswear//Shorts" },
+            { label: "Pyjama bottom", key: "Ladieswear//Pyjama bottom" },
+            { label: "Swimwear bottom", key: "Ladieswear//Swimwear bottom" },
+          ],
+        },
+        {
+          label: "Outwear",
+          key: "Ladieswear Outdoor submenu",
+          children: [
+            { label: "Jacket", key: "Ladieswear//Jacket" },
+            { label: "Waistcoat", key: "Ladieswear//Outdoor Waistcoat" },
+            { label: "Trousers", key: "Ladieswear//Outdoor trousers" },
+            { label: "Cardigan", key: "Ladieswear//Cardigan" },
+          ],
+        },
+        {
+          label: "Footwear",
+          key: "Ladieswear Footwear submenu",
+          children: [
+            { label: "Boots", key: "Ladieswear//Boots" },
+            { label: "Flat shoes", key: "Ladieswear//Flat shoes" },
+            { label: "Heels", key: "Ladieswear//Heels" },
+            { label: "Heeled sandals", key: "Ladieswear//Heeled sandals" },
+            { label: "Sneakers", key: "Ladieswear//Sneakers" },
+          ],
+        },
+        {
+          label: "Accessories",
+          key: "Ladieswear Accessories submenu",
+          children: [
+            { label: "Bag", key: "Ladieswear//Bag" },
+            { label: "Earrings", key: "Ladieswear//Earrings" },
+            { label: "Ring", key: "Ladieswear//Ring" },
+            { label: "Bracelet", key: "Ladieswear//Bracelet" },
+            { label: "Hair clip", key: "Ladieswear//Hair clip" },
+            { label: "Belt", key: "Ladieswear//Belt" },
+            { label: "Sunglasses", key: "Ladieswear//Sunglasses"},
+          ],
+        },
+        
       ],
     },
     {
       label: "Men",
-      key: "Men",
+      key: "Menswear",
       children: [
-        { label: "T-Shirts", key: "Men T-Shirts" },
-        { label: "Shirts", key: "Men Shirts" },
-        { label: "Jeans", key: "Men Jeans" },
-        { label: "Chinos", key: "Men Chinos" },
-        { label: "Trousers", key: "Men Trousers" },
-        { label: "Cargo", key: "Men Cargo" },
-        { label: "Shorts", key: "Men Shorts" },
-        { label: "Suits & Blazers", key: "Men Suits & Blazers" },
+        {
+          label: "Top",
+          key: "Menswear Tops submenu",
+          children: [
+            { label: "T-shirt", key: "Menswear//T-shirt" },
+            { label: "Shirt", key: "Menswear//Shirt" },
+            { label: "Polo Shirt", key: "Menswear//Polo shirt" },
+            { label: "Hoodie", key: "Menswear//Hoodie" },
+            { label: "Sweater", key: "Menswear//Sweater" },
+            { label: "Vest top", key: "Menswear//Vest top" },
+          ],
+        },
+        {
+          label: "Bottoms",
+          key: "Menswear Bottoms submenu",
+          children: [
+            { label: "Trousers", key: "Menswear//Trousers" },
+            { label: "Shorts", key: "Menswear//Shorts" },
+            { label: "Pyjama", key: "Menswear//Pyjama bottom" },
+            { label: "Swimwear bottom", key: "Menswear//Swimwear bottom" },
+          ],
+        },
+        {
+          label: "Outwear",
+          key: "Menswear Outdoor submenu",
+          children: [
+            { label: "Jacket", key: "Menswear//Jacket" },
+            { label: "Waistcoat", key: "Menswear//Outdoor Waistcoat" },
+            { label: "Blazer", key: "Menswear//Blazer" },
+            { label: "Cardigan", key: "Menswear//Cardigan" },
+          ],
+        },
+        {
+          label: "Footwear",
+          key: "Menswear Footwear submenu",
+          children: [
+            { label: "Sneakers", key: "Menswear//Sneakers" },
+            { label: "Boots", key: "Menswear//Boots" },
+            { label: "Slippers", key: "Menswear//Slippers" },
+          ],
+        },
+        {
+          label: "Accessories",
+          key: "Menswear Accessories submenu",
+          children: [
+            { label: "Bag", key: "Menswear//Bag" },
+            { label: "Cross-body bag", key: "Menswear//Cross-body bag" },
+            { label: "Cap", key: "Menswear//Cap" },
+            { label: "Sunglasses", key: "Menswear//Sunglasses" },
+            { label: "Watch", key: "Menswear//Watch" },
+            { label: "Belt", key: "Menswear//Belt"},
+            { label: "Wallet", key: "Menswear//Wallet"},
+            { label: "Gloves", key: "Menswear//Gloves" },
+          ],
+        },
+        
       ],
     },
     {
-      label: "Footwear",
-      key: "Footwear",
+      label: "Kids",
+      key: "Baby Children",
       children: [
-        // Define children for the Footwear category
         {
-          label: "Men Footwear",
-          key: "Men Footwear submenu",
+          label: "Clothing",
+          key: "Baby Children Tops submenu",
           children: [
-            { label: "Casual Shoes", key: "Men Casual Shoes" },
-            { label: "Formal Shoes", key: "Men Formal Shoes" },
-            { label: "Sneakers", key: "Men Sneakers" },
-            { label: "Boots", key: "Men Boots" },
+            { label: "T-shirt", key: "Baby Children//T-shirt" },
+            { label: "Shirt", key: "Baby Children//Shirt" },
+            { label: "Trousers", key: "Baby Children//Trousers" },
+            { label: "Cardigan", key: "Baby Children//Cardigan" },
+            { label: "Bodysuit", key: "Baby Children//Bodysuit" },
+            { label: "Sweater", key: "Baby Children//Sweater" },
+            { label: "Swimsuit", key: "Baby Children//Swimsuit" },
           ],
         },
         {
-          label: "Women Footwear",
-          key: "Women Footwear submenu",
+          label: "Outerwear",
+          key: "Baby Children Outerwear submenu",
           children: [
-            { label: "Heals", key: "Men Heals" },
-            { label: "Flats", key: "Men Flats" },
-            { label: "Sneakers", key: "Men Sneakers" },
-            { label: "Boots", key: "Men Boots" },
+            { label: "Jacket", key: "Baby Children//Jacket" },
+            { label: "Coat", key: "Baby Children//Coat" },
+            { label: "Outdoor trousers", key: "Baby Children//Outdoor trousers" },
+            { label: "Jumpsuit", key: "Baby Children//Jumpsuit" },
           ],
         },
+        {
+          label: "Footwear",
+          key: "Baby Children Footwear submenu",
+          children: [
+            { label: "Sneakers", key: "Baby Children//Sneakers" },
+            { label: "Boots", key: "Baby Children//Boots" },
+            { label: "Slippers", key: "Baby Children//Slippers" },
+            { label: "Pre-walkers", key: "Baby Children//Pre-walkers" },
+          ],
+        },
+        {
+          label: "Accessories",
+          key: "Baby Children Accessories submenu",
+          children: [
+            { label: "Hat", key: "Baby Children//Hat" },
+            { label: "Cap", key: "Baby Children//Cap" },
+            { label: "Sunglasses", key: "Baby Children//Sunglasses" },
+            { label: "Hair ties", key: "Baby Children//Hair ties" },
+            { label: "Hair clip", key: "Baby Children//Hair clip" },
+            { label: "Towel", key: "Baby Children//Towel" },
+            { label: "Toy", key: "Baby Children//Toy" },
+            { label: "Soft Toys", key: "Baby Children//Soft Toys" },
+          ],
+        },
+        
       ],
     },
     {
-      label: "Accessories",
-      key: "Accessories",
+      label: "Sports",
+      key: "Sport",
       children: [
-        // Define children for the Footwear category
         {
-          label: "Men Accessories",
-          key: "Men Accessories submenu",
+          label: "Clothing",
+          key: "Sport Clothing submenu",
           children: [
-            { label: "Bags", key: "Men Bags" },
-            { label: "Belts", key: "Men Belts" },
-            { label: "Wallets", key: "Men Wallets" },
-            { label: "Sunglasses", key: "Men Sunglasses" },
-            { label: "Watches", key: "Men Watches" },
-            { label: "Caps", key: "Men Caps" },
+            { label: "T-shirt", key: "Sport//T-shirt" },
+            { label: "Trousers", key: "Sport//Trousers" },
+            { label: "Shorts", key: "Sport//Shorts" },
+            { label: "Socks", key: "Sport//Socks" },
+            { label: "Swimwear bottom", key: "Sport//Swimwear bottom" },
           ],
         },
         {
-          label: "Women Footwear",
-          key: "Women Accessories submenu",
+          label: "Accessories",
+          key: "Sport Accessories submenu",
           children: [
-            { label: "Bags", key: "Women Bags" },
-            { label: "Wallets", key: "Women Wallets" },
-            { label: "Sunglasses", key: "Women Sunglasses" },
-            { label: "Watches", key: "Women Watches" },
-            { label: "Rings", key: "Women Rings" },
-            { label: "Caps", key: "Women Caps" },
+            // { label: "Cap", key: "Sport//Cap" },
+            { label: "Waterbottle", key: "Sport//Waterbottle" },
+            { label: "Giftbox", key: "Sport//Giftbox" },
+            { label: "Gloves", key: "Sport//Gloves" },
+            { label: "Other accessories", key: "Sport//Other accessories" },
           ],
         },
+        
       ],
     },
+    
   ];
   /*  header dropdown menu lists work*/
 
@@ -725,6 +880,10 @@ useEffect(() => {
   const handleDropdownClick = (value) => {
     debugger;
     console.log("Selected value:", value);
+    dispatch(categoryValueSuccess({ categoryValue: value }));
+    if(location?.pathname !== "/products"){
+    navigate("/products");
+    }
   };
 
   const handleChatComponent = () => {
@@ -764,7 +923,20 @@ useEffect(() => {
     if(token?.token){
       getWishListCount();
     }
+    // getCategoryData();
   }, []);
+
+  // const getCategoryData = async () => {
+  //   debugger;
+
+  //   const getCategories = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product-category/get-all", null, token?.token);
+
+  //   if(getCategories?.data?.length){
+  //     console.log(getCategories?.data);
+  //     localStorage.setItem("CategoryData", JSON.stringify(getCategories?.data));
+  //     setCategoryData(getCategories?.data);
+  //   }
+  // };
 
   const getWishListCount = async () => {
     debugger;
@@ -919,7 +1091,7 @@ useEffect(() => {
                 Search
                 </InputLabel>
                 <OutlinedInput
-                  id="outlined-adornment-password"
+                  label="outlined-Input"
                   type={"text"}
                   style={{ color: "white" }}
                   placeholder="What do you want?"
@@ -967,7 +1139,7 @@ useEffect(() => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  label="Password"
+                  // label="Search"
                   sx={{
                     height: 45,
                     "& label": {
@@ -1122,7 +1294,7 @@ useEffect(() => {
                       fontSize: "18px",
                     },
                   }}
-                  htmlFor="outlined-adornment-password"
+                  // htmlFor="outlined-adornment-password"
                 >
                   Search
                 </InputLabel>

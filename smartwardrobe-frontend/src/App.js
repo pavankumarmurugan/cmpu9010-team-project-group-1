@@ -126,7 +126,7 @@ function App() {
 
   return (
     <Provider store={store}>
-    <div className="App">
+    <div className="App" role="main">
       <ScrollButton />
       <Fragment>
         <BrowserRouter>

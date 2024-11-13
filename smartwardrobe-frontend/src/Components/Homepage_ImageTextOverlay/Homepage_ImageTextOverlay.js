@@ -13,9 +13,9 @@ function ImageWithTextOverlay() {
         style={styles.image}
       />
       <div style={styles.textOverlay}>
-        <h1 style={styles.text}>
+        <h2 style={styles.text}>
           Don’t just shop, shop smarter! Explore our enhanced platform now
-        </h1>
+        </h2>
       </div>
     </div>
   );
@@ -59,7 +59,8 @@ const getStyles = () => {
     text: {
       margin: 0,
       fontSize: "30px",
-      color: "white",
+      backgeoundColor: "rgba(0, 0, 0, 0.4)",
+      color: "#000000",
     },
   };
 };

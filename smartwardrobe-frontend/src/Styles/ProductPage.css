@@ -237,7 +237,8 @@
 
 .productspage-product--image {
   width: 100%;
-  /* height: 500px; */
+  height: 500px;
+  max-height: 400px;
   object-fit: cover;
   /* transition: transform 0.3s ease; */
 }
@@ -740,7 +741,7 @@
   min-height: 50px !important;
   padding: 10px;
   color: white !important;
-  background-color: gray !important;
+  background-color: #4B4B4B !important;
   letter-spacing: 0.3rem;
   border-radius: 0px !important;
   transition: 0.3s ease-in-out;

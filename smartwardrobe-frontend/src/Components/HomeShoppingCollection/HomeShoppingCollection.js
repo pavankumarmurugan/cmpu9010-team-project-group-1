@@ -480,7 +480,7 @@ function HomeShoppingCollection({ data }) {
             </Splitter.Panel>
           </Splitter> */}
 
-          <ImageList sx={{ width: "100%", height: "90vh", cursor: "pointer" }} cols={3}>
+          <ImageList sx={{ width: "100%", height: "90vh", cursor: "pointer" }} cols={3} tabindex="0">
             {itemData.map((item) => (
               <ImageListItem key={item.img}>
                 <img

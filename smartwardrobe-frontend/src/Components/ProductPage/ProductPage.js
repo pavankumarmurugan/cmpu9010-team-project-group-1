@@ -55,6 +55,7 @@ const ProductPage = () => {
   const pagination = useRef(1);
   const imagePagination = useRef(1);
   const homeData = useSelector((state) => state.homeData.homeData);
+  const categoryValue = useSelector((state) => state.homeData.categoryValue);
   const headerSearchValue = useSelector(
     (state) => state.homeData.headerSearchValue
   );
@@ -196,8 +197,10 @@ const ProductPage = () => {
   `;
 
   useEffect(() => {
+    debugger;
+    console.log("state", state);
     getProductsData();
-  }, []);
+  }, [categoryValue]);
 
   useEffect(() => {
     return () => {
@@ -220,7 +223,28 @@ const ProductPage = () => {
 
   const getProductsData = async () => {
     debugger;
-    if (headerSearchValue) {
+
+    if(categoryValue){
+      let splitValue = categoryValue.split("//");
+
+      setOpenLoader(true);
+      const response = await apiCall("GET", `https://smartwardrobe-backend.azurewebsites.net/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
+      setOpenLoader(false);
+      setLoading(false);
+      if(response?.data?.length > 0){
+        if(pagination.current === 1){
+          setProducts(response?.data);
+          setProductsDataForFilter(response?.data);
+        }else{
+          setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+          setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
+        }
+        // return;
+      }
+
+    }
+    
+    else if (headerSearchValue) {
       setFormData((prevState) => ({
         ...prevState,
         searchValue: headerSearchValue,
@@ -605,6 +629,7 @@ const ProductPage = () => {
                         variant="outlined"
                         color="neutral"
                         style={{ border: "none", borderRadius: "50%" }}
+                        aria-label="Upload Image Button"
                       >
                         <SvgIcon>
                           <svg
@@ -626,12 +651,14 @@ const ProductPage = () => {
                           accept="image/*"
                           onChange={imageUpload}
                           style={{ display: "none" }}
+                          aria-label="Upload Image"
                         />
                       </Button>
                       <IconButton aria-label="search" edge="end">
                         <SearchIcon
                           style={{ color: "black" }}
                           onClick={() => handleSearch(null)}
+                          aria-label="Search"
                         />
                       </IconButton>
                     </InputAdornment>
@@ -708,6 +735,7 @@ const ProductPage = () => {
                       height: "30px",
                     }}
                     placeholder="Price"
+                    aria-label="Price"
                     name={formData?.Price}
                     value={formData?.Price}
                     className="filterdropdowns"
@@ -758,6 +786,7 @@ const ProductPage = () => {
                           <Input
                             placeholder="From"
                             name="fromPrice"
+                            aria-label="From Price"
                             value={formData.fromPrice}
                             maxLength={4}
                             onChange={handlePriceFilter}
@@ -765,6 +794,7 @@ const ProductPage = () => {
                           <Input
                             placeholder="To"
                             name="toPrice"
+                            aria-label="To Price"
                             value={formData.toPrice}
                             maxLength={4}
                             onChange={handlePriceFilter}

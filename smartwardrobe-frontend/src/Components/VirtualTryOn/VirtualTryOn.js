@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import "../../Styles/VirtualTryOn.css";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import styled from "styled-components";
 import {
@@ -15,12 +15,14 @@ import {
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
 import Carousel from "react-multi-carousel";
-import { showToastInfo } from "../GenericToasters/GenericToasters";
+import { showToastInfo, showToastSuccess } from "../GenericToasters/GenericToasters";
 import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
 
 const VirtualTryOn = (props) => {
-  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const dispatch = useDispatch();
   let DataClicked = JSON.parse(localStorage.getItem("VTOData")) || {};
   const [disabled, setDisabled] = useState(true);
@@ -33,33 +35,41 @@ const VirtualTryOn = (props) => {
   const [similarProductsData, setSimilarProductsData] = useState([]);
   const [personalizeModels, setPersonalizeModels] = useState(false);
   const [deletePersonalizeModels, setDeletePersonalizeModels] = useState(false);
-  const [deleteButtonText, setDeleteButtonText] = useState("Delete Demo Models");
+  const [deleteButtonText, setDeleteButtonText] =
+    useState("Delete Demo Models");
   const [userModels, setUserModels] = useState(0);
   const [selectedCustomModels, setSelectedCustomModels] = useState([]);
+  const [selectedModelsUpdate, setSelectedModelsUpdate] = useState([]);
   const [dummyData, setDummyData] = useState([
     {
       modelImageName: "01066_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
     },
     {
       modelImageName: "00035_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
     },
     {
       modelImageName: "00071_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
     },
     {
       modelImageName: "00373_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
     },
     {
       modelImageName: "00814_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
     },
     {
       modelImageName: "06206_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
     },
   ]);
   const [customModels, setcustomModels] = useState([
@@ -196,18 +206,10 @@ const VirtualTryOn = (props) => {
 
   const callApiForModels = async (from, imageName) => {
     debugger;
-      let data;
+    let data;
     if (!modelsDataFromApi?.length || from === "fromSimilarProducts") {
       data = imageName ? imageName : DataClicked?.imageName;
       setOpenLoader(true);
-      // const getModels = await apiCall(
-      //   "GET",
-      //   `https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all/${data}`,
-      //   null
-      // );
-      // if (getModels) {
-      //   setModelsDataFromApi(getModels?.data);
-      // }
       let similarProductsHeaders = {
         topN: 10,
         imageName: DataClicked?.imageName,
@@ -225,28 +227,40 @@ const VirtualTryOn = (props) => {
     let createDataForVTOModels = {
       modelImageName: [],
       imageName: data,
-    }
+    };
     setOpenLoader(true);
-    if(token?.token){
-    const getLikedModels = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/user-liked-models/user-liked-models", null, token?.token);
-    if(getLikedModels?.data?.length > 0){
-      setDummyData(getLikedModels?.data);
-      setUserModels(getLikedModels?.data?.length);
-      getLikedModels?.data?.map((item) => {
-        createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
-        setDeletePersonalizeModels(true);
-      }
+    if (token?.token) {
+      const getLikedModels = await apiCall(
+        "GET",
+        "https://smartwardrobe-backend.azurewebsites.net/user-liked-models/user-liked-models",
+        null,
+        token?.token
       );
+      if (getLikedModels?.data?.length > 0) {
+        setDummyData(getLikedModels?.data);
+        setSelectedCustomModels( [ ...selectedCustomModels , ...getLikedModels?.data]);
+        setUserModels(getLikedModels?.data?.length);
+        getLikedModels?.data?.map((item) => {
+          createDataForVTOModels.modelImageName.push(
+            item?.modelImageName + ".jpg"
+          );
+          setDeletePersonalizeModels(true);
+        });
+      }
     }
-  }
 
     dummyData?.map((item) => {
       createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
-    })
+    });
 
-    const getModelsAccordingTOImage = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2", createDataForVTOModels, token?.token);
+    const getModelsAccordingTOImage = await apiCall(
+      "POST",
+      "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2",
+      createDataForVTOModels,
+      token?.token
+    );
     setOpenLoader(false);
-    if(getModelsAccordingTOImage){
+    if (getModelsAccordingTOImage) {
       setModelsDataFromApi(getModelsAccordingTOImage?.data);
     }
   };
@@ -265,47 +279,71 @@ const VirtualTryOn = (props) => {
 
   const handleSimilarProductsClick = (item) => {
     debugger;
-    setShowHideWishlist(true)
+    setShowHideWishlist(true);
     setSimilarProductsClick(item);
     setResultImage(item?.imageUrl);
     callApiForModels("fromSimilarProducts", item?.imageName);
   };
 
-  const handleSelectCustomModelCheckbox = (e, item) => {
+  const handleSelectCustomModelCheckbox = async (e, item) => {
     debugger;
 
-    if(selectedCustomModels?.length >= 6 && e.target.checked){
+    if (selectedCustomModels?.length >= 6 && e.target.checked) {
       showToastInfo("You can select only 6 custom models");
       e.target.checked = false;
       return;
     }
 
-    if(e.target.checked){
+    if (e.target.checked) {
       setSelectedCustomModels([...selectedCustomModels, item]);
-    }else{
-      setSelectedCustomModels(selectedCustomModels.filter((x) => x !== item));
+      setSelectedModelsUpdate([ ...selectedModelsUpdate , item]);
+    } else {
+      setSelectedCustomModels(selectedCustomModels.filter((x) => x.modelImageName !== item?.image_id));
+      setUserModels(userModels - 1);
+      let createDataForDeleteModel = selectedCustomModels.filter(x => x.modelImageName === item?.image_id);
+      setOpenLoader(true);
+      const deleteModel = await apiCall(
+        "DELETE",
+        `https://smartwardrobe-backend.azurewebsites.net/user-liked-models/delete/${createDataForDeleteModel[0]?.id}`,
+        null,
+        token?.token
+      );
+      if(deleteModel?.message === "SUCCESSFULLY DELETED USER LIKED MODEL"){
+        console.log(deleteModel);
+        setDummyData(dummyData.filter(x => x.id !== createDataForDeleteModel[0]?.id));
+      } 
+
+      setOpenLoader(false);
     }
   };
 
   const handleCustomModels = async (e) => {
     debugger;
-    if(deleteButtonText === "Done"){
+    if (deleteButtonText === "Done") {
       return;
     }
-    if(e?.target?.innerHTML === "Custom Demo Models"){
-      if(!token){
+    if (e?.target?.innerHTML === "Custom Demo Models") {
+      if (!token) {
         showToastInfo("Please login to add custom models");
         return;
       }
       setPersonalizeModels(true);
-    }else{
-      if(selectedCustomModels?.length > 0){
-        if(userModels >= 6){
-          showToastInfo("You already have selected 6 custom models, Delete some to add new ones");
+    } else {
+      if (selectedCustomModels?.length > 0) {
+        // if (userModels >= 6) {
+        //   showToastInfo(
+        //     "You already have selected 6 custom models, Delete some to add new ones"
+        //   );
+        //   setPersonalizeModels(false);
+        //   return;
+        // }
+
+        if(selectedModelsUpdate?.length === 0){
           setPersonalizeModels(false);
           return;
         }
-        const apiCalls = selectedCustomModels.map((item) => {
+
+        const apiCalls = selectedModelsUpdate?.map((item) => {
           const data = {
             modelImageName: item?.image_id,
             modelImageUrl: item?.url,
@@ -320,14 +358,15 @@ const VirtualTryOn = (props) => {
         setOpenLoader(true);
         const addCustomModels = await Promise.all(apiCalls);
         setOpenLoader(false);
-        if(addCustomModels){
+        if (addCustomModels) {
           setPersonalizeModels(false);
-          showToastInfo("Custom models added successfully");
+          showToastSuccess("Custom models added successfully");
           let updatedData = addCustomModels.map((item) => item?.data);
           setDummyData([...dummyData, ...updatedData]);
-          setSelectedCustomModels([]);
+          setSelectedCustomModels([...dummyData, ...updatedData]);
+          setSelectedModelsUpdate([]);
         }
-      }else{
+      } else {
         setPersonalizeModels(false);
       }
     }
@@ -335,20 +374,20 @@ const VirtualTryOn = (props) => {
 
   const handleCustomModelsDelete = async (e) => {
     debugger;
-    if(personalizeModels){
+    if (personalizeModels) {
       return;
     }
 
-    if(e?.target?.innerHTML === "Delete Demo Models"){
+    if (e?.target?.innerHTML === "Delete Demo Models") {
       setDeletePersonalizeModels(true);
       setDeleteButtonText("Done");
       return;
-    }else{
+    } else {
       // setDeletePersonalizeModels(false);
       setDeleteButtonText("Delete Demo Models");
     }
 
-    if(selectedCustomModels?.length > 0){
+    if (selectedCustomModels?.length > 0) {
       const apiCalls = selectedCustomModels.map((item) => {
         return apiCall(
           "DELETE",
@@ -360,49 +399,70 @@ const VirtualTryOn = (props) => {
       setOpenLoader(true);
       const deleteCustomModels = await Promise.all(apiCalls);
       setOpenLoader(false);
-      if(deleteCustomModels?.length > 0){
+      if (deleteCustomModels?.length > 0) {
         setUserModels(userModels - deleteCustomModels?.length);
         showToastInfo("Custom models deleted successfully");
-        let filterDummyData = dummyData.filter((item) => !selectedCustomModels.includes(item));
+        let filterDummyData = dummyData.filter(
+          (item) => !selectedCustomModels.includes(item)
+        );
         setDummyData(filterDummyData);
         setSelectedCustomModels([]);
-      }   
+      }
     }
-  }
+  };
 
   const handleWishlist = async (e) => {
     debugger;
-    if(!token){
+    if (!token) {
       showToastInfo("Please login to add to wishlist");
       return;
     }
     let data = {
-      productId: similarProductsClick?.id ? similarProductsClick?.id : DataClicked?.id
+      productId: similarProductsClick?.id
+        ? similarProductsClick?.id
+        : DataClicked?.id,
     };
     if (e === "add") {
       setOpenLoader(true);
-      let addWishlist = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/likes/create", data, token?.token);
+      let addWishlist = await apiCall(
+        "POST",
+        "https://smartwardrobe-backend.azurewebsites.net/likes/create",
+        data,
+        token?.token
+      );
       if (addWishlist?.statusCode?.text === "Success") {
         setShowHideWishlist(false);
       }
     } else {
       setOpenLoader(true);
-      let addWishlist = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${data?.productId}`, data, token?.token);
+      let addWishlist = await apiCall(
+        "DELETE",
+        `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${data?.productId}`,
+        data,
+        token?.token
+      );
       if (addWishlist?.statusCode?.text === "Success") {
         setShowHideWishlist(true);
       }
     }
     // if(token?.token){
-      
-    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
-      setOpenLoader(false);
-        if(getLikeProducts.statusCode.text === "Success"){
-          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
-      }
+
+    const getLikeProducts = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
+    if (getLikeProducts.statusCode.text === "Success") {
+      dispatch(
+        wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length })
+      );
+    }
 
     // }
   };
-  
+
   return (
     <div>
       <Backdrop
@@ -451,58 +511,61 @@ const VirtualTryOn = (props) => {
         <div className="modal-container">
           {/* <h1> </h1> */}
           <h1 className="vto-heading">
-          {!personalizeModels ? "Find your fit: choose a model and let the virtual magic begin!" : "Select your custom models"}
+            {!personalizeModels
+              ? "Find your fit: choose a model and let the virtual magic begin!"
+              : "Select your custom models"}
           </h1>
           <div className="Models-separation-div">
             <div className="model-result">
-              {showHideWishlist ? 
-              <FavoriteBorderIcon
-              className="hover-icon"
-              sx={{
-                color: "black",
-                fontSize: "40px",
-                position: "absolute",
-                top: "10px",
-                left: "10px",
-                transition: "transform 0.3s, color 0.3s",
-                "&:hover": {
-                  cursor: "pointer",
-                  transform: "scale(1.2)",
-                },
-              }}
-              onClick={() => handleWishlist("add")}
-            /> :
-            <FavoriteOutlinedIcon 
-              className="hover-icon"
-              sx={{
-                color: "black",
-                fontSize: "40px",
-                position: "absolute",
-                top: "10px",
-                left: "10px",
-                transition: "transform 0.3s, color 0.3s",
-                "&:hover": {
-                  cursor: "pointer",
-                  transform: "scale(1.2)",
-                },
-              }}
-              onClick={() => handleWishlist("remove")}
-              />
-            }
+              {showHideWishlist ? (
+                <FavoriteBorderIcon
+                  className="hover-icon"
+                  sx={{
+                    color: "black",
+                    fontSize: "40px",
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    transition: "transform 0.3s, color 0.3s",
+                    "&:hover": {
+                      cursor: "pointer",
+                      transform: "scale(1.2)",
+                    },
+                  }}
+                  onClick={() => handleWishlist("add")}
+                />
+              ) : (
+                <FavoriteOutlinedIcon
+                  className="hover-icon"
+                  sx={{
+                    color: "black",
+                    fontSize: "40px",
+                    position: "absolute",
+                    top: "10px",
+                    left: "10px",
+                    transition: "transform 0.3s, color 0.3s",
+                    "&:hover": {
+                      cursor: "pointer",
+                      transform: "scale(1.2)",
+                    },
+                  }}
+                  onClick={() => handleWishlist("remove")}
+                />
+              )}
               <button
                 className="Select-Custom-Model-button"
                 onClick={handleCustomModels}
               >
                 {personalizeModels ? "Done" : "Custom Demo Models"}
               </button>
-              {deletePersonalizeModels &&
-              <button
-                className="Delete-Custom-Model-button"
-                onClick={handleCustomModelsDelete}
-              >
-                {deleteButtonText} 
-              </button>
-              }
+              {/* {deletePersonalizeModels && (
+                <button
+                  className="Delete-Custom-Model-button"
+                  onClick={handleCustomModelsDelete}
+                >
+                  {deleteButtonText}
+                </button>
+              )} */}
               <img
                 className="Result-Image"
                 loading="lazy"
@@ -511,9 +574,6 @@ const VirtualTryOn = (props) => {
               />
             </div>
             <div className="predefined-models">
-              {/* <div className="Right-Div-heading">
-                    <h1 style={{marginBottom:"15px", marginTop:"15px"}}>Choose a Model</h1>
-                </div> */}
               <div className="Model-Images-div">
                 {personalizeModels ? (
                   <>
@@ -533,6 +593,7 @@ const VirtualTryOn = (props) => {
                             onClick={(e) =>
                               handleSelectCustomModelCheckbox(e, item)
                             }
+                            defaultChecked={dummyData?.some(data => data.modelImageName === item.image_id)}
                           />
                         </div>
                       </div>
@@ -550,15 +611,15 @@ const VirtualTryOn = (props) => {
                             alt="models_images"
                             onClick={() => changeModalOnModelClick(index)}
                           />
-                          {deleteButtonText === "Done" && 
-                          <input
-                          type="checkbox"
-                          className="custom-model-checkbox"
-                          onClick={(e) =>
-                            handleSelectCustomModelCheckbox(e, item)
-                          }
-                        />
-                          }
+                          {deleteButtonText === "Done" && (
+                            <input
+                              type="checkbox"
+                              className="custom-model-checkbox"
+                              onClick={(e) =>
+                                handleSelectCustomModelCheckbox(e, item)
+                              }
+                            />
+                          )}
                         </div>
                       </div>
                     ))}
@@ -568,14 +629,51 @@ const VirtualTryOn = (props) => {
             </div>
             <div className="Mobile-models-div">
               <div className="mobile-model-image-div">
-                {dummyData?.map((item, index) => (
-                  <img
-                    src={item?.modelImageUrl}
-                    loading="lazy"
-                    alt="Product Imgae"
-                    className="mobile-model-images"
-                  />
-                ))}
+                {!personalizeModels ? (
+                  <>
+                    {dummyData?.map((item, index) => (
+                      <div className="mobile-custom-models-container">
+                        <img
+                          src={item?.modelImageUrl}
+                          loading="lazy"
+                          alt="modelImgae"
+                          className="mobile-model-images"
+                          onClick={() => changeModalOnModelClick(index)}
+                        />
+                        {deleteButtonText === "Done" && (
+                          <input
+                          type="checkbox"
+                          className="custom-model-checkbox-mobile"
+                          onClick={(e) =>
+                            handleSelectCustomModelCheckbox(e, item)
+                          }
+                        />
+                        )}
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {customModels?.map((item, index) => (
+                      <div className="mobile-custom-models-container">
+                        <img
+                          src={item?.url}
+                          loading="lazy"
+                          alt="custommodelImgae"
+                          className="mobile-model-images"
+                          onClick={() => changeModalOnModelClick(index)}
+                        />
+                        <input
+                          type="checkbox"
+                          className="custom-model-checkbox-mobile"
+                          onClick={(e) =>
+                            handleSelectCustomModelCheckbox(e, item)
+                          }
+                        />
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
             </div>
           </div>
