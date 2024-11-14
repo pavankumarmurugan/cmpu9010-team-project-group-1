@@ -25,12 +25,12 @@
 
 ### **3. Discussion and Taks**
 
-- **Pavan:**
+- **Pavan:** Worked on designing expert interview questions, and reach out to experts.
 
 - **Osama:** Worked on the implementation of websocket on frontend for real time collaborative chat.
 
 - **Salil:** Completed integration of websockets for friend notifications. Added test cases for user apis,recommendations and vto search.
 
-- **Jiaxin:**
+- **Jiaxin:** Design experiment method and data analysis.
 
-- **Lin:**
+- **Lin:** Design user survey and qualitative question.

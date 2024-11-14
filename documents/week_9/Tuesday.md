@@ -20,16 +20,16 @@
 
 ### **2. Agenda**
 
-- Based on Brendan's suggestion, assign tasks.
+- Based on Andrea's suggestion, assign tasks.
 
 ### **3. Discussion and Taks**
 
-- **Pavan:**
+- **Pavan:** Worked on user evaluation report
 
 - **Osama:** Worked on the VTO updates, APi's are changed and also implmeneted User can save models and only those models will show on that user and user can delete from profile also.
 
 - **Salil:** Added test cases for chat, group, group members, friends, friend requests.
 
-- **Jiaxin:**
+- **Jiaxin:** Worked on user evaluation report
 
-- **Lin:**
+- **Lin:** Worked on user evaluation report

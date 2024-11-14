@@ -24,12 +24,12 @@
 
 ### **3. Discussion and Taks**
 
-- **Pavan:**
+- **Pavan:** Implement Cognitive Walkthrough and interview with test user (College). Worked on user evaluation report. 
 
 - **Osama:** Worked on Websocket implementation on friend request received,UI updates according to WCAG Guideliness.
 
 - **Salil:** Added apis for liking models by user, created a new api for vto for fetching models. Uploaded VTO product records to postgres.
 
-- **Jiaxin:**
+- **Jiaxin:** Implement Cognitive Walkthrough and interview with test user (Online). Worked on user evaluation report.
 
-- **Lin:**
+- **Lin:** Implement Cognitive Walkthrough and interview with test user (Online). Worked on user evaluation report.
