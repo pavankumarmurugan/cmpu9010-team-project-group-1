@@ -38,6 +38,7 @@ export const MESSAGES = {
   LIKES: {
     CREATE: {
       SUCCESS: 'SUCCESSFULLY ADDED LIKES',
+      ERROR: 'ALREADY LIKED',
     },
     GET: {
       SUCCESS: 'SUCCESSFULLY FETCHED LIKES',

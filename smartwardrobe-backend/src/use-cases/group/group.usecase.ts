@@ -4,6 +4,7 @@ import { GroupConvertor } from 'src/core/convertors/group/group.convertor';
 import { UserDtoConvertor } from 'src/core/convertors/user/user-dto.convertor';
 import { GroupReqDto } from 'src/core/dto/group/group.req-dto';
 import { UpdateGroupDto } from 'src/core/dto/group/group.req-update-dto';
+import { GroupResDto } from 'src/core/dto/group/group.res-dto';
 import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
 import { GroupEntity } from 'src/core/entities/group/group';
 import { UserEntity } from 'src/core/entities/user/user.entity';
@@ -52,7 +53,7 @@ export class GroupUsecase {
     }
   }
 
-  async getAll(userId: number): Promise<IResponse<GroupEntity[]>> {
+  async getAll(userId: number): Promise<IResponse<GroupResDto[]>> {
     try {
       const groupMembersEntities: GroupMembersEntity[] =
         await this.databaseService.groupMembers.getAllByProperties({ userId });
@@ -62,9 +63,9 @@ export class GroupUsecase {
           this.databaseService.group.get({ groupId }),
         ),
       );
-
-      const data: GroupEntity[] = entities.map((entity) =>
-        this.convertor.toEntity(entity),
+      const data = this.convertor.toEntityWithMembershipId(
+        entities,
+        groupMembersEntities,
       );
 
       return {

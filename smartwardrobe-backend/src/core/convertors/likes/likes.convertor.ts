@@ -34,14 +34,6 @@ export class LikesConvertor {
     };
   }
 
-  // toLikesProductModelFromDto(dto: UpdateLikesReqDto): LikesEntity {
-  //   return {
-  //     ...dto,
-  //     id: undefined,
-  //     updatedAt: new Date(),
-  //   };
-  // }
-
   toOneLikesResDtoFromProductAndLikesEntities(
     product: ProductEntity,
     entity: LikesEntity,
