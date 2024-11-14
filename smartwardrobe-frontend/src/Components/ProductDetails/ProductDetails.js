@@ -19,6 +19,7 @@ import { handleImageUpload } from "../GenericCode/GenericCode";
 import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
 import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
 import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+import Carousel from "react-multi-carousel";
 import { IoMdAdd } from "react-icons/io";
 import { RiFontSize, RiSubtractFill } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
@@ -54,14 +55,35 @@ const ProductDetails = () => {
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("S");
   const [productimages, setProductImages] = useState([]);
   const [friendsListForShare, setFriendsListForShare] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [showFriendsForShare, setShowFriendsForShare] = useState(false);
   const imageUrl = productimages[currentImage];
+  const [similarProductsData, setSimilarProductsData] = useState([]);
+  const [likeData, setLikeData] = useState([]);
   const cartValue = useSelector((state) => state.homeData.cartValue);
+
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 3000 },
+      items: 5,
+    },
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
 
   const VisuallyHiddenInput = styled("input")`
     clip: rect(0 0 0 0);
@@ -189,6 +211,7 @@ const ProductDetails = () => {
       );
       setOpenLoader(false);
       if (getLikeProducts) {
+        setLikeData(getLikeProducts?.data);
         let check = getLikeProducts?.data?.find(
           (item) =>
             item?.productId === numberString ||
@@ -197,6 +220,21 @@ const ProductDetails = () => {
         if (check) {
           setShowHideWishlist(false);
         }
+      }
+
+      setOpenLoader(true);
+      let similarProductsHeaders = {
+        topN: 10,
+        imageName: getModels?.data?.imageName,
+      };
+      const getSimilarProducts = await apiCall(
+        "POST",
+        "https://smartwardrobe-backend.azurewebsites.net/recommend/similar-products",
+        similarProductsHeaders
+      );
+      setOpenLoader(false);
+      if (getSimilarProducts) {
+        setSimilarProductsData(getSimilarProducts?.data);
       }
     }
   };
@@ -245,6 +283,43 @@ const ProductDetails = () => {
   const handleButtonClick = (size) => {
     setSelectedSize(size);
   };
+
+  const handleSimilarProductsClick = async (item) => {
+    debugger
+    setOpenLoader(true);
+    let productId = item?.id;
+    const getModels = await apiCall(
+      "GET",
+      `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${productId}`,
+      null
+    );
+    setOpenLoader(false);
+    if (getModels) {
+      console.log(getModels?.data, "details");
+      setProductImages(getModels?.data);
+    }
+    if (token?.token) {
+    setOpenLoader(true);
+      const getLikeProducts = await apiCall(
+        "GET",
+        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        null,
+        token?.token
+      );
+      setOpenLoader(false);
+      if (getLikeProducts) {
+      let check = getLikeProducts?.data?.find(
+        (item) =>
+          item?.productId === productId
+      );
+      if (check) {
+        setShowHideWishlist(false);
+      }else{
+        setShowHideWishlist(true);
+      }
+    }
+  }
+  }
 
   return (
     <div>
@@ -553,98 +628,33 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
-        {/* <div className="chat">
-          <div className="chat-content">
-            <ChatSection />
-          </div>
-
-          <div className="search-input-container">
-            <FormControl
-              sx={{ m: 1, width: "100%", maxWidth: "800px" }}
-              variant="outlined"
-            >
-              <InputLabel
-                sx={{
-                  color: "black",
-                  letterSpacing: "normal",
-                  textTransform: "capitalize",
-                  "&.Mui-focused": {
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
-                htmlFor="outlined-adornment-password"
-              >
-                Search
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={"text"}
-                style={{ width: "100%", backgroundColor: "#e9ecef" }}
-                className="productsearch-input"
-                autoComplete="off"
-                endAdornment={
-                  <InputAdornment position="end">
-                    <Button
-                      component="label"
-                      role={undefined}
-                      tabIndex={-1}
-                      variant="outlined"
-                      color="neutral"
-                      style={{
-                        border: "none",
-                        width: "10px",
-                        borderRadius: "50%",
-                      }}
-                      startDecorator={
-                        <SvgIcon>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                            />
-                          </svg>
-                        </SvgIcon>
-                      }
-                    >
-                      <VisuallyHiddenInput
-                        type="file"
-                        onChange={imageUpload}
+       
+        {similarProductsData?.length > 0 && (
+            <div className="Similar-Products-div">
+              <h3 className="similar-products-heading-deatils">SIMILAR PRODUCTS</h3>
+              <div className="Similar-Products-Images">
+                <Carousel responsive={responsive} autoPlaySpeed={1500}>
+                  {similarProductsData?.map((items, index) => (
+                    <div className="card">
+                      <img
+                        className="product--image"
+                        loading="lazy"
+                        src={items?.imageUrl}
+                        alt="Similar_productimage"
+                        onClick={() => handleSimilarProductsClick(items)}
                       />
-                    </Button>
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      edge="end"
-                    >
-                      <SearchIcon style={{ color: "black" }} />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                sx={{
-                  height: "50px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "transparent",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.5)",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "black",
-                    borderWidth: "2px",
-                  },
-                }}
-              />
-            </FormControl>
-          </div>
-        </div> */}
+                      <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>
+                      <p className="description">{items?.type}</p>
+                      <p className="price" style={{ fontSize: "15px" }}>
+                        {items?.price}
+                      </p>
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
+            </div>
+          )}
+
       </div>
       <Footer />
     </div>

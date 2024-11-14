@@ -2,6 +2,7 @@ import { showToastError, showToastSuccess } from "../GenericToasters/GenericToas
 
 const apiCall = async (method = "GET", url, data = null, token = null) => {
   try {
+    debugger
     const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
     const options = {
@@ -20,7 +21,9 @@ const apiCall = async (method = "GET", url, data = null, token = null) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      showToastError(errorData?.message || response.statusText);
+      if(errorData?.message !== "USER ALREADY LIKED THIS MODEL"){
+        showToastError(errorData?.message || response.statusText);
+      }
       return errorData;
     }
 

@@ -51,6 +51,7 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import CartComponent from "../CartComponent/CartComponent";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import Profile from "../Profile/Profile";
 
 const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
 
@@ -78,6 +79,7 @@ function Headermenu() {
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
   const [openChatComponent, setOpenChatComponent] = useState(false);
   const [openCart, setOpenCart] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [categoryData, setCategoryData] = useState([]);
   const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
@@ -168,7 +170,7 @@ useEffect(() => {
   newSocket.on("newMessage", (data) => {
     console.log("New friend message received:", data);
     if(data?.senderId !== userId){
-    showToastInfo('New friend message received');
+    showToastInfo('Message received');
     }
   });
 
@@ -194,7 +196,7 @@ useEffect(() => {
   newSocket.on("friendRequestCreated", (data) => {
   console.log("New friend request received:", data);
   // Display a notification or update UI with new friend request
-  showToastInfo("You have a new friend request.");
+  showToastInfo("Friend request received.");
   });
 
   newSocket.on("friendRequestUpdated", (data) => {
@@ -300,18 +302,20 @@ useEffect(() => {
             <IoSearch className="icons" />
             Home
           </a>
-          <a href="#" className="item">
+          <a href="/wishlist" className="item">
             <CiBookmark className="icons" />
             Collections
           </a>
-          <a href="#" className="item">
-            <MdFavoriteBorder className="icons" />
-            Favorites
-          </a>
-          <a href="#" className="item">
-            <MdOutlineShoppingBag className="icons" />
-            Cart
-          </a>
+          <div 
+  className="item" 
+  onClick={() => {
+    // Your custom onClick function logic here
+    handleCartComponent();
+  }}
+>
+  <MdOutlineShoppingBag className="icons" />
+  Cart
+</div>
         </div>
       </List>
       <List>
@@ -827,7 +831,10 @@ useEffect(() => {
       localStorage.removeItem("user");
       navigate("/");
       window.location.reload();
-    } else {
+    } else if(e.key === "2"){
+      setOpenProfile(true);
+    }
+    else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
     }
@@ -896,6 +903,10 @@ useEffect(() => {
   const CloseChatComponent = () => {
     setOpenChatComponent(!openChatComponent);
     fetchFriendAndGroupIds();
+  };
+
+  const CloseProfileComponent = () => {
+    setOpenProfile(!openProfile);
   };
 
   /** handle dropdown click */
@@ -1033,6 +1044,15 @@ useEffect(() => {
 
       {/*  drawer work*/}
 
+      {/*  Profile component */}
+      {openProfile &&
+      <Profile
+        isShowModel={openProfile}
+        closeModal={CloseProfileComponent}
+      />}
+
+      {/*  Profile component */}
+
       {/*  Chat component */}
       {openChatComponent &&
       <ChatComponent
@@ -1094,7 +1114,7 @@ useEffect(() => {
                   label="outlined-Input"
                   type={"text"}
                   style={{ color: "white" }}
-                  placeholder="What do you want?"
+                  placeholder="Search"
                   value={searchValue}
                   onChange={onChangeSearchValue}
                   onKeyDown={handleKeyDown}
@@ -1169,7 +1189,7 @@ useEffect(() => {
               <StyledBadge
                 badgeContent={wishListValue}
                 anchorOrigin={{
-                  vertical: "top",
+                  vertical: "bottom",
                   horizontal: "right",
                 }}
               >
