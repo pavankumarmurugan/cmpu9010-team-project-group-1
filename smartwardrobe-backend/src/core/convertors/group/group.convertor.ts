@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { GroupReqDto } from 'src/core/dto/group/group.req-dto';
 import { UpdateGroupDto } from 'src/core/dto/group/group.req-update-dto';
+import { GroupResDto } from 'src/core/dto/group/group.res-dto';
+import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
 import { GroupEntity } from 'src/core/entities/group/group';
 import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
 
@@ -32,5 +34,20 @@ export class GroupConvertor {
     return {
       ...entity,
     };
+  }
+
+  toEntityWithMembershipId(
+    entities: GroupModel[],
+    groupMembersEntities: GroupMembersEntity[],
+  ): GroupResDto[] {
+    return entities.map((entity) => {
+      const membershipId = groupMembersEntities.find(
+        (groupMember) => groupMember.groupId === entity.groupId,
+      ).membershipId;
+      return {
+        ...entity,
+        membershipId,
+      };
+    });
   }
 }
