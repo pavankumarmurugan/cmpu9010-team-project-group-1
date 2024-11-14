@@ -7,23 +7,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { SQLDataServiceModule } from 'src/infrastructure/frameworks/data-services/sql-data-services.module';
 import { ControllersModule } from 'src/infrastructure/controllers/controllers.module';
-import { RecommendationsReqDto } from 'src/core/dto/recommendations/recommendations-req-dto';
-import { CartItemModel } from 'src/infrastructure/frameworks/data-services/model/cart-items.model';
-import { CartModel } from 'src/infrastructure/frameworks/data-services/model/cart.model';
-import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
-import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
-import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
-import { GroupMembersModel } from 'src/infrastructure/frameworks/data-services/model/group-members.model';
-import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
-import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
-import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
+import { UserModel } from 'src/infrastructure/frameworks/data-services/model/user.model';
 import { ProductCategoryModel } from 'src/infrastructure/frameworks/data-services/model/product-category.model';
 import { ProductInventoryModel } from 'src/infrastructure/frameworks/data-services/model/product-inventory.model';
 import { ProductModel } from 'src/infrastructure/frameworks/data-services/model/product.model';
-import { UserModel } from 'src/infrastructure/frameworks/data-services/model/user.model';
+import { CartItemModel } from 'src/infrastructure/frameworks/data-services/model/cart-items.model';
+import { CartModel } from 'src/infrastructure/frameworks/data-services/model/cart.model';
+import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/likes.model';
+import { ChatModel } from 'src/infrastructure/frameworks/data-services/model/chat.model';
+import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
+import { FriendsRequestsModel } from 'src/infrastructure/frameworks/data-services/model/friend-request.model';
+import { FriendsModel } from 'src/infrastructure/frameworks/data-services/model/friends.model';
+import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
+import { GroupMembersModel } from 'src/infrastructure/frameworks/data-services/model/group-members.model';
 import { VtoImageSearchModel } from 'src/infrastructure/frameworks/data-services/model/vto.model';
+import * as path from 'path';
 
-describe('SearchProductsController (e2e)', () => {
+describe('SearchSimilarProductsController (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
 
@@ -84,22 +84,36 @@ describe('SearchProductsController (e2e)', () => {
     }
   });
 
-  it('/recommend/similar-products (POST) - should return similar products for a given image', async () => {
-    const requestPayload: RecommendationsReqDto = {
-      imageName: '00057_00.jpg',
-      topN: 5,
-    };
+  it('/search/get-all-similar-products-to-image/:page/:limit (POST) - should return similar products for an uploaded image and query', async () => {
+    const page = 1;
+    const limit = 10;
+    const query = "Women's navy blazer suitable for office wear";
+
+    const testImagePath = path.resolve(
+      __dirname,
+      '../../test-files/search_image.jpeg',
+    );
 
     const response = await request(app.getHttpServer())
-      .post('/recommend/similar-products')
-      .send(requestPayload)
+      .post(`/search/get-all-similar-products-to-image/${page}/${limit}`)
+      .set('accept', '*/*')
+      .set('Content-Type', 'multipart/form-data')
+      .field('query', query)
+      .attach('file', testImagePath)
       .expect(201);
 
     expect(response.body).toHaveProperty('data');
-    expect(Array.isArray(response.body.data)).toBe(true);
-    expect(response.body.data.length).toBeLessThanOrEqual(requestPayload.topN);
+    expect(response.body.data).toHaveProperty('expectedQueries');
+    expect(response.body.data).toHaveProperty('products');
 
-    response.body.data.forEach((product) => {
+    expect(Array.isArray(response.body.data.expectedQueries)).toBe(true);
+    response.body.data.expectedQueries.forEach((query) => {
+      expect(query).toHaveProperty('query');
+      expect(typeof query.query).toBe('string');
+    });
+
+    expect(Array.isArray(response.body.data.products)).toBe(true);
+    response.body.data.products.forEach((product) => {
       expect(product).toHaveProperty('id');
       expect(product).toHaveProperty('imageName');
       expect(product).toHaveProperty('name');
@@ -115,7 +129,6 @@ describe('SearchProductsController (e2e)', () => {
       expect(product).toHaveProperty('imageUrl');
       expect(product).toHaveProperty('trail');
 
-      // Check types of specific fields
       expect(typeof product.id).toBe('number');
       expect(typeof product.imageName).toBe('string');
       expect(typeof product.name).toBe('string');
