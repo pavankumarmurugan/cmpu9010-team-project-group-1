@@ -35,11 +35,45 @@ const VirtualTryOn = (props) => {
   const [similarProductsData, setSimilarProductsData] = useState([]);
   const [personalizeModels, setPersonalizeModels] = useState(false);
   const [deletePersonalizeModels, setDeletePersonalizeModels] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState('');
   const [deleteButtonText, setDeleteButtonText] =
     useState("Delete Demo Models");
   const [userModels, setUserModels] = useState(0);
   const [selectedCustomModels, setSelectedCustomModels] = useState([]);
   const [selectedModelsUpdate, setSelectedModelsUpdate] = useState([]);
+  const [apiData, setApiData] = useState([]);
+  const [duplicateDummyData, setDuplicateDummyData] = useState([
+    {
+      modelImageName: "01066_00",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
+    },
+    {
+      modelImageName: "00035_00",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+    },
+    {
+      modelImageName: "00071_00",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+    },
+    {
+      modelImageName: "00373_00",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+    },
+    {
+      modelImageName: "00814_00",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+    },
+    {
+      modelImageName: "06206_00",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+    },
+  ]);
   const [dummyData, setDummyData] = useState([
     {
       modelImageName: "01066_00",
@@ -74,76 +108,76 @@ const VirtualTryOn = (props) => {
   ]);
   const [customModels, setcustomModels] = useState([
     {
-      image_id: "00279_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00279_00.jpg",
+      modelImageName: "00279_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00279_00.jpg",
     },
     {
-      image_id: "00491_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00491_00.jpg",
+      modelImageName: "00491_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00491_00.jpg",
     },
     {
-      image_id: "00548_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00548_00.jpg",
+      modelImageName: "00548_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00548_00.jpg",
     },
     {
-      image_id: "02732_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/02732_00.jpg",
+      modelImageName: "02732_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/02732_00.jpg",
     },
     {
-      image_id: "00373_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+      modelImageName: "00373_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
     },
     {
-      image_id: "00814_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+      modelImageName: "00814_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
     },
     {
-      image_id: "03085_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/03085_00.jpg",
+      modelImageName: "03085_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/03085_00.jpg",
     },
     {
-      image_id: "00071_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+      modelImageName: "00071_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
     },
     {
-      image_id: "05576_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05576_00.jpg",
+      modelImageName: "05576_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05576_00.jpg",
     },
     {
-      image_id: "05941_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05941_00.jpg",
+      modelImageName: "05941_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05941_00.jpg",
     },
     {
-      image_id: "06206_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+      modelImageName: "06206_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
     },
     {
-      image_id: "08137_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08137_00.jpg",
+      modelImageName: "08137_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08137_00.jpg",
     },
     {
-      image_id: "08151_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08151_00.jpg",
+      modelImageName: "08151_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08151_00.jpg",
     },
     {
-      image_id: "09958_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/09958_00.jpg",
+      modelImageName: "09958_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/09958_00.jpg",
     },
     {
-      image_id: "10228_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/10228_00.jpg",
+      modelImageName: "10228_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/10228_00.jpg",
     },
     {
-      image_id: "01066_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
+      modelImageName: "01066_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
     },
     {
-      image_id: "00035_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+      modelImageName: "00035_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
     },
     {
-      image_id: "11486_00",
-      url: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/11486_00.jpg",
+      modelImageName: "11486_00",
+      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/11486_00.jpg",
     },
   ]);
   const responsive = {
@@ -209,6 +243,7 @@ const VirtualTryOn = (props) => {
     let data;
     if (!modelsDataFromApi?.length || from === "fromSimilarProducts") {
       data = imageName ? imageName : DataClicked?.imageName;
+      setSelectedProduct(data);
       setOpenLoader(true);
       let similarProductsHeaders = {
         topN: 10,
@@ -229,6 +264,7 @@ const VirtualTryOn = (props) => {
       imageName: data,
     };
     setOpenLoader(true);
+    let dataForVTOModels = [ ];
     if (token?.token) {
       const getLikedModels = await apiCall(
         "GET",
@@ -236,20 +272,27 @@ const VirtualTryOn = (props) => {
         null,
         token?.token
       );
+      dataForVTOModels = dummyData;
       if (getLikedModels?.data?.length > 0) {
+        debugger
+        setApiData(getLikedModels?.data);
         setDummyData(getLikedModels?.data);
-        setSelectedCustomModels( [ ...selectedCustomModels , ...getLikedModels?.data]);
-        setUserModels(getLikedModels?.data?.length);
-        getLikedModels?.data?.map((item) => {
-          createDataForVTOModels.modelImageName.push(
-            item?.modelImageName + ".jpg"
-          );
-          setDeletePersonalizeModels(true);
-        });
+        setSelectedCustomModels(getLikedModels?.data);
+        dataForVTOModels = getLikedModels?.data;
+        // setSelectedCustomModels( [ ...selectedCustomModels , ...getLikedModels?.data]);
+        // setUserModels(getLikedModels?.data?.length);
+        // getLikedModels?.data?.map((item) => {
+        //   createDataForVTOModels.modelImageName.push(
+        //     item?.modelImageName + ".jpg"
+        //   );
+        //   setDeletePersonalizeModels(true);
+        // });
       }
+    }else{
+      dataForVTOModels = duplicateDummyData;
     }
 
-    dummyData?.map((item) => {
+    dataForVTOModels?.map((item) => {
       createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
     });
 
@@ -273,7 +316,7 @@ const VirtualTryOn = (props) => {
     }
 
     if (personalizeModels) {
-      setResultImage(customModels?.[index].url);
+      setResultImage(customModels?.[index].modelImageUrl);
     }
   };
 
@@ -298,10 +341,17 @@ const VirtualTryOn = (props) => {
       setSelectedCustomModels([...selectedCustomModels, item]);
       setSelectedModelsUpdate([ ...selectedModelsUpdate , item]);
     } else {
-      setSelectedCustomModels(selectedCustomModels.filter((x) => x.modelImageName !== item?.image_id));
+      console.log(dummyData)
+      console.log(apiData)
+      setSelectedCustomModels(selectedCustomModels.filter((x) => x.modelImageName !== item?.modelImageName));
       setUserModels(userModels - 1);
-      let createDataForDeleteModel = selectedCustomModels.filter(x => x.modelImageName === item?.image_id);
+      let dataCorrection = selectedCustomModels?.map(model => {
+        const updatedModel = dummyData?.find(data => data?.modelImageName === model?.modelImageName);
+        return updatedModel ? updatedModel : model;
+    });
+      let createDataForDeleteModel = apiData.filter(x => x.modelImageName === item?.modelImageName);
       setOpenLoader(true);
+      if(createDataForDeleteModel[0]?.id){
       const deleteModel = await apiCall(
         "DELETE",
         `https://smartwardrobe-backend.azurewebsites.net/user-liked-models/delete/${createDataForDeleteModel[0]?.id}`,
@@ -310,8 +360,10 @@ const VirtualTryOn = (props) => {
       );
       if(deleteModel?.message === "SUCCESSFULLY DELETED USER LIKED MODEL"){
         console.log(deleteModel);
-        setDummyData(dummyData.filter(x => x.id !== createDataForDeleteModel[0]?.id));
-      } 
+        debugger
+        setSelectedModelsUpdate(selectedModelsUpdate.filter(x => x.modelImageName !== createDataForDeleteModel[0]?.modelImageName));
+        setDummyData(selectedCustomModels.filter(x => x.modelImageName !== createDataForDeleteModel[0]?.modelImageName));
+      } }
 
       setOpenLoader(false);
     }
@@ -338,15 +390,15 @@ const VirtualTryOn = (props) => {
         //   return;
         // }
 
-        if(selectedModelsUpdate?.length === 0){
+        if(selectedCustomModels?.length === 0){
           setPersonalizeModels(false);
           return;
         }
 
         const apiCalls = selectedModelsUpdate?.map((item) => {
           const data = {
-            modelImageName: item?.image_id,
-            modelImageUrl: item?.url,
+            modelImageName: item?.modelImageName,
+            modelImageUrl: item?.modelImageUrl,
           };
           return apiCall(
             "POST",
@@ -355,19 +407,83 @@ const VirtualTryOn = (props) => {
             token?.token
           );
         });
+        let createDataForVTOModels = {
+          modelImageName: [],
+          imageName: selectedProduct,
+        };
         setOpenLoader(true);
         const addCustomModels = await Promise.all(apiCalls);
         setOpenLoader(false);
         if (addCustomModels) {
+          console.log(apiData)
+          let dataforApiData = addCustomModels
+          .map(item => item?.data)
+          .filter(data => data !== undefined);
+          setApiData([...apiData, ...dataforApiData]);
           setPersonalizeModels(false);
           showToastSuccess("Custom models added successfully");
           let updatedData = addCustomModels.map((item) => item?.data);
-          setDummyData([...dummyData, ...updatedData]);
-          setSelectedCustomModels([...dummyData, ...updatedData]);
-          setSelectedModelsUpdate([]);
+          // if(updatedData?.length > 0){
+            let dataCorrection = selectedCustomModels?.map(model => {
+              const updatedModel = updatedData?.find(data => data?.modelImageName === model?.modelImageName);
+              return updatedModel ? updatedModel : model;
+          });
+          debugger
+            setDummyData(dataCorrection);
+            // createDataForVTOModels = dataCorrection;
+          // }
+
+
+
+          // if(selectedCustomModels?.length === 0 && addCustomModels?.length === 0){
+          //   setDummyData(duplicateDummyData);
+          //   setSelectedModelsUpdate([]);
+          // }else{
+          //   setDummyData([...selectedCustomModels, ...updatedData]);
+          //   setSelectedCustomModels([...dummyData, ...updatedData]);
+          //   setSelectedModelsUpdate([]);
+          // }
+          console.log(selectedCustomModels)
+
+          
+
+          selectedCustomModels?.map((item) => {
+            createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
+          });
+      
+          const getModelsAccordingTOImage = await apiCall(
+            "POST",
+            "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2",
+            createDataForVTOModels,
+            token?.token
+          );
+          setOpenLoader(false);
+          if (getModelsAccordingTOImage) {
+            setModelsDataFromApi(getModelsAccordingTOImage?.data);
+          }
         }
       } else {
+        debugger
+        setDummyData(duplicateDummyData);
         setPersonalizeModels(false);
+        let createDataForVTOModels = {
+          modelImageName: [],
+          imageName: selectedProduct,
+        };
+        duplicateDummyData?.map((item) => {
+          createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
+        });
+    
+        const getModelsAccordingTOImage = await apiCall(
+          "POST",
+          "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2",
+          createDataForVTOModels,
+          token?.token
+        );
+        setOpenLoader(false);
+        if (getModelsAccordingTOImage) {
+          setModelsDataFromApi(getModelsAccordingTOImage?.data);
+        }
       }
     }
   };
@@ -405,6 +521,7 @@ const VirtualTryOn = (props) => {
         let filterDummyData = dummyData.filter(
           (item) => !selectedCustomModels.includes(item)
         );
+        debugger
         setDummyData(filterDummyData);
         setSelectedCustomModels([]);
       }
@@ -583,7 +700,7 @@ const VirtualTryOn = (props) => {
                           <img
                             className="VTO-model--image"
                             loading="lazy"
-                            src={item?.url}
+                            src={item?.modelImageUrl}
                             alt="models_images"
                             onClick={() => changeModalOnModelClick(index)}
                           />
@@ -593,7 +710,7 @@ const VirtualTryOn = (props) => {
                             onClick={(e) =>
                               handleSelectCustomModelCheckbox(e, item)
                             }
-                            defaultChecked={dummyData?.some(data => data.modelImageName === item.image_id)}
+                            defaultChecked={selectedCustomModels?.some(data => data.modelImageName === item.modelImageName)}
                           />
                         </div>
                       </div>
@@ -657,7 +774,7 @@ const VirtualTryOn = (props) => {
                     {customModels?.map((item, index) => (
                       <div className="mobile-custom-models-container">
                         <img
-                          src={item?.url}
+                          src={item?.modelImageUrl}
                           loading="lazy"
                           alt="custommodelImgae"
                           className="mobile-model-images"

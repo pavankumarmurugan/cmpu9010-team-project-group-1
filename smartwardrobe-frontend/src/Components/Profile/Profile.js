@@ -18,6 +18,7 @@ function Profile(props) {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
+  const [formDataUpdate, setFormDataUpdate] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
   const [formData, setFormData] = useState({
     // username: "",
@@ -70,6 +71,7 @@ function Profile(props) {
         ...prev,
         [name]: false,
       }));
+      setFormDataUpdate(true);
     }
   };
 
@@ -108,7 +110,7 @@ function Profile(props) {
     debugger;
 
     const valdiations = handleValidations();
-    if (valdiations) {
+    if (valdiations || formDataUpdate === false) {
       return;
     }
     const data = {
