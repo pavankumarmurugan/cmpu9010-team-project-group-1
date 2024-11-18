@@ -248,7 +248,7 @@ function SignupModal(props) {
             {props?.checkingLoginOrSignup === "Signup" ? (
               <h1>Create an Account</h1>
             ) : (
-              <h1>Log in to your Account</h1>
+              <h1>Login</h1>
             )}
           </div>
           <div className="Signup-form-section">
@@ -420,7 +420,8 @@ function SignupModal(props) {
                 >
                   {props?.checkingLoginOrSignup === "Signup"
                     ? "Login"
-                    : "Create a free acount"}
+                    : "Sign Up"}
+                    
                 </span>
               </div>
             </div>

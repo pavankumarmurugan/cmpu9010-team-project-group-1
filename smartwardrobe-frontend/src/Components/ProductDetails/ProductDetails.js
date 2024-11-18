@@ -64,6 +64,7 @@ const ProductDetails = () => {
   const imageUrl = productimages[currentImage];
   const [similarProductsData, setSimilarProductsData] = useState([]);
   const [likeData, setLikeData] = useState([]);
+  const [cartData, setCartData] = useState([]);
   const cartValue = useSelector((state) => state.homeData.cartValue);
 
   const responsive = {
@@ -115,6 +116,7 @@ const ProductDetails = () => {
     }
     let data = {
       productId: productimages?.id,
+      productSize: selectedSize,
     };
     if (e === "add") {
       setOpenLoader(true);
@@ -163,6 +165,29 @@ const ProductDetails = () => {
       return;
     }
 
+    const getAllCartValues = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/cart-item/get-all",
+      null,
+      token?.token
+    );
+    if (getAllCartValues?.data?.length) {
+      let check = getAllCartValues?.data?.find((item) => item?.productId === productimages?.id);
+    if (check) {
+      const data = {
+        id: check?.id,
+        quantity: check?.quantity + quantityvalue,
+      };
+      setOpenLoader(true);
+      const addToCart = await apiCall("PATCH" , "https://smartwardrobe-backend.azurewebsites.net/cart-item/update", data, token?.token);
+      if (addToCart.statusCode.text === "Success") {
+        // dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+        setOpenLoader(false);
+        return;
+      }
+    }
+    }
+    
     let data = {
       productId: productimages?.id,
       quantity: quantityvalue,
@@ -236,6 +261,9 @@ const ProductDetails = () => {
       if (getSimilarProducts) {
         setSimilarProductsData(getSimilarProducts?.data);
       }
+
+      
+      
     }
   };
 
@@ -533,8 +561,8 @@ const ProductDetails = () => {
                       <>
                         <FaRegHeart
                           style={{
-                            width: "25px",
-                            height: "25px",
+                            width: "30px",
+                            height: "30px",
                             cursor: "pointer",
                           }}
                           onClick={() => handleWishlist("add", productimages)}
@@ -548,6 +576,7 @@ const ProductDetails = () => {
                             width: "25px",
                             height: "25px",
                             cursor: "pointer",
+                            color: "red",
                           }}
                           onClick={() =>
                             handleWishlist("remove", productimages)

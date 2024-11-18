@@ -9,6 +9,7 @@ import {
   Backdrop,
   Badge,
   Button,
+  Checkbox,
   CircularProgress,
   Collapse,
   IconButton,
@@ -22,17 +23,21 @@ import {
 } from "@mui/material";
 import "../../Styles/ChatComponent.css";
 import { FaPaperPlane } from "react-icons/fa6";
-import { IoExitOutline } from "react-icons/io5";
+import { IoArrowBack, IoExitOutline } from "react-icons/io5";
 import chatbackgroundimage from "../../Assets/chatbackgroundimage.jpg";
 import { ExpandLess, ExpandMore, Search } from "@mui/icons-material";
 import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined";
+import { CgMoreVerticalO } from "react-icons/cg";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NewChatModal from "../NewChatModal/NewChatModal";
 import TextArea from "antd/es/input/TextArea";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
+import { IoMdAddCircle } from "react-icons/io";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
+import { IoPersonAddSharp } from "react-icons/io5";
+import { HiUserRemove } from "react-icons/hi";
 import {
   IoIosInformationCircleOutline,
   IoMdContacts,
@@ -40,29 +45,40 @@ import {
 } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { io, Socket } from "socket.io-client";
+import { MdOutlineMoreVert } from "react-icons/md";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   let userId = token?.userId;
+  const inputRef = useRef(null);
   const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
   const messagesEndRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [newChatCraete, setNewChatCraete] = useState(false);
   const [openMemberList, setOpenMemberList] = useState(false);
+  const [defaultArray, setDefaultArray] = useState(0);
   const [openLoader, setOpenLoader] = useState(false);
   const [addNewFriendorGroup, setaddNewFriendorGroup] = useState("");
+  const [leftinputValue, setleftinputValue] = useState("");
   const [textValue, settextValue] = useState("");
   const [friendReqCount, setFriendReqCount] = useState([]);
   const [activeFriend, setActiveFriend] = useState(null);
   const [chatInfo, setChatInfo] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [newChatFriends, setNewChatFriends] = useState([]);
+  const [activeNewChat, setActiveNewChat] = useState("");
+  const [newGroupName, setNewGroupName] = useState("");
   const [friendsDataForFilter, setFriendsDataForFilter] = useState([]);
   const [friendReqCountToShow, setFriendReqCountToShow] = useState(0);
   const [hideLeftSection, sethideLeftSection] = useState(false);
+  const [addMemberToGroupList, setaddMemberToGroupList] = useState([]);
   const [showNewChat, setShowNewChat] = useState(false);
+  const [showContactDetails, setShowContactDetails] = useState(false);
+  const [autocomplteAllData, setAutocomplteAllData] = useState([]);
   const [messages, setMessages] = useState([]);
   const [groupMemberList, setGroupMemberList] = useState([]);
   const [memberListForDetails, setMemberListForDetails] = useState([]);
@@ -234,7 +250,9 @@ function ChatComponent(props) {
   /** more options menu */
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    // setAnchorEl(event.currentTarget);
+    setNewChatCraete(true);
+    setDefaultArray(1);
   };
 
   const handleClose = (e) => {
@@ -284,6 +302,103 @@ function ChatComponent(props) {
     }
   };
 
+  const handleNewChatSearch = async (event, defaultArray) => {
+    debugger;
+    let searchValue = event?.target?.value;
+    setleftinputValue(searchValue);
+    if (activeNewChat === "New Chat") {
+      if (searchValue?.length >= 3) {
+        const response = await apiCall(
+          "GET",
+          `https://smartwardrobe-backend.azurewebsites.net/users/search/${searchValue.trim()}`,
+          null,
+          token?.token
+        );
+        if (response?.data) {
+          setAutocomplteAllData(response?.data);
+          setNewChatFriends(response?.data);
+        }
+      } else if (searchValue?.length === 0) {
+        setNewChatFriends([]);
+      }
+    }
+  };
+
+  const handleGroupCreate = async (e) => {
+    debugger;
+    
+    if(newGroupName.trim() === "") {
+      showToastInfo("Please enter group name");
+      return;
+    }
+
+    const sendObj = {
+      groupName: newGroupName,
+    };
+    setOpenLoader(true);
+    const response = await apiCall(
+      "POST",
+      "https://smartwardrobe-backend.azurewebsites.net/group/create",
+      sendObj,
+      token?.token
+    );
+    setOpenLoader(false);
+    if (response?.message === "SUCCESSFULLY CREATED GROUP") {
+      let groupId = response?.data?.groupId;
+      const promises = addMemberToGroupList.map(async (value) => {
+        const data = friends?.filter((user) => user?.userId === value);
+  
+        // if (data?.length === 0) {
+        //   showToastInfo(`User ${value} not found`);
+        //   return;
+        // }
+  
+        try {
+          const sendObj = {
+            groupId: groupId,
+          userId: data[0]?.userId,
+          };
+  
+          setOpenLoader(true);
+          const response = await apiCall(
+            "POST",
+            "https://smartwardrobe-backend.azurewebsites.net/group-members/create",
+            sendObj,
+            token?.token
+          );
+          if (response) {
+            setaddMemberToGroupList([]);
+          }
+        } catch (error) {
+          console.error(`Error sending request for ${value}:`, error);
+        }
+      });
+  
+      try {
+        // Wait for all promises to resolve
+        const addingFriends = await Promise.all(promises);
+        setOpenLoader(false);
+        if (addingFriends) {
+          showToastInfo("Group created successfully");
+          setDefaultArray(0);
+          setNewChatCraete(false);
+          setNewChatFriends([]);
+          setleftinputValue("");
+          getAllFriendandFriendRequests();
+        }
+  
+        // After all requests are completed
+        // props?.reRenderComponent();
+        // props?.closeModal();
+      } catch (error) {
+        console.error("Error handling multiple friend requests:", error);
+      }
+    }
+
+    
+
+  }
+
   /** handle friend search */
 
   /** Re-render Component */
@@ -300,6 +415,82 @@ function ChatComponent(props) {
     debugger;
     setaddNewFriendorGroup("InviteFriendsToGroup");
     setShowNewChat(true);
+  };
+
+  const handleContactDetails = () => {
+    debugger;
+    setShowContactDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    debugger;
+    setShowContactDetails(false);
+  };
+
+  const handleRemoveFriend = async (e) => {
+    debugger;
+    console.log(chatInfo);
+    setOpenLoader(true);
+    const delteFriend = await apiCall(
+      "DELETE",
+      `https://smartwardrobe-backend.azurewebsites.net/friends/delete/${chatInfo?.friendId}`,
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
+    if (delteFriend?.message === "DELETED FRIEND") {
+      setShowContactDetails(false);
+      setChatInfo(null);
+      setOpenLoader(true);
+      const getFriendsList = await apiCall(
+        "GET",
+        "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+        null,
+        token?.token
+      );
+      setOpenLoader(false);
+      if (getFriendsList?.data?.length > 0) {
+        let removeDeletedFriend = friends?.filter(
+          (x) => x.friendId !== chatInfo?.friendId
+        );
+        setFriends(removeDeletedFriend);
+        setFriendIds(getFriendsList.data.map((x) => x.userId));
+        setFriendsDataForFilter((prevFriends) => [
+          ...prevFriends,
+          ...getFriendsList.data,
+        ]);
+      }
+
+      if (getFriendsList?.data?.length === 0) {
+        let removeDeletedFriend = friends?.filter(
+          (x) => x.friendId !== chatInfo?.friendId
+        );
+        setFriends(removeDeletedFriend);
+      }
+    }
+  };
+
+  const handleExitGroup = async (e) => {
+    debugger;
+    console.log(chatInfo);
+    setOpenLoader(true);
+    const exitGroup = await apiCall(
+      "DELETE",
+      `https://smartwardrobe-backend.azurewebsites.net/group-members/delete/${chatInfo?.membershipId}`,
+      null,
+      token?.token
+    );
+
+    if (exitGroup?.message === "DELETED GROUP MEMBER") {
+      console.log("deleted group member");
+      setShowContactDetails(false);
+      setChatInfo(null);
+      let removeDeletedFriend = friends?.filter(
+        (x) => x.groupId !== chatInfo?.groupId
+      );
+      setFriends(removeDeletedFriend);
+    }
+    setOpenLoader(false);
   };
 
   /** handle Invite friend to group */
@@ -446,25 +637,23 @@ function ChatComponent(props) {
     });
 
     newSocket.emit("joinNotificationRoom", { userId });
-    console.log(
-      `User ${userId} joined their notification room user_${userId}`
-    );
+    console.log(`User ${userId} joined their notification room user_${userId}`);
 
-  // To get notifications
+    // To get notifications
 
     // Friend request event listeners
     newSocket.on("friendRequestCreated", (data) => {
-      debugger
+      debugger;
       console.log("New friend request received in Chat:", data);
       // Display a notification or update UI with new friend request
       handleFriendRequest();
     });
 
     newSocket.on("friendRequestUpdated", (data) => {
-      debugger
+      debugger;
       console.log("Friend request updated:", data);
-      if(data.status === "accepted"){
-        getAllFriendandFriendRequests()
+      if (data.status === "accepted") {
+        getAllFriendandFriendRequests();
       }
       // Display a notification or update UI with friend request update
     });
@@ -494,6 +683,128 @@ function ChatComponent(props) {
       setFriendReqCountToShow(getFriendReqList?.data?.length);
       setFriendReqCount(getFriendReqList?.data);
       setaddNewFriendorGroup("friendReq");
+    }
+  };
+
+  const handleCheckboxForAddMemberInGroup = async (e, item) => {
+    debugger;
+    if (e?.target?.checked) {
+      setaddMemberToGroupList((prevList) => [...prevList, item?.userId]);
+    } else {
+      let filterCheckedOnly = addMemberToGroupList?.filter(
+        (i) => i !== item?.userId
+      );
+      setaddMemberToGroupList(filterCheckedOnly);
+    }
+  };
+
+  const handleNewChat = (e) => {
+    debugger;
+    if (e === "New Chat") {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+      setActiveNewChat(e);
+    } else if (e === "New Group") {
+      let filterfriends = friends?.filter((x) => x.username);
+      setNewChatFriends(filterfriends);
+      setActiveNewChat(e);
+    }
+
+    setDefaultArray(2);
+  };
+
+  const handleRemoveChatCraete = () => {
+    debugger
+    setNewChatCraete(false);
+    setDefaultArray(defaultArray - 1);
+    setleftinputValue("");
+    setaddMemberToGroupList([]);
+    if (defaultArray !== 3) {
+      setNewChatFriends([]);
+      setActiveNewChat("");
+    }
+  };
+
+  const handleAddClick = async () => {
+    debugger;
+    if (!addMemberToGroupList || addMemberToGroupList.length === 0) {
+      return;
+    }
+
+    if (activeNewChat === "New Chat") {
+      const promises = addMemberToGroupList.map(async (value) => {
+        const data = autocomplteAllData.filter(
+          (user) => user?.userId === value
+        );
+
+        if (data?.length === 0) {
+          showToastInfo(`User ${value} not found`);
+          return;
+        }
+
+        try {
+          const sendObj = {
+            receiverId: data[0]?.userId,
+            status: "pending",
+          };
+
+          setOpenLoader(true);
+          const response = await apiCall(
+            "POST",
+            `https://smartwardrobe-backend.azurewebsites.net/friend-requests/create`,
+            sendObj,
+            token?.token
+          );
+          if (response) {
+            setaddMemberToGroupList([]);
+          }
+        } catch (error) {
+          console.error(`Error sending request for ${value}:`, error);
+        }
+      });
+
+      try {
+        // Wait for all promises to resolve
+        const addingFriends = await Promise.all(promises);
+
+        if (addingFriends) {
+          showToastInfo("Friend requests sent successfully");
+          setDefaultArray(0);
+          setNewChatCraete(false);
+          setNewChatFriends([]);
+          setleftinputValue("");
+          getAllFriendandFriendRequests();
+        }
+
+        // After all requests are completed
+        // props?.reRenderComponent();
+        // props?.closeModal();
+      } catch (error) {
+        console.error("Error handling multiple friend requests:", error);
+      }
+    } else if (activeNewChat === "New Group") {
+      if (addMemberToGroupList?.length > 0) {
+        setDefaultArray(3);
+        return;
+      }
+
+      // if (leftinputValue.trim() === "") {
+      //   showToastInfo("Please enter group name");
+      //   return;
+      // }
+
+     
+    }
+  };
+
+  const handleNewGroupName = (e) => {
+    debugger;
+    let value = e?.target?.value;
+    if (value.trim() !== "") {
+      setNewGroupName(value);
+    } else {
+      setNewGroupName("");
     }
   };
 
@@ -550,114 +861,341 @@ function ChatComponent(props) {
                 hideLeftSection ? "hide-left" : "show-left"
               }`}
             >
-              <div className="chat-moreoptions-icon">
-                <h2>Chats</h2>
-                <div className="moreoptions-div">
-                  <StyledBadge
-                    badgeContent={friendReqCountToShow}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                  >
-                    <PeopleOutlinedIcon
-                      style={{ cursor: "pointer" }}
-                      onClick={handleFriendRequests}
-                    />
-                  </StyledBadge>
-                  <IconButton
-                    aria-label="more"
-                    aria-controls="kebab-menu"
-                    aria-haspopup="true"
-                    onClick={handleClick}
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    id="kebab-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    MenuListProps={{
-                      "aria-labelledby": "more-button",
-                    }}
-                  >
-                    <MenuItem onClick={() => handleClose("AddFriends")}>
-                      Add Friends
-                    </MenuItem>
-                    <MenuItem onClick={(e) => handleClose("CreateGroup")}>
-                      Create Group
-                    </MenuItem>
-                  </Menu>
-                </div>
-              </div>
-              <div className="search-contacts">
-                <div className="search-input">
-                  <input
-                    type="text"
-                    placeholder="Search Friends"
-                    onChange={handleFriendsSearch}
-                  />
-                  <button className="search-button">
-                    <Search style={{ color: "2e3b4e" }} />
-                  </button>
-                </div>
-              </div>
-              {/* <h4>
+              {defaultArray === 0 ? (
+                <>
+                  <div className="chat-moreoptions-icon">
+                    <h2>Chats</h2>
+                    <div className="moreoptions-div">
+                      {friendReqCountToShow !== 0 && (
+                        <StyledBadge
+                          badgeContent={friendReqCountToShow}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "left",
+                          }}
+                        >
+                          <PeopleOutlinedIcon
+                            style={{ cursor: "pointer" }}
+                            onClick={handleFriendRequests}
+                          />
+                        </StyledBadge>
+                      )}
+                      <IconButton
+                        aria-label="more"
+                        aria-controls="kebab-menu"
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                      >
+                        {/* <MoreVertIcon /> */}
+                        <IoMdAddCircle style={{ color: "blue" }} />
+                      </IconButton>
+                      <Menu
+                        id="kebab-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        MenuListProps={{
+                          "aria-labelledby": "more-button",
+                        }}
+                      >
+                        <MenuItem onClick={() => handleClose("AddFriends")}>
+                          Add Friends
+                        </MenuItem>
+                        <MenuItem onClick={(e) => handleClose("CreateGroup")}>
+                          Create Group
+                        </MenuItem>
+                      </Menu>
+                    </div>
+                  </div>
+                  <div className="search-contacts">
+                    <div className="search-input">
+                      <input
+                        type="text"
+                        placeholder="Search Friends"
+                        onChange={handleFriendsSearch}
+                      />
+                      <button className="search-button">
+                        <Search style={{ color: "2e3b4e" }} />
+                      </button>
+                    </div>
+                  </div>
+                  {/* <h4>
                 <b style={{ paddingLeft: "10px" }}>GROUPS</b>
               </h4> */}
-              <div className="contact-list">
-                {friends?.map((friend, index) => (
-                  <div
-                    key={friend.id}
-                    className={`contact-details-div ${
-                      activeFriend === friend ? "active" : ""
-                    }`}
-                    onClick={() => handleShowChat(friend)}
-                    tabIndex="0"
-                  >
-                    <img
-                      src={
-                        friend?.profilePic
-                          ? friend?.profilePic
-                          : "https://www.w3schools.com/howto/img_avatar.png"
-                      }
-                      alt="Alice"
-                      className="contact-image"
-                    />
-                    <div className="contact-name-and-last-msg">
-                      <div className="contact-Name">
-                        {friend?.groupName
-                          ? friend?.groupName
-                          : friend?.username}
-                      </div>
-                      {/* <div className="contact-last-msg">Hi, how are you?</div> */}{" "}
-                      {/** uncomment this to show latest msg and .contact-name-and-last-msg uncomment flex-direction:coulmn in this class */}
-                    </div>
-                    {/* <div className="unread-badge">
+                  <div className="contact-list">
+                    {friends?.map((friend, index) => (
+                      <div
+                        key={friend.id}
+                        className={`contact-details-div ${
+                          activeFriend === friend ? "active" : ""
+                        }`}
+                        onClick={() => handleShowChat(friend)}
+                        tabIndex="0"
+                      >
+                        <img
+                          src={
+                            friend?.profilePic
+                              ? friend.profilePic
+                              : friend?.groupName
+                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ3LToR-ycDBDBii0DSf9YrdTOjQs27e-9ywV8vVnjfdzfS7iE_QnIYx_UYkFtVxYl-x8&usqp=CAU"
+                              : `data:image/svg+xml;base64,${btoa(`
+                              <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="100" height="100" fill="gray" />
+                                <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
+                                  ${
+                                    friend?.username?.charAt(0).toUpperCase() ||
+                                    ""
+                                  }
+                                </text>
+                              </svg>
+                            `)}`
+                          }
+                          alt="Alice"
+                          className="contact-image"
+                        />
+                        <div className="contact-name-and-last-msg">
+                          <div className="contact-Name">
+                            {friend?.groupName
+                              ? friend?.groupName
+                              : friend?.username}
+                          </div>
+                          {/* <div className="contact-last-msg">Hi, how are you?</div> */}{" "}
+                          {/** uncomment this to show latest msg and .contact-name-and-last-msg uncomment flex-direction:coulmn in this class */}
+                        </div>
+                        {/* <div className="unread-badge">
                       <span className="unread-msg-count">1</span>
                     </div> */}
+                      </div>
+                    ))}
+                    {friends?.length === 0 && (
+                      <div className="no-friends">
+                        <h4>No Friends</h4>
+                      </div>
+                    )}
                   </div>
-                ))}
-                {friends?.length === 0 && (
-                  <div className="no-friends">
-                    <h4>No Friends</h4>
+                </>
+              ) : (
+                <>
+                  <div className="Newchat-moreoptions-icon">
+                    <IoArrowBack
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        cursor: "pointer",
+                      }}
+                      onClick={handleRemoveChatCraete}
+                    />
+                    <h2>{activeNewChat ? activeNewChat : "New Chats"} </h2>
+                    {addMemberToGroupList?.length > 0 && defaultArray !== 3 && (
+                      <Button
+                        className="Create-Button"
+                        color="default"
+                        onClick={handleAddClick}
+                      >
+                        Add
+                      </Button>
+                    )}
+                    <div className="moreoptions-div">
+                      {friendReqCountToShow !== 0 && (
+                        <StyledBadge
+                          badgeContent={friendReqCountToShow}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "left",
+                          }}
+                        >
+                          <PeopleOutlinedIcon
+                            style={{ cursor: "pointer" }}
+                            onClick={handleFriendRequests}
+                          />
+                        </StyledBadge>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
+                  {activeNewChat !== "New Group" ? (
+                    <div className="search-contacts">
+                      <div className="search-input">
+                        <input
+                          type="text"
+                          placeholder={
+                            activeNewChat === "New Group"
+                              ? "Group Name"
+                              : "Search Username"
+                          }
+                          onChange={(e) => handleNewChatSearch(e, defaultArray)}
+                          ref={inputRef}
+                          value={leftinputValue}
+                        />
+                        {activeNewChat !== "New Group" && (
+                          <button className="search-button">
+                            <Search style={{ color: "2e3b4e" }} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <h3>
+                          {defaultArray !== 3
+                            ? "Select friends to add in group."
+                            : "Enter your group name"}
+                        </h3>
+                      </div>
+                    </>
+                  )}
+                  {/* <h4>
+                <b style={{ paddingLeft: "10px" }}>GROUPS</b>
+              </h4> */}
+                  <div className="contact-list">
+                    {defaultArray === 1 ? (
+                      <>
+                        {["New Chat", "New Group", "New Community"]?.map(
+                          (friend, index) => (
+                            <div
+                              key={friend.id}
+                              className={`contact-details-div ${
+                                activeFriend === friend ? "active" : ""
+                              }`}
+                              onClick={() => handleNewChat(friend)}
+                              tabIndex="0"
+                            >
+                              <img
+                                src={
+                                  friend === "New Chat"
+                                    ? "https://cdn-icons-png.flaticon.com/512/1144/1144760.png"
+                                    : "https://cdn1.iconfinder.com/data/icons/developer-set-2/512/users-512.png"
+                                }
+                                alt="Alice"
+                                className="contact-image"
+                              />
+                              <div className="contact-name-and-last-msg">
+                                <div className="contact-Name">{friend}</div>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </>
+                    ) : defaultArray === 2 ? (
+                      <>
+                        {newChatFriends?.map((friend, index) => (
+                          <div
+                            key={friend.id}
+                            className={`contact-details-div ${
+                              activeFriend === friend ? "active" : ""
+                            }`}
+                            onClick={() => handleNewChat(friend)}
+                            tabIndex="0"
+                          >
+                            <img
+                              src={
+                                friend?.profilePic
+                                  ? friend.profilePic
+                                  : friend?.groupName
+                                  ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ3LToR-ycDBDBii0DSf9YrdTOjQs27e-9ywV8vVnjfdzfS7iE_QnIYx_UYkFtVxYl-x8&usqp=CAU"
+                                  : `data:image/svg+xml;base64,${btoa(`
+                              <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="100" height="100" fill="gray" />
+                                <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
+                                  ${
+                                    friend?.username?.charAt(0).toUpperCase() ||
+                                    ""
+                                  }
+                                </text>
+                              </svg>
+                            `)}`
+                              }
+                              alt="Alice"
+                              className="contact-image"
+                            />
+                            <div
+                              className="contact-name-and-last-msg"
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                width: "100%",
+                              }}
+                            >
+                              <div className="contact-Name">
+                                {friend?.username}
+                              </div>
+                              <div className="checkbox-div">
+                                <Checkbox
+                                  onChange={(e) =>
+                                    handleCheckboxForAddMemberInGroup(e, friend)
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      defaultArray === 3 && (
+                        <>
+                          <div className="groupname-main-div">
+                            <div className="group-image-div">
+                              {/* <label
+                                htmlFor="profilePicInput"
+                                className="profile-label"
+                              > */}
+                              <img
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ3LToR-ycDBDBii0DSf9YrdTOjQs27e-9ywV8vVnjfdzfS7iE_QnIYx_UYkFtVxYl-x8&usqp=CAU"
+                                alt="profile"
+                                className="group-profile"
+                              />
+                              {/* <div className="hover-overlay">
+                                  Change Profile Image
+                                </div> */}
+                              {/* </label> */}
+                              {/* <input
+                                type="file"
+                                id="profilePicInput"
+                                style={{ display: "none" }}
+                                // onChange={handleProfilePicChange} // Replace with your function to handle image updates
+                              /> */}
+                            </div>
+                            <div className="search-contacts">
+                              <div className="search-input">
+                                <input
+                                  type="text"
+                                  placeholder="Enter Group Name"
+                                  onChange={handleNewGroupName}
+                                  ref={inputRef}
+                                  value={newGroupName}
+                                  style={{ textTransform: "capitalize" }}
+                                />
+                              </div>
+                            </div>
+                            <div className="create-button-div">
+                              <Button
+                                className="Create-Button"
+                                color="default"
+                                onClick={handleGroupCreate}
+                              >
+                                Create
+                              </Button>
+                            </div>
+                          </div>
+                        </>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
             </div>
             <div
               className={`right-chat-section ${
                 hideLeftSection ? "show-right" : "hide-right"
-              }`}
+              } ${showContactDetails && "show-deatils-only"} `}
               style={{
                 // backgroundImage: `url(${chatbackgroundimage})`,
                 backgroundColor: "#f4f3f8",
@@ -691,19 +1229,17 @@ function ChatComponent(props) {
                           {chatInfo &&
                             (chatInfo?.username || chatInfo?.groupName)}
                         </h2>
-                        <div className="members-div">
-                          <div className="member-div">
-                            <span>{groupMemberList}</span>
+                        {chatInfo?.groupName && (
+                          <div className="members-div">
+                            <div className="member-div">
+                              <span>{groupMemberList}</span>
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
-                    {chatInfo && chatInfo?.groupName && (
-                      <div
-                        className="Invite-Friends"
-                        onClick={handleInviteFriendsToGroup}
-                      >
-                        <div style={{ display: "flex" }}>
+                    <div className="Invite-Friends">
+                      {/* <div style={{ display: "flex" }} onClick={handleInviteFriendsToGroup}>
                           <FaPlus
                             style={{
                               width: "20px",
@@ -715,12 +1251,12 @@ function ChatComponent(props) {
                           <h3 className="invite-friends-text">
                             Invite Friends
                           </h3>
-                        </div>
-                        <IoIosInformationCircleOutline
-                          style={{ width: "30px", height: "30px" }}
-                        />
-                      </div>
-                    )}
+                        </div> */}
+                      <MdOutlineMoreVert
+                        style={{ width: "30px", height: "30px" }}
+                        onClick={handleContactDetails}
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -866,77 +1402,162 @@ function ChatComponent(props) {
               )}
             </div>
 
-            {/* <div
-              className={`details-chat-section ${
-                hideLeftSection ? "details-show" : "details-hide"
-              }`}
-              style={{
-                // backgroundImage: `url(${chatbackgroundimage})`,
-                backgroundColor: "#f4f3f8",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
+            {showContactDetails && (
               <div
-                className="details-header"
-                style={{ borderBottom: "1px solid lightgray" }}
+                className={`details-chat-section ${showContactDetails && ""}`}
+                style={{
+                  // backgroundImage: `url(${chatbackgroundimage})`,
+                  backgroundColor: "#f4f3f8",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
               >
-                <h2>Contact Information</h2>
-                <IoMdClose style={{ width: "20px", height: "20px" }} />
-              </div>
-
-              <div className="details-body">
-                <div className="details-image-div">
-                  <img
-                    src={chatbackgroundimage}
-                    alt="details-iamge"
-                    className="details-image"
+                <div
+                  className="details-header"
+                  style={{ borderBottom: "1px solid lightgray" }}
+                >
+                  <h2>Contact Information</h2>
+                  <IoMdClose
+                    style={{ width: "20px", height: "20px", cursor: "pointer" }}
+                    onClick={handleCloseDetails}
                   />
-                  <h3>Group Name</h3>
                 </div>
-                <div className="member-list-div">
-                  <List
-                    sx={{
-                      width: "100%",
-                      maxWidth: 360,
-                      borderTop: "1px solid lightgray",
-                      borderBottom: "1px solid lightgray",
-                    }}
-                    component="nav"
-                    aria-labelledby="nested-list-subheader"
-                  >
-                    <ListItemButton onClick={handleClickMember}>
-                      <ListItemIcon>
-                        <IoMdContacts
-                          style={{ width: "30px", height: "30px" }}
-                        />
-                      </ListItemIcon>
-                      <ListItemText primary="Members" />
-                      {openMemberList ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={openMemberList} timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        {memberListForDetails?.map((member, index) => (
-                          <ListItemButton key={index} sx={{ pl: 4 }}>
+
+                <div className="details-body">
+                  <div className="details-image-div">
+                    <img
+                      src={chatbackgroundimage}
+                      alt="details-iamge"
+                      className="details-image"
+                    />
+                    <h3 style={{ textTransform: "capitalize" }}>
+                      {chatInfo?.username || chatInfo?.groupName}
+                    </h3>
+                  </div>
+
+                  <div className="member-list-div">
+                    <List
+                      sx={{
+                        width: "100%",
+                        maxWidth: 360,
+                        borderTop: "1px solid lightgray",
+                        borderBottom: "1px solid lightgray",
+                      }}
+                      component="nav"
+                      aria-labelledby="nested-list-subheader"
+                    >
+                      {chatInfo?.groupName ? (
+                        <>
+                          <ListItemButton
+                            onClick={handleInviteFriendsToGroup}
+                            style={{ borderBottom: "1px solid lightgray" }}
+                          >
+                            <ListItemIcon>
+                              <IoPersonAddSharp
+                                style={{
+                                  width: "30px",
+                                  height: "30px",
+                                  color: "green",
+                                }}
+                              />
+                            </ListItemIcon>
+                            <ListItemText primary="Add Member" />
+                            {/* {openMemberList ? <ExpandLess /> : <ExpandMore />} */}
+                          </ListItemButton>
+                          <ListItemButton
+                            onClick={handleClickMember}
+                            style={{ borderBottom: "1px solid lightgray" }}
+                          >
+                            <ListItemIcon>
+                              <IoMdContacts
+                                style={{ width: "30px", height: "30px" }}
+                              />
+                            </ListItemIcon>
+                            <ListItemText primary="Members" />
+                            {openMemberList ? <ExpandLess /> : <ExpandMore />}
+                          </ListItemButton>
+                          <Collapse
+                            in={openMemberList}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <List component="div" disablePadding>
+                              {memberListForDetails?.map(
+                                (member, index) =>
+                                  member?.username !== token?.username && (
+                                    <ListItemButton
+                                      key={index}
+                                      sx={{ pl: 4 }}
+                                      style={{
+                                        borderBottom: "1px solid lightgray",
+                                        paddingLeft: "10px",
+                                      }}
+                                    >
+                                      <img
+                                        src="https://www.w3schools.com/howto/img_avatar.png"
+                                        alt="contact-details-image"
+                                        style={{
+                                          width: "50px",
+                                          height: "50px",
+                                          borderRadius: "50%",
+                                        }}
+                                      />
+                                      <ListItemText
+                                        primary={member?.username}
+                                        style={{
+                                          textTransform: "capitalize",
+                                          paddingLeft: "15px",
+                                        }}
+                                      />
+                                      {token?.userId ===
+                                        chatInfo?.createdBy && (
+                                        <HiUserRemove
+                                          style={{
+                                            width: "20px",
+                                            height: "20px",
+                                          }}
+                                          onClick={handleRemoveFriend}
+                                        />
+                                      )}
+                                    </ListItemButton>
+                                  )
+                              )}
+                            </List>
+                          </Collapse>
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <IoMdExit
+                                style={{ width: "30px", height: "30px" }}
+                              />
+                            </ListItemIcon>
                             <ListItemText
-                              primary={member?.username}
-                              style={{ textTransform: "capitalize" }}
+                              primary="Exit Group"
+                              style={{ color: "red" }}
+                              onClick={handleExitGroup}
                             />
                           </ListItemButton>
-                        ))}
-                      </List>
-                    </Collapse>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <IoMdExit style={{ width: "30px", height: "30px" }} />
-                      </ListItemIcon>
-                      <ListItemText primary="Leave Group" />
-                    </ListItemButton>
-                  </List>
+                        </>
+                      ) : (
+                        <>
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <IoMdExit
+                                style={{ width: "30px", height: "30px" }}
+                              />
+                            </ListItemIcon>
+                            <ListItemText
+                              primary="Remove Friend"
+                              onClick={handleRemoveFriend}
+                            />
+                          </ListItemButton>
+                        </>
+                      )}
+                    </List>
+                  </div>
                 </div>
               </div>
-            </div> */}
+            )}
           </div>
         </div>
       </Modal>

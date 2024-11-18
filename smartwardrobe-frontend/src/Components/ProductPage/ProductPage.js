@@ -732,7 +732,7 @@ const ProductPage = () => {
                       letterSpacing: "0.1rem",
                       textTransform: "capitalize",
                       borderRadius: "5px",
-                      height: "30px",
+                      height: "40px",
                     }}
                     placeholder="Price"
                     aria-label="Price"

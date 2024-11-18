@@ -538,6 +538,7 @@ const VirtualTryOn = (props) => {
       productId: similarProductsClick?.id
         ? similarProductsClick?.id
         : DataClicked?.id,
+        productSize: "S",
     };
     if (e === "add") {
       setOpenLoader(true);
@@ -630,7 +631,7 @@ const VirtualTryOn = (props) => {
           <h1 className="vto-heading">
             {!personalizeModels
               ? "Find your fit: choose a model and let the virtual magic begin!"
-              : "Select your custom models"}
+              : "You can select upto 6 custom models"}
           </h1>
           <div className="Models-separation-div">
             <div className="model-result">
@@ -795,7 +796,7 @@ const VirtualTryOn = (props) => {
             </div>
           </div>
 
-          {similarProductsData?.length > 0 && (
+          {/* {similarProductsData?.length > 0 && (
             <div className="Similar-Products-div">
               <h1 className="similar-products-heading">SIMILAR PRODUCTS</h1>
               <div className="Similar-Products-Images">
@@ -819,7 +820,7 @@ const VirtualTryOn = (props) => {
                 </Carousel>
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </Modal>
     </div>
