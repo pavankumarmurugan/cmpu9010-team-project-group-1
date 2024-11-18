@@ -69,6 +69,21 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
     });
   }
 
+  async getAllByPropertiesV2(
+    properties: any,
+    relations: string[] = [],
+  ): Promise<T[]> {
+    const options: any = {
+      where: { ...properties },
+    };
+
+    if (relations.length > 0) {
+      options.relations = relations;
+    }
+
+    return await this._repository.find(options);
+  }
+
   delete(id: any) {
     return this._repository.delete(id);
   }
