@@ -40,6 +40,7 @@ function NewChatModal(props) {
   const [friendReqData, setFriendReqData] = useState([]);
   const [autocomplteAllData, setAutocomplteAllData] = useState([]);
   const [addMemberToGroupList, setaddMemberToGroupList] = useState([]);
+  const [shareDataList, setShareDataList] = useState([]);
   // const [loading, setLoading] = useState(false);
 
   const [bounds, setBounds] = useState({
@@ -72,42 +73,74 @@ function NewChatModal(props) {
     console.log(item)
 
     if(event?.target?.checked){
-      if (item?.userId) {
-        let message = {
-          message: props?.productUrl,
-          receiverId: item?.userId,
-          messageType: "text"
-        };
-        setOpenLoader(true);
-        const sendMessage = await apiCall(
-          "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
-          message,
-          token?.token
+      setShareDataList([...shareDataList,item])
+    }
+    else{
+      let filterCheckedOnly = shareDataList?.filter(
+        (i) => i !== item
+      );
+      setShareDataList(filterCheckedOnly);
+    }
+  };
+
+  const handleShareProduct = async () => {
+    debugger;
+
+    if(shareDataList?.length === 0){
+      showToastInfo("Please select atleast one friend or group to share product.");
+      return;
+    }
+
+    if (shareDataList?.length > 0) {
+      const friendList = shareDataList?.filter(x => x?.userId);
+      const groupList = shareDataList?.filter(x => x?.groupId);
+      if(friendList?.length > 0){
+      const apiCalls = friendList.map((item) => {
+          let message = {
+            message: props?.productUrl,
+            receiverId: item?.userId,
+            messageType: "text"
+          };
+        return apiCall(
+         "POST",
+        "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+        message,
+        token?.token
         );
-        setOpenLoader(false);
-        if (sendMessage) {
-          console.log(sendMessage);
-        }
+      });
+      setOpenLoader(true);
+      const apiCallsFriends = await Promise.all(apiCalls);
+      if(apiCallsFriends?.length > 0){
+        // showToastSuccess("Product Shared Successfully");
+        console.log(apiCallsFriends)
       }
-      if (item?.groupId) {
+    }
+
+    if(groupList?.length > 0){
+      const apiCalls = groupList.map((item) => {
         let message = {
           message: props?.productUrl,
           groupId: item?.groupId,
           messageType: "text"
         };
-        setOpenLoader(true);
-        const sendMessage = await apiCall(
-          "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
-          message,
-          token?.token
-        );
-        setOpenLoader(false);
-        if (sendMessage) {
-          console.log(sendMessage);
-        }
-      }
+        
+      return apiCall(
+        "POST",
+        "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
+        message,
+        token?.token
+      );
+    });
+    setOpenLoader(true);
+    const apiCallsGroups = await Promise.all(apiCalls);
+
+    if(apiCallsGroups?.length > 0){
+      // showToastSuccess("Product Shared Successfully");
+      console.log(apiCallsGroups)
+    }
+    setOpenLoader(false);
+    handleCancel();
+    }
     }
   };
 
@@ -255,7 +288,7 @@ function NewChatModal(props) {
         );
         setOpenLoader(false);
         if (response) {
-          showToastSuccess("Friend Added Successfully");
+          showToastSuccess("Your request has been sent successfully.");
           props?.reRenderComponent();
           props?.closeModal();
         }
@@ -379,7 +412,7 @@ function NewChatModal(props) {
         open={props.isShowModel}
         onCancel={handleCancel}
         className="custom-modal-new-chat"
-        footer={[]}
+        footer={null}
         modalRender={(modal) => (
           <Draggable
             disabled={disabled}
@@ -530,11 +563,11 @@ function NewChatModal(props) {
               </div>
               ))}
 
-              {/* <div className="create-button-div">
-                <Button className="Create-Button" color="default">
+              <div className="create-button-div">
+                <Button className="Create-Button" color="default" onClick={handleShareProduct} >
                   Share
                 </Button>
-              </div> */}
+              </div>
             </div>
           )}
 

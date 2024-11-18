@@ -201,40 +201,43 @@ export const ProductPageCards = ({ data, handleTryon }) => {
     navigate(`/productdetails/${item?.id}`, { state: { item } });
   };
 
+  const [hovered, setHovered] = useState(false);
+
   return (
     <div className="productpagecards">
       {data?.map((item, index) => (
         <div className="card" key={index}>
-          <div className="image-container">
-            {item?.trail && (
-              <button
-                className="try-on-button"
-                onClick={() => clickOnTryOn(item)}
-              >
-                Try On
-              </button>
-            )}
-            <img
-              className="productspage-product--image"
-              loading="lazy"
-              src={item?.imageUrl}
-              alt={item?.description.length > 70 ? item?.description.slice(0, 70) + "..." : item?.description}
-              onClick={() => handleProductDetails(item)}
-            />
-          </div>
-          <h3>{item?.name}</h3>
-          <p className="description">{item?.type}</p>
-          <p className="price">&euro;{Number(item?.price)}</p>
-          <p className="button-container">
+        <div className="image-container" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+          {item?.trail && (
+            <button
+              className="try-on-button"
+              onClick={() => clickOnTryOn(item)}
+            >
+              Try On
+            </button>
+          )}
+          {hovered && <div className="hover-button-container">
             <Button
-              className="View-Product-Button"
+              className="View-ProductPage-Button"
               color="default"
               onClick={() => handleProductDetails(item)}
             >
               View
             </Button>
-          </p>
+          </div>}
+          <img
+            className="productspage-product--image"
+            loading="lazy"
+            src={item?.imageUrl}
+            alt={item?.description.length > 70 ? item?.description.slice(0, 70) + "..." : item?.description}
+            onClick={() => handleProductDetails(item)}
+          />
         </div>
+        <h3>{item?.name}</h3>
+        <p className="description">{item?.type}</p>
+        <p className="price">&euro;{Number(item?.price)}.00</p>
+      </div>
+      
       ))}
     </div>
   );
@@ -256,6 +259,7 @@ export const Productfilterdropdowns = (props) => {
         letterSpacing: "0.1rem",
         textTransform: "capitalize",
         borderRadius: "5px",
+        height: "40px",
       }}
       placeholder={props?.placeholder}
       name={props?.name}

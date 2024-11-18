@@ -154,6 +154,9 @@ function WishListComponent() {
                     />
                     {/* <h3 style={{ fontSize: "18px" }}>{items?.product?.imageUrl}</h3> */}
                     <p className="description">{items?.product?.type}</p>
+                    <p className="description">
+                      Size: {items?.productSize}
+                    </p>
                     <p className="price" style={{ fontSize: "15px" }}>
                       ${items?.product?.price}
                     </p>

@@ -30,22 +30,24 @@
   flex: 1;
   padding-left: 2%;
   padding-right: 2%;
-  max-height: 612px; /* Set the max height here */
+  max-height: calc(100vh - 190px);
   overflow-y: auto;
   scrollbar-width: none;
   background-color: white;
   margin-left: 20px;
-  border-radius: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .Result-Image {
   width: 100%;
   height: 100%;
-  max-height: 600px;
+  max-height: calc(100vh - 200px);
   /* height: 500px; */
   object-fit: contain;
   border-radius: 20px;
-  border: 5px solid white;
+  border: 5px solid lightgray;
 }
 
 .Right-Div-heading {
@@ -63,6 +65,7 @@
   /* justify-content: center; */
   padding-top: 25px;
   padding-bottom: 25px;
+  min-height: calc(100% - 50px); /** osama */
 }
 
 .predefined-Model-Image {
@@ -78,7 +81,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+  /* height: 100%; */ /* osama */
 }
 
 @media (min-width: 1200px) {
@@ -135,9 +138,12 @@
     margin-right: 20px;
     border-radius: 10px;
     position: relative;
+    border: 1px solid lightgray;
   }
   .Mobile-models-div {
     display: block !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
   }
   .mobile-model-image-div {
     display: flex;
@@ -147,6 +153,7 @@
     max-width: 100%;
     /* margin-left: 10px; */
     scrollbar-width: none;
+    padding: 10px;
   }
   .Select-Custom-Model-button{
     font-size: 10px !important;
@@ -164,14 +171,17 @@
 .VTO-image-container {
   position: relative;
   display: inline-block;
+  height: 100%;
+  /* background-color: #F6F6F6; */
 }
 
 .VTO-model--image {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 100%;
   object-fit: cover;
   border-radius: 20px;
+  border: 1px solid lightgray;
   &:hover {
     cursor: pointer;
   }
@@ -195,6 +205,8 @@
   width: 100%;
   margin-top: 1%;
   margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .similar-products-heading {
@@ -214,7 +226,7 @@
 
 .Similar-Products-div {
   background-color: white;
-  border-radius: 30px;
+  border-radius: 20px;
 }
 
 .Similar-Products-div .react-multi-carousel-item {
