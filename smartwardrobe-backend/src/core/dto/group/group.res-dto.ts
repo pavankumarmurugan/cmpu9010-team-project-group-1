@@ -2,11 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 import { BaseDto } from '../base-dto/base.dto';
 
-// "updatedAt": null,
-// "createdAt": "2024-11-14",
-// "groupId": 49,
-// "groupName": "FRIENDS",
-// "createdBy": 217
 export class GroupResDto extends BaseDto {
   @ApiProperty({ example: 1, description: 'The ID of the group' })
   @IsNumber()

@@ -55,18 +55,12 @@ export class GroupUsecase {
 
   async getAll(userId: number): Promise<IResponse<GroupResDto[]>> {
     try {
-      const groupMembersEntities: GroupMembersEntity[] =
-        await this.databaseService.groupMembers.getAllByProperties({ userId });
-
-      const entities: GroupEntity[] = await Promise.all(
-        groupMembersEntities.map(({ groupId }) =>
-          this.databaseService.group.get({ groupId }),
-        ),
-      );
-      const data = this.convertor.toEntityWithMembershipId(
-        entities,
-        groupMembersEntities,
-      );
+      const groupMembers =
+        await this.databaseService.groupMembers.getAllByPropertiesV2(
+          { userId },
+          ['group'],
+        );
+      const data = this.convertor.toGroupResDtoFromMembers(groupMembers);
 
       return {
         data,

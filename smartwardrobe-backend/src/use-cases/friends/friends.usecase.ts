@@ -36,33 +36,67 @@ export class FriendsUsecase {
   //   }
   // }
 
+  // async getAll(userId: number): Promise<IResponse<UserResDTO[]>> {
+  //   try {
+  //     const results = await Promise.all([
+  //       this.databaseService.friends.getAllByProperties({
+  //         user1Id: userId,
+  //       }),
+  //       this.databaseService.friends.getAllByProperties({
+  //         user2Id: userId,
+  //       }),
+  //     ]);
+
+  //     const friendsEntity: number[] = results.flat().map((entity) => {
+  //       if (entity.user1Id !== userId) {
+  //         return entity.user1Id;
+  //       }
+  //       return entity.user2Id;
+  //     });
+
+  //     const userEntity: UserEntity[] = await Promise.all(
+  //       friendsEntity.map((id) =>
+  //         this.databaseService.users.get({ userId: id }),
+  //       ),
+  //     );
+
+  //     const data = this.userConvertor.toUserResDTOFromFriendsEntity(
+  //       results.flat(),
+  //       userEntity,
+  //     );
+
+  //     return {
+  //       data,
+  //       message: MESSAGES.FRIENDS.GET.SUCCESS,
+  //     };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
   async getAll(userId: number): Promise<IResponse<UserResDTO[]>> {
     try {
-      const results = await Promise.all([
-        this.databaseService.friends.getAllByProperties({
-          user1Id: userId,
-        }),
-        this.databaseService.friends.getAllByProperties({
-          user2Id: userId,
-        }),
-      ]);
+      const friends = await this.databaseService.friends.getAllWithOrConditions(
+        [{ user1Id: userId }, { user2Id: userId }],
+        ['user1', 'user2'],
+      );
 
-      const friendsEntity: number[] = results.flat().map((entity) => {
-        if (entity.user1Id !== userId) {
-          return entity.user1Id;
-        }
-        return entity.user2Id;
-      });
-
-      const userEntity: UserEntity[] = await Promise.all(
-        friendsEntity.map((id) =>
-          this.databaseService.users.get({ userId: id }),
+      const friendIds = [
+        ...new Set(
+          friends.map((friend) =>
+            friend.user1Id === userId ? friend.user2Id : friend.user1Id,
+          ),
         ),
+      ];
+
+      const users = await this.databaseService.users.getAllByIdsIn(
+        friendIds,
+        'userId',
       );
 
       const data = this.userConvertor.toUserResDTOFromFriendsEntity(
-        results.flat(),
-        userEntity,
+        friends,
+        users,
       );
 
       return {
