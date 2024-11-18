@@ -1,33 +1,43 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Multer } from 'multer';
 
 export class ChatReqDto {
   @ApiProperty({ example: 2, description: 'The ID of the receiver' })
+  @Type(() => Number)
   @IsNumber()
   receiverId?: number;
 
   @ApiProperty({
     example: 'Hello, how are you?',
     description: 'The message content',
+    required: false,
   })
   @IsString()
+  @IsOptional()
   message?: string;
 
   @ApiProperty({
     example: 'text',
-    description: 'The type of the message',
+    description:
+      "The type of the message must be either 'text' or 'linkPreview' or 'audio'",
   })
   @IsString()
-  @IsIn(['text', 'link_preview'], {
-    message: "messageType must be either 'text' or 'linkPreview'",
+  @IsIn(['text', 'link_preview', 'audio'], {
+    message: "messageType must be either 'text' or 'linkPreview' or 'audio'",
   })
   messageType?: string;
 
   @ApiProperty({
-    example: 1,
-    description: 'The ID of the group',
+    type: 'file',
+    properties: {
+      file: {
+        type: 'string',
+        format: 'binary',
+      },
+    },
+    required: false,
   })
-  @IsNumber()
-  @IsOptional()
-  groupId?: number;
+  file?: Multer.File;
 }

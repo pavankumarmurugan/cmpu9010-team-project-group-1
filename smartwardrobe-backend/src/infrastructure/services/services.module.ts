@@ -11,6 +11,7 @@ import { CacheService } from './cache/cache.service';
 import { FirebaseService } from './firebase/firebase.service';
 import { WebSocketService } from './web-sockets/friend-requests/web-sockets.service';
 import { WebSocketGatewayService } from './web-sockets/friend-requests/websocket.gateway.service';
+import { UploadAudioService } from './uploadProfilePicture/upload-audio-chat';
 
 @Module({
   imports: [
@@ -27,12 +28,14 @@ import { WebSocketGatewayService } from './web-sockets/friend-requests/websocket
     FirebaseService,
     WebSocketService,
     WebSocketGatewayService,
+    UploadAudioService,
   ],
   exports: [
     SearchProductsService,
     UploadProfilePictureService,
     FaissService,
     UploadSearchPictureService,
+    UploadAudioService,
     CacheService,
     FirebaseService,
     WebSocketService,
