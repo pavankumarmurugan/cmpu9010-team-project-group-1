@@ -130,4 +130,46 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
       where: query,
     });
   }
+
+  async getAllWithOrConditions(
+    orConditions: { [key: string]: any }[],
+    relations: string[] = [],
+  ): Promise<T[]> {
+    const queryBuilder = this._repository.createQueryBuilder('entity');
+
+    if (relations.length > 0) {
+      relations.forEach((relation) => {
+        queryBuilder.leftJoinAndSelect(`entity.${relation}`, relation);
+      });
+    }
+
+    orConditions.forEach((condition, index) => {
+      const whereClause = Object.keys(condition)
+        .map((key) => `entity.${key} = :${key}_${index}`)
+        .join(' AND ');
+
+      if (index === 0) {
+        queryBuilder.where(
+          whereClause,
+          this.formatParameters(condition, index),
+        );
+      } else {
+        queryBuilder.orWhere(
+          whereClause,
+          this.formatParameters(condition, index),
+        );
+      }
+    });
+
+    return await queryBuilder.getMany();
+  }
+
+  // Helper method to format parameters
+  private formatParameters(properties: any, index: number) {
+    const formattedParams: Record<string, any> = {};
+    Object.keys(properties).forEach((key) => {
+      formattedParams[`${key}_${index}`] = properties[key];
+    });
+    return formattedParams;
+  }
 }

@@ -27,4 +27,9 @@ export abstract class IGenericRepository<T> {
     lastChecked: Date,
     propertyName: string,
   ): Promise<T[]>;
+
+  abstract getAllWithOrConditions(
+    orConditions: { [key: string]: any }[],
+    relations: string[],
+  ): Promise<T[]>;
 }
