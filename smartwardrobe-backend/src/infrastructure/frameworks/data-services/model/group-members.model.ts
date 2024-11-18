@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { BaseModel } from './base.model';
+import { GroupModel } from './group.model';
 
 @Entity('group_members')
 export class GroupMembersModel extends BaseModel {
@@ -18,4 +25,8 @@ export class GroupMembersModel extends BaseModel {
     name: 'joined_at',
   })
   joinedAt: Date;
+
+  @ManyToOne(() => GroupModel, (group) => group.members)
+  @JoinColumn({ name: 'group_id' })
+  group?: GroupModel;
 }

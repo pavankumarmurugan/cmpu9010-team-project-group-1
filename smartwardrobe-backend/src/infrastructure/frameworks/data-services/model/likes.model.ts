@@ -11,4 +11,7 @@ export class LikesModel extends BaseEntity {
 
   @Column({ type: 'int', nullable: true, name: 'product_id' })
   productId?: number;
+
+  @Column({ type: 'varchar', nullable: true, name: 'product_size' })
+  productSize: string;
 }

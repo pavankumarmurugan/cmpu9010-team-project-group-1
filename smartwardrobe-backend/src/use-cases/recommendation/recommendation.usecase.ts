@@ -56,12 +56,10 @@ export class RecommendationUsecase {
         }))
         .slice(0, topN);
 
-      const result = await Promise.all(
-        similarImages.map((item) =>
-          this.dataService.product.getAllByProperties({
-            imageName: item.imageName,
-          }),
-        ),
+      const imageNames = similarImages.map((item) => item.imageName);
+      const result = await this.dataService.product.getAllByIdsIn(
+        imageNames,
+        'imageName',
       );
 
       await this.cacheService.setToCache<RecommendationsResDto[]>(

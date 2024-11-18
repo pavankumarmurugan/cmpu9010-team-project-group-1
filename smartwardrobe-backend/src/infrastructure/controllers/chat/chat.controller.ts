@@ -9,8 +9,12 @@ import {
   Post,
   UseGuards,
   Request,
+  BadRequestException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ChatGroupReqDto } from 'src/core/dto/chat/chat.group.req-dto';
 import { ChatGroupResDto } from 'src/core/dto/chat/chat.group.res-dto';
 import { ChatReqDto } from 'src/core/dto/chat/chat.req-dto';
@@ -24,12 +28,17 @@ import { Roles } from 'src/infrastructure/decorators/roles.decorator';
 import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
 import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
 import { ChatUsecase } from 'src/use-cases/chat/chat.usecase';
+import { Multer } from 'multer';
+import { UploadAudioService } from 'src/infrastructure/services/uploadProfilePicture/upload-audio-chat';
 
 @Controller('chat')
 @ApiTags('Chat')
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class ChatController {
-  constructor(private usecase: ChatUsecase) {}
+  constructor(
+    private usecase: ChatUsecase,
+    private audioService: UploadAudioService,
+  ) {}
 
   // @Get('get-all-my-chats')
   // @ApiBearerAuth()
@@ -116,6 +125,96 @@ export class ChatController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Post('create/send-message-to-group-v2')
+  @ApiBearerAuth()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 20 * 1024 * 1024 }, // 20MB limit
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname) {
+          return callback(
+            new BadRequestException('Invalid file, max size 20 MB'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: ChatGroupReqDto })
+  async createSendMessageToGroupV2(
+    @UploadedFile() file: Multer.File,
+    @Request() request: RequestWithUser,
+    @Body() dto: ChatGroupReqDto,
+  ): Promise<IResponse<ChatGroupResDto>> {
+    const {
+      user: { userId },
+    } = request;
+
+    if (!dto.message && !file) {
+      throw new BadRequestException('Message or audio file is required');
+    }
+
+    let audioFile: string | undefined;
+
+    if (file) {
+      audioFile = await this.audioService.uploadAudio(file, userId);
+    }
+
+    const response = await this.usecase.createSendMessageToGroup(userId, {
+      ...dto,
+      message: audioFile ? audioFile : dto.message,
+    });
+
+    return response;
+  }
+
+  @Post('create/send-message-to-friend-v2')
+  @ApiBearerAuth()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 20 * 1024 * 1024 }, // 20MB limit
+      fileFilter: (req, file, callback) => {
+        if (!file.originalname) {
+          return callback(
+            new BadRequestException('Invalid file, max size 20 MB'),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: ChatReqDto })
+  async createV2(
+    @UploadedFile() file: Multer.File,
+    @Request() request: RequestWithUser,
+    @Body() dto: ChatReqDto,
+  ): Promise<IResponse<ChatResDto>> {
+    const {
+      user: { userId },
+    } = request;
+
+    if (!dto.message && !file) {
+      throw new BadRequestException('Message or audio/image file is required');
+    }
+
+    let audioFile: string | undefined;
+
+    if (file) {
+      audioFile = await this.audioService.uploadAudio(file, userId);
+    }
+
+    const response = await this.usecase.createSendMessageToUser(userId, {
+      ...dto,
+      message: audioFile ? audioFile : dto.message,
+    });
+
+    return response;
   }
 
   @Patch('update')

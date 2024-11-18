@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
+import { IsEnum, IsNumber } from 'class-validator';
 
 export class LikesReqDto {
   @ApiProperty({
@@ -9,4 +9,12 @@ export class LikesReqDto {
   })
   @IsNumber()
   readonly productId: number;
+
+  @ApiProperty({
+    required: true,
+    example: 'M',
+    description: 'Product size',
+  })
+  @IsEnum(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
+  readonly productSize: string;
 }

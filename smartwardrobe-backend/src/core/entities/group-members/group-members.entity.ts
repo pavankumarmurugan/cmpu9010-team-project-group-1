@@ -1,3 +1,4 @@
+import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
 import { BaseEntity } from '../base/base.entity';
 
 export class GroupMembersEntity extends BaseEntity {
@@ -5,4 +6,5 @@ export class GroupMembersEntity extends BaseEntity {
   readonly groupId?: number;
   readonly userId?: number;
   readonly joinedAt?: Date;
+  readonly group?: GroupModel;
 }

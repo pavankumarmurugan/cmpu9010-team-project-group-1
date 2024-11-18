@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsObject } from 'class-validator';
+import { IsEnum, IsNumber, IsObject } from 'class-validator';
 import { BaseDto } from '../base-dto/base.dto';
 import { ProductResDto } from '../product/product-res-dto';
 
@@ -15,4 +15,12 @@ export class LikesResDto extends BaseDto {
   @ApiProperty({ required: true })
   @IsObject()
   readonly product?: ProductResDto;
+
+  @ApiProperty({
+    required: true,
+    example: 'M',
+    description: 'Product size',
+  })
+  @IsEnum(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
+  readonly productSize: string;
 }

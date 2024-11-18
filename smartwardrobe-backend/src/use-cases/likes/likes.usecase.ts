@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { LikesConvertor } from 'src/core/convertors/likes/likes.convertor';
 import { LikesReqDto } from 'src/core/dto/likes/likes.req-dto';
@@ -34,7 +34,7 @@ export class LikesUsecase {
         message: MESSAGES.LIKES.CREATE.SUCCESS,
       };
     } catch (error) {
-      throw error;
+      throw new BadRequestException(MESSAGES.LIKES.CREATE.ERROR);
     }
   }
 

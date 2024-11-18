@@ -401,3 +401,14 @@ CREATE TABLE public.user_liked_models (
         UNIQUE (user_id, model_image_name)
 );
 
+CREATE INDEX idx_model_image_name_image_name ON vto_image_search (model_image_name, image_name);
+
+CREATE INDEX idx_image_name ON products (image_name);
+
+CREATE INDEX idx_friends_user1_user2 ON friends (user1_id, user2_id);
+
+CREATE INDEX idx_group_members_user_id ON group_members (user_id);
+
+CREATE INDEX idx_group_members_group_id ON group_members (group_id);
+
+
