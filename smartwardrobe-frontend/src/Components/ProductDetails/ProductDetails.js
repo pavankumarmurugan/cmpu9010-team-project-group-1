@@ -16,9 +16,9 @@ import {
 import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
 import { handleImageUpload } from "../GenericCode/GenericCode";
-import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
-import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+// import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
+// import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
+// import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import Carousel from "react-multi-carousel";
 import { IoMdAdd } from "react-icons/io";
 import { RiFontSize, RiSubtractFill } from "react-icons/ri";

@@ -14,12 +14,12 @@ import {
   SvgIcon,
 } from "@mui/material";
 
-import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
-import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
-import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
-import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
-import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
+// import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
+// import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
+// import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
+// import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+// import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
+// import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import {
   filterDataAccordingToUser,
   handleImageUpload,
@@ -82,80 +82,80 @@ const ProductPage = () => {
   });
   const [file, setFile] = useState(null);
 
-  const dummyData = [
-    {
-      image: Homeproductimage_1,
-      name: "Zapara",
-      description: "Wedding Suit",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_2,
-      name: "Harper",
-      description: "Long Sleeves T-Shirt",
-      price: "$130",
-    },
-    {
-      image: Homeproductimage_3,
-      name: "Zara",
-      description: "Urban Style Hoodeis",
-      price: "$250",
-    },
-    {
-      image: Homeproductimage_4,
-      name: "H&M",
-      description: "Printed Dress for Summer",
-      price: "$120",
-    },
-    {
-      image: Homeproductimage_5,
-      name: "Next Direct",
-      description: "Leopard Printed Shoes For Women",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_6,
-      name: "Converse",
-      description: "Black Converse Shoes",
-      price: "$230",
-    },
-    {
-      image: Homeproductimage_1,
-      name: "Zapara",
-      description: "Wedding Suit",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_2,
-      name: "Harper",
-      description: "Long Sleeves T-Shirt",
-      price: "$130",
-    },
-    {
-      image: Homeproductimage_3,
-      name: "Zara",
-      description: "Urban Style Hoodeis",
-      price: "$250",
-    },
-    {
-      image: Homeproductimage_4,
-      name: "H&M",
-      description: "Printed Dress for Summer",
-      price: "$120",
-    },
-    {
-      image: Homeproductimage_5,
-      name: "Next Direct",
-      description: "Leopard Printed Shoes For Women",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_6,
-      name: "Converse",
-      description: "Black Converse Shoes",
-      price: "$230",
-    },
-  ];
+  // const dummyData = [
+  //   {
+  //     image: Homeproductimage_1,
+  //     name: "Zapara",
+  //     description: "Wedding Suit",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_2,
+  //     name: "Harper",
+  //     description: "Long Sleeves T-Shirt",
+  //     price: "$130",
+  //   },
+  //   {
+  //     image: Homeproductimage_3,
+  //     name: "Zara",
+  //     description: "Urban Style Hoodeis",
+  //     price: "$250",
+  //   },
+  //   {
+  //     image: Homeproductimage_4,
+  //     name: "H&M",
+  //     description: "Printed Dress for Summer",
+  //     price: "$120",
+  //   },
+  //   {
+  //     image: Homeproductimage_5,
+  //     name: "Next Direct",
+  //     description: "Leopard Printed Shoes For Women",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_6,
+  //     name: "Converse",
+  //     description: "Black Converse Shoes",
+  //     price: "$230",
+  //   },
+  //   {
+  //     image: Homeproductimage_1,
+  //     name: "Zapara",
+  //     description: "Wedding Suit",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_2,
+  //     name: "Harper",
+  //     description: "Long Sleeves T-Shirt",
+  //     price: "$130",
+  //   },
+  //   {
+  //     image: Homeproductimage_3,
+  //     name: "Zara",
+  //     description: "Urban Style Hoodeis",
+  //     price: "$250",
+  //   },
+  //   {
+  //     image: Homeproductimage_4,
+  //     name: "H&M",
+  //     description: "Printed Dress for Summer",
+  //     price: "$120",
+  //   },
+  //   {
+  //     image: Homeproductimage_5,
+  //     name: "Next Direct",
+  //     description: "Leopard Printed Shoes For Women",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_6,
+  //     name: "Converse",
+  //     description: "Black Converse Shoes",
+  //     price: "$230",
+  //   },
+  // ];
 
   const categoryfilter = [
     { label: 1, value: 1 },

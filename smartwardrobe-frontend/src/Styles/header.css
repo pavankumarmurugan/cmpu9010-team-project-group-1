@@ -338,7 +338,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .menu-item .item{
@@ -362,4 +362,44 @@
     width: 20px;
     height: 20px;
     color: #5E5546;
+}
+
+.p-megamenu{
+    background-color: black !important;
+    border: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-left: 6% !important;
+}
+
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text{
+    color: white !important;
+    font-size: 20px !important;
+}
+
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon{
+    color: white !important;
+}
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover{
+    background-color: black !important;
+}
+
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:active{
+    background-color: black !important;
+}
+
+.p-megamenu .p-menuitem.p-highlight > .p-menuitem-content{
+    background-color: black !important;
+}
+
+.p-megamenu-panel {
+    left: -200px !important;
+}
+
+.p-megamenu .p-menuitem.p-highlight > .p-menuitem-content{
+    background-color: black !important;
+}
+
+.p-menuitem .p-focus{
+    background-color: black !important;
 }

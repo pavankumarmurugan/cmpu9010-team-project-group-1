@@ -24,6 +24,9 @@ import ListItem from "@mui/material/ListItem";
 import { ListItemText } from "@mui/material";
 import { Collapse } from "@mui/material";
 import { CiBookmark } from "react-icons/ci";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import { MegaMenu } from "primereact/megamenu";
 import { IoMdClose } from "react-icons/io";
 import {
   MdExpandLess,
@@ -69,6 +72,7 @@ function Headermenu() {
   const [open, setOpen] = useState(false);
   const [login, setlogin] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
+  const [openWomen, setOpenWomen] = useState(false);
   const [openTop, setOpenTop] = useState(false);
   const [openFootwear, setOpenFootwear] = useState(false);
   const [openMenFootwear, setOpenMenFootwear] = useState(false);
@@ -92,141 +96,136 @@ function Headermenu() {
 
   let userId = token?.userId;
   // State for friend and group IDs
-const [friendIds, setFriendIds] = useState([]);
-const [groupIds, setGroupIds] = useState([]);
-const [socket, setSocket] = useState(null);
+  const [friendIds, setFriendIds] = useState([]);
+  const [groupIds, setGroupIds] = useState([]);
+  const [socket, setSocket] = useState(null);
 
-// Mock API call to get friend IDs and group IDs (replace with actual API call)
-const fetchFriendAndGroupIds = async () => {
-  // Simulate an API call
-  debugger
-  const getFriendsList = await apiCall(
-    "GET",
-    "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
-    null,
-    token?.token
-  );
-  if(getFriendsList?.data?.length > 0){
-    setFriendIds(getFriendsList.data.map((x) => x.userId));
-  }
-  console.log(getFriendsList);
-  const getGroupsList = await apiCall(
-    "GET",
-    "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
-    null,
-    token?.token
-  );
-  if(getGroupsList?.data?.length > 0){
-    setGroupIds(getGroupsList.data.map((x) => x.groupId));
-  }
-  console.log(getGroupsList);
-  console.log(friendIds);
-  console.log(groupIds);
-};
-
-useEffect(() => {
-  // Fetch friend and group IDs when component mounts
-  if(token){
-    fetchFriendAndGroupIds();
-  }
-}, []);
-
-useEffect(() => {
-  debugger
-  if (friendIds.length === 0 && groupIds.length === 0) return; // Only initialize socket if we have IDs
-
-  // Initialize WebSocket connection
-  const newSocket = io(backendUrl, {
-    withCredentials: true,
-    reconnection: true, // enables automatic reconnection
-    reconnectionAttempts: Infinity, // retry indefinitely
-    reconnectionDelay: 2000, // time before the first retry in milliseconds
-    reconnectionDelayMax: 10000, // maximum time delay between retries
-    timeout: 20000, // connection timeout before trying to reconnect
-  });
-  setSocket(newSocket);
-
-  newSocket.on("connect", () => {
-    console.log("Connected to WebSocket server with id:", newSocket.id);
-
-    // Dynamically join friend chat rooms
-    friendIds.forEach((friendId) => {
-      const roomId = `room_${Math.min(userId, friendId)}_${Math.max(
-        userId,
-        friendId
-      )}`;
-      newSocket.emit("joinChatRoom", { roomId, userId });
-      console.log(`User ${userId} joined friend chat room: ${roomId}`);
-    });
-
-    // Dynamically join group chat rooms
-    groupIds.forEach((groupId) => {
-      newSocket.emit("joinGroupRoom", { groupId, userId });
-      console.log(`User ${userId} joined group chat room: group_${groupId}`);
-    });
-  });
-
-  // Listener for friend messages
-  newSocket.on("newMessage", (data) => {
-    console.log("New friend message received:", data);
-    if(data?.senderId !== userId){
-    showToastInfo('Message received');
+  // Mock API call to get friend IDs and group IDs (replace with actual API call)
+  const fetchFriendAndGroupIds = async () => {
+    // Simulate an API call
+    debugger;
+    const getFriendsList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+      null,
+      token?.token
+    );
+    if (getFriendsList?.data?.length > 0) {
+      setFriendIds(getFriendsList.data.map((x) => x.userId));
     }
-  });
-
-  // Listener for group messages
-  newSocket.on("newGroupMessage", (data) => {
-    console.log("New group message received:", data);
-    if(data?.senderId !== userId){
-      showToastInfo('New group message received');
-
+    console.log(getFriendsList);
+    const getGroupsList = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+      null,
+      token?.token
+    );
+    if (getGroupsList?.data?.length > 0) {
+      setGroupIds(getGroupsList.data.map((x) => x.groupId));
     }
-    // Display a notification or update UI with the new group message
-  });
-
-  
-  newSocket.emit("joinNotificationRoom", { userId });
-  console.log(
-    `User ${userId} joined their notification room user_${userId}`
-  );
-
-  // To get notifications
-
-  // Friend request event listeners
-  newSocket.on("friendRequestCreated", (data) => {
-  console.log("New friend request received:", data);
-  // Display a notification or update UI with new friend request
-  showToastInfo("Friend request received.");
-  });
-
-  newSocket.on("friendRequestUpdated", (data) => {
-  console.log("Friend request updated:", data);
-  // Display a notification or update UI with friend request update
-  showToastInfo(
-    `Your friend request status with user ${data.receiverId} is now ${data.status}`
-  );
-  });
-
-  // Handle disconnection
-  newSocket.on("disconnect", () => {
-    console.log("Disconnected from WebSocket server");
-  });
-
-  // Clean up WebSocket connection when the component unmounts
-  return () => {
-    newSocket.disconnect();
+    console.log(getGroupsList);
+    console.log(friendIds);
+    console.log(groupIds);
   };
-}, [userId, friendIds, groupIds]); // Re-run effect when friendIds or groupIds change
 
+  useEffect(() => {
+    // Fetch friend and group IDs when component mounts
+    if (token) {
+      fetchFriendAndGroupIds();
+    }
+  }, []);
 
-  const contentStyle= {
+  useEffect(() => {
+    debugger;
+    if (friendIds.length === 0 && groupIds.length === 0) return; // Only initialize socket if we have IDs
+
+    // Initialize WebSocket connection
+    const newSocket = io(backendUrl, {
+      withCredentials: true,
+      reconnection: true, // enables automatic reconnection
+      reconnectionAttempts: Infinity, // retry indefinitely
+      reconnectionDelay: 2000, // time before the first retry in milliseconds
+      reconnectionDelayMax: 10000, // maximum time delay between retries
+      timeout: 20000, // connection timeout before trying to reconnect
+    });
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server with id:", newSocket.id);
+
+      // Dynamically join friend chat rooms
+      friendIds.forEach((friendId) => {
+        const roomId = `room_${Math.min(userId, friendId)}_${Math.max(
+          userId,
+          friendId
+        )}`;
+        newSocket.emit("joinChatRoom", { roomId, userId });
+        console.log(`User ${userId} joined friend chat room: ${roomId}`);
+      });
+
+      // Dynamically join group chat rooms
+      groupIds.forEach((groupId) => {
+        newSocket.emit("joinGroupRoom", { groupId, userId });
+        console.log(`User ${userId} joined group chat room: group_${groupId}`);
+      });
+    });
+
+    // Listener for friend messages
+    newSocket.on("newMessage", (data) => {
+      console.log("New friend message received:", data);
+      if (data?.senderId !== userId) {
+        showToastInfo("Message received");
+      }
+    });
+
+    // Listener for group messages
+    newSocket.on("newGroupMessage", (data) => {
+      console.log("New group message received:", data);
+      if (data?.senderId !== userId) {
+        showToastInfo("New group message received");
+      }
+      // Display a notification or update UI with the new group message
+    });
+
+    newSocket.emit("joinNotificationRoom", { userId });
+    console.log(`User ${userId} joined their notification room user_${userId}`);
+
+    // To get notifications
+
+    // Friend request event listeners
+    newSocket.on("friendRequestCreated", (data) => {
+      console.log("New friend request received:", data);
+      // Display a notification or update UI with new friend request
+      showToastInfo("Friend request received.");
+    });
+
+    newSocket.on("friendRequestUpdated", (data) => {
+      console.log("Friend request updated:", data);
+      // Display a notification or update UI with friend request update
+      showToastInfo(
+        `Your friend request status with user ${data.receiverId} is now ${data.status}`
+      );
+    });
+
+    // Handle disconnection
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from WebSocket server");
+    });
+
+    // Clean up WebSocket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [userId, friendIds, groupIds]); // Re-run effect when friendIds or groupIds change
+
+  const contentStyle = {
     margin: 0,
     // height: '30px',
-    color: '#fff',
-    textAlign: 'center',
-    background: '#e8e4e0',
+    color: "#fff",
+    textAlign: "center",
+    background: "#e8e4e0",
     color: "black",
-    fontWeight: "500"
+    fontWeight: "500",
   };
 
   const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -306,87 +305,24 @@ useEffect(() => {
             <CiBookmark className="icons" />
             Collections
           </a>
-          <div 
-  className="item" 
-  onClick={() => {
-    // Your custom onClick function logic here
-    handleCartComponent();
-  }}
->
-  <MdOutlineShoppingBag className="icons" />
-  Cart
-</div>
+          <div
+            className="item"
+            onClick={() => {
+              // Your custom onClick function logic here
+              handleCartComponent();
+            }}
+          >
+            <MdOutlineShoppingBag className="icons" />
+            Cart
+          </div>
         </div>
       </List>
       <List>
         <div>
           <h1 className="history-heading">CATEGORIES</h1>
         </div>
-        <div className="menu-item">
-          <div className="item" onClick={handleTrendingClick}>
-            Women {openTrending ? <MdExpandLess /> : <MdExpandMore />}
-          </div>
-          <Collapse in={openTrending} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem
-                button
-                className="item"
-                data-hidden-text="Dresses Extra Info"
-                onClick={() => handleItemClick("Women Dresses")}
-              >
-                <ListItemText primary="Dresses" />
-              </ListItem>
-              <ListItem
-                button
-                className="submenu-item"
-                onClick={() => handleItemClick("Women Tops")}
-              >
-                <ListItemText primary="Tops" />
-              </ListItem>
-              <ListItem
-                button
-                className="submenu-item"
-                onClick={() => handleItemClick("Women Bottoms")}
-              >
-                <ListItemText primary="Bottom" />
-              </ListItem>
-              <ListItem
-                button
-                className="submenu-item"
-                onClick={() => handleItemClick("Women Skirts")}
-              >
-                <ListItemText primary="Skirts" />
-              </ListItem>
-              <ListItem
-                button
-                className="submenu-item"
-                onClick={() => handleItemClick("Women Pants")}
-              >
-                <ListItemText primary="Pants " />
-              </ListItem>
-              <ListItem
-                button
-                className="submenu-item"
-                onClick={() => handleItemClick("Women Trousers")}
-              >
-                <ListItemText primary="Trousers" />
-              </ListItem>
-              {/* <ListItem
-                button
-                className="submenu-item"
-                onClick={() => handleItemClick("Women Outerwear")}
-              >
-                <ListItemText primary="Outerwear" />
-              </ListItem> */}
-            </List>
-          </Collapse>
-        </div>
-        <div className="menu-item">
-          <div className="item" onClick={handleTopClick}>
-            Men {openTop ? <MdExpandLess /> : <MdExpandMore />}
-          </div>
-        </div>
-        <Collapse in={openTop} timeout="auto" unmountOnExit>
+
+        <Collapse in={openWomen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItem
               button
@@ -395,49 +331,11 @@ useEffect(() => {
             >
               <ListItemText primary="T-Shirts" />
             </ListItem>
-            <ListItem
-              button
-              className="submenu-item"
-              onClick={() => handleItemClick("Men Shirts")}
-            >
-              <ListItemText primary="Shirts" />
-            </ListItem>
-            <ListItem
-              button
-              className="submenu-item"
-              onClick={() => handleItemClick("Men Pants")}
-            >
-              <ListItemText primary="Pants" />
-            </ListItem>
-            <ListItem
-              button
-              className="submenu-item"
-              onClick={() => handleItemClick("Men Trousers & Cargo")}
-            >
-              <ListItemText primary="Trousers & Cargo" />
-            </ListItem>
-            <ListItem
-              button
-              className="submenu-item"
-              onClick={() => handleItemClick("Men Shorts")}
-            >
-              <ListItemText primary="Shorts" />
-            </ListItem>
-            {/* <ListItem button className="submenu-item" onClick={() => handleItemClick("Men Outwear")}>
-              <ListItemText primary="Outwear" />
-            </ListItem> */}
-            <ListItem
-              button
-              className="submenu-item"
-              onClick={() => handleItemClick("Men Suits & Blazers")}
-            >
-              <ListItemText primary="Suits & Blazers" />
-            </ListItem>
           </List>
         </Collapse>
         <div className="menu-item">
           <div className="item" onClick={handleFootwear}>
-            Footwear {openFootwear ? <MdExpandLess /> : <MdExpandMore />}
+            WoMen {openWomenenFootwear ? <MdExpandLess /> : <MdExpandMore />}
           </div>
         </div>
         <Collapse in={openFootwear} timeout="auto" unmountOnExit>
@@ -603,6 +501,579 @@ useEffect(() => {
   /*  login work*/
 
   /*  header dropdown menu lists work*/
+
+  const primeMenu = [
+    {
+      label: "Women",
+      key: "Ladieswear",
+      icon: "pi pi-box",
+      items: [
+        [
+          {
+            label: "Top",
+            key: "Ladieswear Tops submenu",
+            items: [
+              {
+                label: "T-shirt",
+                key: "Ladieswear//T-shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Long-sleeve top",
+                key: "Ladieswear//Long-sleeve top",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Crop top and skirt",
+                key: "Ladieswear//Crop top and skirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Tank top",
+                key: "Ladieswear//Tank top",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Vest top",
+                key: "Ladieswear//Vest top",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Casual top",
+                key: "Ladieswear//Casual top",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+          {
+            label: "Bottoms",
+            key: "Ladieswear Bottoms submenu",
+            items: [
+              {
+                label: "Outdoor trousers",
+                key: "Ladieswear//Outdoor trousers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Skirt",
+                key: "Ladieswear//Skirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Shorts",
+                key: "Ladieswear//Shorts",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Pyjama bottom",
+                key: "Ladieswear//Pyjama bottom",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Swimwear bottom",
+                key: "Ladieswear//Swimwear bottom",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Outwear",
+            key: "Ladieswear Outdoor submenu",
+            items: [
+              {
+                label: "Jacket",
+                key: "Ladieswear//Jacket",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Waistcoat",
+                key: "Ladieswear//Outdoor Waistcoat",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Trousers",
+                key: "Ladieswear//Outdoor trousers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Cardigan",
+                key: "Ladieswear//Cardigan",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Footwear",
+            key: "Ladieswear Footwear submenu",
+            items: [
+              {
+                label: "Boots",
+                key: "Ladieswear//Boots",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Flat shoes",
+                key: "Ladieswear//Flat shoes",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Heels",
+                key: "Ladieswear//Heels",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Heeled sandals",
+                key: "Ladieswear//Heeled sandals",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Sneakers",
+                key: "Ladieswear//Sneakers",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Accessories",
+            key: "Ladieswear Accessories submenu",
+            items: [
+              {
+                label: "Bag",
+                key: "Ladieswear//Bag",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Earrings",
+                key: "Ladieswear//Earrings",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Ring",
+                key: "Ladieswear//Ring",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Bracelet",
+                key: "Ladieswear//Bracelet",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Hair clip",
+                key: "Ladieswear//Hair clip",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Belt",
+                key: "Ladieswear//Belt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Sunglasses",
+                key: "Ladieswear//Sunglasses",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+      ],
+    },
+    {
+      label: "Men",
+      key: "Menswear",
+      icon: "pi pi-box",
+      items: [
+        [
+          {
+            label: "Top",
+            key: "Menswear Tops submenu",
+            items: [
+              {
+                label: "T-shirt",
+                key: "Menswear//T-shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Shirt",
+                key: "Menswear//Shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Polo Shirt",
+                key: "Menswear//Polo shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Hoodie",
+                key: "Menswear//Hoodie",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Sweater",
+                key: "Menswear//Sweater",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Vest top",
+                key: "Menswear//Vest top",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+          {
+            label: "Bottoms",
+            key: "Menswear Bottoms submenu",
+            items: [
+              {
+                label: "Trousers",
+                key: "Menswear//Trousers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Shorts",
+                key: "Menswear//Shorts",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Pyjama",
+                key: "Menswear//Pyjama bottom",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Swimwear bottom",
+                key: "Menswear//Swimwear bottom",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Outwear",
+            key: "Menswear Outdoor submenu",
+            items: [
+              {
+                label: "Jacket",
+                key: "Menswear//Jacket",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Waistcoat",
+                key: "Menswear//Outdoor Waistcoat",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Blazer",
+                key: "Menswear//Blazer",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Cardigan",
+                key: "Menswear//Cardigan",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+          {
+            label: "Footwear",
+            key: "Menswear Footwear submenu",
+            items: [
+              {
+                label: "Sneakers",
+                key: "Menswear//Sneakers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Boots",
+                key: "Menswear//Boots",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Slippers",
+                key: "Menswear//Slippers",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Accessories",
+            key: "Menswear Accessories submenu",
+            items: [
+              {
+                label: "Bag",
+                key: "Menswear//Bag",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Cross-body bag",
+                key: "Menswear//Cross-body bag",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Cap",
+                key: "Menswear//Cap",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Sunglasses",
+                key: "Menswear//Sunglasses",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Watch",
+                key: "Menswear//Watch",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Belt",
+                key: "Menswear//Belt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Wallet",
+                key: "Menswear//Wallet",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Gloves",
+                key: "Menswear//Gloves",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+      ],
+    },
+    {
+      label: "Kids",
+      key: "Baby Children",
+      icon: "pi pi-box",
+      items: [
+        [
+          {
+            label: "Clothing",
+            key: "Baby Children Tops submenu",
+            items: [
+              {
+                label: "T-shirt",
+                key: "Baby Children//T-shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Shirt",
+                key: "Baby Children//Shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Trousers",
+                key: "Baby Children//Trousers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Cardigan",
+                key: "Baby Children//Cardigan",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Bodysuit",
+                key: "Baby Children//Bodysuit",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Sweater",
+                key: "Baby Children//Sweater",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Swimsuit",
+                key: "Baby Children//Swimsuit",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+          {
+            label: "Outerwear",
+            key: "Baby Children Outerwear submenu",
+            items: [
+              {
+                label: "Jacket",
+                key: "Baby Children//Jacket",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Coat",
+                key: "Baby Children//Coat",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Outdoor trousers",
+                key: "Baby Children//Outdoor trousers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Jumpsuit",
+                key: "Baby Children//Jumpsuit",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Footwear",
+            key: "Baby Children Footwear submenu",
+            items: [
+              {
+                label: "Sneakers",
+                key: "Baby Children//Sneakers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Boots",
+                key: "Baby Children//Boots",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Slippers",
+                key: "Baby Children//Slippers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Pre-walkers",
+                key: "Baby Children//Pre-walkers",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Accessories",
+            key: "Baby Children Accessories submenu",
+            items: [
+              {
+                label: "Hat",
+                key: "Baby Children//Hat",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Cap",
+                key: "Baby Children//Cap",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Sunglasses",
+                key: "Baby Children//Sunglasses",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Hair ties",
+                key: "Baby Children//Hair ties",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Hair clip",
+                key: "Baby Children//Hair clip",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Towel",
+                key: "Baby Children//Towel",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Toy",
+                key: "Baby Children//Toy",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Soft Toys",
+                key: "Baby Children//Soft Toys",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+      ],
+    },
+    {
+      label: "Sports",
+      key: "Sport",
+      icon: "pi pi-box",
+      items: [
+        [
+          {
+            label: "Clothing",
+            key: "Sport Clothing submenu",
+            items: [
+              {
+                label: "T-shirt",
+                key: "Sport//T-shirt",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Trousers",
+                key: "Sport//Trousers",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Shorts",
+                key: "Sport//Shorts",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Socks",
+                key: "Sport//Socks",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Swimwear bottom",
+                key: "Sport//Swimwear bottom",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+        [
+          {
+            label: "Accessories",
+            key: "Sport Accessories submenu",
+            items: [
+              // { label: "Cap", key: "Sport//Cap" },
+              {
+                label: "Waterbottle",
+                key: "Sport//Waterbottle",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Giftbox",
+                key: "Sport//Giftbox",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Gloves",
+                key: "Sport//Gloves",
+                command: (e) => handleDropdownClick(e),
+              },
+              {
+                label: "Other accessories",
+                key: "Sport//Other accessories",
+                command: (e) => handleDropdownClick(e),
+              },
+            ],
+          },
+        ],
+      ],
+    },
+  ];
+
   const menuData = [
     {
       label: "Women",
@@ -619,7 +1090,10 @@ useEffect(() => {
           children: [
             { label: "T-shirt", key: "Ladieswear//T-shirt" },
             { label: "Long-sleeve top", key: "Ladieswear//Long-sleeve top" },
-            { label: "Crop top and skirt", key: "Ladieswear//Crop top and skirt" },
+            {
+              label: "Crop top and skirt",
+              key: "Ladieswear//Crop top and skirt",
+            },
             { label: "Tank top", key: "Ladieswear//Tank top" },
             { label: "Vest top", key: "Ladieswear//Vest top" },
             { label: "Casual top", key: "Ladieswear//Casual top" },
@@ -667,10 +1141,9 @@ useEffect(() => {
             { label: "Bracelet", key: "Ladieswear//Bracelet" },
             { label: "Hair clip", key: "Ladieswear//Hair clip" },
             { label: "Belt", key: "Ladieswear//Belt" },
-            { label: "Sunglasses", key: "Ladieswear//Sunglasses"},
+            { label: "Sunglasses", key: "Ladieswear//Sunglasses" },
           ],
         },
-        
       ],
     },
     {
@@ -727,12 +1200,11 @@ useEffect(() => {
             { label: "Cap", key: "Menswear//Cap" },
             { label: "Sunglasses", key: "Menswear//Sunglasses" },
             { label: "Watch", key: "Menswear//Watch" },
-            { label: "Belt", key: "Menswear//Belt"},
-            { label: "Wallet", key: "Menswear//Wallet"},
+            { label: "Belt", key: "Menswear//Belt" },
+            { label: "Wallet", key: "Menswear//Wallet" },
             { label: "Gloves", key: "Menswear//Gloves" },
           ],
         },
-        
       ],
     },
     {
@@ -758,7 +1230,10 @@ useEffect(() => {
           children: [
             { label: "Jacket", key: "Baby Children//Jacket" },
             { label: "Coat", key: "Baby Children//Coat" },
-            { label: "Outdoor trousers", key: "Baby Children//Outdoor trousers" },
+            {
+              label: "Outdoor trousers",
+              key: "Baby Children//Outdoor trousers",
+            },
             { label: "Jumpsuit", key: "Baby Children//Jumpsuit" },
           ],
         },
@@ -786,7 +1261,6 @@ useEffect(() => {
             { label: "Soft Toys", key: "Baby Children//Soft Toys" },
           ],
         },
-        
       ],
     },
     {
@@ -815,10 +1289,8 @@ useEffect(() => {
             { label: "Other accessories", key: "Sport//Other accessories" },
           ],
         },
-        
       ],
     },
-    
   ];
   /*  header dropdown menu lists work*/
 
@@ -831,10 +1303,9 @@ useEffect(() => {
       localStorage.removeItem("user");
       navigate("/");
       window.location.reload();
-    } else if(e.key === "2"){
+    } else if (e.key === "2") {
       setOpenProfile(true);
-    }
-    else {
+    } else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
     }
@@ -884,19 +1355,31 @@ useEffect(() => {
 
   /** handle dropdown click */
 
-  const handleDropdownClick = (value) => {
+  const handlePrimeMenu = (e) => {
     debugger;
-    console.log("Selected value:", value);
+    console.log(e);
+  };
+
+  const handlePrime = (e) => {
+    debugger;
+    console.log(e);
+  };
+
+  const handleDropdownClick = (e) => {
+    debugger;
+    console.log("Selected value:", e);
+    let value = e?.item?.key;
     dispatch(categoryValueSuccess({ categoryValue: value }));
-    if(location?.pathname !== "/products"){
-    navigate("/products");
+    if (location?.pathname !== "/products") {
+      navigate("/products");
     }
   };
 
   const handleChatComponent = () => {
-    if(token !== undefined && token !== null){ /** will uncomment after login signup setup to email */
-    setOpenChatComponent(true);
-    }else{
+    if (token !== undefined && token !== null) {
+      /** will uncomment after login signup setup to email */
+      setOpenChatComponent(true);
+    } else {
       showToastInfo("Please login first to chat with your friends.");
     }
   };
@@ -931,7 +1414,7 @@ useEffect(() => {
   /** wish list count */
 
   useEffect(() => {
-    if(token?.token){
+    if (token?.token) {
       getWishListCount();
     }
     // getCategoryData();
@@ -951,35 +1434,34 @@ useEffect(() => {
 
   const getWishListCount = async () => {
     debugger;
-    if(token?.token){
-
-    
-    const getLikeProducts = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
-      null,
-      token?.token
-    );
-    // setOpenLoader(false);
-    if (getLikeProducts?.data?.length) {
-      // setCountOfLikeProducts(getLikeProducts?.data?.length);
-      dispatch(
-        wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length })
+    if (token?.token) {
+      const getLikeProducts = await apiCall(
+        "GET",
+        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        null,
+        token?.token
       );
+      // setOpenLoader(false);
+      if (getLikeProducts?.data?.length) {
+        // setCountOfLikeProducts(getLikeProducts?.data?.length);
+        dispatch(
+          wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length })
+        );
+      }
+
+      const getAllCartValues = await apiCall(
+        "GET",
+        "https://smartwardrobe-backend.azurewebsites.net/cart-item/get-all",
+        null,
+        token?.token
+      );
+      setOpenLoader(false);
+      if (getAllCartValues?.data?.length) {
+        dispatch(
+          addToCartValueSuccess({ cartValue: getAllCartValues?.data?.length })
+        );
+      }
     }
-
-    const getAllCartValues = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/cart-item/get-all",
-      null,
-      token?.token
-    );
-    setOpenLoader(false);
-    if (getAllCartValues?.data?.length) {
-      dispatch(
-        addToCartValueSuccess({ cartValue: getAllCartValues?.data?.length })
-      );
-    }}
   };
 
   /** wish list count */
@@ -1045,20 +1527,19 @@ useEffect(() => {
       {/*  drawer work*/}
 
       {/*  Profile component */}
-      {openProfile &&
-      <Profile
-        isShowModel={openProfile}
-        closeModal={CloseProfileComponent}
-      />}
+      {openProfile && (
+        <Profile isShowModel={openProfile} closeModal={CloseProfileComponent} />
+      )}
 
       {/*  Profile component */}
 
       {/*  Chat component */}
-      {openChatComponent &&
-      <ChatComponent
-        isShowModel={openChatComponent}
-        closeModal={CloseChatComponent}
-      />}
+      {openChatComponent && (
+        <ChatComponent
+          isShowModel={openChatComponent}
+          closeModal={CloseChatComponent}
+        />
+      )}
 
       {/*  Chat component */}
 
@@ -1072,17 +1553,24 @@ useEffect(() => {
       />
       {/*  Signup/Login Modal */}
 
-      <Carousel dotPosition="left" dots={false} infinite={true} autoplay={true} autoplaySpeed={2500} style={{maxHeight:"20px"}} >
-      <div>
-        <h3 style={contentStyle}>Collaborative Chat</h3>
-      </div>
-      <div>
-        <h3 style={contentStyle}>Virtual Try-On</h3>
-      </div>
-      <div>
-        <h3 style={contentStyle}>Customization option</h3>
-      </div>
-    </Carousel>
+      <Carousel
+        dotPosition="left"
+        dots={false}
+        infinite={true}
+        autoplay={true}
+        autoplaySpeed={2500}
+        style={{ maxHeight: "20px" }}
+      >
+        <div>
+          <h3 style={contentStyle}>Collaborative Chat</h3>
+        </div>
+        <div>
+          <h3 style={contentStyle}>Virtual Try-On</h3>
+        </div>
+        <div>
+          <h3 style={contentStyle}>Customization option</h3>
+        </div>
+      </Carousel>
 
       <div className="header-main">
         <div className="header-conatiner page-width">
@@ -1108,7 +1596,7 @@ useEffect(() => {
                   }}
                   htmlFor="outlined-adornment-password"
                 >
-                Search
+                  Search
                 </InputLabel>
                 <OutlinedInput
                   label="outlined-Input"
@@ -1329,11 +1817,11 @@ useEffect(() => {
                   endAdornment={
                     <InputAdornment position="end">
                       <input
-                          type="file"
-                          accept="image/*"
-                          onChange={imageUpload}
-                          style={{ display: "none" }}
-                        />
+                        type="file"
+                        accept="image/*"
+                        onChange={imageUpload}
+                        style={{ display: "none" }}
+                      />
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={handleSearch}
@@ -1369,10 +1857,11 @@ useEffect(() => {
           )}
           {/* Header Dropdowns */}
           <div className="search-input-above-900px">
-            <GenericDropdownMenu
+            {/* <GenericDropdownMenu
               menuData={menuData}
               handleChange={handleDropdownClick}
-            />
+            /> */}
+            <MegaMenu model={primeMenu} breakpoint="900px" />
           </div>
           {/* Header Dropdowns */}
         </div>

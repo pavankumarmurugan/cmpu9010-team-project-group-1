@@ -3,7 +3,7 @@ import Headermenu from "../Headermenu/Headermenu";
 import Footer from "../Footer/Footer";
 import "../../Styles/WishListComponent.css";
 import { Button } from "@mui/joy";
-import image from "../../Assets/Homeproductimage_3.jpg";
+// import image from "../../Assets/Homeproductimage_3.jpg";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { Backdrop, CircularProgress } from "@mui/material";
 import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
