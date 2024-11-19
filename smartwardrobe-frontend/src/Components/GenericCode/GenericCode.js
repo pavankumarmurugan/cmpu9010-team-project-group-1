@@ -24,9 +24,9 @@ const renderMenuItems = (items) => {
             className={!item?.key?.includes("submenu") && "Dropdown-Maintext"}
           >
             {item.label}
-            {!item?.key?.includes("submenu") && (
+            {/* {!item?.key?.includes("submenu") && (
               <DownOutlined style={{ marginLeft: "3px" }} />
-            )}
+            )} */}
           </span>
         ),
         key: item.key,
@@ -55,6 +55,7 @@ export const GenericDropdownMenu = ({ menuData, handleChange }) => {
           alignItems: "center",
           marginTop: "5px",
           marginLeft: "50px",
+          textTransform: "uppercase",
         }}
         mode="horizontal"
         items={menuItems}

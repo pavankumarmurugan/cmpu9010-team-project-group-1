@@ -2,21 +2,21 @@ import React, { useEffect, useState } from "react";
 import "../../Styles/header.css";
 import { Button } from "antd";
 import { Carousel } from "antd";
-import carousel_image1 from "../../Assets/carousel_image1.jpg";
-import carousel_image2 from "../../Assets/carousel_image2.jpg";
-import carousel_image3 from "../../Assets/carousel_image3.jpg";
-import carousel_image4 from "../../Assets/carousel_image4.jpg";
-import carousel_image5 from "../../Assets/carousel_image5.jpg";
+// import carousel_image1 from "../../Assets/carousel_image1.jpg";
+// import carousel_image2 from "../../Assets/carousel_image2.jpg";
+// import carousel_image3 from "../../Assets/carousel_image3.jpg";
+// import carousel_image4 from "../../Assets/carousel_image4.jpg";
+// import carousel_image5 from "../../Assets/carousel_image5.jpg";
 import { Flex, Splitter, Typography } from "antd";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 // import { HomeProductSection } from "../GenericCode/GenericCode"; /** will uncomment when data comes */
-import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
-import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
-import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
-import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
-import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
+// import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
+// import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
+// import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
+// import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+// import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
+// import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import HomeProductSection from "../HomeProductsSection/HomeProductSection";
 import { ImageList, ImageListItem } from "@mui/material";
 import { headerSearchValueSuccess } from "../../redux/slices/HomeDataSlice";
@@ -27,6 +27,7 @@ function HomeShoppingCollection({ data }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [homeData, setHomeData] = useState({});
+  const [carouselImageCount, setCarouselImageCount] = useState(3);
   //   const carouseldata = [
   //     {
   //       src: "https://images.unsplash.com/photo-1502657877623-f66bf489d236",
@@ -63,44 +64,44 @@ function HomeShoppingCollection({ data }) {
     },
   ];
 
-  const dummyData = [
-    {
-      image: Homeproductimage_1,
-      name: "Zapara",
-      description: "Wedding Suit",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_2,
-      name: "Harper",
-      description: "Long Sleeves T-Shirt",
-      price: "$130",
-    },
-    {
-      image: Homeproductimage_3,
-      name: "Zara",
-      description: "Urban Style Hoodeis",
-      price: "$250",
-    },
-    {
-      image: Homeproductimage_4,
-      name: "H&M",
-      description: "Printed Dress for Summer",
-      price: "$120",
-    },
-    {
-      image: Homeproductimage_5,
-      name: "Next Direct",
-      description: "Leopard Printed Shoes For Women",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_6,
-      name: "Converse",
-      description: "Black Converse Shoes",
-      price: "$230",
-    },
-  ];
+  // const dummyData = [
+  //   {
+  //     image: Homeproductimage_1,
+  //     name: "Zapara",
+  //     description: "Wedding Suit",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_2,
+  //     name: "Harper",
+  //     description: "Long Sleeves T-Shirt",
+  //     price: "$130",
+  //   },
+  //   {
+  //     image: Homeproductimage_3,
+  //     name: "Zara",
+  //     description: "Urban Style Hoodeis",
+  //     price: "$250",
+  //   },
+  //   {
+  //     image: Homeproductimage_4,
+  //     name: "H&M",
+  //     description: "Printed Dress for Summer",
+  //     price: "$120",
+  //   },
+  //   {
+  //     image: Homeproductimage_5,
+  //     name: "Next Direct",
+  //     description: "Leopard Printed Shoes For Women",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_6,
+  //     name: "Converse",
+  //     description: "Black Converse Shoes",
+  //     price: "$230",
+  //   },
+  // ];
 
   /* Home page product section dummy data for now */
 
@@ -231,6 +232,25 @@ function HomeShoppingCollection({ data }) {
     dispatch(headerSearchValueSuccess({ headerSearchValue: item }));
     navigate("/products");
   };
+
+  useEffect(() => {
+    const updateTopValue = () => {
+      if (window.innerWidth > 768) {
+        setCarouselImageCount(3);
+      }else{
+        setCarouselImageCount(1);
+      }
+    };
+
+    updateTopValue();
+
+    window.addEventListener("resize", updateTopValue);
+
+    return () => {
+      window.removeEventListener("resize", updateTopValue);
+    };
+  }, []);
+
 
   return (
     <>
@@ -480,7 +500,7 @@ function HomeShoppingCollection({ data }) {
             </Splitter.Panel>
           </Splitter> */}
 
-          <ImageList sx={{ width: "100%", height: "90vh", cursor: "pointer" }} cols={3} tabindex="0">
+          <ImageList sx={{ width: "100%", height: "90vh", cursor: "pointer" }} cols={ carouselImageCount } tabindex="0">
             {itemData.map((item) => (
               <ImageListItem key={item.img}>
                 <img

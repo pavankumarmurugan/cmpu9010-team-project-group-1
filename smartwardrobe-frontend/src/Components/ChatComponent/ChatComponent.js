@@ -46,6 +46,8 @@ import {
 import { IoMdClose } from "react-icons/io";
 import { io, Socket } from "socket.io-client";
 import { MdOutlineMoreVert } from "react-icons/md";
+import { AudioRecorder } from "react-audio-voice-recorder";
+import { BsChat } from "react-icons/bs";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
@@ -67,6 +69,7 @@ function ChatComponent(props) {
   const [textValue, settextValue] = useState("");
   const [friendReqCount, setFriendReqCount] = useState([]);
   const [activeFriend, setActiveFriend] = useState(null);
+  const [audioMessage, setAudioMessage] = useState(null);
   const [chatInfo, setChatInfo] = useState(null);
   const [friends, setFriends] = useState([]);
   const [newChatFriends, setNewChatFriends] = useState([]);
@@ -182,6 +185,7 @@ function ChatComponent(props) {
 
   const handleShowChat = async (event) => {
     debugger;
+    
     setActiveFriend(event);
     setChatInfo(event);
     chatInfoRef.current = event;
@@ -326,8 +330,8 @@ function ChatComponent(props) {
 
   const handleGroupCreate = async (e) => {
     debugger;
-    
-    if(newGroupName.trim() === "") {
+
+    if (newGroupName.trim() === "") {
       showToastInfo("Please enter group name");
       return;
     }
@@ -347,18 +351,18 @@ function ChatComponent(props) {
       let groupId = response?.data?.groupId;
       const promises = addMemberToGroupList.map(async (value) => {
         const data = friends?.filter((user) => user?.userId === value);
-  
+
         // if (data?.length === 0) {
         //   showToastInfo(`User ${value} not found`);
         //   return;
         // }
-  
+
         try {
           const sendObj = {
             groupId: groupId,
-          userId: data[0]?.userId,
+            userId: data[0]?.userId,
           };
-  
+
           setOpenLoader(true);
           const response = await apiCall(
             "POST",
@@ -373,7 +377,7 @@ function ChatComponent(props) {
           console.error(`Error sending request for ${value}:`, error);
         }
       });
-  
+
       try {
         // Wait for all promises to resolve
         const addingFriends = await Promise.all(promises);
@@ -386,7 +390,7 @@ function ChatComponent(props) {
           setleftinputValue("");
           getAllFriendandFriendRequests();
         }
-  
+
         // After all requests are completed
         // props?.reRenderComponent();
         // props?.closeModal();
@@ -394,10 +398,7 @@ function ChatComponent(props) {
         console.error("Error handling multiple friend requests:", error);
       }
     }
-
-    
-
-  }
+  };
 
   /** handle friend search */
 
@@ -504,10 +505,17 @@ function ChatComponent(props) {
   };
 
   const handleSendMessage = async (event, from) => {
+    debugger
     if (
       (event.key === "Enter" && textValue.trim() !== "") ||
       (textValue.trim() !== "" && from === "fromIcon")
     ) {
+
+      // if(audioMessage !== null){
+      //   console.log("audioMessage", audioMessage);
+      //   return
+      // }
+
       event.preventDefault();
       if (chatInfo?.userId) {
         let message = {
@@ -715,7 +723,7 @@ function ChatComponent(props) {
   };
 
   const handleRemoveChatCraete = () => {
-    debugger
+    debugger;
     setNewChatCraete(false);
     setDefaultArray(defaultArray - 1);
     setleftinputValue("");
@@ -793,8 +801,6 @@ function ChatComponent(props) {
       //   showToastInfo("Please enter group name");
       //   return;
       // }
-
-     
     }
   };
 
@@ -807,6 +813,23 @@ function ChatComponent(props) {
       setNewGroupName("");
     }
   };
+
+  /** audio */
+
+  const handleRecordingComplete = (audioBlob) => {
+    // Log or handle the blob, for example:
+    debugger
+    console.log('Audio recorded:', audioBlob);
+
+    setAudioMessage(audioBlob);
+  
+    // Create FormData to send the audio as part of a POST request
+    const formData = new FormData();
+    formData.append('audioFile', audioBlob, 'recording.webm');
+  
+  };
+
+  /** audio */
 
   return (
     <>
@@ -1262,19 +1285,31 @@ function ChatComponent(props) {
               ) : (
                 <div
                   className="rightside-div-when-Nocontact-selected"
-                  style={{ height: "100%" }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    height: "100%",
+                    flexDirection: "column",
+                  }}
                 >
+                  <BsChat style={{width:"40px", height:"35px", strokeWidth: "1", color: "gray" }} />
                   <h2
                     style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      textAlign: "center",
-                      height: "100%",
+                      marginTop: "10px",
+                    //   display: "flex",
+                    //   justifyContent: "center",
+                    //   alignItems: "center",
+                    //   textAlign: "center",
+                    //   height: "100%",
+                    //   flexDirection: "column",
                     }}
                   >
-                    Start a conversation by choosing a contact from the list.
+                    
+                    No Chat Selected
                   </h2>
+                  <p style={{marginTop:"5px", color:"gray"}}>Choose a conversation from sidebar to start chatting</p>
                 </div>
               )}
               <div className="chat-messages">
@@ -1383,7 +1418,7 @@ function ChatComponent(props) {
               {chatInfo !== null && (
                 <div className="chat-input">
                   <TextArea
-                    style={{ paddingRight: "7%" }}
+                    style={{ paddingRight: "7%", marginLeft: "10px" }}
                     placeholder="Type a message..."
                     autoSize={{ minRows: 2 }}
                     className="custom-textarea"
@@ -1393,8 +1428,34 @@ function ChatComponent(props) {
                     disabled={!chatInfo?.userId && !chatInfo?.groupName}
                   />
                   <button className="send-button">
+                  <AudioRecorder
+                      onRecordingComplete={handleRecordingComplete}
+                      audioTrackConstraints={{
+                        noiseSuppression: true,
+                        echoCancellation: true,
+                        // autoGainControl,
+                        // channelCount,
+                        // deviceId,
+                        // groupId,
+                        // sampleRate,
+                        // sampleSize,
+                      }}
+                      onNotAllowedOrFound={(err) => console.table(err)}
+                      downloadOnSavePress={false}
+                      downloadFileExtension="webm"
+                      mediaRecorderOptions={{
+                        audioBitsPerSecond: 128000,
+                      }}
+                      showVisualizer={true}
+                      showSaveButton={false}
+                      
+                    />
                     <FaPaperPlane
-                      style={{ color: "2e3b4e", cursor: "pointer" }}
+                      style={{
+                        color: "2e3b4e",
+                        cursor: "pointer",
+                        marginLeft: "10px",
+                      }}
                       onClick={(event) => handleSendMessage(event, "fromIcon")}
                     />
                   </button>
