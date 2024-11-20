@@ -164,7 +164,8 @@ function ChatComponent(props) {
       token?.token
     );
     if (getFriendsList?.data?.length > 0) {
-      setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+      // setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+      setFriends(getFriendsList?.data);
       setFriendIds(getFriendsList.data.map((x) => x.userId));
       setFriendsDataForFilter((prevFriends) => [
         ...prevFriends,
@@ -898,6 +899,7 @@ function ChatComponent(props) {
                       className="frined-request-button"
                       color="default"
                       aria-hidden="true"
+                      onClick={handleFriendRequests}
                     >
                       <LuUserCheck2
                         style={{
@@ -959,8 +961,24 @@ function ChatComponent(props) {
                       </Menu>
                     </div> */}
                   </div>
-
-                  <div className="search-contacts">
+                  
+                  <div className="search-contacts" style={{ marginTop:"6px" }}>
+                  <Button
+                      className="frined-request-button-specificscreensize"
+                      color="default"
+                      aria-hidden="true"
+                      onClick={handleFriendRequests}
+                    >
+                      <LuUserCheck2
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          
+                        }}
+                      />
+                      Friend requests
+                      {friendReqCountToShow !== 0 && `(${friendReqCountToShow})`}
+                    </Button>
                   <Button
                     className="add-friends-groups-button"
                     color="default"

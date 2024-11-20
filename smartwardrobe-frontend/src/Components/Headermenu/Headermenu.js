@@ -56,6 +56,7 @@ import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import Profile from "../Profile/Profile";
 import { FaSearch } from "react-icons/fa";
+import Homelogo2 from "../../Assets/Homelogo2.png";
 
 const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
 
@@ -1597,7 +1598,10 @@ function Headermenu() {
           >
               <>
               <a href="/" className="anchor-tag">
-              <h1 className="header-logo">SMARTWARDROBE</h1>
+              <h2 className="header-logo">
+                <img src={Homelogo2} alt="logo" style={{width: "60px", height:"50px", objectFit: "contain"}} />
+                SMARTWARDROBE
+              </h2>
             </a>
               {/* <FormControl sx={{ m: 1 }} variant="outlined">
                 <InputLabel
@@ -1782,7 +1786,10 @@ function Headermenu() {
               sx={{ color: "white", fontSize: "30px" }}
             />
             <a href="/" className="anchor-tag">
-              <h1 className="header-logo">SMARTWARDROBE</h1>
+              <h1 className="header-logo">
+              <img src={Homelogo2} alt="logo" style={{width: "60px", height:"50px", objectFit: "contain"}} />
+              SMARTWARDROBE
+              </h1>
             </a>
             <div className="header-icons">
               {/* <Badge

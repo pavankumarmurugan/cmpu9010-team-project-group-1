@@ -42,7 +42,7 @@
 
 /* Left chat section (contacts) */
 .left-chat-section {
-  width: 25%;
+  width: 30%;
   /* background-color: #2e3b4e; */
   color: black;
   padding: 10px 0px 20px 0px; /** osama */
@@ -381,7 +381,7 @@
 
 @media (min-width: 769px) and (max-width: 1200px) {
   .left-chat-section {
-    width: 30%;
+    width: 35%;
   }
   .right-chat-section {
     width: 70%;
@@ -699,6 +699,13 @@
   overflow: auto;
   scrollbar-width: thin;
   max-height: 365px;
+}
+
+.newfriendReq-main-div {
+  overflow: auto;
+  scrollbar-width: thin;
+  max-height: 365px;
+  border-bottom: 1px solid lightgray;
 }
 
 .newGroup-list {
@@ -1022,13 +1029,35 @@
 }
 
 .frined-request-button{
-  /* width: fit-content; */
   gap: 3px;
   border: 1px solid lightgray !important;
   letter-spacing: normal !important;
   text-transform: capitalize !important;
   &:hover{
     background-color: #e6e5ea !important;
+  }
+}
+
+.frined-request-button-specificscreensize{
+  display: none !important;
+  
+}
+
+@media (min-width: 769px) and (max-width: 999px) {
+  .frined-request-button-specificscreensize{
+    display: block !important;
+    width: 100%;
+    gap: 3px;
+    margin-bottom: 10px !important;
+    border: 1px solid lightgray !important;
+    letter-spacing: normal !important;
+    text-transform: capitalize !important;
+    &:hover{
+      background-color: #e6e5ea !important;
+    }
+  }
+  .frined-request-button{
+    display: none !important;
   }
 }
 
