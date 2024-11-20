@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     paths:
-      - "smartwardrobe-AI/vector-search-v1"
+      - "../../smartwardrobe-AI/vector-search-v2"
   workflow_dispatch:
 
 jobs:
