@@ -29,8 +29,8 @@
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
-    padding-top: 15px;
-    padding-bottom: 10px;
+    /* padding-top: 15px;
+    padding-bottom: 10px; */
 }
 
 @media (min-width: 901px) and (max-width: 1000px) {

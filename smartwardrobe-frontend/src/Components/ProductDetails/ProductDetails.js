@@ -276,6 +276,12 @@ const ProductDetails = () => {
 
   const handleShare = async (data) => {
     debugger;
+
+    if (!token) {
+      showToastInfo("Please login to share products");
+      return;
+    }
+
     setOpenLoader(true);
     const getGroupsList = await apiCall(
       "GET",
