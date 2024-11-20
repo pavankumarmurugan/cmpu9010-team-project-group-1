@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/controllers/image_search_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/controllers/test_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/controllers/text_search_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/models/image_search_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/models/text_search_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/services/image_search_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/services/text_search_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vector_search/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.github/workflows/CICD-vector-search.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.github/workflows/CICD-vector-search.yml" afterDir="false" />
-    </list>
+    <list default="true" id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,18 +13,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "linchen008"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;linchen008&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/pavankumarmurugan/cmpu9010-team-project-group-1.git",
-    "accountId": "1246f12a-a2d1-4f99-8022-f71a9dd48fff"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/pavankumarmurugan/cmpu9010-team-project-group-1.git&quot;,
+    &quot;accountId&quot;: &quot;1246f12a-a2d1-4f99-8022-f71a9dd48fff&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -49,20 +33,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "d23125391__lin",
-    "last_opened_file_path": "/Users/janezhang/final--project/cmpu9010-team-project-group-1/smartwardrobe-AI/vector-search-v1",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;d23125391__lin&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/janezhang/final--project/cmpu9010-team-project-group-1/smartwardrobe-AI/vector-search-v1&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -87,7 +71,8 @@
       <workItem from="1730985082927" duration="30000" />
       <workItem from="1731016459476" duration="5248000" />
       <workItem from="1732131904936" duration="73000" />
-      <workItem from="1732137798274" duration="3082000" />
+      <workItem from="1732137798274" duration="3842000" />
+      <workItem from="1732144654023" duration="389000" />
     </task>
     <servers />
   </component>
