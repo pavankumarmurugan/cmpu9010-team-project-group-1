@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import HomePage_FinalImage from "../../Assets/HomePage_FinalImage.jpeg";
 
 function ImageWithTextOverlay() {
-  const [topValue, setTopValue] = useState("25%");
+  const [topValue, setTopValue] = useState("27%");
   const [FontSize, setFontSize] = useState("65px");
 
   useEffect(() => {
     // Function to check screen width and update the top value
     const updateTopValue = () => {
       if (window.innerWidth > 1200) {
-        setTopValue("25%");
+        setTopValue("27%");
         setFontSize("65px");
       } else {
         setTopValue("79%");
@@ -41,10 +41,10 @@ function ImageWithTextOverlay() {
       <div style={styles.textOverlay}>
         <h1 style={styles.text}>Smart Choices, Smarter Wardrobe.</h1>
       </div>
-      <p style={styles.paratext} className="text-lg text-muted-foreground">
+      {/* <p style={styles.paratext} className="text-lg text-muted-foreground">
         Explore our enhanced platform with personalized recommendations,
         sustainable fashion options, and a seamless shopping experience.
-      </p>
+      </p> */}
     </div>
   );
 }
