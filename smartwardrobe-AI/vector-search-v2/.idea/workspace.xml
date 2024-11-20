@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/controllers/image_search_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/controllers/test_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/controllers/text_search_controller.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/models/image_search_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/models/text_search_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/services/image_search_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/services/text_search_service.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vector_search/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.github/workflows/CICD-vector-search.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.github/workflows/CICD-vector-search.yml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "linchen008"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/pavankumarmurugan/cmpu9010-team-project-group-1.git",
+    "accountId": "1246f12a-a2d1-4f99-8022-f71a9dd48fff"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2oAPvlKZRbsxdUO60uPOq14Kpuj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "d23125391__lin",
+    "last_opened_file_path": "/Users/janezhang/final--project/cmpu9010-team-project-group-1/smartwardrobe-AI/vector-search-v1",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
+        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="04794888-bec7-473a-8a02-634e0dd2a371" name="Changes" comment="" />
+      <created>1730309639558</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1730309639558</updated>
+      <workItem from="1730309640745" duration="1316000" />
+      <workItem from="1730312898852" duration="18000" />
+      <workItem from="1730317382247" duration="4002000" />
+      <workItem from="1730911936616" duration="8000" />
+      <workItem from="1730980418787" duration="37000" />
+      <workItem from="1730985082927" duration="30000" />
+      <workItem from="1731016459476" duration="5248000" />
+      <workItem from="1732131904936" duration="73000" />
+      <workItem from="1732137798274" duration="3082000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
