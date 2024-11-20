@@ -54,7 +54,7 @@ const getStyles = (topValue,FontSize) => {
     container: {
       position: "relative",
       width: "100%",
-      height: "calc(100vh - 120px)",
+      height: "calc(100vh - 200px)",
       overflow: "hidden",
       margin: 0,
       padding: 0,

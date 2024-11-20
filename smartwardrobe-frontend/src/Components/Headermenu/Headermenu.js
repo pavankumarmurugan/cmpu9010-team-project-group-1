@@ -1307,7 +1307,9 @@ function Headermenu() {
       window.location.reload();
     } else if (e.key === "2") {
       setOpenProfile(true);
-    } else {
+    } else if(e.key === "1"){
+    } 
+    else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
     }
@@ -1715,7 +1717,8 @@ function Headermenu() {
                     },
                   }}
                 />
-              </FormControl> : <>
+              </FormControl> 
+              : <>
               <SearchIcon sx={{ color: "white", fontSize: "34px", marginRight:"-8px", paddingTop:"1px" , display: `${location?.pathname !== "/products" ? "block" : "none"}` }} onClick={handleSearchShow} />
               <StyledBadge
                 badgeContent={wishListValue}

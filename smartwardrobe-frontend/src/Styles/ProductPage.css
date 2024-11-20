@@ -169,6 +169,7 @@
   .products {
     padding-left: 10px;
     padding-right: 10px;
+    padding-top: 20px;
   }
 }
 
@@ -427,6 +428,30 @@ z-index: 9999;
   top: 10px; 
   left: 10px; 
   padding: 8px 12px;
+  background-color: black;
+  color: white;
+  border: 1px solid #cbcbcb;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+    border: 1px solid #cbcbcb !important;
+  }
+}
+
+.product-detailsimage-share-button {
+  /* position: absolute; */
+  top: 10px; 
+  height: 35px !important;
+  /* left: 10px;  */
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* padding: 8px 12px; */
+  font-size: 20px;
   background-color: black;
   color: white;
   border: 1px solid #cbcbcb;
@@ -779,6 +804,93 @@ z-index: 9999;
   background-color: black !important;
   letter-spacing: 0.3rem;
   border-radius: 0px !important;
+  transition: 0.3s ease-in-out;
+  &:hover{
+    transform: scale(1.05);
+  }
+}
+
+.share-details-main-div{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.details-virtualtryon-buttons{
+  border-radius: 50px !important;
+  padding: 15px !important;
+  font-size: 16px !important;
+  letter-spacing: normal !important;
+  transition: 0.3s ease-in-out;
+  text-transform: capitalize;
+  display: flex !important;
+  gap: 5px !important;
+  background-color: black !important;
+  color: white !important;
+  &:hover{
+    transform: scale(1.05);
+  }
+}
+
+.details-share-buttons{
+  display: flex !important;
+  padding: 10px;
+  border-radius: 50% !important;
+  transition: 0.3s ease-in-out;
+  background-color: black !important;
+  color: white !important;
+  &:hover{
+    transform: scale(1.05);
+  }
+}
+
+.details-heart-buttons{
+  display: flex !important;
+  padding: 8px;
+  border-radius: 50% !important;
+  transition: 0.3s ease-in-out;
+  border: 2px solid black !important;
+  &:hover{
+    transform: scale(1.05);
+  }
+}
+
+.share-deatils-mobile{
+  display: none !important;
+}
+
+@media screen and (max-width: 1249px) {
+  .share-deatils-laptop{
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 1249px) {
+ .share-deatils-mobile{
+    display: flex !important;
+    justify-content: flex-start !important;
+    margin-top: 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+ .share-deatils-mobile{
+    justify-content: center !important;
+    margin-top: 50px;
+  }
+}
+
+.share-button{
+  /* min-width: 250px; */
+  /* min-height: 50px !important; */
+  /* padding: 10px; */
+  gap: 10px;
+  max-height: fit-content;
+  font-size: 14px !important;
+  background-color: black !important;
+  letter-spacing: 0.1rem;
+  border-radius: 10px !important;
   transition: 0.3s ease-in-out;
   &:hover{
     transform: scale(1.05);

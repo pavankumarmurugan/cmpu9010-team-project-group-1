@@ -20,10 +20,10 @@ import { handleImageUpload } from "../GenericCode/GenericCode";
 // import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
 // import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
 import Carousel from "react-multi-carousel";
-import { IoMdAdd } from "react-icons/io";
+import { IoMdAdd, IoMdHeartEmpty, IoMdShare } from "react-icons/io";
 import { RiFontSize, RiSubtractFill } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa6";
+import { FaHeart, FaShare } from "react-icons/fa6";
 import Footer from "../Footer/Footer";
 import AccordionGroup from "@mui/joy/AccordionGroup";
 import Accordion from "@mui/joy/Accordion";
@@ -42,6 +42,7 @@ import { showToastInfo } from "../GenericToasters/GenericToasters";
 import NewChatModal from "../NewChatModal/NewChatModal";
 import { Helmet } from "react-helmet";
 import sizeChartImage from "../../Assets/sizeChartImage.webp";
+import { IoHeart, IoShareOutline, IoShirtOutline } from "react-icons/io5";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -172,22 +173,29 @@ const ProductDetails = () => {
       token?.token
     );
     if (getAllCartValues?.data?.length) {
-      let check = getAllCartValues?.data?.find((item) => item?.productId === productimages?.id);
-    if (check) {
-      const data = {
-        id: check?.id,
-        quantity: check?.quantity + quantityvalue,
-      };
-      setOpenLoader(true);
-      const addToCart = await apiCall("PATCH" , "https://smartwardrobe-backend.azurewebsites.net/cart-item/update", data, token?.token);
-      if (addToCart.statusCode.text === "Success") {
-        // dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
-        setOpenLoader(false);
-        return;
+      let check = getAllCartValues?.data?.find(
+        (item) => item?.productId === productimages?.id
+      );
+      if (check) {
+        const data = {
+          id: check?.id,
+          quantity: check?.quantity + quantityvalue,
+        };
+        setOpenLoader(true);
+        const addToCart = await apiCall(
+          "PATCH",
+          "https://smartwardrobe-backend.azurewebsites.net/cart-item/update",
+          data,
+          token?.token
+        );
+        if (addToCart.statusCode.text === "Success") {
+          // dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+          setOpenLoader(false);
+          return;
+        }
       }
     }
-    }
-    
+
     let data = {
       productId: productimages?.id,
       quantity: quantityvalue,
@@ -261,9 +269,6 @@ const ProductDetails = () => {
       if (getSimilarProducts) {
         setSimilarProductsData(getSimilarProducts?.data);
       }
-
-      
-      
     }
   };
 
@@ -319,7 +324,7 @@ const ProductDetails = () => {
   };
 
   const handleSimilarProductsClick = async (item) => {
-    debugger
+    debugger;
     setOpenLoader(true);
     let productId = item?.id;
     const getModels = await apiCall(
@@ -333,7 +338,7 @@ const ProductDetails = () => {
       setProductImages(getModels?.data);
     }
     if (token?.token) {
-    setOpenLoader(true);
+      setOpenLoader(true);
       const getLikeProducts = await apiCall(
         "GET",
         "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
@@ -342,17 +347,21 @@ const ProductDetails = () => {
       );
       setOpenLoader(false);
       if (getLikeProducts) {
-      let check = getLikeProducts?.data?.find(
-        (item) =>
-          item?.productId === productId
-      );
-      if (check) {
-        setShowHideWishlist(false);
-      }else{
-        setShowHideWishlist(true);
+        let check = getLikeProducts?.data?.find(
+          (item) => item?.productId === productId
+        );
+        if (check) {
+          setShowHideWishlist(false);
+        } else {
+          setShowHideWishlist(true);
+        }
       }
     }
-  }
+  };
+
+  const handleTryOn = () => {
+    debugger
+    handleTryon(productimages);
   }
 
   return (
@@ -455,30 +464,97 @@ const ProductDetails = () => {
                 <img
                   src={productimages?.imageUrl}
                   loading="lazy"
-                  alt={productimages?.description?.length > 70 ? productimages?.description.slice(0, 70) + "..." : productimages?.description}
+                  alt={
+                    productimages?.description?.length > 70
+                      ? productimages?.description.slice(0, 70) + "..."
+                      : productimages?.description
+                  }
                   className="product-details-main-image"
                 />
-                <button
+                {/* <button
                   className="product-detailsimage-top-left-button"
                   onClick={() => handleShare(productimages)}
                 >
                   Share
-                </button>
-                {productimages?.trail && (
+                </button> */}
+                {/* {productimages?.trail && (
                   <button
                     className="product-detailsimage-top-right-button"
                     onClick={() => handleTryon(productimages)}
                   >
                     Try On
                   </button>
-                )}
+                )} */}
                 {/* <button className="product-detailsimage-bottom-right-button">
                   Create Your Avatar
                 </button> */}
               </div>
               <div className="Products-Details-div">
                 <div>
-                  <h1>{productimages?.type}</h1>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <h1>{productimages?.type}</h1>
+                    <div className="share-details-main-div share-deatils-laptop">
+                      {productimages && productimages?.trail && (
+                        <div className="details-virtualtryon-buttons" onClick={handleTryOn}>
+                          <IoShirtOutline
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                          Virtual Try on
+                        </div>
+                      )}
+                      <div
+                        className="details-share-buttons"
+                        onClick={() => handleShare(productimages)}
+                      >
+                        <IoShareOutline
+                          style={{ width: "25px", height: "25px" }}
+                        />
+                      </div>
+                      <div className="details-heart-buttons">
+                        {showHideWishlist ? (
+                          <>
+                            <IoMdHeartEmpty
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleWishlist("add", productimages)
+                              }
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <FaHeart
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                                color: "red",
+                              }}
+                              onClick={() =>
+                                handleWishlist("remove", productimages)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    {/* <button
+                  className="product-detailsimage-share-button"
+                  onClick={() => handleShare(productimages)}
+                >
+                  <IoMdShare style={{width:"20px", height:"20px", color:"white"}}/>
+                  Share
+                </button> */}
+                    {/* <Button className="share-button" onClick={handleAddToCart}>
+                <IoShareOutline style={{width:"25px", height:"25px", color:"white"}} />
+                      Share
+                </Button> */}
+                  </div>
                   <h3>&#8364;{Number(productimages?.price)}</h3>
                 </div>
                 <div>
@@ -561,37 +637,55 @@ const ProductDetails = () => {
                     </div>
                   </div>
                 </div>
+                <div className="share-details-main-div share-deatils-mobile">
+                      {productimages && productimages?.trail && (
+                        <div className="details-virtualtryon-buttons" onClick={handleTryOn}>
+                          <IoShirtOutline
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                          Virtual Try on
+                        </div>
+                      )}
+                      <div
+                        className="details-share-buttons"
+                        onClick={() => handleShare(productimages)}
+                      >
+                        <IoShareOutline
+                          style={{ width: "25px", height: "25px" }}
+                        />
+                      </div>
+                      <div className="details-heart-buttons">
+                        {showHideWishlist ? (
+                          <>
+                            <IoMdHeartEmpty
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleWishlist("add", productimages)
+                              }
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <FaHeart
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                                color: "red",
+                              }}
+                              onClick={() =>
+                                handleWishlist("remove", productimages)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
                 <div className="add-to-cart-buttons-div">
-                  <div className="whishlist-div">
-                    {showHideWishlist ? (
-                      <>
-                        <FaRegHeart
-                          style={{
-                            width: "30px",
-                            height: "30px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleWishlist("add", productimages)}
-                        />
-                        <p className="wishlist-text">Add to Wishlist</p>
-                      </>
-                    ) : (
-                      <>
-                        <FaHeart
-                          style={{
-                            width: "25px",
-                            height: "25px",
-                            cursor: "pointer",
-                            color: "red",
-                          }}
-                          onClick={() =>
-                            handleWishlist("remove", productimages)
-                          }
-                        />
-                        <p className="wishlist-text">Remove from Wishlist</p>
-                      </>
-                    )}
-                  </div>
                   <div className="cart-buttons-div">
                     <Button className="cart-button" onClick={handleAddToCart}>
                       ADD TO CART
@@ -663,33 +757,34 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
-       
-        {similarProductsData?.length > 0 && (
-            <div className="Similar-Products-div">
-              <h3 className="similar-products-heading-deatils">SIMILAR PRODUCTS</h3>
-              <div className="Similar-Products-Images">
-                <Carousel responsive={responsive} autoPlaySpeed={1500}>
-                  {similarProductsData?.map((items, index) => (
-                    <div className="card">
-                      <img
-                        className="product--image"
-                        loading="lazy"
-                        src={items?.imageUrl}
-                        alt="Similar_productimage"
-                        onClick={() => handleSimilarProductsClick(items)}
-                      />
-                      <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>
-                      <p className="description">{items?.type}</p>
-                      <p className="price" style={{ fontSize: "15px" }}>
-                        {items?.price}
-                      </p>
-                    </div>
-                  ))}
-                </Carousel>
-              </div>
-            </div>
-          )}
 
+        {similarProductsData?.length > 0 && (
+          <div className="Similar-Products-div">
+            <h3 className="similar-products-heading-deatils">
+              SIMILAR PRODUCTS
+            </h3>
+            <div className="Similar-Products-Images">
+              <Carousel responsive={responsive} autoPlaySpeed={1500}>
+                {similarProductsData?.map((items, index) => (
+                  <div className="card">
+                    <img
+                      className="product--image"
+                      loading="lazy"
+                      src={items?.imageUrl}
+                      alt="Similar_productimage"
+                      onClick={() => handleSimilarProductsClick(items)}
+                    />
+                    <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>
+                    <p className="description">{items?.type}</p>
+                    <p className="price" style={{ fontSize: "15px" }}>
+                      {items?.price}
+                    </p>
+                  </div>
+                ))}
+              </Carousel>
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </div>
