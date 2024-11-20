@@ -103,7 +103,7 @@ def perform_search(search_query, top_k=200):
     sql_query = f"""
         SELECT t1.image_name, t2.id, t1.text_vector <=> '[{search_embedding_str}]' AS similarity
         FROM products_des_embedding t1
-        JOIN products t2 ON t1.image_name = t2.image_name
+        JOIN products_2_image t2 ON t1.image_name = t2.image_name
         ORDER BY similarity
         LIMIT {top_k};
     """
