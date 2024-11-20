@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
+import { IsIn, IsNumber, IsString } from 'class-validator';
 import { CartItemReqDto } from './cart-item-req-dto';
 
 export class UpdateCartItemReqDto {
@@ -10,4 +10,9 @@ export class UpdateCartItemReqDto {
   @ApiProperty({ required: true })
   @IsNumber()
   readonly quantity: number;
+
+  @ApiProperty({ required: true, default: 'M' })
+  @IsString()
+  @IsIn(['S', 'M', 'L', 'XL'])
+  readonly size: string;
 }

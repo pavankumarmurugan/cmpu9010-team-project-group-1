@@ -5,4 +5,5 @@ export class CartItemEntity extends BaseEntity {
   readonly cartId?: number;
   readonly productId?: number;
   readonly quantity?: number;
+  readonly size?: string;
 }

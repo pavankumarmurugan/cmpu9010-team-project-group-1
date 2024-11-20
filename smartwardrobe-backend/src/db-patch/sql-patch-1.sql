@@ -150,6 +150,7 @@ CREATE TABLE "public"."cart_item" (
   "cart_id" INT NULL,
   "product_id" INT NULL,
   "quantity" INT NULL,
+  "size" VARCHAR(100) NULL,
   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP NULL,
   CONSTRAINT "fk_product_id"

@@ -11,4 +11,6 @@ export class CartItemModel extends BaseModel {
   readonly productId: number;
   @Column({ type: 'int', name: 'quantity' })
   readonly quantity: number;
+  @Column({ type: 'varchar', name: 'size', length: 255, nullable: true })
+  readonly size?: string;
 }
