@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../Styles/header.css";
-import { Button } from "antd";
+import { Button, Card } from "antd";
 import { Carousel } from "antd";
 // import carousel_image1 from "../../Assets/carousel_image1.jpg";
 // import carousel_image2 from "../../Assets/carousel_image2.jpg";
@@ -22,6 +22,10 @@ import { ImageList, ImageListItem } from "@mui/material";
 import { headerSearchValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import video from "../../Assets/video.mp4";
+import video1 from "../../Assets/video1.mp4";
+import video3 from "../../Assets/video3.mp4";
+import Meta from "antd/es/card/Meta";
 
 function HomeShoppingCollection({ data }) {
   const navigate = useNavigate();
@@ -128,7 +132,7 @@ function HomeShoppingCollection({ data }) {
       />
     );
   }
-  
+
   function SamplePrevArrow(props) {
     const { className, style, onClick } = props;
     return (
@@ -223,7 +227,7 @@ function HomeShoppingCollection({ data }) {
     debugger;
     console.log("Splitter clicked", item);
     dispatch(headerSearchValueSuccess({ headerSearchValue: item?.title }));
-      navigate("/products");
+    navigate("/products");
   };
 
   const handleSliderClick = (item) => {
@@ -237,7 +241,7 @@ function HomeShoppingCollection({ data }) {
     const updateTopValue = () => {
       if (window.innerWidth > 768) {
         setCarouselImageCount(3);
-      }else{
+      } else {
         setCarouselImageCount(1);
       }
     };
@@ -251,14 +255,17 @@ function HomeShoppingCollection({ data }) {
     };
   }, []);
 
+  const handleViewAll = () => {
+    navigate("/products");
+  };
 
   return (
     <>
       <div className="HomeShoppingCollection-main">
         <div className="HomeShoppingCollection-heading">
-          <h3>SHOP BY COLLECTION</h3>
+          <h2>NEW ARRIVALS </h2>
         </div>
-        <div className="HomeShoppingCollectioncollection-buttons">
+        {/* <div className="HomeShoppingCollectioncollection-buttons">
           <div className="first2buttons">
             <Button
               className="collection-buttons"
@@ -291,10 +298,11 @@ function HomeShoppingCollection({ data }) {
               Jewellery
             </Button>
           </div>
-        </div>
+        </div> */}
+
         <div
           className="carousel-container"
-          style={{ width: "80%", height: "100%", margin: "30px auto" }}
+          style={{ width: "100%", height: "100%", margin: "10px auto" }}
         >
           <Carousel {...carouselSettings}>
             <div style={contentStyle}>
@@ -373,14 +381,86 @@ function HomeShoppingCollection({ data }) {
               />
             </div>
           </Carousel>
+          <div
+            className="HomeShoppingCollection-heading"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <h2>WOMEN TOPS </h2>
+          </div>
           <div className="homeproductsection-main">
             {/* <HomeProductSection data={dummyData} /> */}{" "}
             {/** will uncomment when data comes */}
             {homeData && homeData?.length > 0 && (
-              <HomeProductSection data={homeData} />
+              <HomeProductSection data={homeData} from={"RecentlyViewed"} />
             )}
+            {/* <div className="card-div-homepage">
+{homeData && homeData?.length > 0 && (
+  homeData.map((item) =>
+            <Card
+                hoverable
+                style={{ maxWidth: "354px" }}
+                cover={<img 
+                  src={item?.imageUrl} alt={item?.description.length > 70 ? item?.description.slice(0, 70) + "..." : item?.description}
+                   />}
+              >
+                <Meta title={item?.name} description={item?.type}  />
+                <p>&euro;{Number(item?.price)}</p>
+              </Card>
+  )
+)}
+</div> */}
+            <div className="view-all-div">
+              <Button
+                className="View-All-Button"
+                color="default"
+                onClick={handleViewAll}
+              >
+                VIEW MORE
+              </Button>
+            </div>
           </div>
         </div>
+
+        <div className="video-main-div">
+          <div className="video-div">
+            <video
+              autoPlay
+              muted
+              loop
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                filter: "none",
+                opacity: 1,
+                transition: "none",
+              }}
+            >
+              <source src={video3} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div
+              className="centered-text"
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                color: "white",
+                fontSize: "50px",
+                fontWeight: "bold",
+                // textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
+              }}
+            >
+              Step Up Your Style
+            </div>
+          </div>
+        </div>
+
         <div className="splitter-div">
           <div
             className="bestselling-div"
@@ -389,14 +469,14 @@ function HomeShoppingCollection({ data }) {
               justifyContent: "center",
               alignItems: "center",
               textAlign: "center",
-              margin: "20px auto",
+              margin: "30px auto 20px auto",
               fontSize: "20px",
               fontFamily: "bold",
               textTransform: "uppercase",
               letterSpacing: "0.3rem",
             }}
           >
-            <h3>Best Selling Collections</h3>
+            <h2>Best Selling Collections</h2>
           </div>
           {/* <Splitter
             style={{
@@ -500,7 +580,11 @@ function HomeShoppingCollection({ data }) {
             </Splitter.Panel>
           </Splitter> */}
 
-          <ImageList sx={{ width: "100%", height: "90vh", cursor: "pointer" }} cols={ carouselImageCount } tabindex="0">
+          <ImageList
+            sx={{ width: "100%", height: "90vh", cursor: "pointer" }}
+            cols={carouselImageCount}
+            tabindex="0"
+          >
             {itemData.map((item) => (
               <ImageListItem key={item.img}>
                 <img

@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from "react";
+import React, { Children, useEffect, useRef, useState } from "react";
 import "../../Styles/header.css";
 import {
   Backdrop,
@@ -55,6 +55,7 @@ import CartComponent from "../CartComponent/CartComponent";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
 import Profile from "../Profile/Profile";
+import { FaSearch } from "react-icons/fa";
 
 const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
 
@@ -82,6 +83,7 @@ function Headermenu() {
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
   const [checkingLoginOrSignup, setCheckingLoginOrSignup] = useState("");
   const [openChatComponent, setOpenChatComponent] = useState(false);
+  const [searchShow, setSearchShow] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -335,7 +337,7 @@ function Headermenu() {
         </Collapse>
         <div className="menu-item">
           <div className="item" onClick={handleFootwear}>
-            WoMen {openWomenenFootwear ? <MdExpandLess /> : <MdExpandMore />}
+            Women {openWomenenFootwear ? <MdExpandLess /> : <MdExpandMore />}
           </div>
         </div>
         <Collapse in={openFootwear} timeout="auto" unmountOnExit>
@@ -1500,6 +1502,15 @@ function Headermenu() {
     // console.log(formData.image);
   };
 
+  const handleSearchShow = () => {
+    debugger;
+    setSearchShow(!searchShow);
+  }
+
+  const handleSearchOnBlur = () => {
+    setSearchShow(false);
+  }
+
   return (
     <>
       {/** loader code */}
@@ -1559,7 +1570,7 @@ function Headermenu() {
         infinite={true}
         autoplay={true}
         autoplaySpeed={2500}
-        style={{ maxHeight: "20px" }}
+        style={{ maxHeight: "25px" }}
       >
         <div>
           <h3 style={contentStyle}>Collaborative Chat</h3>
@@ -1575,16 +1586,81 @@ function Headermenu() {
       <div className="header-main">
         <div className="header-conatiner page-width">
           <div
-            className={
-              location?.pathname === "/products"
-                ? "search-div-laptop-productspage search-input-above-900px"
-                : "search-div-laptop search-input-above-900px"
-            }
+            className="search-div-laptop search-input-above-900px"
+            // className={
+            //   location?.pathname === "/products"
+            //     ? "search-div-laptop-productspage search-input-above-900px"
+            //     : "search-div-laptop search-input-above-900px"
+            // }
           >
-            {location?.pathname === "/products" ? (
-              <></>
-            ) : (
-              <FormControl sx={{ m: 1 }} variant="outlined">
+              <>
+              <a href="/" className="anchor-tag">
+              <h1 className="header-logo">SMARTWARDROBE</h1>
+            </a>
+              {/* <FormControl sx={{ m: 1 }} variant="outlined">
+                <InputLabel
+                  sx={{
+                    lineHeight: "1rem",
+                    color: "white",
+                    "&.Mui-focused": {
+                      color: "white",
+                      fontSize: "18px",
+                    },
+                  }}
+                  htmlFor="outlined-adornment-password"
+                >
+                  Search11
+                </InputLabel>
+                <OutlinedInput
+                  label="outlined-Input"
+                  type={"text"}
+                  style={{ color: "white" }}
+                  placeholder="Search"
+                  value={searchValue}
+                  onChange={onChangeSearchValue}
+                  onKeyDown={handleKeyDown}
+                  autoComplete="off"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleSearch}
+                        edge="end"
+                      >
+                        <SearchIcon style={{ color: "white" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  sx={{
+                    height: 45,
+                    "& label": {
+                      color: "white",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                  }}
+                />
+              </FormControl> */}
+              <div className="search-input-above-900px">
+            <MegaMenu model={primeMenu} breakpoint="900px" />
+          </div>
+          
+              </>
+            
+            <div className="header-icons">
+              {searchShow ?
+              
+            <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                 <InputLabel
                   sx={{
                     lineHeight: "1rem",
@@ -1606,38 +1682,11 @@ function Headermenu() {
                   value={searchValue}
                   onChange={onChangeSearchValue}
                   onKeyDown={handleKeyDown}
+                  onBlur={handleSearchOnBlur}
                   autoComplete="off"
+                  autoFocus={true}
                   endAdornment={
                     <InputAdornment position="end">
-                      {/* <Button
-                        component="label"
-                        variant="outlined"
-                        color="neutral"
-                        style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}
-                      >
-                        <SvgIcon>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            style={{ color: "white" }}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                            />
-                          </svg>
-                        </SvgIcon>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={imageUpload}
-                          style={{ display: "none" }}
-                        />
-                      </Button> */}
                       <IconButton
                         aria-label="toggle password visibility"
                         onClick={handleSearch}
@@ -1647,7 +1696,6 @@ function Headermenu() {
                       </IconButton>
                     </InputAdornment>
                   }
-                  // label="Search"
                   sx={{
                     height: 45,
                     "& label": {
@@ -1665,15 +1713,10 @@ function Headermenu() {
                       borderColor: "white",
                       borderWidth: 2,
                     },
-                    // color: 'white',
                   }}
                 />
-              </FormControl>
-            )}
-            <a href="/" className="anchor-tag">
-              <h1 className="header-logo">SMARTWARDROBE</h1>
-            </a>
-            <div className="header-icons">
+              </FormControl> : <>
+              <SearchIcon sx={{ color: "white", fontSize: "34px", marginRight:"-8px", paddingTop:"1px" , display: `${location?.pathname !== "/products" ? "block" : "none"}` }} onClick={handleSearchShow} />
               <StyledBadge
                 badgeContent={wishListValue}
                 anchorOrigin={{
@@ -1726,7 +1769,7 @@ function Headermenu() {
                     sx={{ color: "white", fontSize: "30px" }}
                   />
                 </>
-              )}
+              )}</>}
               {/* this is for logout*/}
             </div>
           </div>
@@ -1861,7 +1904,7 @@ function Headermenu() {
               menuData={menuData}
               handleChange={handleDropdownClick}
             /> */}
-            <MegaMenu model={primeMenu} breakpoint="900px" />
+            {/* <MegaMenu model={primeMenu} breakpoint="900px" /> */}
           </div>
           {/* Header Dropdowns */}
         </div>
