@@ -6,7 +6,7 @@ function Footer() {
     <div className="footer">
       <div className="top">
         <div>
-          <h2>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h2>
+          <h2>SMARTWARDROBE</h2>
         </div>
         {/* <div>
           <a href="/" aria-label="Visit our Facebook page">

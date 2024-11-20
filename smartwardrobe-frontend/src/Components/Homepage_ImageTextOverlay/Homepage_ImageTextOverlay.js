@@ -39,7 +39,7 @@ function ImageWithTextOverlay() {
         style={styles.image}
       />
       <div style={styles.textOverlay}>
-        <h1 style={styles.text}>Smart Choices, Smarter Wardrobe.</h1>
+        <h1 style={styles.text}>Smart Choices, Smarter Wardrobe</h1>
       </div>
       {/* <p style={styles.paratext} className="text-lg text-muted-foreground">
         Explore our enhanced platform with personalized recommendations,
@@ -54,7 +54,7 @@ const getStyles = (topValue,FontSize) => {
     container: {
       position: "relative",
       width: "100%",
-      height: "calc(100vh - 200px)",
+      height: "calc(100vh - 120px)",
       overflow: "hidden",
       margin: 0,
       padding: 0,
@@ -67,20 +67,25 @@ const getStyles = (topValue,FontSize) => {
     },
     textOverlay: {
       position: "absolute",
-      top: window.innerWidth < 500 ? "70%" : window.innerWidth < 681 ? "74%" : topValue,
-      left: topValue === "79%" ? "50%" : "13%",
+      // top: window.innerWidth < 500 ? "70%" : window.innerWidth < 681 ? "74%" : topValue,
+      // left: topValue === "79%" ? "50%" : "13%",
+      top: "85%",
+      left: "50%",
       transform: "translate(-50%, -50%)",
       color: "#014D4E",
       padding: "10px 20px",
       borderRadius: "5px",
-      width: topValue === "79%" ? "100%" : "20%",
+      // width: topValue === "79%" ? "100%" : "20%",
+      width: "100%",
       display: "flex",
       justifyContent: "center",
-      textAlign: FontSize === "40px" && "center",
+      // textAlign: FontSize === "40px" && "center",
+      textAlign: "center",
     },
     text: {
       margin: 0,
-      fontSize: FontSize,
+      // fontSize: FontSize,
+      fontSize: "60px",
       color: "white",
       borderRadius: "5px",
     },
