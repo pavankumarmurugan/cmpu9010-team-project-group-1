@@ -237,7 +237,9 @@ function NewChatModal(props) {
           }));
 
         setSuggestions(options);
-        props?.reRenderComponent();
+        // props?.reRenderComponent();
+      }else{
+        setSuggestions([]);
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
@@ -313,12 +315,14 @@ function NewChatModal(props) {
     };
     let filterData = [];
     if (appOrRej === "Accept") {
+      setOpenLoader(true);
       const acceptApi = await apiCall(
         "PATCH",
         `https://smartwardrobe-backend.azurewebsites.net/friend-requests/update`,
         data,
         token?.token
       );
+      setOpenLoader(false);
       if (acceptApi) {
         showToastSuccess("Request Accepted Successfully");
         filterData = friendReqData.filter(
@@ -328,12 +332,14 @@ function NewChatModal(props) {
         props?.setFriendReqCountToShow(filterData?.length);
       }
     } else {
+      setOpenLoader(true);
       const rejectApi = await apiCall(
         "DELETE",
         `https://smartwardrobe-backend.azurewebsites.net/friend-requests/delete/${item?.requestId}`,
         null,
         token?.token
       );
+      setOpenLoader(false);
       if (rejectApi) {
         showToastSuccess("Request Rejected Successfully");
         filterData = friendReqData.filter(
@@ -476,6 +482,8 @@ function NewChatModal(props) {
               ? "Invite Friends to Group"
               : props?.showSection === "ShareProductsToFriends"
               ? "Share Product with Friends"
+              : props?.showSection === "friendReq"
+              ? "Friend Requests"
               : "Create New Group"}
           </div>
         }
@@ -683,9 +691,9 @@ function NewChatModal(props) {
           )}
 
           {props?.showSection === "friendReq" && (
-            <>
+            <div style={{marginTop:"30px"}}>
               {friendReqData?.map((item, index) => (
-                <div className="newGroup-main-div">
+                <div className="newfriendReq-main-div">
                   <div className="newGroup-list">
                     <div className="newGroup-list-item">
                       <div className="newGroup-list-item-image">
@@ -728,7 +736,7 @@ function NewChatModal(props) {
                   </div>
                 </div>
               ))}
-            </>
+            </div>
           )}
         </div>
       </Modal>
