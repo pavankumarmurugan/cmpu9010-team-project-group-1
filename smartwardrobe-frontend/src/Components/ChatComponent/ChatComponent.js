@@ -38,6 +38,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { HiUserRemove } from "react-icons/hi";
+import { LuUserCheck2 } from "react-icons/lu";
 import {
   IoIosInformationCircleOutline,
   IoMdContacts,
@@ -47,7 +48,7 @@ import { IoMdClose } from "react-icons/io";
 import { io, Socket } from "socket.io-client";
 import { MdOutlineMoreVert } from "react-icons/md";
 import { AudioRecorder } from "react-audio-voice-recorder";
-import { BsChat } from "react-icons/bs";
+import { BsChat, BsInfoCircleFill } from "react-icons/bs";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
@@ -87,6 +88,7 @@ function ChatComponent(props) {
   const [memberListForDetails, setMemberListForDetails] = useState([]);
   const [friendIds, setFriendIds] = useState([]);
   const [groupIds, setGroupIds] = useState([]);
+  const [currentTab, setCurrentTab] = useState(1);
   const [socket, setSocket] = useState(null);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
@@ -185,7 +187,7 @@ function ChatComponent(props) {
 
   const handleShowChat = async (event) => {
     debugger;
-    
+
     setActiveFriend(event);
     setChatInfo(event);
     chatInfoRef.current = event;
@@ -259,7 +261,7 @@ function ChatComponent(props) {
     setDefaultArray(1);
   };
 
-  const handleClose = (e) => {
+  const handleAddFriendAndGroup = (e) => {
     debugger;
     if (e === "AddFriends") {
       setaddNewFriendorGroup("AddFriends");
@@ -505,12 +507,11 @@ function ChatComponent(props) {
   };
 
   const handleSendMessage = async (event, from) => {
-    debugger
+    debugger;
     if (
       (event.key === "Enter" && textValue.trim() !== "") ||
       (textValue.trim() !== "" && from === "fromIcon")
     ) {
-
       // if(audioMessage !== null){
       //   console.log("audioMessage", audioMessage);
       //   return
@@ -818,18 +819,22 @@ function ChatComponent(props) {
 
   const handleRecordingComplete = (audioBlob) => {
     // Log or handle the blob, for example:
-    debugger
-    console.log('Audio recorded:', audioBlob);
+    debugger;
+    console.log("Audio recorded:", audioBlob);
 
     setAudioMessage(audioBlob);
-  
+
     // Create FormData to send the audio as part of a POST request
     const formData = new FormData();
-    formData.append('audioFile', audioBlob, 'recording.webm');
-  
+    formData.append("audioFile", audioBlob, "recording.webm");
   };
 
   /** audio */
+
+  const handleTabSelect = (value) => {
+    debugger;
+    setCurrentTab(value);
+  };
 
   return (
     <>
@@ -888,7 +893,24 @@ function ChatComponent(props) {
                 <>
                   <div className="chat-moreoptions-icon">
                     <h2>Chats</h2>
-                    <div className="moreoptions-div">
+
+                    <Button
+                      className="frined-request-button"
+                      color="default"
+                      aria-hidden="true"
+                    >
+                      <LuUserCheck2
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          
+                        }}
+                      />
+                      Friend requests
+                      {friendReqCountToShow !== 0 && `(${friendReqCountToShow})`}
+                    </Button>
+
+                    {/* <div className="moreoptions-div">
                       {friendReqCountToShow !== 0 && (
                         <StyledBadge
                           badgeContent={friendReqCountToShow}
@@ -909,7 +931,6 @@ function ChatComponent(props) {
                         aria-haspopup="true"
                         onClick={handleClick}
                       >
-                        {/* <MoreVertIcon /> */}
                         <IoMdAddCircle style={{ color: "blue" }} />
                       </IconButton>
                       <Menu
@@ -936,9 +957,51 @@ function ChatComponent(props) {
                           Create Group
                         </MenuItem>
                       </Menu>
-                    </div>
+                    </div> */}
                   </div>
+
                   <div className="search-contacts">
+                  <Button
+                    className="add-friends-groups-button"
+                    color="default"
+                    aria-hidden="true"
+                    onClick={() => handleAddFriendAndGroup("AddFriends")}
+                  >
+                    Add Friends
+                  </Button>
+                  <Button
+                          className="add-friends-groups-button"
+                          color="default"
+                          aria-hidden="true"
+                          onClick={() => handleAddFriendAndGroup("CreateGroup")}
+                        >
+                          Create Group
+                        </Button>
+                  </div>
+
+                  <div className="tab-main-div">
+                      <div
+                        className={`friends-tab-div ${
+                          currentTab === 1 ? "activeTab" : ""
+                        }`}
+                        onClick={() => handleTabSelect(1)}
+                      >
+                        Friends
+                      </div>
+                      <div
+                        className={`groups-tab-div ${
+                          currentTab === 2 ? "activeTab" : ""
+                        }`}
+                        onClick={() => handleTabSelect(2)}
+                      >
+                        Groups
+                      </div>
+                    </div>
+
+                  <div className="contact-list">
+                    {currentTab === 1 && (
+                      <div>
+                         <div className="search-friends">
                     <div className="search-input">
                       <input
                         type="text"
@@ -949,27 +1012,85 @@ function ChatComponent(props) {
                         <Search style={{ color: "2e3b4e" }} />
                       </button>
                     </div>
+
+                    
                   </div>
-                  {/* <h4>
-                <b style={{ paddingLeft: "10px" }}>GROUPS</b>
-              </h4> */}
-                  <div className="contact-list">
-                    {friends?.map((friend, index) => (
-                      <div
-                        key={friend.id}
-                        className={`contact-details-div ${
-                          activeFriend === friend ? "active" : ""
-                        }`}
-                        onClick={() => handleShowChat(friend)}
-                        tabIndex="0"
-                      >
-                        <img
-                          src={
-                            friend?.profilePic
-                              ? friend.profilePic
-                              : friend?.groupName
-                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ3LToR-ycDBDBii0DSf9YrdTOjQs27e-9ywV8vVnjfdzfS7iE_QnIYx_UYkFtVxYl-x8&usqp=CAU"
-                              : `data:image/svg+xml;base64,${btoa(`
+                        
+                        {friends?.map(
+                          (friend, index) =>
+                            friend?.username && (
+                              <div
+                                key={friend.id}
+                                className={`contact-details-div ${
+                                  activeFriend === friend ? "active" : ""
+                                }`}
+                                onClick={() => handleShowChat(friend)}
+                                tabIndex="0"
+                              >
+                                <img
+                                  src={
+                                    friend?.profilePic
+                                      ? friend.profilePic
+                                      : friend?.groupName
+                                      ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ3LToR-ycDBDBii0DSf9YrdTOjQs27e-9ywV8vVnjfdzfS7iE_QnIYx_UYkFtVxYl-x8&usqp=CAU"
+                                      : `data:image/svg+xml;base64,${btoa(`
+                            <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="100" height="100" fill="gray" />
+                              <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
+                                ${
+                                  friend?.username?.charAt(0).toUpperCase() ||
+                                  ""
+                                }
+                              </text>
+                            </svg>
+                          `)}`
+                                  }
+                                  alt="Alice"
+                                  className="contact-image"
+                                />
+                                <div className="contact-name-and-last-msg">
+                                  <div className="contact-Name">
+                                    {friend?.groupName
+                                      ? friend?.groupName
+                                      : friend?.username}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                        )}
+                      </div>
+                    )}
+
+                    {currentTab === 2 && (
+                      <div>
+                        <div className="search-input">
+                      <input
+                        type="text"
+                        placeholder="search Groups"
+                        onChange={handleFriendsSearch}
+                      />
+                      <button className="search-button">
+                        <Search style={{ color: "2e3b4e" }} />
+                      </button>
+                    </div>
+                        {friends?.map(
+                          (friend, index) =>
+                            friend?.groupName && (
+                              <div
+                                key={friend.id}
+                                className={`contact-details-div ${
+                                  activeFriend === friend ? "active" : ""
+                                }`}
+                                onClick={() => handleShowChat(friend)}
+                                tabIndex="0"
+                              >
+                                <img
+                                  src={
+                                    friend?.profilePic
+                                      ? friend.profilePic
+                                      : friend?.groupName
+                                      ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ3LToR-ycDBDBii0DSf9YrdTOjQs27e-9ywV8vVnjfdzfS7iE_QnIYx_UYkFtVxYl-x8&usqp=CAU"
+                                      : `data:image/svg+xml;base64,${btoa(`
                               <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="100" height="100" fill="gray" />
                                 <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
@@ -980,27 +1101,26 @@ function ChatComponent(props) {
                                 </text>
                               </svg>
                             `)}`
-                          }
-                          alt="Alice"
-                          className="contact-image"
-                        />
-                        <div className="contact-name-and-last-msg">
-                          <div className="contact-Name">
-                            {friend?.groupName
-                              ? friend?.groupName
-                              : friend?.username}
-                          </div>
-                          {/* <div className="contact-last-msg">Hi, how are you?</div> */}{" "}
-                          {/** uncomment this to show latest msg and .contact-name-and-last-msg uncomment flex-direction:coulmn in this class */}
-                        </div>
-                        {/* <div className="unread-badge">
-                      <span className="unread-msg-count">1</span>
-                    </div> */}
+                                  }
+                                  alt="Alice"
+                                  className="contact-image"
+                                />
+                                <div className="contact-name-and-last-msg">
+                                  <div className="contact-Name">
+                                    {friend?.groupName
+                                      ? friend?.groupName
+                                      : friend?.username}
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                        )}
                       </div>
-                    ))}
+                    )}
+
                     {friends?.length === 0 && (
                       <div className="no-friends">
-                        <h4>No Friends</h4>
+                        <h4>{currentTab === 1 ? "No Friends" : "No Groups" }</h4>
                       </div>
                     )}
                   </div>
@@ -1221,7 +1341,7 @@ function ChatComponent(props) {
               } ${showContactDetails && "show-deatils-only"} `}
               style={{
                 // backgroundImage: `url(${chatbackgroundimage})`,
-                backgroundColor: "#f4f3f8",
+                // backgroundColor: "#f4f3f8",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
@@ -1275,7 +1395,7 @@ function ChatComponent(props) {
                             Invite Friends
                           </h3>
                         </div> */}
-                      <MdOutlineMoreVert
+                      <BsInfoCircleFill
                         style={{ width: "30px", height: "30px" }}
                         onClick={handleContactDetails}
                       />
@@ -1294,22 +1414,30 @@ function ChatComponent(props) {
                     flexDirection: "column",
                   }}
                 >
-                  <BsChat style={{width:"40px", height:"35px", strokeWidth: "1", color: "gray" }} />
+                  <BsChat
+                    style={{
+                      width: "40px",
+                      height: "35px",
+                      strokeWidth: "1",
+                      color: "gray",
+                    }}
+                  />
                   <h2
                     style={{
                       marginTop: "10px",
-                    //   display: "flex",
-                    //   justifyContent: "center",
-                    //   alignItems: "center",
-                    //   textAlign: "center",
-                    //   height: "100%",
-                    //   flexDirection: "column",
+                      //   display: "flex",
+                      //   justifyContent: "center",
+                      //   alignItems: "center",
+                      //   textAlign: "center",
+                      //   height: "100%",
+                      //   flexDirection: "column",
                     }}
                   >
-                    
                     No Chat Selected
                   </h2>
-                  <p style={{marginTop:"5px", color:"gray"}}>Choose a conversation from sidebar to start chatting</p>
+                  <p style={{ marginTop: "5px", color: "gray" }}>
+                    Choose a conversation from sidebar to start chatting
+                  </p>
                 </div>
               )}
               <div className="chat-messages">
@@ -1428,7 +1556,7 @@ function ChatComponent(props) {
                     disabled={!chatInfo?.userId && !chatInfo?.groupName}
                   />
                   <button className="send-button">
-                  <AudioRecorder
+                    <AudioRecorder
                       onRecordingComplete={handleRecordingComplete}
                       audioTrackConstraints={{
                         noiseSuppression: true,
@@ -1448,7 +1576,6 @@ function ChatComponent(props) {
                       }}
                       showVisualizer={true}
                       showSaveButton={false}
-                      
                     />
                     <FaPaperPlane
                       style={{
@@ -1468,7 +1595,7 @@ function ChatComponent(props) {
                 className={`details-chat-section ${showContactDetails && ""}`}
                 style={{
                   // backgroundImage: `url(${chatbackgroundimage})`,
-                  backgroundColor: "#f4f3f8",
+                  // backgroundColor: "#f4f3f8",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",

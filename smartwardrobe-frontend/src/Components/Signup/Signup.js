@@ -398,9 +398,12 @@ function SignupModal(props) {
                     Forget Password?
                   </Typography.Title>
                 )} */}
+                {validationField.password && <div class="password-error">
+                Password must be at least 5 characters long.
+              </div>}
               </div>
               <div class="text-xs text-text-neutral font-brittiSans">
-                &nbsp;
+                
               </div>
               <div class="text-xs text-text-neutral font-brittiSans">
                 &nbsp;

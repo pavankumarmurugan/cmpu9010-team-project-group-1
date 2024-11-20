@@ -130,12 +130,21 @@
 
 .signup-text{
     font-weight: bold;
+    font-size: 18px;
 }
 
 .LoginLink-text{
     font-weight: bold;
-    font-size: 20px;
+    font-size: 22px;
     color: dodgerblue;
     margin-left: 10px;
     cursor: pointer;
+}
+
+.password-error{
+    color: red;
+    font-size: 16px;
+    display: flex;
+    justify-content: end;
+    margin-top: -10px;
 }

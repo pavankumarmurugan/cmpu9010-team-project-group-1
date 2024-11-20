@@ -62,12 +62,19 @@
 
 .header-logo{
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     color: #fff;
     font-weight: lighter;
     letter-spacing: 0.2rem;
 }
+
+
+@media (max-width: 900px) {
+    .header-logo{
+        justify-content: center;
+    }
+  }
 
 @media (min-width: 300px) and (max-width: 500px) {
     .header-logo{
