@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .result-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+        .result-item img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="query" placeholder="Enter your search query" />
+        <select id="method">
+            <option value="fulltext">Full-Text Search</option>
+            <option value="semantic">Semantic Search</option>
+        </select>
+        <button onclick="performSearch()">Search</button>
+    </div>
+    <div id="results" class="results"></div>
+
+    <script>
+        async function performSearch() {
+            const query = document.getElementById("query").value.trim();
+            const method = document.getElementById("method").value;
+            const resultsDiv = document.getElementById("results");
+
+            // Clear previous results
+            resultsDiv.innerHTML = "";
+
+            // Validate input
+            if (!query) {
+                resultsDiv.innerHTML = "<p class='error'>Please enter a search query.</p>";
+                return;
+            }
+
+            // Show loading message
+            resultsDiv.innerHTML = "<p>Loading results...</p>";
+
+            try {
+                // Make POST request to backend
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, method })
+                });
+
+                // Parse the response JSON
+                const data = await response.json();
+
+                if (!data.results || !Array.isArray(data.results)) {
+                    resultsDiv.innerHTML = "<p>No results found.</p>";
+                    return;
+                }
+
+
+                // Check if results are returned
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = "<p>No results found.</p>";
+                    return;
+                }
+
+                // Render results
+                resultsDiv.innerHTML = data.results.map(result => `
+                    <div class="result-item">
+                        <img src="${result.image_url}" alt="${result.image_name}" />
+                        <p>${result.image_name}</p>
+                        <p>Product ID: ${result.product_id}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                // Handle errors
+                console.error(error);
+                resultsDiv.innerHTML = "<p class='error'>An error occurred while searching. Please try again later.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
+
