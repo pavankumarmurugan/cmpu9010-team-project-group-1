@@ -32,6 +32,7 @@ import { VtoImageSearchController } from './vto/vto.controller';
 import { OriginMiddleware } from '../middleware/origin.middleware';
 import { ConfigController } from './config/config.controller';
 import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
+import { InviteController } from './invite/invite.controller';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { UserLikedModelController } from './user-liked-models/user-liked-models.
     VtoImageSearchController,
     ConfigController,
     UserLikedModelController,
+    InviteController,
   ],
   providers: [
     // {
