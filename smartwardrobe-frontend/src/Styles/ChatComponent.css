@@ -487,8 +487,8 @@
 }
 
 .Create-Button{
-  text-transform: capitalize !important;
-  letter-spacing: normal !important;
+  /* text-transform: capitalize !important;
+  letter-spacing: normal !important; */
 }
 
 .Newchat-moreoptions-icon {
@@ -694,9 +694,16 @@
   max-height: 500px;
 }
 
+.div-for-scroll{
+  overflow: auto !important;
+  scrollbar-width: thin !important;
+  min-height: 210px;
+  max-height: 210px;
+}
+
 .newGroup-main-div {
   margin-top: 30px;
-  overflow: auto;
+  /* overflow: auto; */
   scrollbar-width: thin;
   max-height: 365px;
 }
@@ -727,7 +734,7 @@
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding-left: 20px;
+  padding-left: 12px;
   width: 100%;
 }
 
@@ -740,7 +747,7 @@
 }
 
 .create-button-div {
-  width: 100%;
+  /* width: 100%; */
   display: flex;
   justify-content: end;
 }
@@ -758,6 +765,46 @@
   cursor: pointer !important;
   width: fit-content !important;
   font-size: 18px !important;
+  text-transform: capitalize !important;
+  letter-spacing: normal !important;
+}
+
+.copylink-Button {
+  height: 37px;
+  border-radius: 5px;
+  margin-top: 10px !important;
+  border: none !important;
+  outline: 0 !important;
+  padding: 10px 8px !important;
+  color: black !important;
+  margin-right: 10px !important;
+  border: 1px solid black !important;
+  background-color: white !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  width: fit-content !important;
+  font-size: 18px !important;
+  text-transform: capitalize !important;
+  letter-spacing: normal !important;
+}
+
+.copiedlink-Button {
+  min-width: 160px !important;
+  height: 37px;
+  border-radius: 5px;
+  margin-top: 10px !important;
+  border: none !important;
+  outline: 0 !important;
+  padding: 10px 8px !important;
+  color: white !important;
+  margin-right: 10px !important;
+  background-color: black !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  width: fit-content !important;
+  font-size: 18px !important;
+  text-transform: capitalize !important;
+  letter-spacing: normal !important;
 }
 
 .Accept-Button {
@@ -1059,6 +1106,20 @@
   .frined-request-button{
     display: none !important;
   }
+}
+
+.add-friends-groups-div{
+  display: flex;
+  /* justify-content: end; */
+  gap: 5px;
+  /* margin-bottom: 10px; */
+}
+
+.Share-screen-add-friend-group-buttons{
+  width: 100%;
+  background-color: black !important;
+  color: white !important;
+  margin-bottom: 10px !important;
 }
 
 /** tab work */

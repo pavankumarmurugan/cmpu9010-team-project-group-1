@@ -73,6 +73,23 @@
         transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
     }
 }
+.Signup-Inputfield-password{
+    height: 42px;
+    background-color: white;
+    border-radius: 0.5rem;
+    border: 1px solid #E0E1E3;
+    font-weight: 500;
+    &:hover{
+        cursor: text !important;
+        border: 2px solid black;
+    }
+    &:focus{
+        
+        border: 2px solid black; 
+        box-shadow: 0px 0px 5px 0px black; 
+        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
+    }
+}
 
 .Signup-Inputs .errorSignup-Inputfield {
     margin-bottom: 1rem;

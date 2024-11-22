@@ -12,7 +12,7 @@ import {
   Checkbox,
   CircularProgress,
 } from "@mui/material";
-import { json, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
 import {
   showToastInfo,
   showToastSuccess,
@@ -23,16 +23,19 @@ import { AiOutlineWechat } from "react-icons/ai";
 import "../../Styles/ChatComponent.css";
 import { GoPersonAdd } from "react-icons/go";
 import { Search } from "@mui/icons-material";
+import { TiTick } from "react-icons/ti";
 import { FreiendRequestsValueSuccess } from "../../redux/slices/HomeDataSlice";
 
 function NewChatModal(props) {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+    const location = useLocation();
   const [disabled, setDisabled] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewGroup, setAddNewGroup] = useState(false);
+  const [currentTab, setCurrentTab] = useState(1);
   const [friendEmail, setFriendEmail] = useState("");
   const [groupNameValue, setGroupNameValue] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -42,6 +45,9 @@ function NewChatModal(props) {
   const [autocomplteAllData, setAutocomplteAllData] = useState([]);
   const [addMemberToGroupList, setaddMemberToGroupList] = useState([]);
   const [shareDataList, setShareDataList] = useState([]);
+  const [friendsData, setFriendsData] = useState([]);
+  const [GroupData, setGroupsData] = useState([]);
+  const [copyButtonText, setCopyButtonText] = useState("Copy Product Link");
   // const [loading, setLoading] = useState(false);
 
   const [bounds, setBounds] = useState({
@@ -54,6 +60,12 @@ function NewChatModal(props) {
   const handleCancel = (e) => {
     props?.closeModal();
   };
+  const handleAddFriendFromShareProduct = (value) => {
+    debugger;
+
+    props?.changeSection(value);
+
+  }
   const onStart = (_event, uiData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
     const targetRect = draggleRef.current?.getBoundingClientRect();
@@ -68,81 +80,99 @@ function NewChatModal(props) {
     });
   };
 
-  const handleCheckboxForShareProducts = async (event,item) => {
+  const handleCheckboxForShareProducts = async (event, item) => {
     debugger;
-    console.log(event)
-    console.log(item)
+    console.log(event);
+    console.log(item);
 
-    if(event?.target?.checked){
-      setShareDataList([...shareDataList,item])
-    }
-    else{
-      let filterCheckedOnly = shareDataList?.filter(
-        (i) => i !== item
-      );
+    if (event?.target?.checked) {
+      setShareDataList([...shareDataList, item]);
+    } else {
+      let filterCheckedOnly = shareDataList?.filter((i) => i !== item);
       setShareDataList(filterCheckedOnly);
     }
   };
 
+  const handleCopyProductLink = () => {
+    debugger;
+    let url = `${window.location.origin}${location.pathname}`;
+    navigator.clipboard.writeText(url)
+    .then(() => {
+      setCopyButtonText("Copied");
+    })
+    // .catch((error) => {
+    //   console.error("Failed to copy the link: ", error);
+    // });
+  }
+
+  // const handleAddFriendFromShareProduct = () => {
+  //   debugger;
+
+  //   props?.changeSection();
+
+  // }
+
   const handleShareProduct = async () => {
     debugger;
 
-    if(shareDataList?.length === 0){
-      showToastInfo("Please select atleast one friend or group to share product.");
+    if (shareDataList?.length === 0) {
+      showToastInfo(
+        "Please select atleast one friend or group to share product."
+      );
       return;
     }
 
     if (shareDataList?.length > 0) {
-      const friendList = shareDataList?.filter(x => x?.userId);
-      const groupList = shareDataList?.filter(x => x?.groupId);
-      if(friendList?.length > 0){
-      const apiCalls = friendList.map((item) => {
+      const friendList = shareDataList?.filter((x) => x?.userId);
+      const groupList = shareDataList?.filter((x) => x?.groupId);
+      if (friendList?.length > 0) {
+        const apiCalls = friendList.map((item) => {
           let message = {
             message: props?.productUrl,
             receiverId: item?.userId,
-            messageType: "text"
+            messageType: "text",
           };
-        return apiCall(
-         "POST",
-        "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
-        message,
-        token?.token
-        );
-      });
-      setOpenLoader(true);
-      const apiCallsFriends = await Promise.all(apiCalls);
-      if(apiCallsFriends?.length > 0){
-        // showToastSuccess("Product Shared Successfully");
-        console.log(apiCallsFriends)
+          return apiCall(
+            "POST",
+            "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+            message,
+            token?.token
+          );
+        });
+        setOpenLoader(true);
+        const apiCallsFriends = await Promise.all(apiCalls);
+        if (apiCallsFriends?.length > 0) {
+          // showToastSuccess("Product Shared Successfully");
+          console.log(apiCallsFriends);
+        }
       }
-    }
 
-    if(groupList?.length > 0){
-      const apiCalls = groupList.map((item) => {
-        let message = {
-          message: props?.productUrl,
-          groupId: item?.groupId,
-          messageType: "text"
-        };
-        
-      return apiCall(
-        "POST",
-        "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
-        message,
-        token?.token
-      );
-    });
-    setOpenLoader(true);
-    const apiCallsGroups = await Promise.all(apiCalls);
+      if (groupList?.length > 0) {
+        const apiCalls = groupList.map((item) => {
+          let message = {
+            message: props?.productUrl,
+            groupId: item?.groupId,
+            messageType: "text",
+          };
 
-    if(apiCallsGroups?.length > 0){
-      // showToastSuccess("Product Shared Successfully");
-      console.log(apiCallsGroups)
-    }
-    setOpenLoader(false);
-    handleCancel();
-    setOpenLoader(false);
-    }
+          return apiCall(
+            "POST",
+            "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
+            message,
+            token?.token
+          );
+        });
+        setOpenLoader(true);
+        const apiCallsGroups = await Promise.all(apiCalls);
+
+        if (apiCallsGroups?.length > 0) {
+          // showToastSuccess("Product Shared Successfully");
+          console.log(apiCallsGroups);
+        }
+        setOpenLoader(false);
+        handleCancel();
+        setOpenLoader(false);
+      }
     }
   };
 
@@ -195,7 +225,7 @@ function NewChatModal(props) {
   };
 
   const fetchSuggestions = async (query) => {
-    debugger
+    debugger;
     const trimmedQuery = query.trim();
     if (trimmedQuery.length < 3) {
       setSuggestions([]);
@@ -238,7 +268,7 @@ function NewChatModal(props) {
 
         setSuggestions(options);
         // props?.reRenderComponent();
-      }else{
+      } else {
         setSuggestions([]);
       }
     } catch (error) {
@@ -260,10 +290,20 @@ function NewChatModal(props) {
   }, [props?.friendReqCount]);
 
   useEffect(() => {
-    if(props?.friends?.length >0){
+    if (props?.friends?.length > 0) {
       setFriendsDataForGroup(props?.friends);
     }
-  },[props?.friends])
+  }, [props?.friends]);
+
+  useEffect(() => {
+    if (props?.friendsListForShare?.length > 0) {
+      let friends = props?.friendsListForShare.filter((x) => x?.userId);
+      // setFriendsData(friends);
+      setFriendsDataForGroup(friends);
+      let groups = props?.friendsListForShare.filter((x) => x?.groupName);
+      setGroupsData(groups);
+    }
+  }, [props?.friendsListForShare]);
 
   const handleInputChange = (event) => {
     setInputValue(event);
@@ -297,10 +337,14 @@ function NewChatModal(props) {
           token?.token
         );
         setOpenLoader(false);
-        if (response) {
+        if (response?.message !== "FRIEND REQUEST ALREADY SENT") {
           showToastSuccess("Your request has been sent successfully.");
-          props?.reRenderComponent();
-          props?.closeModal();
+          if(props?.fromProductsDetails === "AddFriends"){
+            handleAddFriendFromShareProduct("ShareProductsToFriends")
+          }else{
+            props?.reRenderComponent();
+            props?.closeModal();
+          }
         }
       } catch (error) {
         console.error("Error fetching suggestions:", error);
@@ -368,7 +412,7 @@ function NewChatModal(props) {
       return;
     }
 
-    if(addMemberToGroupList?.length === 0){
+    if (addMemberToGroupList?.length === 0) {
       showToastInfo("Select atleast one friend to create group");
       return;
     }
@@ -421,9 +465,25 @@ function NewChatModal(props) {
         if (addingFriends) {
           showToastInfo("Group created successfully");
         }
-
-        props?.reRenderComponent();
-        props?.closeModal();
+        
+        if(props?.fromProductsDetails === "CreateGroup"){
+          setGroupNameValue("");
+          setOpenLoader(true);
+          const getGroupsList = await apiCall(
+            "GET",
+            "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+            null,
+            token?.token
+          );
+          setOpenLoader(false);
+          if (getGroupsList?.data?.length > 0) {
+            setGroupsData(getGroupsList?.data);
+          }
+          handleAddFriendFromShareProduct("ShareProductsToFriends");
+        } else{
+          props?.reRenderComponent();
+          props?.closeModal();
+        }
       } catch (error) {
         console.error("Error handling multiple friend requests:", error);
       }
@@ -433,17 +493,56 @@ function NewChatModal(props) {
   const handleSearchFriendInGroup = (event) => {
     debugger;
     const searchValue = event?.target?.value;
-    if(searchValue?.trim === ""){
-      return
+    if (searchValue?.trim === "") {
+      return;
     }
-    const filterData = props?.friends?.filter(x => x.username?.toLowerCase().includes(searchValue?.toLowerCase()));
+    const filterData = props?.friends?.filter((x) =>
+      x.username?.toLowerCase().includes(searchValue?.toLowerCase())
+    );
     if (filterData && filterData?.length > 0) {
       setFriendsDataForGroup(filterData);
-    }else{
+    } else {
       setFriendsDataForGroup(props?.friends);
-
     }
-  }
+  };
+
+  const handleTabSelect = (value) => {
+    debugger;
+    setCurrentTab(value);
+  };
+
+  const handleFriendsSearch = (event, from) => {
+    debugger;
+    let searchValue = event?.target?.value;
+    if (searchValue.trim() !== "") {
+      if (from === "friends") {
+        let filteredFriends = props?.friendsListForShare.filter((friend) => {
+          const usernameMatches = friend?.username
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase());
+
+          return usernameMatches;
+        });
+        // setFriendsData(filteredFriends);
+        setFriendsDataForGroup(filteredFriends);
+      } else {
+        let filteredFriends = props?.friendsListForShare.filter((friend) => {
+          const usernameMatches = friend?.groupName
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase());
+
+          return usernameMatches;
+        });
+        setGroupsData(filteredFriends);
+      }
+    } else {
+      let friends = props?.friendsListForShare.filter((x) => x?.userId);
+      // setFriendsData(friends);
+      setFriendsDataForGroup(friends);
+      let groups = props?.friendsListForShare.filter((x) => x?.groupName);
+      setGroupsData(groups);
+    }
+  };
 
   return (
     <>
@@ -477,11 +576,11 @@ function NewChatModal(props) {
             {props?.showSection === "AddFriends"
               ? "Add New Friends"
               : props?.showSection === "ShareProductsToFriends"
-              ? "Share Product with Friends"
+              ? "Share Product with Friends or Groups"
               : props?.showSection === "InviteFriendsToGroup"
               ? "Invite Friends to Group"
               : props?.showSection === "ShareProductsToFriends"
-              ? "Share Product with Friends"
+              ? "Share Product with Friends or Groups"
               : props?.showSection === "friendReq"
               ? "Friend Requests"
               : "Create New Group"}
@@ -506,7 +605,9 @@ function NewChatModal(props) {
           {props?.showSection === "AddFriends" && (
             <div className="create-search-contacts">
               <div className="search-input-add">
-                <p style={{marginBottom:"10px"}}>Enter the username or email of the friend you want to add.</p>
+                <p style={{ marginBottom: "10px" }}>
+                  Enter the username or email of the friend you want to add.
+                </p>
                 <AutoComplete
                   style={{ width: "100%", height: "40px" }}
                   value={inputValue}
@@ -521,6 +622,15 @@ function NewChatModal(props) {
                 />
               </div>
               <div className="create-button-div">
+              {props?.fromProductsDetails === "AddFriends" &&
+                <Button
+                  className="Create-Button"
+                  color="default"
+                  onClick={() => handleAddFriendFromShareProduct("ShareProductsToFriends")}
+                  style={{marginRight:"10px"}}
+                >
+                  Back
+                </Button>}
                 <Button
                   className="Create-Button"
                   color="default"
@@ -545,26 +655,36 @@ function NewChatModal(props) {
                 />
               </div>
               <div className="newGroup-main-div">
-              <div className="searchfriendinGroupCreate">
-                <label>Friends List</label>
-                <input
-                  type="text"
-                  onChange={handleSearchFriendInGroup}
-                  placeholder="Search Friends"
-                  className="searchfriendinGroup"
-                />
-              </div>
+                <div className="searchfriendinGroupCreate">
+                  <label>{friendsDataForGroup?.length > 0 ? "Friends List" : "No Friends" }</label>
+                  <input
+                    type="text"
+                    onChange={handleSearchFriendInGroup}
+                    placeholder="Search Friends"
+                    className="searchfriendinGroup"
+                  />
+                </div>
                 {friendsDataForGroup?.map(
                   (item, index) =>
                     item?.username && (
                       <div className="newGroup-list">
                         <div className="newGroup-list-item">
+                          <div
+                            className="checkbox-div"
+                            style={{ display: "flex" }}
+                          >
+                            <Checkbox
+                              onChange={(e) =>
+                                handleCheckboxForAddMemberInGroup(e, item)
+                              }
+                            />
+                          </div>
                           <div className="newGroup-list-item-image">
                             <img
                               src={
                                 item?.profilePic
                                   ? item?.profilePic
-                                  :`data:image/svg+xml;base64,${btoa(`
+                                  : `data:image/svg+xml;base64,${btoa(`
                               <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
                                 <rect width="100" height="100" fill="gray" />
                                 <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
@@ -582,14 +702,9 @@ function NewChatModal(props) {
                           </div>
                           <div className="newGroup-list-item-name">
                             <div className="newGroup-list-item-name-text">
-                              <p style={{textTransform:"capitalize"}}>{item?.username}</p>
-                            </div>
-                            <div className="checkbox-div">
-                              <Checkbox
-                                onChange={(e) =>
-                                  handleCheckboxForAddMemberInGroup(e, item)
-                                }
-                              />
+                              <p style={{ textTransform: "capitalize" }}>
+                                {item?.username}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -598,6 +713,15 @@ function NewChatModal(props) {
                 )}
               </div>
               <div className="create-button-div">
+                {props?.fromProductsDetails === "CreateGroup" &&
+              <Button
+                  className="Create-Button"
+                  color="default"
+                  onClick={() => handleAddFriendFromShareProduct("ShareProductsToFriends")}
+                  style={{marginRight:"10px"}}
+                >
+                  Back
+                </Button>}
                 <Button
                   className="Create-Button"
                   color="default"
@@ -659,39 +783,194 @@ function NewChatModal(props) {
 
           {props?.showSection === "ShareProductsToFriends" && (
             <div className="newGroup-main-div">
-              {props?.friendsListForShare?.map( (item, index) => (
-                
-              <div className="newGroup-list">
-                <div className="newGroup-list-item">
-                  <div className="newGroup-list-item-image">
-                    <img
-                      src={item?.profilePic || "https://www.w3schools.com/howto/img_avatar.png"} 
-                      alt=""
-                      className="newGroup-list-item-image-img"
-                    />
-                  </div>
-                  <div className="newGroup-list-item-name">
-                    <div className="newGroup-list-item-name-text" style={{textTransform: "capitalize"}}>
-                      <p>{item?.groupName || item?.username} </p>
-                    </div>
-                    <div className="checkbox-div">
-                      <Checkbox onChange={(e) => handleCheckboxForShareProducts(e,item)} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              ))}
-
-              <div className="create-button-div">
-                <Button className="Create-Button" color="default" onClick={handleShareProduct} >
-                  Share
+              <div className="add-friends-groups-div">
+                <Button
+                  className="Share-screen-add-friend-group-buttons"
+                  color="default"
+                  onClick={() => handleAddFriendFromShareProduct('AddFriends')}
+                >
+                  Add Friends
+                </Button>
+                <Button
+                  className="Share-screen-add-friend-group-buttons"
+                  color="default"
+                  onClick={() => handleAddFriendFromShareProduct('CreateGroup')}
+                >
+                  Create Group
                 </Button>
               </div>
+              <div className="tab-main-div" style={{ marginBottom: "10px" }}>
+                <div
+                  className={`friends-tab-div ${
+                    currentTab === 1 ? "activeTab" : ""
+                  }`}
+                  onClick={() => handleTabSelect(1)}
+                >
+                  Friends
+                </div>
+                <div
+                  className={`groups-tab-div ${
+                    currentTab === 2 ? "activeTab" : ""
+                  }`}
+                  onClick={() => handleTabSelect(2)}
+                >
+                  Groups
+                </div>
+              </div>
+              {currentTab === 1 ? (
+                <>
+                  <div className="search-input">
+                    <input
+                      type="text"
+                      placeholder="Search Friends"
+                      onChange={(e) => handleFriendsSearch(e, "friends")}
+                    />
+                    <button className="search-button">
+                      <Search style={{ color: "2e3b4e" }} />
+                    </button>
+                  </div>
+                  <div className="div-for-scroll">
+                    {friendsDataForGroup?.map(
+                      (item, index) =>
+                        item?.userId && (
+                          <div className="newGroup-list">
+                            <div className="newGroup-list-item">
+                              <div
+                                className="checkbox-div"
+                                style={{ display: "flex" }}
+                              >
+                                <Checkbox
+                                  checked={shareDataList?.includes(item)}
+                                  onChange={(e) =>
+                                    handleCheckboxForShareProducts(e, item)
+                                  }
+                                />
+                              </div>
+                              <div className="newGroup-list-item-image">
+                                <img
+                                  src={
+                                    item?.profilePic ||
+                                    `data:image/svg+xml;base64,${btoa(`
+                              <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="100" height="100" fill="gray" />
+                                <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
+                                  ${
+                                    item?.username?.charAt(0).toUpperCase() ||
+                                    item?.groupName?.charAt(0).toUpperCase()
+                                  }
+                                </text>
+                              </svg>
+                            `)}`
+                                  }
+                                  alt=""
+                                  className="newGroup-list-item-image-img"
+                                />
+                              </div>
+                              <div className="newGroup-list-item-name">
+                                <div
+                                  className="newGroup-list-item-name-text"
+                                  style={{ textTransform: "capitalize" }}
+                                >
+                                  <p>{item?.groupName || item?.username} </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="search-input">
+                    <input
+                      type="text"
+                      placeholder="Search Friends"
+                      onChange={(e) => handleFriendsSearch(e, "groups")}
+                    />
+                    <button className="search-button">
+                      <Search style={{ color: "2e3b4e" }} />
+                    </button>
+                  </div>
+                  <div className="div-for-scroll">
+                    {GroupData?.map(
+                      (item, index) =>
+                        item?.groupName && (
+                          <div className="newGroup-list">
+                            <div className="newGroup-list-item">
+                              <div
+                                className="checkbox-div"
+                                style={{ display: "flex" }}
+                              >
+                                <Checkbox
+                                  checked={shareDataList?.includes(item)}
+                                  onChange={(e) =>
+                                    handleCheckboxForShareProducts(e, item)
+                                  }
+                                />
+                              </div>
+                              <div className="newGroup-list-item-image">
+                                <img
+                                  src={
+                                    item?.profilePic ||
+                                    `data:image/svg+xml;base64,${btoa(`
+                              <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="100" height="100" fill="gray" />
+                                <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
+                                  ${
+                                    item?.username?.charAt(0).toUpperCase() ||
+                                    item?.groupName?.charAt(0).toUpperCase()
+                                  }
+                                </text>
+                              </svg>
+                            `)}`
+                                  }
+                                  alt=""
+                                  className="newGroup-list-item-image-img"
+                                />
+                              </div>
+                              <div className="newGroup-list-item-name">
+                                <div
+                                  className="newGroup-list-item-name-text"
+                                  style={{ textTransform: "capitalize" }}
+                                >
+                                  <p>{item?.groupName || item?.username} </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
+          {props?.showSection === "ShareProductsToFriends" && (
+            <div style={{display:"flex", justifyContent:"end"}}>
+            <div className="create-button-div" >
+              <Button
+                className={`${copyButtonText === "Copied" ?  "copiedlink-Button" :  "copylink-Button"}`}
+                color="default"
+                onClick={handleCopyProductLink}
+              >
+              {copyButtonText} {copyButtonText === "Copied" && <TiTick style={{ width:"25px", height:"25px", color: "white"}} />} 
+              </Button>
+            </div>
+            <div className="create-button-div">
+              <Button
+                className="Create-Button"
+                color="default"
+                onClick={handleShareProduct}
+              >
+                Share
+              </Button>
+            </div>
+            </div>
+          )}
           {props?.showSection === "friendReq" && (
-            <div style={{marginTop:"30px"}}>
+            <div style={{ marginTop: "30px" }}>
               {friendReqData?.map((item, index) => (
                 <div className="newfriendReq-main-div">
                   <div className="newGroup-list">

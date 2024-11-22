@@ -10,10 +10,17 @@ import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
+import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
 
 function Homepage() {
   const location = useLocation();
-  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+  let firstlogin = localStorage.getItem("firstlogin")
+    ? JSON.parse(localStorage.getItem("firstlogin"))
+    : null;
+  const [showBanner, setShowBanner] = useState(false);
   let { state } = location;
   const dispatch = useDispatch();
   const [openLoader, setOpenLoader] = useState(false);
@@ -22,35 +29,52 @@ function Homepage() {
   useEffect(() => {
     debugger;
     getHomeData();
-  },[])
+  }, []);
 
   const getHomeData = async () => {
-    debugger
+    debugger;
     setOpenLoader(true);
-    const response = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/product/get-all/1/20", null, token?.token);
-    setOpenLoader(false)
+    const response = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend.azurewebsites.net/product/get-all/1/20",
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
     if (response) {
       setHomeData(response?.data);
-      dispatch(homeDataSuccess({ homeData: response?.data}));
+      dispatch(homeDataSuccess({ homeData: response?.data }));
     }
-  }
+    if (firstlogin) {
+      setShowBanner(true);
+    }
+  };
 
+  const handleCloseBanner = () => {
+    setShowBanner(false);
+  };
 
   return (
     <>
-    {/** loader code */}
-    <Backdrop
+      {showBanner && (
+        <WelcomeBanner
+          isShowModel={showBanner}
+          closeModal={handleCloseBanner}
+        />
+      )}
+      {/** loader code */}
+      <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-        >
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
-        {/** loader code */}
-    <Headermenu />
-    <ImageWithTextOverlay />
-    <HomeShoppingCollection data={homeData} />
-    <RecentlyViewed />
-    <Footer />
+      {/** loader code */}
+      <Headermenu />
+      <ImageWithTextOverlay />
+      <HomeShoppingCollection data={homeData} />
+      <RecentlyViewed />
+      <Footer />
     </>
   );
 }
