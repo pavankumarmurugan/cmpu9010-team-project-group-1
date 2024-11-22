@@ -12,12 +12,16 @@ import { FirebaseService } from './firebase/firebase.service';
 import { WebSocketService } from './web-sockets/friend-requests/web-sockets.service';
 import { WebSocketGatewayService } from './web-sockets/friend-requests/websocket.gateway.service';
 import { UploadAudioService } from './uploadProfilePicture/upload-audio-chat';
+import { EmailService } from './sendgrid/sendgrid.service';
+import { ConfigModule } from '@nestjs/config';
+import { EmailTemplateService } from './sendgrid/email-template.service';
 
 @Module({
   imports: [
     HttpModule,
     DataServicesModule,
     TypeOrmModule.forFeature([ImageClusterModel]),
+    ConfigModule,
   ],
   providers: [
     SearchProductsService,
@@ -29,6 +33,9 @@ import { UploadAudioService } from './uploadProfilePicture/upload-audio-chat';
     WebSocketService,
     WebSocketGatewayService,
     UploadAudioService,
+    EmailService,
+
+    EmailTemplateService,
   ],
   exports: [
     SearchProductsService,
@@ -40,6 +47,7 @@ import { UploadAudioService } from './uploadProfilePicture/upload-audio-chat';
     FirebaseService,
     WebSocketService,
     WebSocketGatewayService,
+    EmailService,
   ],
 })
 export class ServicesModule {}
