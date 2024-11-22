@@ -5,7 +5,6 @@ import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { CacheService } from 'src/infrastructure/services/cache/cache.service';
 import { FaissService } from 'src/infrastructure/services/faiss/faiss.service';
-
 @Injectable()
 export class RecommendationUsecase {
   constructor(
