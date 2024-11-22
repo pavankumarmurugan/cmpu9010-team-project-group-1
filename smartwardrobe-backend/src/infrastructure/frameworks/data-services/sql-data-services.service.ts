@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IDataServices, IGenericRepository } from 'src/core/abstracts';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { UserModel } from './model/user.model';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { SQLGenericRepository } from './sql-generic-repository';
 import { ProductCategoryModel } from './model/product-category.model';
 import { ProductCategoryEntity } from 'src/core/entities/product-category/product-category.entity';
@@ -35,6 +35,8 @@ import { UserLikedModelsEntity } from 'src/core/entities/user-liked-model/user-l
 import { UserLikedModels } from './model/user-liked-models';
 import { ProductSubcategoryEntity } from 'src/core/entities/product-subcategory/product-subcategory.entity';
 import { ProductSubcategoryModel } from './model/product-subcategory.model';
+import { ImageClusterMVEntity } from 'src/core/entities/image-cluster-mv/image-cluster-mv.entity';
+import { ImageClustersMVModel } from './model/image-clusters-mv.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -54,6 +56,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
   userLikedModel: IGenericRepository<UserLikedModelsEntity>;
   productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
+  imageClusterMV: IGenericRepository<ImageClusterMVEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -88,6 +91,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private userLikedModelRepository: Repository<UserLikedModelsEntity>,
     @InjectRepository(ProductSubcategoryModel)
     private productSubcategoryRepository: Repository<ProductSubcategoryEntity>,
+    @InjectRepository(ImageClustersMVModel)
+    private imageClusterMVRepository: Repository<ImageClusterMVEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -130,5 +135,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
       new SQLGenericRepository<ProductSubcategoryEntity>(
         this.productSubcategoryRepository,
       );
+    this.imageClusterMV = new SQLGenericRepository<ImageClusterMVEntity>(
+      this.imageClusterMVRepository,
+    );
   }
 }
