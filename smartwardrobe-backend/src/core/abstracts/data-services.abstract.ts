@@ -5,6 +5,7 @@ import { FriendRequestsEntity } from '../entities/friend-request/friend-requests
 import { FriendsEntity } from '../entities/friends/friends';
 import { GroupMembersEntity } from '../entities/group-members/group-members.entity';
 import { GroupEntity } from '../entities/group/group';
+import { ImageClusterMVEntity } from '../entities/image-cluster-mv/image-cluster-mv.entity';
 import { ImageClusterEntity } from '../entities/image-cluster/image-cluster.entity';
 import { LikesEntity } from '../entities/likes/likes.entity';
 import { ProductCategoryEntity } from '../entities/product-category/product-category.entity';
@@ -26,6 +27,7 @@ export abstract class IDataServices {
   abstract likes: IGenericRepository<LikesEntity>;
   abstract chat: IGenericRepository<ChatEntity>;
   abstract imageCluster: IGenericRepository<ImageClusterEntity>;
+  abstract imageClusterMV: IGenericRepository<ImageClusterMVEntity>;
   abstract friendRequests: IGenericRepository<FriendRequestsEntity>;
   abstract friends: IGenericRepository<FriendsEntity>;
   abstract group: IGenericRepository<GroupEntity>;

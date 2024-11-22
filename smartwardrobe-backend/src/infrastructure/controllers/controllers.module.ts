@@ -56,7 +56,7 @@ import { FaissModule } from '../services/faiss/faiss.module';
     ServicesModule,
     FaissModule,
     CacheModule.register({
-      ttl: 300000,
+      ttl: 3000000,
       max: 100,
       isGlobal: true,
     }),

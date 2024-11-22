@@ -3,6 +3,8 @@ import * as faiss from 'faiss-node';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ImageClustersMVModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters-mv.model';
+import { CacheService } from '../cache/cache.service';
 
 @Injectable()
 export class FaissService implements OnModuleInit {
@@ -13,6 +15,10 @@ export class FaissService implements OnModuleInit {
   constructor(
     @InjectRepository(ImageClusterModel)
     private readonly imageClusterRepository: Repository<ImageClusterModel>,
+    @InjectRepository(ImageClustersMVModel)
+    private readonly imageClusterMVRepository: Repository<ImageClustersMVModel>,
+
+    private readonly cacheService: CacheService,
   ) {}
 
   async onModuleInit() {
@@ -23,7 +29,16 @@ export class FaissService implements OnModuleInit {
 
   private async initializeFaissIndex(): Promise<void> {
     try {
-      const imageClusterEntities = await this.imageClusterRepository.find();
+      const cacheKey = `image_clusters`;
+
+      let imageClusterEntities: ImageClustersMVModel[] = [];
+      const cachedData =
+        await this.cacheService.getFromCache<ImageClustersMVModel[]>(cacheKey);
+      if (cachedData) {
+        imageClusterEntities = cachedData;
+      } else {
+        imageClusterEntities = await this.imageClusterMVRepository.find();
+      }
 
       if (!imageClusterEntities.length) {
         throw new Error('No data found in image_clusters table');
@@ -48,6 +63,11 @@ export class FaissService implements OnModuleInit {
 
       embeddings.forEach((embedding) => this.faissIndex.add(embedding));
       this.embeddingMatrix = embeddings;
+
+      await this.cacheService.setToCache<ImageClustersMVModel[]>(
+        cacheKey,
+        imageClusterEntities,
+      );
 
       console.log(
         `FAISS index initialized with ${this.faissIndex.ntotal()} embeddings.`,
