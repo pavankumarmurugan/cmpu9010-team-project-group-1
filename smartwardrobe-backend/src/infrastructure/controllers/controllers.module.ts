@@ -33,6 +33,7 @@ import { OriginMiddleware } from '../middleware/origin.middleware';
 import { ConfigController } from './config/config.controller';
 import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
 import { InviteController } from './invite/invite.controller';
+import { FaissModule } from '../services/faiss/faiss.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { InviteController } from './invite/invite.controller';
     ConvertorsModule,
     UseCasesModule,
     ServicesModule,
+    FaissModule,
     CacheModule.register({
       ttl: 300000,
       max: 100,
