@@ -28,6 +28,7 @@ function Homepage() {
 
   useEffect(() => {
     debugger;
+    localStorage.setItem("firstlogin", JSON.stringify(true));
     getHomeData();
   }, []);
 
