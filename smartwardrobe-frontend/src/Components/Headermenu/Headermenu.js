@@ -27,7 +27,7 @@ import { CiBookmark } from "react-icons/ci";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import { MegaMenu } from "primereact/megamenu";
-import { IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdStar } from "react-icons/io";
 import {
   MdExpandLess,
   MdExpandMore,
@@ -57,6 +57,8 @@ import { toast } from "react-toastify";
 import Profile from "../Profile/Profile";
 import { FaSearch } from "react-icons/fa";
 import Homelogo2 from "../../Assets/Homelogo2.png";
+import Marquee from "react-fast-marquee";
+import { GoDotFill } from "react-icons/go";
 
 const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
 
@@ -1308,9 +1310,8 @@ function Headermenu() {
       window.location.reload();
     } else if (e.key === "2") {
       setOpenProfile(true);
-    } else if(e.key === "1"){
-    } 
-    else {
+    } else if (e.key === "1") {
+    } else {
       setCheckingLoginOrSignup("Login");
       setOpenLoginModal(true);
     }
@@ -1385,7 +1386,9 @@ function Headermenu() {
       /** will uncomment after login signup setup to email */
       setOpenChatComponent(true);
     } else {
-      showToastInfo("Please login first to chat with your friends.");
+      setCheckingLoginOrSignup("Login");
+      setOpenLoginModal(true);
+      // showToastInfo("Please login first to chat with your friends.");
     }
   };
   const CloseChatComponent = () => {
@@ -1403,7 +1406,9 @@ function Headermenu() {
 
   const handleWishListComponent = () => {
     if (!token) {
-      showToastInfo("Please login first.");
+      setCheckingLoginOrSignup("Login");
+      setOpenLoginModal(true);
+      // showToastInfo("Please login first.");
       return;
     }
     if (wishListValue === 0) {
@@ -1475,7 +1480,9 @@ function Headermenu() {
 
   const handleCartComponent = () => {
     if (!token) {
-      showToastInfo("Please login first.");
+      setCheckingLoginOrSignup("Login");
+      setOpenLoginModal(true);
+      // showToastInfo("Please login first.");
       return;
     }
     if (cartValue === 0) {
@@ -1508,11 +1515,11 @@ function Headermenu() {
   const handleSearchShow = () => {
     debugger;
     setSearchShow(!searchShow);
-  }
+  };
 
   const handleSearchOnBlur = () => {
     setSearchShow(false);
-  }
+  };
 
   return (
     <>
@@ -1567,7 +1574,7 @@ function Headermenu() {
       />
       {/*  Signup/Login Modal */}
 
-      <Carousel
+      {/* <Carousel
         dotPosition="left"
         dots={false}
         infinite={true}
@@ -1584,7 +1591,186 @@ function Headermenu() {
         <div>
           <h3 style={contentStyle}>Customization option</h3>
         </div>
-      </Carousel>
+      </Carousel> */}
+
+      <Marquee
+        pauseOnHover
+        gradient={false}
+        style={{ height: "40px", backgroundColor: "black", color:"white"}}
+      >
+        <div style={{ display: "flex", gap: "0px", minWidth: "100%" }}>
+        <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Virtual Try-On Using Preset Models & Its Customizations
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+              
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Collaborative Chat & Share Products
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Image Search
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Natural Language Search & Predictive Search
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          {/* Duplicate content for seamless transition */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Virtual Try-On Using Preset Models & Its Customizations
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Collaborative Chat & Share Products
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Image Search
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <GoDotFill />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Natural Language Search & Predictive Search
+          </div>
+        </div>
+      </Marquee>
 
       <div className="header-main">
         <div className="header-conatiner page-width">
@@ -1596,13 +1782,21 @@ function Headermenu() {
             //     : "search-div-laptop search-input-above-900px"
             // }
           >
-              <>
+            <>
               <a href="/" className="anchor-tag">
-              <h2 className="header-logo">
-                <img src={Homelogo2} alt="logo" style={{width: "60px", height:"50px", objectFit: "contain"}} />
-                SMARTWARDROBE
-              </h2>
-            </a>
+                <h2 className="header-logo">
+                  <img
+                    src={Homelogo2}
+                    alt="logo"
+                    style={{
+                      width: "60px",
+                      height: "50px",
+                      objectFit: "contain",
+                    }}
+                  />
+                  SMARTWARDROBE
+                </h2>
+              </a>
               {/* <FormControl sx={{ m: 1 }} variant="outlined">
                 <InputLabel
                   sx={{
@@ -1658,125 +1852,137 @@ function Headermenu() {
                 />
               </FormControl> */}
               <div className="search-input-above-900px">
-            <MegaMenu model={primeMenu} breakpoint="900px" />
-          </div>
-          
-              </>
-            
+                <MegaMenu model={primeMenu} breakpoint="900px" />
+              </div>
+            </>
+
             <div className="header-icons">
-              {searchShow ?
-              
-            <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                <InputLabel
-                  sx={{
-                    lineHeight: "1rem",
-                    color: "white",
-                    "&.Mui-focused": {
+              {searchShow ? (
+                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                  <InputLabel
+                    sx={{
+                      lineHeight: "1rem",
                       color: "white",
-                      fontSize: "18px",
-                    },
-                  }}
-                  htmlFor="outlined-adornment-password"
-                >
-                  Search
-                </InputLabel>
-                <OutlinedInput
-                  label="outlined-Input"
-                  type={"text"}
-                  style={{ color: "white" }}
-                  placeholder="Search"
-                  value={searchValue}
-                  onChange={onChangeSearchValue}
-                  onKeyDown={handleKeyDown}
-                  onBlur={handleSearchOnBlur}
-                  autoComplete="off"
-                  autoFocus={true}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleSearch}
-                        edge="end"
-                      >
-                        <SearchIcon style={{ color: "white" }} />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  sx={{
-                    height: 45,
-                    "& label": {
-                      color: "white",
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 2,
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 2,
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 2,
-                    },
-                  }}
-                />
-              </FormControl> 
-              : <>
-              <SearchIcon sx={{ color: "white", fontSize: "34px", marginRight:"-8px", paddingTop:"1px" , display: `${location?.pathname !== "/products" ? "block" : "none"}` }} onClick={handleSearchShow} />
-              <StyledBadge
-                badgeContent={wishListValue}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-              >
-                <FavoriteBorderIcon
-                  sx={{ color: "white", fontSize: "30px" }}
-                  onClick={handleWishListComponent}
-                />
-              </StyledBadge>
-
-              {/* will use later for login signup form open only*/}
-              <StyledBadge
-                badgeContent={cartValue}
-                color="error"
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-              >
-                <ShoppingBagOutlinedIcon
-                  sx={{ color: "white", fontSize: "30px" }}
-                  onClick={handleCartComponent}
-                />
-              </StyledBadge>
-
-              <QuestionAnswerOutlinedIcon
-                sx={{ color: "white", fontSize: "30px" }}
-                onClick={handleChatComponent}
-              />
-              {/* this is for logout*/}
-              {token !== undefined && token !== null ? (
-                <Dropdown
-                  menu={{
-                    items,
-                    onClick: userDropdown,
-                  }}
-                  placement="bottom"
-                >
-                  <PersonOutlineIcon
-                    sx={{ color: "white", fontSize: "30px" }}
+                      "&.Mui-focused": {
+                        color: "white",
+                        fontSize: "18px",
+                      },
+                    }}
+                    htmlFor="outlined-adornment-password"
+                  >
+                    Search
+                  </InputLabel>
+                  <OutlinedInput
+                    label="outlined-Input"
+                    type={"text"}
+                    style={{ color: "white" }}
+                    placeholder="Search"
+                    value={searchValue}
+                    onChange={onChangeSearchValue}
+                    onKeyDown={handleKeyDown}
+                    onBlur={handleSearchOnBlur}
+                    autoComplete="off"
+                    autoFocus={true}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleSearch}
+                          edge="end"
+                        >
+                          <SearchIcon style={{ color: "white" }} />
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    sx={{
+                      height: 45,
+                      "& label": {
+                        color: "white",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                    }}
                   />
-                </Dropdown>
+                </FormControl>
               ) : (
                 <>
-                  <PersonOutlineIcon
-                    onClick={userDropdown}
-                    sx={{ color: "white", fontSize: "30px" }}
+                  <SearchIcon
+                    sx={{
+                      color: "white",
+                      fontSize: "34px",
+                      marginRight: "-8px",
+                      paddingTop: "1px",
+                      display: `${
+                        location?.pathname !== "/products" ? "block" : "none"
+                      }`,
+                    }}
+                    onClick={handleSearchShow}
                   />
+                  <StyledBadge
+                    badgeContent={wishListValue}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                  >
+                    <FavoriteBorderIcon
+                      sx={{ color: "white", fontSize: "30px" }}
+                      onClick={handleWishListComponent}
+                    />
+                  </StyledBadge>
+
+                  {/* will use later for login signup form open only*/}
+                  <StyledBadge
+                    badgeContent={cartValue}
+                    color="error"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                  >
+                    <ShoppingBagOutlinedIcon
+                      sx={{ color: "white", fontSize: "30px" }}
+                      onClick={handleCartComponent}
+                    />
+                  </StyledBadge>
+
+                  <QuestionAnswerOutlinedIcon
+                    sx={{ color: "white", fontSize: "30px" }}
+                    onClick={handleChatComponent}
+                  />
+                  {/* this is for logout*/}
+                  {token !== undefined && token !== null ? (
+                    <Dropdown
+                      menu={{
+                        items,
+                        onClick: userDropdown,
+                      }}
+                      placement="bottom"
+                    >
+                      <PersonOutlineIcon
+                        sx={{ color: "white", fontSize: "30px" }}
+                      />
+                    </Dropdown>
+                  ) : (
+                    <>
+                      <PersonOutlineIcon
+                        onClick={userDropdown}
+                        sx={{ color: "white", fontSize: "30px" }}
+                      />
+                    </>
+                  )}
                 </>
-              )}</>}
+              )}
               {/* this is for logout*/}
             </div>
           </div>
@@ -1787,8 +1993,16 @@ function Headermenu() {
             />
             <a href="/" className="anchor-tag">
               <h1 className="header-logo">
-              <img src={Homelogo2} alt="logo" style={{width: "60px", height:"50px", objectFit: "contain"}} />
-              SMARTWARDROBE
+                <img
+                  src={Homelogo2}
+                  alt="logo"
+                  style={{
+                    width: "60px",
+                    height: "50px",
+                    objectFit: "contain",
+                  }}
+                />
+                SMARTWARDROBE
               </h1>
             </a>
             <div className="header-icons">

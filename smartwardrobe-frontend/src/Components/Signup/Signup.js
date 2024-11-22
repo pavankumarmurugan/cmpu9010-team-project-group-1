@@ -9,26 +9,29 @@ import { Backdrop, CircularProgress } from "@mui/material";
 import { json, useNavigate } from "react-router-dom";
 import { showToastSuccess } from "../GenericToasters/GenericToasters";
 import { setTokenToLocalStorage } from "../GenericCode/GenericCode";
+import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
 
 function SignupModal(props) {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
   const [formData, setFormData] = useState({
-    // username: "",
-    firstname: "",
-    lastname: "",
+    email: "",
+    firstname: "ewfdscx",
+    lastname: "dsvcdscwd",
     username: "",
     password: "",
+    confirmpassword: "",
     role: "user",
   });
 
   const [validationField, setValidationField] = useState({
-    // username: false,
-    firstname: false,
-    lastname: false,
+    email: false,
+    // firstname: false,
+    // lastname: false,
     username: false,
     password: false,
+    confirmpassword: false,
   });
 
   const [bounds, setBounds] = useState({
@@ -72,24 +75,49 @@ function SignupModal(props) {
     }
   };
 
+  const handleBlurOnConfirmPassword = (e) => {
+    debugger
+
+    const name = e?.target?.name;
+    const value = e?.target?.value;
+
+    if(value !== formData?.password){
+      setValidationField((prev) => ({
+        ...prev,
+        [name]: true,
+      }));
+    }else{
+      setValidationField((prev) => ({
+        ...prev,
+        [name]: false,
+      }));
+    }
+  }
+
   const handleValidations = () => {
     let showerror = false;
     if (props?.checkingLoginOrSignup === "Signup") {
-      if (formData.firstname.trim() === "") {
+      // if (formData.firstname.trim() === "") {
+      //   setValidationField((prev) => ({
+      //     ...prev,
+      //     firstname: true,
+      //   }));
+      //   showerror = true;
+      // } 
+      // if (formData?.lastname?.trim() === "") {
+      //   setValidationField((prev) => ({
+      //     ...prev,
+      //     lastname: true,
+      //   }));
+      //   showerror = true;
+      // }
+      if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
         setValidationField((prev) => ({
           ...prev,
-          firstname: true,
-        }));
-        showerror = true;
-      } 
-      if (formData?.lastname?.trim() === "") {
-        setValidationField((prev) => ({
-          ...prev,
-          lastname: true,
+          email: true,
         }));
         showerror = true;
       }
-      // if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
       if (formData?.username?.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
@@ -106,6 +134,12 @@ function SignupModal(props) {
       }
     }else{
       // if (formData.email.trim() === "" || !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(formData?.email)) {
+      //   setValidationField((prev) => ({
+      //     ...prev,
+      //     email: true,
+      //   }));
+      //   showerror = true;
+      // }
       if (formData?.username?.trim() === "") {
         setValidationField((prev) => ({
           ...prev,
@@ -134,19 +168,23 @@ function SignupModal(props) {
       if(valdiations){
         return;
       }
+      formData['firstname'] = formData['username']
+      formData['lastname'] = formData['username']
       setOpenLoader(true);
       const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/users/create", formData);
       debugger
       setOpenLoader(false)
-      handleloginOrSignupChange()
       if (response?.statusCode?.text === 'Success') {
         let token = setTokenToLocalStorage(response?.data);
+        localStorage.setItem("firstlogin", JSON.stringify(true));
         showToastSuccess(response?.data?.message);
         handleCancel();
+        handleloginOrSignupChange()
         const data = response?.data;
         setTimeout(() => {
           // navigate("/", { state: { data } });
           window.location.reload();
+          
         }, 1000);
       }
     } else {
@@ -155,8 +193,8 @@ function SignupModal(props) {
         return;
       }
       
-      delete formData["firstname"];
-      delete formData["lastname"];
+      // delete formData["firstname"];
+      // delete formData["lastname"];
       delete formData["role"];
       setOpenLoader(true);
       const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/auth/login", formData);
@@ -179,16 +217,18 @@ function SignupModal(props) {
 
   const handleloginOrSignupChange = (from) => {
     setFormData({
+      email: "",
       username: "",
-      firstname: "",
-      lastname: "",
+      // firstname: "",
+      // lastname: "",
       password: "",
       role: "user",
     })
     setValidationField({
+      email: false,
       username: false,
-      firstname: false,
-      lastname: false,
+      // firstname: false,
+      // lastname: false,
       password: false,
     })
     if(from !== "fromApi"){
@@ -204,6 +244,7 @@ function SignupModal(props) {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+
       <Modal
         title={
           <div
@@ -287,7 +328,7 @@ function SignupModal(props) {
                           : "Signup-Inputfield"
                       }`}
                     /> */}
-                    <Typography.Title
+                    {/* <Typography.Title
                       level={5}
                       className={`${
                         validationField.firstname && "Error-FieldName"
@@ -306,8 +347,8 @@ function SignupModal(props) {
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
-                    />
-                    <Typography.Title level={5}
+                    /> */}
+                    {/* <Typography.Title level={5}
                     className={`${
                       validationField.lastname && "Error-FieldName"
                     }`}>Last Name</Typography.Title>
@@ -322,7 +363,7 @@ function SignupModal(props) {
                           ? "errorSignup-Inputfield"
                           : "Signup-Inputfield"
                       }`}
-                    />
+                    /> */}
                     <Typography.Title
                       level={5}
                       className={`${
@@ -344,26 +385,66 @@ function SignupModal(props) {
                           : "Signup-Inputfield"
                       }`}
                     />
+                    <Typography.Title
+                      level={5}
+                      className={`${
+                        validationField.email && "Error-FieldName"
+                      }`}
+                    >
+                      Email
+                    </Typography.Title>
+                    <Input
+                      placeholder="Email"
+                      name="email"
+                      autoComplete="off"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`${
+                        validationField.email
+                          ? "errorSignup-Inputfield"
+                          : "Signup-Inputfield"
+                      }`}
+                    />
                   </>
                 )
               :
               (
                 <>
-                <Typography.Title
+                {/* <Typography.Title
+                      level={5}
+                      className={`${
+                        validationField.email && "Error-FieldName"
+                      }`}
+                    >
+                      Email
+                    </Typography.Title>
+                    <Input
+                      placeholder="Email"
+                      name="email"
+                      autoComplete="off"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`${
+                        validationField.email
+                          ? "errorSignup-Inputfield"
+                          : "Signup-Inputfield"
+                      }`}
+                    /> */}
+                    <Typography.Title
                       level={5}
                       className={`${
                         validationField.username && "Error-FieldName"
                       }`}
                     >
-                     {/* Email */}
-                     User Name
+                      {/* Email */}
+                      User Name
                     </Typography.Title>
                     <Input
                       placeholder="User Name"
                       name="username"
+                      autoComplete="off"
                       value={formData.username}
                       onChange={handleChange}
-                      autoComplete="off"
                       className={`${
                         validationField.username
                           ? "errorSignup-Inputfield"
@@ -377,7 +458,7 @@ function SignupModal(props) {
                 className={`${
                   validationField.password && "Error-FieldName"
                 }`}>Password</Typography.Title>
-                <Input
+                <Input.Password
                   placeholder="Password"
                   type="password"
                   name="password"
@@ -389,7 +470,31 @@ function SignupModal(props) {
                       ? "errorSignup-Inputfield"
                       : "Signup-Inputfield"
                   }`}
+                  style={{gap: 0}}
                 />
+                {props?.checkingLoginOrSignup === "Signup" &&
+                <>
+                <Typography.Title level={5}
+                className={`${
+                  validationField.confirmpassword && "Error-FieldName"
+                }`}>Confirm Password</Typography.Title>
+                <Input.Password
+                  placeholder="confirmPassword"
+                  type="password"
+                  name="confirmpassword"
+                  value={formData.confirmpassword}
+                  autocomplete="new-password"
+                  onChange={handleChange}
+                  onBlur={handleBlurOnConfirmPassword}
+                  className={`${
+                    validationField.confirmpassword
+                      ? "errorSignup-Inputfield"
+                      : "Signup-Inputfield"
+                  }`}
+                  style={{gap: 0}}
+                />
+                </>
+                }
                 {/* {props?.checkingLoginOrSignup !== "Signup" && (
                   <Typography.Title
                     level={5}

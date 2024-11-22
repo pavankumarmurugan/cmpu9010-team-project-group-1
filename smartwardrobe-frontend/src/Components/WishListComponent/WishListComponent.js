@@ -83,6 +83,7 @@ function WishListComponent() {
       let data = {
         productId: items?.product?.id,
         quantity: 1,
+        size: items?.productSize,
       }
       setOpenLoader(true);
       const addToCart = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/cart-item/create", data, token?.token);

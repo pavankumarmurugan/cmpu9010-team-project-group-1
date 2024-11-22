@@ -46,7 +46,7 @@ import {
 } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { io, Socket } from "socket.io-client";
-import { MdOutlineMoreVert } from "react-icons/md";
+import { MdOutlineKeyboardVoice, MdOutlineMoreVert } from "react-icons/md";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import { BsChat, BsInfoCircleFill } from "react-icons/bs";
 
@@ -164,8 +164,8 @@ function ChatComponent(props) {
       token?.token
     );
     if (getFriendsList?.data?.length > 0) {
-      // setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
-      setFriends(getFriendsList?.data);
+      setFriends((prevFriends) => [...prevFriends, ...getFriendsList.data]);
+      // setFriends(getFriendsList?.data);
       setFriendIds(getFriendsList.data.map((x) => x.userId));
       setFriendsDataForFilter((prevFriends) => [
         ...prevFriends,
@@ -624,6 +624,7 @@ function ChatComponent(props) {
 
     // Listener for friend messages
     newSocket.on("newMessage", (data) => {
+      debugger
       console.log("New friend message received:", data);
       console.log(chatInfoRef.current);
       setChatInfo(chatInfoRef.current);
@@ -1084,7 +1085,7 @@ function ChatComponent(props) {
                         <div className="search-input">
                       <input
                         type="text"
-                        placeholder="search Groups"
+                        placeholder="Search Groups"
                         onChange={handleFriendsSearch}
                       />
                       <button className="search-button">
@@ -1574,7 +1575,7 @@ function ChatComponent(props) {
                     disabled={!chatInfo?.userId && !chatInfo?.groupName}
                   />
                   <button className="send-button">
-                    <AudioRecorder
+                    {/* <AudioRecorder
                       onRecordingComplete={handleRecordingComplete}
                       audioTrackConstraints={{
                         noiseSuppression: true,
@@ -1594,7 +1595,8 @@ function ChatComponent(props) {
                       }}
                       showVisualizer={true}
                       showSaveButton={false}
-                    />
+                    /> */}
+                    {/* <MdOutlineKeyboardVoice style={{width:"25px", height:"25px"}} /> */}
                     <FaPaperPlane
                       style={{
                         color: "2e3b4e",

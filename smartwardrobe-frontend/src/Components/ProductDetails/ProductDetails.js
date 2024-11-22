@@ -62,6 +62,8 @@ const ProductDetails = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [showFriendsForShare, setShowFriendsForShare] = useState(false);
+  const [showSection, setShowSection] = useState("ShareProductsToFriends");
+  const [forAddFriendorCreateGroup, setforAddFriendorCreateGroup] = useState("");
   const imageUrl = productimages[currentImage];
   const [similarProductsData, setSimilarProductsData] = useState([]);
   const [likeData, setLikeData] = useState([]);
@@ -199,6 +201,7 @@ const ProductDetails = () => {
     let data = {
       productId: productimages?.id,
       quantity: quantityvalue,
+      size: selectedSize
     };
     setOpenLoader(true);
     const addToCart = await apiCall(
@@ -312,6 +315,7 @@ const ProductDetails = () => {
 
   const closeNewChat = () => {
     setShowFriendsForShare(false);
+    setShowSection("ShareProductsToFriends");
   };
 
   const closeTryOnModal = () => {
@@ -362,6 +366,12 @@ const ProductDetails = () => {
   const handleTryOn = () => {
     debugger
     handleTryon(productimages);
+  }
+
+  const handleChangeContent = (value) => {
+    debugger;
+    setShowSection(value);
+    setforAddFriendorCreateGroup(value);
   }
 
   return (
@@ -416,8 +426,10 @@ const ProductDetails = () => {
         <NewChatModal
           isShowModel={showFriendsForShare}
           closeModal={closeNewChat}
-          showSection={"ShareProductsToFriends"}
+          showSection={showSection}
           data={null}
+          changeSection={handleChangeContent}
+          fromProductsDetails={forAddFriendorCreateGroup}
           friendsListForShare={friendsListForShare}
           productUrl={`${window.location.origin}${location.pathname}${location.search}`}
         />
