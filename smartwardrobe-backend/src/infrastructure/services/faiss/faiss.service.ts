@@ -1,138 +1,206 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as faiss from 'faiss-node';
-import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ImageClustersMVModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters-mv.model';
 import { CacheService } from '../cache/cache.service';
-import { camelCase } from 'lodash';
 
 @Injectable()
 export class FaissService implements OnModuleInit {
-  private faissIndex: faiss.IndexFlatL2;
+  private faissIndex: faiss.IndexFlatL2 | null = null;
   private imageData: { imageName: string; clusterId: number }[] = [];
   private embeddingMatrix: number[][] = [];
   private isInitialized = false;
+  private isInitializing = false;
+  private readonly BATCH_SIZE = 10000;
+  private readonly INITIAL_BATCH_SIZE = 1000;
 
   constructor(
-    @InjectRepository(ImageClusterModel)
-    private readonly imageClusterRepository: Repository<ImageClusterModel>,
     @InjectRepository(ImageClustersMVModel)
     private readonly imageClusterMVRepository: Repository<ImageClustersMVModel>,
-    private readonly dataSource: DataSource,
     private readonly cacheService: CacheService,
   ) {}
 
-  async onModuleInit() {
-    if (!this.isInitialized) {
-      if (process.env.NODE_ENV !== 'test') {
-        await this.initializeFaissIndex();
+  async onModuleInit() {}
+
+  private async initialize() {
+    if (this.isInitialized) return;
+    if (this.isInitializing) {
+      while (this.isInitializing) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
-      this.isInitialized = true;
+      return;
     }
-  }
 
-  private async initializeFaissIndex(): Promise<void> {
     try {
-      const cacheKey = `image_clusters`;
+      this.isInitializing = true;
+      console.log('Starting FAISS initialization...');
 
-      let imageClusterEntities: ImageClustersMVModel[] = [];
-      const cachedData =
-        await this.cacheService.getFromCache<ImageClustersMVModel[]>(cacheKey);
+      const cacheKey = 'faiss_index_data';
+      const cachedData = await this.cacheService.getFromCache<{
+        imageData: typeof this.imageData;
+        embeddingMatrix: typeof this.embeddingMatrix;
+      }>(cacheKey);
 
       if (cachedData) {
-        imageClusterEntities = cachedData;
+        console.log('Found cached FAISS data, initializing from cache...');
+        await this.initializeFromCache(cachedData);
       } else {
-        // Fetch data in chunks using raw SQL and camel case conversion
-        imageClusterEntities = await this.fetchInChunks(10000);
+        console.log('No cached data found, loading from database...');
+        // The dimension will be automatically determined from the first embedding
+        await this.loadInitialBatch();
+        this.isInitialized = true;
+
+        // Load remaining data in background
+        this.loadRemainingBatches();
       }
-
-      if (!imageClusterEntities.length) {
-        throw new Error('No data found in image_clusters table');
-      }
-
-      const embeddings: number[][] = [];
-      const dimension = imageClusterEntities[0].clipEmbedding.length;
-
-      this.faissIndex = new faiss.IndexFlatL2(dimension);
-
-      for (const {
-        clipEmbedding,
-        imageName,
-        clusterId,
-      } of imageClusterEntities) {
-        if (clipEmbedding.length) {
-          embeddings.push(clipEmbedding);
-          this.faissIndex.add(clipEmbedding);
-          this.imageData.push({ imageName, clusterId });
-        }
-      }
-
-      if (!embeddings.length) {
-        throw new Error('No valid embeddings found for FAISS index');
-      }
-
-      this.embeddingMatrix = embeddings;
-
-      // Cache the processed data for future use
-      await this.cacheService.setToCache<ImageClustersMVModel[]>(
-        cacheKey,
-        imageClusterEntities,
-      );
-
-      console.log(
-        `FAISS index initialized with ${this.faissIndex.ntotal()} embeddings.`,
-      );
     } catch (error) {
-      console.error('Error initializing FAISS index:', error);
-      throw new Error('Failed to initialize FAISS index');
+      console.error('Error initializing FAISS:', error);
+      this.isInitialized = false;
+      throw new Error('Failed to initialize FAISS service');
+    } finally {
+      this.isInitializing = false;
     }
   }
 
-  public findSimilarEmbeddings(targetEmbedding: number[], topN: number) {
-    const results = this.faissIndex.search(targetEmbedding, topN);
-    return results;
+  private async initializeFromCache(cachedData: {
+    imageData: typeof this.imageData;
+    embeddingMatrix: typeof this.embeddingMatrix;
+  }) {
+    this.imageData = cachedData.imageData;
+    this.embeddingMatrix = cachedData.embeddingMatrix;
+
+    // Create index with dimension from first embedding
+    if (this.embeddingMatrix.length > 0) {
+      const dimension = this.embeddingMatrix[0].length;
+      this.faissIndex = new faiss.IndexFlatL2(dimension);
+
+      // Process cached embeddings in batches
+      const totalEmbeddings = this.embeddingMatrix.length;
+      for (let i = 0; i < totalEmbeddings; i += this.BATCH_SIZE) {
+        const batchEnd = Math.min(i + this.BATCH_SIZE, totalEmbeddings);
+        const batch = this.embeddingMatrix.slice(i, batchEnd);
+
+        for (const embedding of batch) {
+          this.faissIndex.add(embedding);
+        }
+
+        console.log(
+          `Processed ${batchEnd}/${totalEmbeddings} cached embeddings`,
+        );
+      }
+
+      this.isInitialized = true;
+      console.log('FAISS initialization from cache complete');
+    }
   }
 
-  public getImageData(): { imageName: string; clusterId: number }[] {
+  private async loadInitialBatch(): Promise<void> {
+    console.log('Loading initial batch...');
+    const initialData = await this.imageClusterMVRepository.query(`
+      SELECT clip_embedding, image_name, cluster_id
+      FROM image_clusters_mv
+      LIMIT ${this.INITIAL_BATCH_SIZE};
+    `);
+
+    if (initialData.length > 0 && initialData[0].clip_embedding) {
+      const dimension = initialData[0].clip_embedding.length;
+      this.faissIndex = new faiss.IndexFlatL2(dimension);
+
+      for (const record of initialData) {
+        if (record.clip_embedding?.length) {
+          this.faissIndex.add(record.clip_embedding);
+          this.imageData.push({
+            imageName: record.image_name,
+            clusterId: record.cluster_id,
+          });
+          this.embeddingMatrix.push(record.clip_embedding);
+        }
+      }
+    }
+
+    console.log(`Initial batch loaded with ${initialData.length} records`);
+  }
+
+  private async loadRemainingBatches() {
+    try {
+      let offset = this.INITIAL_BATCH_SIZE;
+      let totalLoaded = this.INITIAL_BATCH_SIZE;
+
+      while (true) {
+        const batch = await this.imageClusterMVRepository.query(`
+          SELECT clip_embedding, image_name, cluster_id
+          FROM image_clusters_mv
+          OFFSET ${offset}
+          LIMIT ${this.BATCH_SIZE};
+        `);
+
+        if (batch.length === 0) break;
+
+        for (const record of batch) {
+          if (record.clip_embedding?.length) {
+            this.faissIndex!.add(record.clip_embedding);
+            this.imageData.push({
+              imageName: record.image_name,
+              clusterId: record.cluster_id,
+            });
+            this.embeddingMatrix.push(record.clip_embedding);
+          }
+        }
+
+        totalLoaded += batch.length;
+        offset += this.BATCH_SIZE;
+        console.log(`Loaded ${totalLoaded} total records`);
+
+        // Add delay between batches
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      // Cache the complete data
+      await this.cacheService.setToCache('faiss_index_data', {
+        imageData: this.imageData,
+        embeddingMatrix: this.embeddingMatrix,
+      });
+
+      console.log('Background loading complete');
+    } catch (error) {
+      console.error('Error in background loading:', error);
+    }
+  }
+
+  public async findSimilarEmbeddings(targetEmbedding: number[], topN: number) {
+    await this.initialize();
+    if (!this.faissIndex || this.faissIndex.ntotal() === 0) {
+      throw new Error('FAISS index not properly initialized');
+    }
+    return this.faissIndex.search(targetEmbedding, topN);
+  }
+
+  public async getImageData(): Promise<
+    { imageName: string; clusterId: number }[]
+  > {
+    await this.initialize();
     return this.imageData;
   }
 
-  public getEmbeddingMatrix(): number[][] {
+  public async getEmbeddingMatrix(): Promise<number[][]> {
+    await this.initialize();
     return this.embeddingMatrix;
   }
 
-  private async fetchInChunks(
-    chunkSize: number,
-  ): Promise<ImageClustersMVModel[]> {
-    let offset = 0;
-    const imageClusterEntities: ImageClustersMVModel[] = [];
-
-    while (true) {
-      const rawData = await this.imageClusterRepository.query(`
-        SELECT clip_embedding, image_name, cluster_id
-        FROM image_clusters_mv
-        OFFSET ${offset} LIMIT ${chunkSize};
-      `);
-
-      if (rawData.length === 0) break;
-
-      const convertedData =
-        this.convertKeysToCamelCase<ImageClustersMVModel>(rawData);
-      imageClusterEntities.push(...convertedData);
-      offset += chunkSize;
-    }
-
-    return imageClusterEntities;
-  }
-
-  private convertKeysToCamelCase<T>(rows: T[]): T[] {
-    return rows.map((row) => {
-      const camelCasedRow = {};
-      for (const key in row) {
-        camelCasedRow[camelCase(key)] = row[key];
-      }
-      return camelCasedRow as T;
-    });
+  public getStatus(): {
+    isInitialized: boolean;
+    isInitializing: boolean;
+    totalEmbeddings: number;
+    totalImages: number;
+    isCached: boolean;
+  } {
+    return {
+      isInitialized: this.isInitialized,
+      isInitializing: this.isInitializing,
+      totalEmbeddings: this.faissIndex ? this.faissIndex.ntotal() : 0,
+      totalImages: this.imageData.length,
+      isCached: this.imageData.length > 0 && this.embeddingMatrix.length > 0,
+    };
   }
 }

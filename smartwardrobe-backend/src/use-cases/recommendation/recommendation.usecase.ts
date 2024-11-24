@@ -5,6 +5,7 @@ import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
 import { CacheService } from 'src/infrastructure/services/cache/cache.service';
 import { FaissService } from 'src/infrastructure/services/faiss/faiss.service';
+
 @Injectable()
 export class RecommendationUsecase {
   constructor(
@@ -19,9 +20,9 @@ export class RecommendationUsecase {
   ): Promise<IResponse<RecommendationsResDto[]>> {
     try {
       const cacheKey = `similarProducts:${imageName}:${topN}`;
-
       const cachedData =
         await this.cacheService.getFromCache<RecommendationsResDto[]>(cacheKey);
+
       if (cachedData) {
         return {
           data: cachedData,
@@ -29,8 +30,9 @@ export class RecommendationUsecase {
         };
       }
 
-      const imageData = this.faissService.getImageData();
-      const embeddingMatrix = this.faissService.getEmbeddingMatrix();
+      // Get data with await since methods are now async
+      const imageData = await this.faissService.getImageData();
+      const embeddingMatrix = await this.faissService.getEmbeddingMatrix();
 
       const targetImage = imageData.find((img) => img.imageName === imageName);
       if (!targetImage) {
@@ -40,12 +42,13 @@ export class RecommendationUsecase {
       const targetIdx = imageData.indexOf(targetImage);
       const targetVector = embeddingMatrix[targetIdx];
 
-      const results = this.faissService.findSimilarEmbeddings(
+      // Find similar embeddings is now async
+      const results = await this.faissService.findSimilarEmbeddings(
         targetVector,
         topN + 1,
       );
-      const { labels, distances } = results;
 
+      const { labels, distances } = results;
       const similarImages = labels
         .filter((label) => label !== targetIdx)
         .map((label, i) => ({
