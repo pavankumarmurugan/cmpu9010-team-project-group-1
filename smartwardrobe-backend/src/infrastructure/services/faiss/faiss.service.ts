@@ -2,28 +2,33 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as faiss from 'faiss-node';
 import { ImageClusterModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { ImageClustersMVModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters-mv.model';
 import { CacheService } from '../cache/cache.service';
+import { camelCase } from 'lodash';
 
 @Injectable()
 export class FaissService implements OnModuleInit {
   private faissIndex: faiss.IndexFlatL2;
   private imageData: { imageName: string; clusterId: number }[] = [];
   private embeddingMatrix: number[][] = [];
+  private isInitialized = false;
 
   constructor(
     @InjectRepository(ImageClusterModel)
     private readonly imageClusterRepository: Repository<ImageClusterModel>,
     @InjectRepository(ImageClustersMVModel)
     private readonly imageClusterMVRepository: Repository<ImageClustersMVModel>,
-
+    private readonly dataSource: DataSource,
     private readonly cacheService: CacheService,
   ) {}
 
   async onModuleInit() {
-    if (process.env.NODE_ENV !== 'test') {
-      await this.initializeFaissIndex();
+    if (!this.isInitialized) {
+      if (process.env.NODE_ENV !== 'test') {
+        await this.initializeFaissIndex();
+      }
+      this.isInitialized = true;
     }
   }
 
@@ -34,10 +39,12 @@ export class FaissService implements OnModuleInit {
       let imageClusterEntities: ImageClustersMVModel[] = [];
       const cachedData =
         await this.cacheService.getFromCache<ImageClustersMVModel[]>(cacheKey);
+
       if (cachedData) {
         imageClusterEntities = cachedData;
       } else {
-        imageClusterEntities = await this.imageClusterMVRepository.find();
+        // Fetch data in chunks using raw SQL and camel case conversion
+        imageClusterEntities = await this.fetchInChunks(10000);
       }
 
       if (!imageClusterEntities.length) {
@@ -45,25 +52,29 @@ export class FaissService implements OnModuleInit {
       }
 
       const embeddings: number[][] = [];
-      imageClusterEntities.forEach(
-        ({ clipEmbedding, imageName, clusterId }) => {
-          if (clipEmbedding.length) {
-            embeddings.push(clipEmbedding);
-            this.imageData.push({ imageName, clusterId });
-          }
-        },
-      );
+      const dimension = imageClusterEntities[0].clipEmbedding.length;
+
+      this.faissIndex = new faiss.IndexFlatL2(dimension);
+
+      for (const {
+        clipEmbedding,
+        imageName,
+        clusterId,
+      } of imageClusterEntities) {
+        if (clipEmbedding.length) {
+          embeddings.push(clipEmbedding);
+          this.faissIndex.add(clipEmbedding);
+          this.imageData.push({ imageName, clusterId });
+        }
+      }
 
       if (!embeddings.length) {
         throw new Error('No valid embeddings found for FAISS index');
       }
 
-      const dimension = embeddings[0].length;
-      this.faissIndex = new faiss.IndexFlatL2(dimension);
-
-      embeddings.forEach((embedding) => this.faissIndex.add(embedding));
       this.embeddingMatrix = embeddings;
 
+      // Cache the processed data for future use
       await this.cacheService.setToCache<ImageClustersMVModel[]>(
         cacheKey,
         imageClusterEntities,
@@ -89,5 +100,39 @@ export class FaissService implements OnModuleInit {
 
   public getEmbeddingMatrix(): number[][] {
     return this.embeddingMatrix;
+  }
+
+  private async fetchInChunks(
+    chunkSize: number,
+  ): Promise<ImageClustersMVModel[]> {
+    let offset = 0;
+    const imageClusterEntities: ImageClustersMVModel[] = [];
+
+    while (true) {
+      const rawData = await this.imageClusterRepository.query(`
+        SELECT clip_embedding, image_name, cluster_id
+        FROM image_clusters_mv
+        OFFSET ${offset} LIMIT ${chunkSize};
+      `);
+
+      if (rawData.length === 0) break;
+
+      const convertedData =
+        this.convertKeysToCamelCase<ImageClustersMVModel>(rawData);
+      imageClusterEntities.push(...convertedData);
+      offset += chunkSize;
+    }
+
+    return imageClusterEntities;
+  }
+
+  private convertKeysToCamelCase<T>(rows: T[]): T[] {
+    return rows.map((row) => {
+      const camelCasedRow = {};
+      for (const key in row) {
+        camelCasedRow[camelCase(key)] = row[key];
+      }
+      return camelCasedRow as T;
+    });
   }
 }
