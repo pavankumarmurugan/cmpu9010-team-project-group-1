@@ -50,7 +50,7 @@ import { ImageClustersMVModel } from './model/image-clusters-mv.model';
         ImageClustersMVModel,
       ],
       password: process.env.DATABASE_PASSWORD,
-      // logging: ['query', 'error'],
+      logging: ['query', 'error'],
       ssl: true,
       extra: {
         ssl: {
