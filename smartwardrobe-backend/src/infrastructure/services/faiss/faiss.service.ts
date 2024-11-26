@@ -1,233 +1,231 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as faiss from 'faiss-node';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SchedulerRegistry } from '@nestjs/schedule';
 import { ImageClustersMVModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters-mv.model';
-import { RedisCacheService } from '../redis/redis-cache.service';
-import pako from 'pako';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 @Injectable()
-export class FaissService implements OnModuleInit {
+export class FaissService {
   private faissIndex: faiss.IndexFlatL2 | null = null;
   private imageData: { imageName: string; clusterId: number }[] = [];
   private embeddingMatrix: number[][] = [];
-  private isInitialized = false;
-  private isInitializing = false; // Prevent concurrent initialization
   private readonly BATCH_SIZE = 1000;
+  private readonly DATA_DIR = 'data/faiss';
+  private readonly METADATA_FILE = 'metadata.json';
+  private readonly EMBEDDINGS_FILE = 'embeddings.bin';
+  private readonly INDEX_FILE = 'faiss.index';
 
   constructor(
     @InjectRepository(ImageClustersMVModel)
     private readonly imageClusterMVRepository: Repository<ImageClustersMVModel>,
-    private readonly redisCacheService: RedisCacheService,
-    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async onModuleInit() {
-    this.scheduleBackgroundInitialization();
-  }
+    await this.ensureDataDirectory();
+    const needsInitialization = await this.checkInitializationNeeded();
 
-  /**
-   * Schedules background initialization to ensure FAISS index is loaded after app startup.
-   */
-  private scheduleBackgroundInitialization() {
-    // Avoid duplicate interval registration
-    if (
-      this.schedulerRegistry.getIntervals().includes('faiss-initialization')
-    ) {
-      console.log('Initialization interval already registered.');
-      return;
+    if (needsInitialization) {
+      await this.exportDataToFiles();
     }
 
-    const interval = setInterval(() => {
-      if (!this.isInitialized) {
-        this.initializeInBackground()
-          .then(() => console.log('FAISS initialized in background'))
-          .catch((error) =>
-            console.error(
-              'Error during FAISS background initialization:',
-              error,
-            ),
-          );
-      } else {
-        clearInterval(interval);
-        this.schedulerRegistry.deleteInterval('faiss-initialization');
-      }
-    }, 10000); // Run every 10 seconds until initialization is complete
+    await this.loadFromFiles();
+  }
 
-    this.schedulerRegistry.addInterval('faiss-initialization', interval);
+  private async ensureDataDirectory(): Promise<void> {
+    try {
+      await fs.mkdir(this.DATA_DIR, { recursive: true });
+    } catch (error) {
+      console.error('Error creating data directory:', error);
+      throw error;
+    }
+  }
+
+  private async checkInitializationNeeded(): Promise<boolean> {
+    try {
+      await fs.access(path.join(this.DATA_DIR, this.METADATA_FILE));
+      await fs.access(path.join(this.DATA_DIR, this.EMBEDDINGS_FILE));
+      await fs.access(path.join(this.DATA_DIR, this.INDEX_FILE));
+      return false;
+    } catch {
+      return true;
+    }
   }
 
   /**
-   * Ensures FAISS index is initialized.
+   * Export data from database to files
    */
-  private async initialize(): Promise<void> {
-    if (this.isInitialized) return;
+  private async exportDataToFiles(): Promise<void> {
+    console.log('Starting data export to files...');
 
-    await this.initializeInBackground();
-  }
+    const totalRecords = await this.imageClusterMVRepository.count();
+    let offset = 0;
+    let dimension: number | null = null;
 
-  private async initializeInBackground() {
-    if (this.isInitialized || this.isInitializing) return;
+    // Open file streams
+    const embeddingsStream = await fs.open(
+      path.join(this.DATA_DIR, this.EMBEDDINGS_FILE),
+      'w',
+    );
 
-    this.isInitializing = true;
+    const metadata: { imageName: string; clusterId: number }[] = [];
 
     try {
-      console.log('Starting FAISS background initialization...');
-      const cacheKey = 'faiss_index_data';
-      const cachedData = await this.redisCacheService.get<string>(cacheKey);
-      if (cachedData) {
-        const finalCachedData = JSON.parse(this.decompressData(cachedData));
-        await this.initializeFromCache(finalCachedData);
-      } else {
-        await this.loadInitialBatch();
-        await this.loadRemainingBatches();
-        await this.storeDataByCluster(); // Store data in Redis by cluster ID
+      while (offset < totalRecords) {
+        const batch = await this.imageClusterMVRepository.find({
+          skip: offset,
+          take: this.BATCH_SIZE,
+        });
+
+        for (const record of batch) {
+          if (record.clipEmbedding?.length) {
+            // Initialize dimension if not set
+            if (!dimension) {
+              dimension = record.clipEmbedding.length;
+              // Initialize FAISS index
+              this.faissIndex = new faiss.IndexFlatL2(dimension);
+            }
+
+            // Write embedding to binary file
+            const buffer = Buffer.from(
+              new Float32Array(record.clipEmbedding).buffer,
+            );
+            await embeddingsStream.write(buffer);
+
+            // Store metadata
+            metadata.push({
+              imageName: record.imageName,
+              clusterId: record.clusterId,
+            });
+
+            // Add to FAISS index
+            this.faissIndex.add(record.clipEmbedding);
+          }
+        }
+
+        offset += batch.length;
+        console.log(`Processed ${offset}/${totalRecords} records`);
       }
+
+      // Save metadata
+      await fs.writeFile(
+        path.join(this.DATA_DIR, this.METADATA_FILE),
+        JSON.stringify(metadata),
+        'utf8',
+      );
+
+      // Save FAISS index
+      if (this.faissIndex) {
+        await this.faissIndex.write(path.join(this.DATA_DIR, this.INDEX_FILE));
+      }
+
+      console.log('Data export completed successfully');
     } catch (error) {
-      console.error('Error during FAISS initialization:', error);
+      console.error('Error during data export:', error);
+      throw error;
     } finally {
-      this.isInitializing = false;
+      await embeddingsStream.close();
     }
   }
 
-  private async loadInitialBatch(): Promise<void> {
-    const initialBatch = await this.imageClusterMVRepository.find({
-      take: this.BATCH_SIZE,
-    });
+  // ... previous code remains the same ...
 
-    if (initialBatch.length > 0) {
-      const dimension = initialBatch[0].clipEmbedding.length;
+  /**
+   * Load data from files
+   */
+  private async loadFromFiles(): Promise<void> {
+    console.log('Loading data from files...');
+
+    try {
+      // Load metadata
+      const metadataContent = await fs.readFile(
+        path.join(this.DATA_DIR, this.METADATA_FILE),
+        'utf8',
+      );
+      this.imageData = JSON.parse(metadataContent);
+
+      // Load embeddings
+      const embeddingsFile = await fs.open(
+        path.join(this.DATA_DIR, this.EMBEDDINGS_FILE),
+        'r',
+      );
+      const stats = await embeddingsFile.stat();
+      const dimension = stats.size / (4 * this.imageData.length); // 4 bytes per float
+
+      // Read embeddings in chunks
+      const buffer = Buffer.alloc(stats.size);
+      await embeddingsFile.read(buffer, 0, stats.size, 0);
+      await embeddingsFile.close();
+
+      // Convert buffer to float array
+      const float32Array = new Float32Array(buffer.buffer);
+
+      // Reconstruct embedding matrix
+      this.embeddingMatrix = [];
+      for (let i = 0; i < this.imageData.length; i++) {
+        const embedding = Array.from(
+          float32Array.slice(i * dimension, (i + 1) * dimension),
+        );
+        this.embeddingMatrix.push(embedding);
+      }
+
+      // Initialize and load FAISS index
       this.faissIndex = new faiss.IndexFlatL2(dimension);
 
-      initialBatch.forEach((record) => {
-        if (record.clipEmbedding?.length) {
-          this.faissIndex.add(record.clipEmbedding);
-          this.imageData.push({
-            imageName: record.imageName,
-            clusterId: record.clusterId,
-          });
-          this.embeddingMatrix.push(record.clipEmbedding);
-        }
-      });
+      // Add embeddings to the index
+      for (const embedding of this.embeddingMatrix) {
+        this.faissIndex.add(embedding);
+      }
 
-      console.log(`Loaded ${initialBatch.length} initial embeddings`);
+      console.log(`Loaded ${this.imageData.length} records from files`);
+    } catch (error) {
+      console.error('Error loading data from files:', error);
+      throw error;
     }
   }
 
-  private async loadRemainingBatches(): Promise<void> {
-    const totalRecords = await this.imageClusterMVRepository.count();
-    let offset = this.BATCH_SIZE;
+  // ... rest of the code remains the same ...
 
-    console.log(`Total records to load: ${totalRecords}`);
-
-    while (offset < totalRecords) {
-      const batch = await this.imageClusterMVRepository.find({
-        skip: offset,
-        take: this.BATCH_SIZE,
-      });
-
-      if (batch.length === 0) {
-        console.log('No more records to load.');
-        break;
-      }
-
-      batch.forEach((record) => {
-        if (record.clipEmbedding?.length) {
-          this.faissIndex!.add(record.clipEmbedding);
-          this.imageData.push({
-            imageName: record.imageName,
-            clusterId: record.clusterId,
-          });
-          this.embeddingMatrix.push(record.clipEmbedding);
-        }
-      });
-
-      offset += batch.length;
-      console.log(`Loaded ${offset} embeddings so far.`);
-      await this.delay(2000); // Delay of 2 seconds between batches
+  /**
+   * Find similar embeddings using the FAISS index
+   */
+  public async findSimilarEmbeddings(
+    targetEmbedding: number[],
+    topN: number,
+  ): Promise<{ labels: number[]; distances: number[] }> {
+    if (!this.faissIndex) {
+      throw new Error('FAISS index has not been initialized.');
     }
 
-    this.isInitialized = true;
-    const compressedData = this.compressData(
-      JSON.stringify({
-        imageData: this.imageData,
-        embeddingMatrix: this.embeddingMatrix,
-      }),
-    );
-    await this.redisCacheService.set('faiss_index_data', compressedData);
-    console.log('All batches loaded.');
+    try {
+      const result = this.faissIndex.search(targetEmbedding, topN);
+      if (!result) {
+        throw new Error('FAISS search returned no results.');
+      }
+
+      const { labels, distances } = result;
+      return { labels, distances };
+    } catch (error) {
+      console.error('Error during FAISS search:', error);
+      throw new Error('Failed to perform FAISS search.');
+    }
   }
 
   /**
-   * Store data in Redis grouped by cluster ID.
+   * Find target embedding by image name
    */
-  private async storeDataByCluster(): Promise<void> {
-    const clusterDataMap: Record<number, any[]> = {};
-
-    // Group data by cluster ID
-    this.imageData.forEach((record, index) => {
-      const clusterId = record.clusterId;
-      if (!clusterDataMap[clusterId]) {
-        clusterDataMap[clusterId] = [];
-      }
-      clusterDataMap[clusterId].push({
-        imageName: record.imageName,
-        embedding: this.embeddingMatrix[index],
-      });
-    });
-
-    // Save each cluster's data in Redis
-    for (const [clusterId, clusterData] of Object.entries(clusterDataMap)) {
-      const key = `cluster:${clusterId}`;
-      const serializedData = JSON.stringify(clusterData);
-      await this.redisCacheService.set(key, serializedData);
-      console.log(`Cluster ${clusterId} data stored in Redis.`);
-    }
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  private async initializeFromCache(cachedData: {
-    imageData: typeof this.imageData;
-    embeddingMatrix: typeof this.embeddingMatrix;
-  }): Promise<void> {
-    this.imageData = cachedData.imageData;
-    this.embeddingMatrix = cachedData.embeddingMatrix;
-
-    const dimension = this.embeddingMatrix[0]?.length;
-    if (!dimension) return;
-
-    this.faissIndex = new faiss.IndexFlatL2(dimension);
-    this.embeddingMatrix.forEach((embedding) =>
-      this.faissIndex!.add(embedding),
-    );
-
-    this.isInitialized = true;
-    console.log('FAISS initialized from cache');
-  }
-
-  ///this is
-
   public async findTargetEmbedding(imageName: string): Promise<{
     targetEmbedding: number[];
     imageData: { imageName: string; clusterId: number }[];
   } | null> {
-    await this.initialize(); // Ensure FAISS is initialized
-
     const imageRecord = this.imageData.find(
       (img) => img.imageName === imageName,
     );
+
     if (!imageRecord) {
-      console.warn(`Image ${imageName} not found in preloaded data.`);
-      const loaded = await this.loadDynamicEmbedding(imageName);
-      if (!loaded) {
-        console.error(`Failed to load embedding for image: ${imageName}`);
-        return null;
-      }
-      return this.findTargetEmbedding(imageName); // Retry after dynamic loading
+      console.warn(`Image ${imageName} not found in FAISS index.`);
+      return null;
     }
 
     const targetIdx = this.imageData.indexOf(imageRecord);
@@ -240,84 +238,5 @@ export class FaissService implements OnModuleInit {
       targetEmbedding: this.embeddingMatrix[targetIdx],
       imageData: this.imageData,
     };
-  }
-
-  private async loadDynamicEmbedding(imageName: string): Promise<boolean> {
-    try {
-      const batch = await this.imageClusterMVRepository.query(
-        `
-          SELECT clip_embedding, image_name, cluster_id
-          FROM image_clusters_mv
-          WHERE image_name = $1
-          LIMIT 1;
-        `,
-        [imageName],
-      );
-
-      if (batch.length === 0) {
-        console.warn(`No embedding found for image: ${imageName}`);
-        return false;
-      }
-
-      const record = batch[0];
-      if (record.clip_embedding?.length) {
-        this.faissIndex!.add(record.clip_embedding);
-        this.imageData.push({
-          imageName: record.image_name,
-          clusterId: record.cluster_id,
-        });
-        this.embeddingMatrix.push(record.clip_embedding);
-        console.log(`Dynamically loaded embedding for image: ${imageName}`);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error(`Error dynamically loading embedding: ${error.message}`);
-      return false;
-    }
-  }
-
-  /**
-   * Searches the FAISS index for the top N embeddings most similar to the given target embedding.
-   * @param targetEmbedding The target embedding to search for.
-   * @param topN The number of top similar embeddings to retrieve.
-   * @returns An object containing the labels (indices) of similar embeddings and their distances.
-   */
-  public async findSimilarEmbeddings(
-    targetEmbedding: number[],
-    topN: number,
-  ): Promise<{ labels: number[]; distances: number[] }> {
-    if (!this.faissIndex || !this.isInitialized) {
-      throw new Error('FAISS index is not initialized yet.');
-    }
-
-    try {
-      const result = this.faissIndex.search(targetEmbedding, topN);
-      if (!result) {
-        throw new Error('FAISS search returned no results.');
-      }
-
-      const { labels, distances } = result;
-      return { labels, distances };
-    } catch (error) {
-      console.error('Error during FAISS search:', error.message);
-      throw new Error('Failed to perform FAISS search.');
-    }
-  }
-
-  /**
-   * Compress data using gzip.
-   */
-  private compressData(data: string): string {
-    return Buffer.from(pako.gzip(data)).toString('base64');
-  }
-
-  /**
-   * Decompress data using gzip.
-   */
-  private decompressData(compressed: string): string {
-    return pako.ungzip(new Uint8Array(Buffer.from(compressed, 'base64')), {
-      to: 'string',
-    });
   }
 }
