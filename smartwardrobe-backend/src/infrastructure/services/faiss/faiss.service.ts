@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ImageClustersMVModel } from 'src/infrastructure/frameworks/data-services/model/image-clusters-mv.model';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class FaissService {
@@ -12,66 +13,72 @@ export class FaissService {
   private imageData: { imageName: string; clusterId: number }[] = [];
   private embeddingMatrix: number[][] = [];
   private readonly BATCH_SIZE = 1000;
-  private readonly DATA_DIR = 'data/faiss';
-  private readonly METADATA_FILE = 'metadata.json';
-  private readonly EMBEDDINGS_FILE = 'embeddings.bin';
-  private readonly INDEX_FILE = 'faiss.index';
+  private readonly TEMP_DIR = '/tmp/faiss';
+  private readonly s3: AWS.S3;
+  private readonly bucketName: string;
 
   constructor(
     @InjectRepository(ImageClustersMVModel)
     private readonly imageClusterMVRepository: Repository<ImageClustersMVModel>,
-  ) {}
+  ) {
+    this.s3 = new AWS.S3({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION,
+    });
+    this.bucketName = process.env.AWS_S3_BUCKET_NAME;
+  }
 
   async onModuleInit() {
-    await this.ensureDataDirectory();
-    const needsInitialization = await this.checkInitializationNeeded();
+    await this.ensureTempDirectory();
+    const needsInitialization = await this.checkS3Files();
 
     if (needsInitialization) {
-      await this.exportDataToFiles();
+      await this.exportDataToS3();
+    } else {
+      await this.downloadFromS3();
     }
 
     await this.loadFromFiles();
   }
 
-  private async ensureDataDirectory(): Promise<void> {
+  private async ensureTempDirectory(): Promise<void> {
     try {
-      await fs.mkdir(this.DATA_DIR, { recursive: true });
+      await fs.mkdir(this.TEMP_DIR, { recursive: true });
     } catch (error) {
-      console.error('Error creating data directory:', error);
+      console.error('Error creating temp directory:', error);
       throw error;
     }
   }
 
-  private async checkInitializationNeeded(): Promise<boolean> {
+  private async checkS3Files(): Promise<boolean> {
     try {
-      await fs.access(path.join(this.DATA_DIR, this.METADATA_FILE));
-      await fs.access(path.join(this.DATA_DIR, this.EMBEDDINGS_FILE));
-      await fs.access(path.join(this.DATA_DIR, this.INDEX_FILE));
-      return false;
+      await this.s3
+        .headObject({
+          Bucket: this.bucketName,
+          Key: 'faiss/metadata.json',
+        })
+        .promise();
+
+      return false; // Files exist, no need to initialize
     } catch {
-      return true;
+      return true; // Files don't exist, need to initialize
     }
   }
 
-  /**
-   * Export data from database to files
-   */
-  private async exportDataToFiles(): Promise<void> {
-    console.log('Starting data export to files...');
+  private async exportDataToS3(): Promise<void> {
+    console.log('Starting data export to S3...');
 
     const totalRecords = await this.imageClusterMVRepository.count();
     let offset = 0;
     let dimension: number | null = null;
 
-    // Open file streams
-    const embeddingsStream = await fs.open(
-      path.join(this.DATA_DIR, this.EMBEDDINGS_FILE),
-      'w',
-    );
-
-    const metadata: { imageName: string; clusterId: number }[] = [];
-
     try {
+      // Initialize temporary files
+      const embeddingsPath = path.join(this.TEMP_DIR, 'embeddings.bin');
+      const embeddings = await fs.open(embeddingsPath, 'w');
+      const metadata = [];
+
       while (offset < totalRecords) {
         const batch = await this.imageClusterMVRepository.find({
           skip: offset,
@@ -80,26 +87,21 @@ export class FaissService {
 
         for (const record of batch) {
           if (record.clipEmbedding?.length) {
-            // Initialize dimension if not set
             if (!dimension) {
               dimension = record.clipEmbedding.length;
-              // Initialize FAISS index
               this.faissIndex = new faiss.IndexFlatL2(dimension);
             }
 
-            // Write embedding to binary file
             const buffer = Buffer.from(
               new Float32Array(record.clipEmbedding).buffer,
             );
-            await embeddingsStream.write(buffer);
+            await embeddings.write(buffer);
 
-            // Store metadata
             metadata.push({
               imageName: record.imageName,
               clusterId: record.clusterId,
             });
 
-            // Add to FAISS index
             this.faissIndex.add(record.clipEmbedding);
           }
         }
@@ -108,84 +110,122 @@ export class FaissService {
         console.log(`Processed ${offset}/${totalRecords} records`);
       }
 
-      // Save metadata
-      await fs.writeFile(
-        path.join(this.DATA_DIR, this.METADATA_FILE),
-        JSON.stringify(metadata),
-        'utf8',
-      );
+      await embeddings.close();
 
-      // Save FAISS index
-      if (this.faissIndex) {
-        await this.faissIndex.write(path.join(this.DATA_DIR, this.INDEX_FILE));
-      }
+      // Upload metadata to S3
+      await this.s3
+        .upload({
+          Bucket: this.bucketName,
+          Key: 'faiss/metadata.json',
+          Body: JSON.stringify({
+            metadata,
+            dimension,
+            totalRecords: metadata.length,
+          }),
+          ContentType: 'application/json',
+        })
+        .promise();
 
-      console.log('Data export completed successfully');
+      // Upload embeddings to S3
+      await this.s3
+        .upload({
+          Bucket: this.bucketName,
+          Key: 'faiss/embeddings.bin',
+          Body: await fs.readFile(embeddingsPath),
+          ContentType: 'application/octet-stream',
+        })
+        .promise();
+
+      console.log('Data export to S3 completed successfully');
     } catch (error) {
-      console.error('Error during data export:', error);
+      console.error('Error during data export to S3:', error);
       throw error;
-    } finally {
-      await embeddingsStream.close();
     }
   }
 
-  // ... previous code remains the same ...
+  private async downloadFromS3(): Promise<void> {
+    console.log('Downloading files from S3...');
 
-  /**
-   * Load data from files
-   */
+    try {
+      // Download metadata
+      const metadataResult = await this.s3
+        .getObject({
+          Bucket: this.bucketName,
+          Key: 'faiss/metadata.json',
+        })
+        .promise();
+
+      await fs.writeFile(
+        path.join(this.TEMP_DIR, 'metadata.json'),
+        metadataResult.Body as Buffer,
+      );
+
+      // Download embeddings
+      const embeddingsResult = await this.s3
+        .getObject({
+          Bucket: this.bucketName,
+          Key: 'faiss/embeddings.bin',
+        })
+        .promise();
+
+      await fs.writeFile(
+        path.join(this.TEMP_DIR, 'embeddings.bin'),
+        embeddingsResult.Body as Buffer,
+      );
+
+      console.log('Files downloaded from S3 successfully');
+    } catch (error) {
+      console.error('Error downloading files from S3:', error);
+      throw error;
+    }
+  }
+
   private async loadFromFiles(): Promise<void> {
     console.log('Loading data from files...');
 
     try {
       // Load metadata
       const metadataContent = await fs.readFile(
-        path.join(this.DATA_DIR, this.METADATA_FILE),
+        path.join(this.TEMP_DIR, 'metadata.json'),
         'utf8',
       );
-      this.imageData = JSON.parse(metadataContent);
+      const { metadata, dimension, totalRecords } = JSON.parse(metadataContent);
+      this.imageData = metadata;
 
       // Load embeddings
       const embeddingsFile = await fs.open(
-        path.join(this.DATA_DIR, this.EMBEDDINGS_FILE),
+        path.join(this.TEMP_DIR, 'embeddings.bin'),
         'r',
       );
-      const stats = await embeddingsFile.stat();
-      const dimension = stats.size / (4 * this.imageData.length); // 4 bytes per float
-
-      // Read embeddings in chunks
-      const buffer = Buffer.alloc(stats.size);
-      await embeddingsFile.read(buffer, 0, stats.size, 0);
+      const buffer = Buffer.alloc(totalRecords * dimension * 4); // 4 bytes per float
+      await embeddingsFile.read(buffer, 0, buffer.length, 0);
       await embeddingsFile.close();
 
-      // Convert buffer to float array
-      const float32Array = new Float32Array(buffer.buffer);
+      // Initialize FAISS index
+      this.faissIndex = new faiss.IndexFlatL2(dimension);
 
-      // Reconstruct embedding matrix
+      // Convert buffer to embeddings and add to index
+      const float32Array = new Float32Array(buffer.buffer);
       this.embeddingMatrix = [];
-      for (let i = 0; i < this.imageData.length; i++) {
+
+      for (let i = 0; i < totalRecords; i++) {
         const embedding = Array.from(
           float32Array.slice(i * dimension, (i + 1) * dimension),
         );
         this.embeddingMatrix.push(embedding);
-      }
-
-      // Initialize and load FAISS index
-      this.faissIndex = new faiss.IndexFlatL2(dimension);
-
-      // Add embeddings to the index
-      for (const embedding of this.embeddingMatrix) {
         this.faissIndex.add(embedding);
       }
 
       console.log(`Loaded ${this.imageData.length} records from files`);
+
+      // Cleanup temp files
+      await fs.unlink(path.join(this.TEMP_DIR, 'metadata.json'));
+      await fs.unlink(path.join(this.TEMP_DIR, 'embeddings.bin'));
     } catch (error) {
       console.error('Error loading data from files:', error);
       throw error;
     }
   }
-
-  // ... rest of the code remains the same ...
 
   /**
    * Find similar embeddings using the FAISS index
