@@ -15,6 +15,8 @@ import { UploadAudioService } from './uploadProfilePicture/upload-audio-chat';
 import { EmailService } from './sendgrid/sendgrid.service';
 import { ConfigModule } from '@nestjs/config';
 import { EmailTemplateService } from './sendgrid/email-template.service';
+import { RedisCacheService } from './redis/redis-cache.service';
+import { TestService } from './redis/test-redis';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { EmailTemplateService } from './sendgrid/email-template.service';
     EmailService,
 
     EmailTemplateService,
+    RedisCacheService,
+    TestService,
   ],
   exports: [
     SearchProductsService,
@@ -48,6 +52,8 @@ import { EmailTemplateService } from './sendgrid/email-template.service';
     WebSocketService,
     WebSocketGatewayService,
     EmailService,
+    RedisCacheService,
+    TestService,
   ],
 })
 export class ServicesModule {}
