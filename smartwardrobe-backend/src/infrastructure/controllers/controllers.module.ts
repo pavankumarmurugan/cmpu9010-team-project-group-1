@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+
 // import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 // import { APP_GUARD } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
@@ -34,6 +35,7 @@ import { ConfigController } from './config/config.controller';
 import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
 import { InviteController } from './invite/invite.controller';
 import { FaissModule } from '../services/faiss/faiss.module';
+import { TestController } from './test-redis/test-redis-controller';
 
 @Module({
   imports: [
@@ -83,6 +85,7 @@ import { FaissModule } from '../services/faiss/faiss.module';
     ConfigController,
     UserLikedModelController,
     InviteController,
+    TestController,
   ],
   providers: [
     // {

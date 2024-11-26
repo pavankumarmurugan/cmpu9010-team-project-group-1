@@ -1,3 +1,126 @@
+// import { Injectable } from '@nestjs/common';
+// import { IDataServices } from 'src/core/abstracts';
+// import { RecommendationsResDto } from 'src/core/dto/recommendations/recommendations-res-dto';
+// import { IResponse } from 'src/core/interface/response.interface';
+// import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
+// import { CacheService } from 'src/infrastructure/services/cache/cache.service';
+// import { FaissService } from 'src/infrastructure/services/faiss/faiss.service';
+
+// @Injectable()
+// export class RecommendationUsecase {
+//   constructor(
+//     private readonly faissService: FaissService,
+//     private readonly dataService: IDataServices,
+//     private readonly cacheService: CacheService,
+//   ) {}
+
+//   /**
+//    * Finds similar products based on the given image name and number of results required.
+//    * @param imageName Name of the image to find similar products for.
+//    * @param topN Number of top similar results to return.
+//    * @returns List of recommended products with similarity scores.
+//    */
+//   public async findSimilarProducts(
+//     imageName: string,
+//     topN: number,
+//   ): Promise<IResponse<RecommendationsResDto[]>> {
+//     try {
+//       const cacheKey = `similarProducts:${imageName}:${topN}`;
+//       const cachedData =
+//         await this.cacheService.getFromCache<RecommendationsResDto[]>(cacheKey);
+
+//       if (cachedData) {
+//         return {
+//           data: cachedData,
+//           message: `${MESSAGES.RECOMMENDATIONS.GET.SUCCESS} (from cache)`,
+//         };
+//       }
+
+//       console.log(`Fetching target embedding for image: ${imageName}`);
+//       const targetData = await this.getTargetEmbedding(imageName);
+
+//       if (!targetData) {
+//         return {
+//           data: [],
+//           message: `${MESSAGES.RECOMMENDATIONS.GET.SUCCESS} - No matching data`,
+//         };
+//       }
+
+//       const { targetEmbedding, imageData } = targetData;
+
+//       console.log(`Finding similar embeddings for image: ${imageName}`);
+//       const results = await this.faissService.findSimilarEmbeddings(
+//         targetEmbedding,
+//         topN,
+//       );
+
+//       if (!results.labels.length) {
+//         return {
+//           data: [],
+//           message: `${MESSAGES.RECOMMENDATIONS.GET.SUCCESS} - No similar products found`,
+//         };
+//       }
+
+//       const { labels, distances } = results;
+
+//       const similarImages = labels.map((label, i) => ({
+//         imageName: imageData[label].imageName,
+//         similarity: distances[i] * 100, // FAISS uses L2 distance
+//         cluster: imageData[label].clusterId,
+//       }));
+
+//       console.log(`Similar embeddings found: ${JSON.stringify(similarImages)}`);
+
+//       // Fetch additional product information
+//       const imageNames = similarImages.map((item) => item.imageName);
+//       const productDetails = await this.dataService.product.getAllByIdsIn(
+//         imageNames,
+//         'imageName',
+//       );
+
+//       const data = productDetails
+//         .flat()
+//         .filter((item) => item.imageName !== imageName);
+
+//       console.log('Caching similar product results.');
+//       await this.cacheService.setToCache(cacheKey, data);
+
+//       return {
+//         data: data,
+//         message: MESSAGES.RECOMMENDATIONS.GET.SUCCESS,
+//       };
+//     } catch (error) {
+//       console.error('Error in findSimilarProducts:', error.message);
+//       return {
+//         data: [],
+//         message: `${MESSAGES.RECOMMENDATIONS.GET.ERROR} - ${error.message}`,
+//       };
+//     }
+//   }
+
+//   /**
+//    * Retrieves the target embedding for a specific image.
+//    * @param imageName Name of the image to fetch the embedding for.
+//    * @returns Embedding and image metadata or null if not found.
+//    */
+//   private async getTargetEmbedding(imageName: string): Promise<{
+//     targetEmbedding: number[];
+//     imageData: { imageName: string; clusterId: number }[];
+//   } | null> {
+//     try {
+//       const targetData = await this.faissService.findTargetEmbedding(imageName);
+//       if (!targetData || !targetData.targetEmbedding) {
+//         console.warn(`No target embedding found for image: ${imageName}`);
+//         return null;
+//       }
+//       return targetData;
+//     } catch (error) {
+//       console.error('Error retrieving target embedding:', error.message);
+//       throw new Error('Failed to retrieve target embedding');
+//     }
+//   }
+// }
+
 import { Injectable } from '@nestjs/common';
 import { IDataServices } from 'src/core/abstracts';
 import { RecommendationsResDto } from 'src/core/dto/recommendations/recommendations-res-dto';
@@ -14,6 +137,12 @@ export class RecommendationUsecase {
     private readonly cacheService: CacheService,
   ) {}
 
+  /**
+   * Finds similar products based on the given image name and number of results required.
+   * @param imageName - Name of the image to find similar products for.
+   * @param topN - Number of top similar results to return.
+   * @returns List of recommended products with similarity scores.
+   */
   public async findSimilarProducts(
     imageName: string,
     topN: number,
@@ -26,56 +155,92 @@ export class RecommendationUsecase {
       if (cachedData) {
         return {
           data: cachedData,
-          message: MESSAGES.RECOMMENDATIONS.GET.SUCCESS + ' (from cache)',
+          message: `${MESSAGES.RECOMMENDATIONS.GET.SUCCESS} (from cache)`,
         };
       }
 
-      // Get data with await since methods are now async
-      const imageData = await this.faissService.getImageData();
-      const embeddingMatrix = await this.faissService.getEmbeddingMatrix();
+      console.log(`Fetching target embedding for image: ${imageName}`);
+      const targetData = await this.getTargetEmbedding(imageName);
 
-      const targetImage = imageData.find((img) => img.imageName === imageName);
-      if (!targetImage) {
-        return { data: [], message: MESSAGES.RECOMMENDATIONS.GET.SUCCESS };
+      if (!targetData) {
+        return {
+          data: [],
+          message: `${MESSAGES.RECOMMENDATIONS.GET.SUCCESS} - No matching data`,
+        };
       }
 
-      const targetIdx = imageData.indexOf(targetImage);
-      const targetVector = embeddingMatrix[targetIdx];
+      const { targetEmbedding, imageData } = targetData;
 
-      // Find similar embeddings is now async
+      console.log(`Finding similar embeddings for image: ${imageName}`);
       const results = await this.faissService.findSimilarEmbeddings(
-        targetVector,
-        topN + 1,
+        targetEmbedding,
+        topN + 1, // Include the target image to filter it out later.
       );
 
+      if (!results.labels.length) {
+        return {
+          data: [],
+          message: `${MESSAGES.RECOMMENDATIONS.GET.SUCCESS} - No similar products found`,
+        };
+      }
+
       const { labels, distances } = results;
+
+      // Map FAISS results back to image metadata
       const similarImages = labels
-        .filter((label) => label !== targetIdx)
+        .filter((label) => imageData[label].imageName !== imageName) // Exclude the target image itself
         .map((label, i) => ({
           imageName: imageData[label].imageName,
-          similarity: distances[i] * 100,
+          similarity: (1 - distances[i]) * 100, // Convert L2 distance to similarity percentage
           cluster: imageData[label].clusterId,
         }))
-        .slice(0, topN);
+        .slice(0, topN); // Return only the top-N results
 
+      console.log(`Similar embeddings found: ${JSON.stringify(similarImages)}`);
+
+      // Fetch additional product details based on image names
       const imageNames = similarImages.map((item) => item.imageName);
-      const result = await this.dataService.product.getAllByIdsIn(
+      const productDetails = await this.dataService.product.getAllByIdsIn(
         imageNames,
         'imageName',
       );
 
-      await this.cacheService.setToCache<RecommendationsResDto[]>(
-        cacheKey,
-        result.flat(),
-      );
+      // Filter the final product list and cache the results
+      const data = productDetails.flat();
+      await this.cacheService.setToCache(cacheKey, data);
 
       return {
-        data: result.flat(),
+        data: data,
         message: MESSAGES.RECOMMENDATIONS.GET.SUCCESS,
       };
     } catch (error) {
-      console.error('Error finding similar images:', error);
-      throw new Error('Failed to find similar images');
+      console.error('Error in findSimilarProducts:', error.message);
+      return {
+        data: [],
+        message: `${MESSAGES.RECOMMENDATIONS.GET.ERROR} - ${error.message}`,
+      };
+    }
+  }
+
+  /**
+   * Retrieves the target embedding for a specific image.
+   * @param imageName - Name of the image to fetch the embedding for.
+   * @returns Embedding and image metadata or null if not found.
+   */
+  private async getTargetEmbedding(imageName: string): Promise<{
+    targetEmbedding: number[];
+    imageData: { imageName: string; clusterId: number }[];
+  } | null> {
+    try {
+      const targetData = await this.faissService.findTargetEmbedding(imageName);
+      if (!targetData || !targetData.targetEmbedding) {
+        console.warn(`No target embedding found for image: ${imageName}`);
+        return null;
+      }
+      return targetData;
+    } catch (error) {
+      console.error('Error retrieving target embedding:', error.message);
+      throw new Error('Failed to retrieve target embedding');
     }
   }
 }
