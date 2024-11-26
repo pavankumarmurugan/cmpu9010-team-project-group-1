@@ -32,7 +32,7 @@ import { Divider, Input, Select, Space } from "antd";
 import ChatSection from "../ChatSection/ChatSection";
 import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,6 +47,7 @@ const ProductPage = () => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+    console.log('no of reloads');
   const dispatch = useDispatch();
   const location = useLocation();
   let { state } = location;
@@ -174,13 +175,17 @@ const ProductPage = () => {
     { label: 2, value: 200 },
   ];
   const colourfilter = [
+    { label: "White", value: "White" },
     { label: "Black", value: "Black" },
     { label: "Blue", value: "Blue" },
     { label: "Brown", value: "Brown" },
+    { label: "Grey", value: "Grey" },
     { label: "Green", value: "Green" },
     { label: "Navy", value: "Navy" },
+    { label: "Rose Gold", value: "Rose Gold" },
     { label: "Red", value: "Red" },
     { label: "Orange", value: "Orange" },
+    { label: "Silver", value: "Silver" },
     { label: "Pink", value: "Pink" },
   ];
 
@@ -227,9 +232,9 @@ const ProductPage = () => {
     if(categoryValue){
       let splitValue = categoryValue.split("//");
 
-      setOpenLoader(true);
-      const response = await apiCall("GET", `https://smartwardrobe-backend.azurewebsites.net/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
-      setOpenLoader(false);
+      // setOpenLoader(true);
+      const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
+      // setOpenLoader(false);
       setLoading(false);
       if(response?.data?.length > 0){
         if(pagination.current === 1){
@@ -245,18 +250,27 @@ const ProductPage = () => {
     }
     
     else if (headerSearchValue) {
-      setFormData((prevState) => ({
-        ...prevState,
-        searchValue: headerSearchValue,
-      }));
+      if(headerSearchValue?.file){
+        setFile(headerSearchValue?.file)
+        setFormData((prevState) => ({
+          ...prevState,
+          ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
+          searchValue: headerSearchValue?.searchValue,
+        }));
+      }else{
+        setFormData((prevState) => ({
+          ...prevState,
+          searchValue: headerSearchValue?.searchValue,
+        }));
+      }
       handleSearch(headerSearchValue);
-      dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+      // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
       // state.searchValue = null;
     } else {
       // setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/product/get-all/${pagination?.current}/100`,
+        `${baseUrl}/product/get-all/${pagination?.current}/100`,
         null,
         token?.token
       );
@@ -298,17 +312,23 @@ const ProductPage = () => {
   const handleSearch = async (event) => {
     debugger;
     let searchValue = event === null ? formData?.searchValue : event;
-    if (searchValue !== "" || file) {
+    if ((searchValue !== "" && searchValue !== undefined) || file) {
       // event.preventDefault();
       const formData = new FormData();
       if (file) {
         formData.append("file", file);
       }
-      formData.append("query", searchValue);
+      if(searchValue?.file){
+        formData.append("file", searchValue?.file);
+        formData.append("query", searchValue?.searchValue);
+      }else{
+        formData.append("query", searchValue);
+      }
       try {
+        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue }));
         setOpenLoader(true);
         const response = await fetch(
-          `https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
+         `${baseUrl}/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
           {
             method: "POST",
             headers: {
@@ -404,9 +424,28 @@ const ProductPage = () => {
     dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = async (e) => {
+    debugger
     if (e.key === "Enter") {
-      handleSearch(null);
+      if(e?.target?.value === ""){
+        pagination.current = 1;
+        setOpenLoader(true);
+      const response = await apiCall(
+        "GET",
+        `${baseUrl}/product/get-all/${pagination?.current}/100`,
+        null,
+        token?.token
+      );
+      setOpenLoader(false)
+      setLoading(false);
+      if (response?.data) {
+        setProducts(response?.data);
+        setProductsDataForFilter(response?.data);
+        dispatch(homeDataSuccess({ homeData: response?.data }));
+      }
+      }else{
+        handleSearch(null);
+      }
     }
   };
 
@@ -501,7 +540,14 @@ const ProductPage = () => {
   /** this is to handle tryon modal */
 
   const removeImage = () => {
+    debugger
     setFormData((prevData) => ({ ...prevData, imagePreview: null }));
+    if(headerSearchValue?.searchValue){
+      let removeFileData = headerSearchValue?.searchValue;
+      dispatch(headerSearchValueSuccess({ headerSearchValue: removeFileData}));
+    }else{
+      dispatch(headerSearchValueSuccess({ headerSearchValue: ""}));
+    }
   };
 
   return (
@@ -540,6 +586,40 @@ const ProductPage = () => {
             </div> */}
             <div className="productsearch-input-div">
               {/* <div className="search-input-container"> */}
+              {formData?.imagePreview && 
+              <div
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                marginLeft:"10px"
+              }}
+              className="thumbnail-container" // Add a class for styling hover
+            >
+              {/* Thumbnail Image */}
+              <img
+                src={formData?.imagePreview}
+                alt="Uploaded preview"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "5px",
+                  marginRight: "8px",
+                }}
+                className="thumbnail-image"
+              />
+
+              {/* Hover to enlarge the image */}
+              <div className="image-preview-container">
+                <img
+                  src={formData?.imagePreview}
+                  alt="Uploaded preview"
+                  className="hover-image"
+                />
+              </div>
+            </div>
+              }
               <FormControl
                 sx={{ m: 1, width: "100%", maxWidth: "800px" }}
                 variant="outlined"
@@ -594,15 +674,6 @@ const ProductPage = () => {
                             }}
                             className="thumbnail-image"
                           />
-
-                          {/* Hover to enlarge the image */}
-                          <div className="image-preview-container">
-                            <img
-                              src={formData?.imagePreview}
-                              alt="Uploaded preview"
-                              className="hover-image"
-                            />
-                          </div>
 
                           <IconButton
                             onClick={removeImage}

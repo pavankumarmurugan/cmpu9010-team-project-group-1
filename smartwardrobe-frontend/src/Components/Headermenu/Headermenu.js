@@ -34,7 +34,7 @@ import {
   MdFavoriteBorder,
   MdOutlineShoppingBag,
 } from "react-icons/md";
-import { IoSearch } from "react-icons/io5";
+import { IoCloseCircleOutline, IoSearch } from "react-icons/io5";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Button, Carousel, Dropdown } from "antd";
 import { GenericDropdownMenu } from "../GenericCode/GenericCode";
@@ -50,7 +50,9 @@ import {
   wishListValueSuccess,
 } from "../../redux/slices/HomeDataSlice";
 import { useDispatch, useSelector } from "react-redux";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, {
+  baseUrl,
+} from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import CartComponent from "../CartComponent/CartComponent";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
@@ -60,7 +62,8 @@ import Homelogo2 from "../../Assets/Homelogo2.png";
 import Marquee from "react-fast-marquee";
 import { GoDotFill } from "react-icons/go";
 
-const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
+const backendUrl =
+  "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
 
 function Headermenu() {
   console.log("rendered header");
@@ -70,6 +73,12 @@ function Headermenu() {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+  let friends = localStorage.getItem("friendIds")
+    ? JSON.parse(localStorage.getItem("friendIds"))
+    : null;
+  let groups = localStorage.getItem("groupIds")
+    ? JSON.parse(localStorage.getItem("groupIds"))
+    : null;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -77,10 +86,27 @@ function Headermenu() {
   const [login, setlogin] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
   const [openWomen, setOpenWomen] = useState(false);
+  const [openMen, setOpenMen] = useState(false);
+  const [openKids, setOpenKids] = useState(false);
+  const [openSports, setOpenSports] = useState(false);
+  const [openWomenTop, setOpenWomenTop] = useState(false);
+  const [openMenTop, setOpenMenTop] = useState(false);
+  const [openKidsTop, setOpenKidsTop] = useState(false);
+  const [openSportsClothing, setOpenSportsClothing] = useState(false);
+  const [openWomenBottom, setOpenWomenBottom] = useState(false);
+  const [openMenBottom, setOpenMenBottom] = useState(false);
+  const [openKidsOutwear, setOpenKidsOutwear] = useState(false);
+  const [openSportsAccessories, setOpenSportsAccessories] = useState(false);
+  const [openWomenOutwear, setOpenWomenOutwear] = useState(false);
+  const [openMenOutwear, seOpenMenOutwear] = useState(false);
+  const [openKidsFootwear, seOpenKidsFootwear] = useState(false);
   const [openTop, setOpenTop] = useState(false);
   const [openFootwear, setOpenFootwear] = useState(false);
   const [openMenFootwear, setOpenMenFootwear] = useState(false);
+  const [openKidsAccessories, setOpenKidsAccessories] = useState(false);
   const [openWomenenFootwear, setOpenWomenFootwear] = useState(false);
+  const [openWomenenAccessories, setOpenWomenenAccessories] = useState(false);
+  const [openMenAccessories, setOpenMenAccessories] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
   const [openAccessories, setOpenAccessories] = useState(false);
   const [OpenLoginModal, setOpenLoginModal] = useState(false);
@@ -111,21 +137,23 @@ function Headermenu() {
     debugger;
     const getFriendsList = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+      `${baseUrl}/friends/get-all-my-friends`,
       null,
       token?.token
     );
     if (getFriendsList?.data?.length > 0) {
+      localStorage.setItem("friendIds", JSON.stringify(getFriendsList?.data));
       setFriendIds(getFriendsList.data.map((x) => x.userId));
     }
     console.log(getFriendsList);
     const getGroupsList = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+      `${baseUrl}/group/get-my-groups`,
       null,
       token?.token
     );
     if (getGroupsList?.data?.length > 0) {
+      localStorage.setItem("groupIds", JSON.stringify(getGroupsList?.data));
       setGroupIds(getGroupsList.data.map((x) => x.groupId));
     }
     console.log(getGroupsList);
@@ -136,6 +164,12 @@ function Headermenu() {
   useEffect(() => {
     // Fetch friend and group IDs when component mounts
     if (token) {
+      debugger;
+      if (friends && groups) {
+        setFriendIds(friends);
+        setGroupIds(groups);
+        return;
+      }
       fetchFriendAndGroupIds();
     }
   }, []);
@@ -267,12 +301,79 @@ function Headermenu() {
   const handleFootwear = () => {
     setOpenFootwear(!openFootwear);
   };
+  const handleWomen = () => {
+    setOpenWomen(!openWomen);
+  };
+  const handleMen = () => {
+    setOpenMen(!openMen);
+  };
+  const handleKids = () => {
+    setOpenKids(!openKids);
+  };
+  const handleSports = () => {
+    setOpenSports(!openSports);
+  };
   const handleMenFootwear = () => {
     setOpenMenFootwear(!openMenFootwear);
   };
 
+  const handleKidsAccessories = () => {
+    setOpenKidsAccessories(!openKidsAccessories);
+  };
+
+  const handleWomenTop = () => {
+    setOpenWomenTop(!openWomenTop);
+  };
+
+  const handleMenTop = () => {
+    setOpenMenTop(!openMenTop);
+  };
+
+  const handleKidsTop = () => {
+    setOpenKidsTop(!openKidsTop);
+  };
+  const handleSportsClothing = () => {
+    setOpenSportsClothing(!openSportsClothing);
+  };
+
   const handleWomenFootwear = () => {
     setOpenWomenFootwear(!openWomenenFootwear);
+  };
+
+  const handleWomenAccessories = () => {
+    setOpenWomenenAccessories(!openWomenenAccessories);
+  };
+
+  const handleMenAccessories = () => {
+    setOpenMenAccessories(!openMenAccessories);
+  };
+
+  const handleWomenBottom = () => {
+    setOpenWomenBottom(!openWomenBottom);
+  };
+
+  const handleMenBottom = () => {
+    setOpenMenBottom(!openMenBottom);
+  };
+
+  const handleKidsOutwear = () => {
+    setOpenKidsOutwear(!openKidsOutwear);
+  };
+
+  const handleSportsAccessories = () => {
+    setOpenSportsAccessories(!openSportsAccessories);
+  };
+
+  const handleWomenOutwear = () => {
+    setOpenWomenOutwear(!openWomenOutwear);
+  };
+
+  const handleMenOutwear = () => {
+    seOpenMenOutwear(!openMenOutwear);
+  };
+
+  const handleKidsFootwear = () => {
+    seOpenKidsFootwear(!openKidsFootwear);
   };
 
   const handlesetAccessories = () => {
@@ -281,7 +382,12 @@ function Headermenu() {
 
   const handleItemClick = (item) => {
     debugger;
-    console.log(`${item} selected`);
+    let value = item;
+    dispatch(categoryValueSuccess({ categoryValue: value }));
+    setOpen(false)
+    if (location?.pathname !== "/products") {
+      navigate("/products");
+    }
   };
 
   const DrawerList = (
@@ -327,7 +433,7 @@ function Headermenu() {
           <h1 className="history-heading">CATEGORIES</h1>
         </div>
 
-        <Collapse in={openWomen} timeout="auto" unmountOnExit>
+        {/* <Collapse in={openWomen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItem
               button
@@ -337,52 +443,66 @@ function Headermenu() {
               <ListItemText primary="T-Shirts" />
             </ListItem>
           </List>
-        </Collapse>
+        </Collapse> */}
         <div className="menu-item">
-          <div className="item" onClick={handleFootwear}>
-            Women {openWomenenFootwear ? <MdExpandLess /> : <MdExpandMore />}
+          <div className="item" onClick={handleWomen}>
+            Women {openWomen ? <MdExpandLess /> : <MdExpandMore />}
           </div>
         </div>
-        <Collapse in={openFootwear} timeout="auto" unmountOnExit>
+        <Collapse in={openWomen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {/* Men Category */}
             <ListItem
               button
               className="submenu-item footwear-submenu"
-              onClick={handleMenFootwear}
+              onClick={handleWomenTop}
             >
-              <ListItemText primary="Men" />
-              {openMenFootwear ? <MdExpandLess /> : <MdExpandMore />}
+              <ListItemText primary="Top" />
+              {openWomenTop ? <MdExpandLess /> : <MdExpandMore />}
             </ListItem>
-            <Collapse in={openMenFootwear} timeout="auto" unmountOnExit>
+            <Collapse in={openWomenTop} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Men Casual Shoes")}
+                  onClick={() => handleItemClick("Ladieswear//T-shirt")}
                 >
-                  <ListItemText primary="Casual Shoes" />
+                  <ListItemText primary="T-shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Men Formal Shoes")}
+                  onClick={() => handleItemClick("Ladieswear//Long-sleeve top")}
                 >
-                  <ListItemText primary="Formal Shoes" />
+                  <ListItemText primary="Long-sleeve top" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Men Sneakers")}
+                  onClick={() => handleItemClick("Ladieswear//Crop top and skirt")}
                 >
-                  <ListItemText primary="Sneakers" />
+                  <ListItemText primary="Crop top and skirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Men Boots")}
+                  onClick={() => handleItemClick("Ladieswear//Tank top")}
                 >
-                  <ListItemText primary="Boots" />
+                  <ListItemText primary="Tank top" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Vest top")}
+                >
+                  <ListItemText primary="Vest top" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Casual top")}
+                >
+                  <ListItemText primary="Casual top" />
                 </ListItem>
               </List>
             </Collapse>
@@ -391,9 +511,98 @@ function Headermenu() {
             <ListItem
               button
               className="submenu-item footwear-submenu"
+              onClick={handleWomenBottom}
+            >
+              <ListItemText primary="Bottom" />
+              {openWomenBottom ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openWomenBottom} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Outdoor trousers")}
+                >
+                  <ListItemText primary="Outdoor trousers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Skirt")}
+                >
+                  <ListItemText primary="Skirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Shorts")}
+                >
+                  <ListItemText primary="Shorts" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Pyjama bottom")}
+                >
+                  <ListItemText primary="Pyjama bottom" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Swimwear bottom")}
+                >
+                  <ListItemText primary="Swimwear bottom" />
+                </ListItem>
+              </List>
+            </Collapse>
+            
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleWomenOutwear}
+            >
+              <ListItemText primary="Outwear" />
+              {openWomenOutwear ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openWomenOutwear} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Jacket")}
+                >
+                  <ListItemText primary="Jacket" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Outdoor Waistcoat")}
+                >
+                  <ListItemText primary="Waistcoat" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Outdoor trousers")}
+                >
+                  <ListItemText primary="Trousers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Cardigan")}
+                >
+                  <ListItemText primary="Cardigan" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
               onClick={handleWomenFootwear}
             >
-              <ListItemText primary="Women" />
+              <ListItemText primary="Footwear" />
               {openWomenenFootwear ? <MdExpandLess /> : <MdExpandMore />}
             </ListItem>
             <Collapse in={openWomenenFootwear} timeout="auto" unmountOnExit>
@@ -401,36 +610,689 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Women Heels")}
+                  onClick={() => handleItemClick("Ladieswear//Boots")}
+                >
+                  <ListItemText primary="Boots" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Flat shoes")}
+                >
+                  <ListItemText primary="Flat shoes" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Heels")}
                 >
                   <ListItemText primary="Heels" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Women Flats")}
+                  onClick={() => handleItemClick("Ladieswear//Heeled sandals")}
                 >
-                  <ListItemText primary="Flats" />
+                  <ListItemText primary="Heeled sandals" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Women Sneakers")}
+                  onClick={() => handleItemClick("Ladieswear//Sneakers")}
+                >
+                  <ListItemText primary="Sneakers" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleWomenAccessories}
+            >
+              <ListItemText primary="Accessories" />
+              {openWomenenAccessories ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openWomenenAccessories} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Bag")}
+                >
+                  <ListItemText primary="Bag" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Earrings")}
+                >
+                  <ListItemText primary="Earrings" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Ring")}
+                >
+                  <ListItemText primary="Ring" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Bracelet")}
+                >
+                  <ListItemText primary="Bracelet" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Hair clip")}
+                >
+                  <ListItemText primary="Hair clip" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Belt")}
+                >
+                  <ListItemText primary="Belt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Ladieswear//Sunglasses")}
+                >
+                  <ListItemText primary="Sunglasses" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+
+          </List>
+        </Collapse>
+
+        <div className="menu-item">
+          <div className="item" onClick={handleMen}>
+            Men {openMen ? <MdExpandLess /> : <MdExpandMore />}
+          </div>
+        </div>
+        <Collapse in={openMen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {/* Men Category */}
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleMenTop}
+            >
+              <ListItemText primary="Top" />
+              {openMenTop ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openMenTop} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//T-shirt")}
+                >
+                  <ListItemText primary="T-shirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Shirt")}
+                >
+                  <ListItemText primary="Shirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Polo shirt")}
+                >
+                  <ListItemText primary="Polo Shirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Hoodie")}
+                >
+                  <ListItemText primary="Hoodie" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Sweater")}
+                >
+                  <ListItemText primary="Sweater" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Vest top")}
+                >
+                  <ListItemText primary="Vest top" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Women Category */}
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleMenBottom}
+            >
+              <ListItemText primary="Bottom" />
+              {openMenBottom ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openMenBottom} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Trousers")}
+                >
+                  <ListItemText primary="Trousers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Shorts")}
+                >
+                  <ListItemText primary="Shorts" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Pyjama bottom")}
+                >
+                  <ListItemText primary="Pyjama" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Swimwear bottom")}
+                >
+                  <ListItemText primary="Swimwear bottom" />
+                </ListItem>
+              </List>
+            </Collapse>
+            
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleMenOutwear}
+            >
+              <ListItemText primary="Outwear" />
+              {openMenOutwear ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openMenOutwear} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Jacket")}
+                >
+                  <ListItemText primary="Jacket" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Outdoor Waistcoat")}
+                >
+                  <ListItemText primary="Waistcoat" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Blazer")}
+                >
+                  <ListItemText primary="Blazer" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Cardigan")}
+                >
+                  <ListItemText primary="Cardigan" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleMenFootwear}
+            >
+              <ListItemText primary="Footwear" />
+              {openMenFootwear ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openMenFootwear} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Sneakers")}
                 >
                   <ListItemText primary="Sneakers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Women Boots")}
+                  onClick={() => handleItemClick("Menswear//Boots")}
                 >
                   <ListItemText primary="Boots" />
                 </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Slippers")}
+                >
+                  <ListItemText primary="Slippers" />
+                </ListItem>
               </List>
             </Collapse>
+
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleMenAccessories}
+            >
+              <ListItemText primary="Accessories" />
+              {openMenAccessories ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openMenAccessories} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Bag")}
+                >
+                  <ListItemText primary="Bag" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Cross-body bag")}
+                >
+                  <ListItemText primary="Cross-body bag" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Cap")}
+                >
+                  <ListItemText primary="Cap" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Sunglasses")}
+                >
+                  <ListItemText primary="Sunglasses" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Watch")}
+                >
+                  <ListItemText primary="Watch" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Belt")}
+                >
+                  <ListItemText primary="Belt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Wallet")}
+                >
+                  <ListItemText primary="Wallet" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Menswear//Wallet")}
+                >
+                  <ListItemText primary="Gloves" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+
           </List>
         </Collapse>
+
         <div className="menu-item">
+          <div className="item" onClick={handleKids}>
+            Kids {openKids ? <MdExpandLess /> : <MdExpandMore />}
+          </div>
+        </div>
+        <Collapse in={openKids} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {/* Men Category */}
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleKidsTop}
+            >
+              <ListItemText primary="Clothing" />
+              {openKidsTop ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openKidsTop} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//T-shirt")}
+                >
+                  <ListItemText primary="T-shirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Shirt")}
+                >
+                  <ListItemText primary="Shirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Trousers")}
+                >
+                  <ListItemText primary="Trousers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Cardigan")}
+                >
+                  <ListItemText primary="Cardigan" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Bodysuit")}
+                >
+                  <ListItemText primary="Bodysuit" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Sweater")}
+                >
+                  <ListItemText primary="Sweater" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Swimsuit")}
+                >
+                  <ListItemText primary="Swimsuit" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Women Category */}
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleKidsOutwear}
+            >
+              <ListItemText primary="Outerwear" />
+              {openKidsOutwear ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openKidsOutwear} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Jacket")}
+                >
+                  <ListItemText primary="Jacket" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Coat")}
+                >
+                  <ListItemText primary="Coat" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Outdoor trousers")}
+                >
+                  <ListItemText primary="Outdoor trousers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Jumpsuit")}
+                >
+                  <ListItemText primary="Jumpsuit" />
+                </ListItem>
+              </List>
+            </Collapse>
+            
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleKidsFootwear}
+            >
+              <ListItemText primary="Footwear" />
+              {openKidsFootwear ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openKidsFootwear} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Sneakers")}
+                >
+                  <ListItemText primary="Sneakers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Boots")}
+                >
+                  <ListItemText primary="Boots" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Slippers")}
+                >
+                  <ListItemText primary="Slippers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Pre-walkers")}
+                >
+                  <ListItemText primary="Pre-walkers" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleKidsAccessories}
+            >
+              <ListItemText primary="Accessories" />
+              {openKidsAccessories ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openKidsAccessories} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Hat")}
+                >
+                  <ListItemText primary="Hat" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Cap")}
+                >
+                  <ListItemText primary="Cap" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Sunglasses")}
+                >
+                  <ListItemText primary="Sunglasses" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Hair ties")}
+                >
+                  <ListItemText primary="Hair ties" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Hair clip")}
+                >
+                  <ListItemText primary="Hair clip" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Towel")}
+                >
+                  <ListItemText primary="Towel" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Toy")}
+                >
+                  <ListItemText primary="Toy" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Baby Children//Soft Toys")}
+                >
+                  <ListItemText primary="Soft Toys" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+
+          </List>
+        </Collapse>
+
+        <div className="menu-item">
+          <div className="item" onClick={handleSports}>
+            Sports {openSports ? <MdExpandLess /> : <MdExpandMore />}
+          </div>
+        </div>
+        <Collapse in={openSports} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {/* Men Category */}
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleSportsClothing}
+            >
+              <ListItemText primary="Clothing" />
+              {openSportsClothing ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openSportsClothing} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//T-shirt")}
+                >
+                  <ListItemText primary="T-shirt" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Trousers")}
+                >
+                  <ListItemText primary="Trousers" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Shorts")}
+                >
+                  <ListItemText primary="Shorts" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Socks")}
+                >
+                  <ListItemText primary="Socks" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Swimwear bottom")}
+                >
+                  <ListItemText primary="Swimwear bottom" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Women Category */}
+            <ListItem
+              button
+              className="submenu-item footwear-submenu"
+              onClick={handleSportsAccessories}
+            >
+              <ListItemText primary="Accessories" />
+              {openSportsAccessories ? <MdExpandLess /> : <MdExpandMore />}
+            </ListItem>
+            <Collapse in={openSportsAccessories} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Waterbottle")}
+                >
+                  <ListItemText primary="Waterbottle" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Giftbox")}
+                >
+                  <ListItemText primary="Giftbox" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Gloves")}
+                >
+                  <ListItemText primary="Gloves" />
+                </ListItem>
+                <ListItem
+                  button
+                  className="submenu-item"
+                  onClick={() => handleItemClick("Sport//Other accessories")}
+                >
+                  <ListItemText primary="Other accessories" />
+                </ListItem>
+              </List>
+            </Collapse>
+
+          </List>
+        </Collapse>
+
+        
+        {/* <div className="menu-item">
           <div className="item" onClick={handlesetAccessories}>
             Accessories {openAccessories ? <MdExpandLess /> : <MdExpandMore />}
           </div>
@@ -480,7 +1342,7 @@ function Headermenu() {
               </ListItem>
             </List>
           </Collapse>
-        </div>
+        </div> */}
       </List>
     </Box>
   );
@@ -1306,6 +2168,8 @@ function Headermenu() {
     console.log(e);
     if (e.key === "3") {
       localStorage.removeItem("user");
+      localStorage.removeItem("friends");
+      localStorage.removeItem("groups");
       navigate("/");
       window.location.reload();
     } else if (e.key === "2") {
@@ -1351,10 +2215,18 @@ function Headermenu() {
 
   const handleSearch = () => {
     debugger;
-    if (searchValue.trim() !== "") {
-      dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue }));
+    if (searchValue.trim() !== "" || file !== null) {
+      let data = {};
+      data.searchValue = searchValue;
+      data.file = file;
+      console.log(data)
+      dispatch(headerSearchValueSuccess({ headerSearchValue: data }));
       navigate("/products");
     }
+    // if (file !== null) {
+    //   dispatch(headerSearchValueSuccess({ headerSearchValue: file }));
+    //   navigate("/products");
+    // }
   };
 
   /*  search work*/
@@ -1447,7 +2319,7 @@ function Headermenu() {
     if (token?.token) {
       const getLikeProducts = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        `${baseUrl}/likes/get-all`,
         null,
         token?.token
       );
@@ -1461,7 +2333,7 @@ function Headermenu() {
 
       const getAllCartValues = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/cart-item/get-all",
+        `${baseUrl}/cart-item/get-all`,
         null,
         token?.token
       );
@@ -1501,9 +2373,9 @@ function Headermenu() {
 
   const imageUpload = async (e) => {
     debugger;
-    const file = e.target.files[0];
-    if (file) {
-      setFile(file);
+    const files = e.target.files[0];
+    if (files) {
+      setFile(files);
       // setFormData((prevData) => ({
       //   ...prevData,
       //   imagePreview: URL.createObjectURL(file),
@@ -1512,13 +2384,27 @@ function Headermenu() {
     // console.log(formData.image);
   };
 
+  const removeImage = () => {
+    setFile(null)
+  }
+
   const handleSearchShow = () => {
     debugger;
     setSearchShow(!searchShow);
   };
 
   const handleSearchOnBlur = () => {
-    setSearchShow(false);
+    debugger;
+    // setSearchShow(false);
+  };
+
+  const inputRefFile = useRef(null);
+
+  const handleButtonClick = () => {
+    debugger;
+    if (inputRefFile.current) {
+      inputRefFile.current.click(); // Trigger file input click
+    }
   };
 
   return (
@@ -1596,10 +2482,10 @@ function Headermenu() {
       <Marquee
         pauseOnHover
         gradient={false}
-        style={{ height: "40px", backgroundColor: "black", color:"white"}}
+        style={{ height: "40px", backgroundColor: "black", color: "white" }}
       >
         <div style={{ display: "flex", gap: "0px", minWidth: "100%" }}>
-        <div
+          <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -1627,7 +2513,6 @@ function Headermenu() {
               justifyContent: "center",
               padding: "0 40px",
               whiteSpace: "nowrap",
-              
             }}
           >
             <GoDotFill />
@@ -1858,6 +2743,7 @@ function Headermenu() {
 
             <div className="header-icons">
               {searchShow ? (
+                <>
                 <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
                   <InputLabel
                     sx={{
@@ -1883,8 +2769,90 @@ function Headermenu() {
                     onBlur={handleSearchOnBlur}
                     autoComplete="off"
                     autoFocus={true}
+                    startAdornment={
+                      file && (
+                        <InputAdornment
+                          position="start"
+                          sx={{ mr: 1, display: "flex", alignItems: "center" }}
+                        >
+                          <div
+                            style={{
+                              position: "relative",
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer", // Make sure the entire area is interactive
+                            }}
+                            className="thumbnail-container" // Add a class for styling hover
+                          >
+                            {/* Thumbnail Image */}
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt="Uploaded preview"
+                              style={{
+                                width: "30px",
+                                height: "30px",
+                                borderRadius: "5px",
+                                marginRight: "8px",
+                              }}
+                              className="thumbnail-image"
+                            />
+  
+                            <IconButton
+                              onClick={removeImage}
+                              size="small"
+                              sx={{
+                                position: "absolute",
+                                top: "-8px",
+                                right: "-8px",
+                                backgroundColor: "white",
+                                boxShadow: 1,
+                                "&:hover": { backgroundColor: "#f0f0f0" },
+                              }}
+                            >
+                              <IoCloseCircleOutline fontSize="small" />
+                            </IconButton>
+                          </div>
+                        </InputAdornment>
+                      )
+                    }
                     endAdornment={
                       <InputAdornment position="end">
+                        <Button
+                          onClick={handleButtonClick}
+                          variant="outlined"
+                          style={{
+                            border: "none",
+                            borderRadius: "50%",
+                            backgroundColor: "transparent",
+                            color: "white",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <SvgIcon>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                              />
+                            </svg>
+                          </SvgIcon>
+                          {/* Hidden file input */}
+                          <input
+                            ref={inputRefFile}
+                            type="file"
+                            accept="image/*"
+                            onChange={imageUpload}
+                            style={{ display: "none" }}
+                            aria-label="Upload Image"
+                          />
+                        </Button>
                         <IconButton
                           aria-label="toggle password visibility"
                           onClick={handleSearch}
@@ -1914,6 +2882,10 @@ function Headermenu() {
                     }}
                   />
                 </FormControl>
+                <div onClick={() => setSearchShow(false)} style={{display:"flex"}}>
+                <IoMdClose style={{width:"25px", height:"25px", color:"white", marginTop:"auto", marginBottom:"auto"}} />
+                </div>
+                </>
               ) : (
                 <>
                   <SearchIcon
@@ -2059,67 +3031,144 @@ function Headermenu() {
             <></>
           ) : (
             <div className="mobile-search-input search-input-below-900px">
-              <FormControl sx={{ m: 1 }} variant="outlined">
-                <InputLabel
-                  sx={{
-                    lineHeight: "1rem",
-                    color: "white",
-                    "&.Mui-focused": {
+             <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                  <InputLabel
+                    sx={{
+                      lineHeight: "1rem",
                       color: "white",
-                      fontSize: "18px",
-                    },
-                  }}
-                  // htmlFor="outlined-adornment-password"
-                >
-                  Search
-                </InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={"text"}
-                  style={{ color: "white" }}
-                  value={searchValue}
-                  onChange={onChangeSearchValue}
-                  onKeyDown={handleKeyDown}
-                  autoComplete="off"
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={imageUpload}
-                        style={{ display: "none" }}
-                      />
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleSearch}
-                        edge="end"
-                      >
-                        <SearchIcon style={{ color: "white" }} />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                  sx={{
-                    height: 45,
-                    "& label": {
-                      color: "white",
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 5,
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 5,
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 5,
-                    },
-                    // color: 'white',
-                  }}
-                />
-              </FormControl>
+                      "&.Mui-focused": {
+                        color: "white",
+                        fontSize: "18px",
+                      },
+                    }}
+                    htmlFor="outlined-adornment-password"
+                  >
+                    Search
+                  </InputLabel>
+                  <OutlinedInput
+                    label="outlined-Input"
+                    type={"text"}
+                    style={{ color: "white" }}
+                    placeholder="Search"
+                    value={searchValue}
+                    onChange={onChangeSearchValue}
+                    onKeyDown={handleKeyDown}
+                    onBlur={handleSearchOnBlur}
+                    autoComplete="off"
+                    autoFocus={true}
+                    startAdornment={
+                      file && (
+                        <InputAdornment
+                          position="start"
+                          sx={{ mr: 1, display: "flex", alignItems: "center" }}
+                        >
+                          <div
+                            style={{
+                              position: "relative",
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer", // Make sure the entire area is interactive
+                            }}
+                            className="thumbnail-container" // Add a class for styling hover
+                          >
+                            {/* Thumbnail Image */}
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt="Uploaded preview"
+                              style={{
+                                width: "30px",
+                                height: "30px",
+                                borderRadius: "5px",
+                                marginRight: "8px",
+                              }}
+                              className="thumbnail-image"
+                            />
+  
+                            <IconButton
+                              onClick={removeImage}
+                              size="small"
+                              sx={{
+                                position: "absolute",
+                                top: "-8px",
+                                right: "-8px",
+                                backgroundColor: "white",
+                                boxShadow: 1,
+                                "&:hover": { backgroundColor: "#f0f0f0" },
+                              }}
+                            >
+                              <IoCloseCircleOutline fontSize="small" />
+                            </IconButton>
+                          </div>
+                        </InputAdornment>
+                      )
+                    }
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <Button
+                          onClick={handleButtonClick}
+                          variant="outlined"
+                          style={{
+                            border: "none",
+                            borderRadius: "50%",
+                            backgroundColor: "transparent",
+                            color: "white",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <SvgIcon>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                              />
+                            </svg>
+                          </SvgIcon>
+                          {/* Hidden file input */}
+                          <input
+                            ref={inputRefFile}
+                            type="file"
+                            accept="image/*"
+                            onChange={imageUpload}
+                            style={{ display: "none" }}
+                            aria-label="Upload Image"
+                          />
+                        </Button>
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleSearch}
+                          edge="end"
+                        >
+                          <SearchIcon style={{ color: "white" }} />
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    sx={{
+                      height: 45,
+                      "& label": {
+                        color: "white",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                    }}
+                  />
+                </FormControl>
             </div>
           )}
           {/* Header Dropdowns */}

@@ -86,6 +86,7 @@
   display: flex;
   padding: 5px;
   border-radius: 10px;
+  margin-bottom: 5px;
 }
 
 .contact-details-div:hover,

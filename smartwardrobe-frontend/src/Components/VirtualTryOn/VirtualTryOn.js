@@ -12,7 +12,7 @@ import {
   Tooltip,
   tooltipClasses,
 } from "@mui/material";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
 import Carousel from "react-multi-carousel";
 import { showToastInfo, showToastSuccess } from "../GenericToasters/GenericToasters";
@@ -244,20 +244,20 @@ const VirtualTryOn = (props) => {
     if (!modelsDataFromApi?.length || from === "fromSimilarProducts") {
       data = imageName ? imageName : DataClicked?.imageName;
       setSelectedProduct(data);
-      setOpenLoader(true);
-      let similarProductsHeaders = {
-        topN: 10,
-        imageName: DataClicked?.imageName,
-      };
-      const getSimilarProducts = await apiCall(
-        "POST",
-        "https://smartwardrobe-backend.azurewebsites.net/recommend/similar-products",
-        similarProductsHeaders
-      );
-      setOpenLoader(false);
-      if (getSimilarProducts) {
-        setSimilarProductsData(getSimilarProducts?.data);
-      }
+      // setOpenLoader(true);
+      // let similarProductsHeaders = {
+      //   topN: 10,
+      //   imageName: DataClicked?.imageName,
+      // };
+      // const getSimilarProducts = await apiCall(
+      //   "POST",
+      //   `${baseUrl}/recommend/similar-products`,
+      //   similarProductsHeaders
+      // );
+      // setOpenLoader(false);
+      // if (getSimilarProducts) {
+      //   setSimilarProductsData(getSimilarProducts?.data);
+      // }
     }
     let createDataForVTOModels = {
       modelImageName: [],
@@ -268,7 +268,7 @@ const VirtualTryOn = (props) => {
     if (token?.token) {
       const getLikedModels = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/user-liked-models/user-liked-models",
+        `${baseUrl}/user-liked-models/user-liked-models`,
         null,
         token?.token
       );
@@ -298,7 +298,7 @@ const VirtualTryOn = (props) => {
 
     const getModelsAccordingTOImage = await apiCall(
       "POST",
-      "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2",
+      `${baseUrl}/vto-image-search/get-all-v2`,
       createDataForVTOModels,
       token?.token
     );
@@ -354,7 +354,7 @@ const VirtualTryOn = (props) => {
       if(createDataForDeleteModel[0]?.id){
       const deleteModel = await apiCall(
         "DELETE",
-        `https://smartwardrobe-backend.azurewebsites.net/user-liked-models/delete/${createDataForDeleteModel[0]?.id}`,
+        `${baseUrl}/user-liked-models/delete/${createDataForDeleteModel[0]?.id}`,
         null,
         token?.token
       );
@@ -402,7 +402,7 @@ const VirtualTryOn = (props) => {
           };
           return apiCall(
             "POST",
-            "https://smartwardrobe-backend.azurewebsites.net/user-liked-models/create",
+            `${baseUrl}/user-liked-models/create`,
             data,
             token?.token
           );
@@ -453,7 +453,7 @@ const VirtualTryOn = (props) => {
       
           const getModelsAccordingTOImage = await apiCall(
             "POST",
-            "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2",
+            `${baseUrl}/vto-image-search/get-all-v2`,
             createDataForVTOModels,
             token?.token
           );
@@ -476,7 +476,7 @@ const VirtualTryOn = (props) => {
     
         const getModelsAccordingTOImage = await apiCall(
           "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/vto-image-search/get-all-v2",
+          `${baseUrl}/vto-image-search/get-all-v2`,
           createDataForVTOModels,
           token?.token
         );
@@ -507,7 +507,7 @@ const VirtualTryOn = (props) => {
       const apiCalls = selectedCustomModels.map((item) => {
         return apiCall(
           "DELETE",
-          `https://smartwardrobe-backend.azurewebsites.net/user-liked-models/delete/${item?.id}`,
+          `${baseUrl}/user-liked-models/delete/${item?.id}`,
           null,
           token?.token
         );
@@ -544,7 +544,7 @@ const VirtualTryOn = (props) => {
       setOpenLoader(true);
       let addWishlist = await apiCall(
         "POST",
-        "https://smartwardrobe-backend.azurewebsites.net/likes/create",
+        `${baseUrl}/likes/create`,
         data,
         token?.token
       );
@@ -555,7 +555,7 @@ const VirtualTryOn = (props) => {
       setOpenLoader(true);
       let addWishlist = await apiCall(
         "DELETE",
-        `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${data?.productId}`,
+        `${baseUrl}/likes/delete/${data?.productId}`,
         data,
         token?.token
       );
@@ -567,7 +567,7 @@ const VirtualTryOn = (props) => {
 
     const getLikeProducts = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+      `${baseUrl}/likes/get-all`,
       null,
       token?.token
     );

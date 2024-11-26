@@ -17,9 +17,11 @@ function RecentlyViewed() {
               textTransform: "uppercase",
               letterSpacing: "0.3rem",
               marginLeft: "16px",
+              display:"flex",
+              justifyContent:"center"
             }}
           >
-            <h3>RECENTLY VIEWED</h3>
+            <h2>RECENTLY VIEWED</h2>
           </div>
           <HomeProductSection
             data={visitedProductsData}

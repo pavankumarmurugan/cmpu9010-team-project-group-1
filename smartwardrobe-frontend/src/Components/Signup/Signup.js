@@ -4,7 +4,7 @@ import Draggable from "react-draggable";
 import { FcGoogle } from "react-icons/fc";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { json, useNavigate } from "react-router-dom";
 import { showToastSuccess } from "../GenericToasters/GenericToasters";
@@ -171,7 +171,7 @@ function SignupModal(props) {
       formData['firstname'] = formData['username']
       formData['lastname'] = formData['username']
       setOpenLoader(true);
-      const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/users/create", formData);
+      const response = await apiCall("POST", `${baseUrl}/users/create`, formData);
       debugger
       setOpenLoader(false)
       if (response?.statusCode?.text === 'Success') {
@@ -197,7 +197,7 @@ function SignupModal(props) {
       // delete formData["lastname"];
       delete formData["role"];
       setOpenLoader(true);
-      const response = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/auth/login", formData);
+      const response = await apiCall("POST", `${baseUrl}/auth/login`, formData);
       debugger
       setOpenLoader(false)
       handleloginOrSignupChange("fromApi")

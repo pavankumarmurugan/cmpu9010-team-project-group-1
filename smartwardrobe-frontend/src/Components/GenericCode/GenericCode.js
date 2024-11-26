@@ -12,7 +12,7 @@ import ChatComponent from "../ChatComponent/ChatComponent";
 import { useNavigate } from "react-router-dom";
 import "../../Styles/ChatComponent.css";
 import { useSelector } from "react-redux";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 
 const renderMenuItems = (items) => {
@@ -444,7 +444,7 @@ const WhatsAppStylePreview = ({ message }) => {
       setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${Number(
+        `${baseUrl}/product/get-one/${Number(
           id
         )}`,
         null
@@ -550,7 +550,7 @@ const WhatsAppStylePreview = ({ message }) => {
             )}
           </div>
         </a>
-      ) : message.includes("http") ? (
+      ) : (message.includes("http") && !message.includes("blob")) ? (
         <a
           href={message}
           target="_blank"
@@ -560,7 +560,15 @@ const WhatsAppStylePreview = ({ message }) => {
         >
           <p>{message}</p>
         </a>
-      ) : (
+      ) : message.includes("blob") ?
+      <p>
+      <audio
+      controls
+      src={message}
+      style={{ display:"flex" }}
+    />
+    </p>
+      : (
         <p>{message}</p>
       ) // If not a URL, return the exact same message
       }

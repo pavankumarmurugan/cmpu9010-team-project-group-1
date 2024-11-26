@@ -18,20 +18,25 @@ import "slick-carousel/slick/slick-theme.css";
 // import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
 // import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import HomeProductSection from "../HomeProductsSection/HomeProductSection";
-import { ImageList, ImageListItem } from "@mui/material";
-import { headerSearchValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { Backdrop, CircularProgress, ImageList, ImageListItem } from "@mui/material";
+import { headerSearchValueSuccess, homeDataSuccess } from "../../redux/slices/HomeDataSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import video from "../../Assets/video.mp4";
 import video1 from "../../Assets/video1.mp4";
 import video3 from "../../Assets/video3.mp4";
 import Meta from "antd/es/card/Meta";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 
-function HomeShoppingCollection({ data }) {
+function HomeShoppingCollection() {
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [homeData, setHomeData] = useState({});
   const [carouselImageCount, setCarouselImageCount] = useState(3);
+  const [openLoader, setOpenLoader] = useState(false);
   //   const carouseldata = [
   //     {
   //       src: "https://images.unsplash.com/photo-1502657877623-f66bf489d236",
@@ -216,12 +221,33 @@ function HomeShoppingCollection({ data }) {
   );
 
   useEffect(() => {
-    if (data) {
+    // if (data) {
       debugger;
-      let top10Data = data?.slice(0, 10);
+      // let top10Data = data?.slice(0, 10);
+      // setHomeData(top10Data);
+      getHomeData();
+    // }
+  }, []);
+
+  const getHomeData = async () => {
+    debugger;
+    setOpenLoader(true);
+    const response = await apiCall(
+      "GET",
+      `${baseUrl}/product/get-all/1/20`,
+      null,
+      token?.token
+    );
+    setOpenLoader(false);
+    if (response?.data) {
+      let top10Data = response?.data?.slice(0, 10);
       setHomeData(top10Data);
+      dispatch(homeDataSuccess({ homeData: response?.data }));
     }
-  }, [data]);
+    // if (firstlogin) {
+    //   setShowBanner(true);
+    // }
+  };
 
   const handleSplitter = (item) => {
     debugger;
@@ -261,6 +287,14 @@ function HomeShoppingCollection({ data }) {
 
   return (
     <>
+    {/** loader code */}
+    <Backdrop
+        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+        open={openLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      {/** loader code */}
       <div className="HomeShoppingCollection-main">
         <div className="HomeShoppingCollection-heading">
           <h2>NEW ARRIVALS </h2>
@@ -302,7 +336,7 @@ function HomeShoppingCollection({ data }) {
 
         <div
           className="carousel-container"
-          style={{ width: "100%", height: "100%", margin: "10px auto" }}
+          style={{ width: "100%", height: "100%" }}
         >
           <Carousel {...carouselSettings}>
             <div style={contentStyle}>
@@ -469,7 +503,7 @@ function HomeShoppingCollection({ data }) {
               justifyContent: "center",
               alignItems: "center",
               textAlign: "center",
-              margin: "30px auto 20px auto",
+              margin: "45px 0px 20px 0px",
               fontSize: "20px",
               fontFamily: "bold",
               textTransform: "uppercase",

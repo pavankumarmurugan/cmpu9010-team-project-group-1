@@ -200,7 +200,8 @@
 }
 
 .HomeShoppingCollection-heading{
-    margin-top: 40px;
+    /* margin-top: 40px; */
+    margin: 45px 0px 10px 0px;
     /* margin-bottom: 50px; */
     font-size: 24px;
     letter-spacing: 0.3rem;
@@ -337,7 +338,7 @@
         margin-bottom: 0px; */
     }
     .homeproductsection-main{
-        margin-top: 2rem !important;
+        /* margin-top: 2rem !important; */
     }
 }
 
@@ -348,7 +349,7 @@
 }
 
 .homeproductsection-main{
-    margin-top: 2rem;
+    /* margin-top: 2rem; */
 }
 
 .anchor-tag{

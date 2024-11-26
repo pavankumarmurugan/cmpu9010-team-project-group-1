@@ -4,7 +4,7 @@ import Draggable from "react-draggable";
 import { FaPlus } from "react-icons/fa";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import {
   Backdrop,
   Badge,
@@ -33,7 +33,7 @@ import NewChatModal from "../NewChatModal/NewChatModal";
 import TextArea from "antd/es/input/TextArea";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
-import { showToastInfo } from "../GenericToasters/GenericToasters";
+import { showToastError, showToastInfo } from "../GenericToasters/GenericToasters";
 import { IoMdAddCircle } from "react-icons/io";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
 import { IoPersonAddSharp } from "react-icons/io5";
@@ -46,9 +46,15 @@ import {
 } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { io, Socket } from "socket.io-client";
-import { MdOutlineKeyboardVoice, MdOutlineMoreVert } from "react-icons/md";
+import {
+  MdOutlineKeyboardVoice,
+  MdOutlineMoreVert,
+  MdPauseCircleOutline,
+} from "react-icons/md";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import { BsChat, BsInfoCircleFill } from "react-icons/bs";
+import { MdDelete } from "react-icons/md";
+import { RiSendPlane2Fill } from "react-icons/ri";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
@@ -56,7 +62,7 @@ function ChatComponent(props) {
     : null;
   let userId = token?.userId;
   const inputRef = useRef(null);
-  const backendUrl = "https://smartwardrobe-backend.azurewebsites.net/";
+  const backendUrl = "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
   const messagesEndRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -135,7 +141,7 @@ function ChatComponent(props) {
     setOpenLoader(true);
     const getFriendReqList = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/friend-requests/get-all-my-received-requests",
+      `${baseUrl}/friend-requests/get-all-my-received-requests`,
       null,
       token?.token
     );
@@ -147,7 +153,7 @@ function ChatComponent(props) {
 
     const getGroupsList = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+      `${baseUrl}/group/get-my-groups`,
       null,
       token?.token
     );
@@ -159,7 +165,7 @@ function ChatComponent(props) {
 
     const getFriendsList = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+      `${baseUrl}/friends/get-all-my-friends`,
       null,
       token?.token
     );
@@ -197,7 +203,7 @@ function ChatComponent(props) {
     if (event?.userId) {
       const getMessages = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-friend-id/${event?.userId}`,
+        `${baseUrl}/chat/get-all-my-chats-by-friend-id/${event?.userId}`,
         null,
         token?.token
       );
@@ -211,7 +217,7 @@ function ChatComponent(props) {
     if (event?.groupId) {
       const getGroupMessages = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/chat/get-all-my-chats-by-group-id/${event?.groupId}`,
+        `${baseUrl}/chat/get-all-my-chats-by-group-id/${event?.groupId}`,
         null,
         token?.token
       );
@@ -225,7 +231,7 @@ function ChatComponent(props) {
 
       const getAllGroupMembers = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/group/get-all-members-in-group/${event?.groupId}`,
+        `${baseUrl}/group/get-all-members-in-group/${event?.groupId}`,
         null,
         token?.token
       );
@@ -317,7 +323,7 @@ function ChatComponent(props) {
       if (searchValue?.length >= 3) {
         const response = await apiCall(
           "GET",
-          `https://smartwardrobe-backend.azurewebsites.net/users/search/${searchValue.trim()}`,
+          `${baseUrl}/users/search/${searchValue.trim()}` ,
           null,
           token?.token
         );
@@ -345,7 +351,7 @@ function ChatComponent(props) {
     setOpenLoader(true);
     const response = await apiCall(
       "POST",
-      "https://smartwardrobe-backend.azurewebsites.net/group/create",
+      `${baseUrl}/group/create`,
       sendObj,
       token?.token
     );
@@ -369,7 +375,7 @@ function ChatComponent(props) {
           setOpenLoader(true);
           const response = await apiCall(
             "POST",
-            "https://smartwardrobe-backend.azurewebsites.net/group-members/create",
+            `${baseUrl}/group-members/create`,
             sendObj,
             token?.token
           );
@@ -437,7 +443,7 @@ function ChatComponent(props) {
     setOpenLoader(true);
     const delteFriend = await apiCall(
       "DELETE",
-      `https://smartwardrobe-backend.azurewebsites.net/friends/delete/${chatInfo?.friendId}`,
+      `${baseUrl}/friends/delete/${chatInfo?.friendId}`,
       null,
       token?.token
     );
@@ -448,7 +454,7 @@ function ChatComponent(props) {
       setOpenLoader(true);
       const getFriendsList = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
+        `${baseUrl}/friends/get-all-my-friends`,
         null,
         token?.token
       );
@@ -480,7 +486,7 @@ function ChatComponent(props) {
     setOpenLoader(true);
     const exitGroup = await apiCall(
       "DELETE",
-      `https://smartwardrobe-backend.azurewebsites.net/group-members/delete/${chatInfo?.membershipId}`,
+      `${baseUrl}/group-members/delete/${chatInfo?.membershipId}` ,
       null,
       token?.token
     );
@@ -513,10 +519,6 @@ function ChatComponent(props) {
       (event.key === "Enter" && textValue.trim() !== "") ||
       (textValue.trim() !== "" && from === "fromIcon")
     ) {
-      // if(audioMessage !== null){
-      //   console.log("audioMessage", audioMessage);
-      //   return
-      // }
 
       event.preventDefault();
       if (chatInfo?.userId) {
@@ -536,7 +538,7 @@ function ChatComponent(props) {
         settextValue("");
         const sendMessage = await apiCall(
           "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+          `${baseUrl}/chat/create/send-message-to-friend`,
           message,
           token?.token
         );
@@ -562,13 +564,69 @@ function ChatComponent(props) {
         settextValue("");
         const sendMessage = await apiCall(
           "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
+          `${baseUrl}/chat/create/send-message-to-group`,
           message,
           token?.token
         );
         if (sendMessage) {
           console.log(sendMessage);
         }
+      }
+    }
+
+    if (audioMessage !== null) {
+      console.log("audioMessage", audioMessage);
+      const response = await fetch(audioMessage);
+      const blob = await response.blob();
+      let url = "";
+      const formData = new FormData();
+      if(chatInfo?.userId){
+        url = `${baseUrl}/chat/create/send-message-to-friend-v2`;
+        formData.append('receiverId', chatInfo?.userId);
+      }else if (chatInfo?.groupId){
+        url = `${baseUrl}/chat/create/send-message-to-group-v2`;
+        formData.append('groupId', chatInfo?.groupId);
+      }
+      formData.append('message', '');
+      formData.append('messageType', 'audio');
+      formData.append('file', blob);
+
+      try {
+        setOpenLoader(true);
+        const response = await fetch(
+          url,
+          {
+            method: "POST",
+            headers: {
+              accept: "*/*",
+              Authorization: `Bearer ${token?.token}`,
+            },
+            body: formData,
+          }
+        );
+        setOpenLoader(false);
+        if (!response.ok) {
+          const errorData = await response.json();
+          showToastError(errorData?.message || response.statusText);
+        }
+        const result = await response.json();
+        console.log(result)
+        if(result?.message === "SUCCESSFULLY ADDED CHAT"){
+          handleDeleteRecording();
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              message: result?.data?.message,
+              receiverId: result?.data?.receiverId,
+              senderId: result?.data?.senderId,
+              messageType: result?.data?.messageType,
+            },
+          ]);
+        }
+        // removeImage();
+        // setInputSuggestions()
+      } catch (error) {
+        console.error("There was an error uploading the image:", error);
       }
     }
   };
@@ -624,7 +682,7 @@ function ChatComponent(props) {
 
     // Listener for friend messages
     newSocket.on("newMessage", (data) => {
-      debugger
+      debugger;
       console.log("New friend message received:", data);
       console.log(chatInfoRef.current);
       setChatInfo(chatInfoRef.current);
@@ -685,7 +743,7 @@ function ChatComponent(props) {
     setOpenLoader(true);
     const getFriendReqList = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/friend-requests/get-all-my-received-requests",
+      `${baseUrl}/friend-requests/get-all-my-received-requests`,
       null,
       token?.token
     );
@@ -763,7 +821,7 @@ function ChatComponent(props) {
           setOpenLoader(true);
           const response = await apiCall(
             "POST",
-            `https://smartwardrobe-backend.azurewebsites.net/friend-requests/create`,
+            `${baseUrl}/friend-requests/create`,
             sendObj,
             token?.token
           );
@@ -838,6 +896,88 @@ function ChatComponent(props) {
     setCurrentTab(value);
   };
 
+  const audioChunk = useRef([]);
+  const mediaRecorderRef = useRef(null);
+  const [startRecord, setStartRecording] = useState(false);
+  const [ShowCanvas, setShowCanvas] = useState(false);
+  const [secondsElapsed, setSecondsElapsed] = useState(0);
+  const intervalRef = useRef(null);
+  const startRecording = async () => {
+    try {
+      debugger;
+      setStartRecording(true);
+      setShowCanvas(true);
+      setSecondsElapsed(0); // Reset the timer
+      intervalRef.current = setInterval(() => {
+        setSecondsElapsed((prev) => prev + 1);
+      }, 1000);
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+
+      // Debug the state after creating the MediaRecorder
+      console.log("Initial MediaRecorder state:", mediaRecorder.state); // Should be "inactive"
+
+      audioChunk.current = []; // Reset audio chunks
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e?.data?.size > 0) {
+          audioChunk.current.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        debugger;
+        console.log("MediaRecorder stopped");
+        const audioBlob = new Blob(audioChunk.current, { type: "audio/wav" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setAudioMessage(audioUrl); // Use your state setter for audio URL
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+
+      mediaRecorder.start(); // Start recording
+      console.log("MediaRecorder state after start:", mediaRecorder.state); // Should be "recording"
+    } catch (error) {
+      console.error("Error during startRecording:", error);
+    }
+  };
+
+  const stopRecording = () => {
+    debugger;
+    if (mediaRecorderRef.current) {
+      console.log(
+        "Current MediaRecorder state:",
+        mediaRecorderRef.current.state
+      );
+      if (mediaRecorderRef.current.state === "recording") {
+        mediaRecorderRef.current.stop(); // Stop the recording
+        clearInterval(intervalRef.current); // Stop the timer
+        setStartRecording(false); // Update the recording state
+        setShowCanvas(false);
+      } else {
+        console.warn("MediaRecorder is not in a recording state.");
+      }
+    } else {
+      console.error("MediaRecorder reference is null.");
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secondsLeft = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${secondsLeft
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const handleDeleteRecording = () => {
+    debugger;
+    setAudioMessage(null);
+    setShowCanvas(false);
+    setStartRecording(false);
+  };
+
   return (
     <>
       {/** loader code */}
@@ -906,11 +1046,11 @@ function ChatComponent(props) {
                         style={{
                           width: "20px",
                           height: "20px",
-                          
                         }}
                       />
                       Friend requests
-                      {friendReqCountToShow !== 0 && `(${friendReqCountToShow})`}
+                      {friendReqCountToShow !== 0 &&
+                        `(${friendReqCountToShow})`}
                     </Button>
 
                     {/* <div className="moreoptions-div">
@@ -962,9 +1102,9 @@ function ChatComponent(props) {
                       </Menu>
                     </div> */}
                   </div>
-                  
-                  <div className="search-contacts" style={{ marginTop:"6px" }}>
-                  <Button
+
+                  <div className="search-contacts" style={{ marginTop: "6px" }}>
+                    <Button
                       className="frined-request-button-specificscreensize"
                       color="default"
                       aria-hidden="true"
@@ -974,67 +1114,65 @@ function ChatComponent(props) {
                         style={{
                           width: "20px",
                           height: "20px",
-                          
                         }}
                       />
                       Friend requests
-                      {friendReqCountToShow !== 0 && `(${friendReqCountToShow})`}
+                      {friendReqCountToShow !== 0 &&
+                        `(${friendReqCountToShow})`}
                     </Button>
-                  <Button
-                    className="add-friends-groups-button"
-                    color="default"
-                    aria-hidden="true"
-                    onClick={() => handleAddFriendAndGroup("AddFriends")}
-                  >
-                    Add Friends
-                  </Button>
-                  <Button
-                          className="add-friends-groups-button"
-                          color="default"
-                          aria-hidden="true"
-                          onClick={() => handleAddFriendAndGroup("CreateGroup")}
-                        >
-                          Create Group
-                        </Button>
+                    <Button
+                      className="add-friends-groups-button"
+                      color="default"
+                      aria-hidden="true"
+                      onClick={() => handleAddFriendAndGroup("AddFriends")}
+                    >
+                      Add Friends
+                    </Button>
+                    <Button
+                      className="add-friends-groups-button"
+                      color="default"
+                      aria-hidden="true"
+                      onClick={() => handleAddFriendAndGroup("CreateGroup")}
+                    >
+                      Create Group
+                    </Button>
                   </div>
 
                   <div className="tab-main-div">
-                      <div
-                        className={`friends-tab-div ${
-                          currentTab === 1 ? "activeTab" : ""
-                        }`}
-                        onClick={() => handleTabSelect(1)}
-                      >
-                        Friends
-                      </div>
-                      <div
-                        className={`groups-tab-div ${
-                          currentTab === 2 ? "activeTab" : ""
-                        }`}
-                        onClick={() => handleTabSelect(2)}
-                      >
-                        Groups
-                      </div>
+                    <div
+                      className={`friends-tab-div ${
+                        currentTab === 1 ? "activeTab" : ""
+                      }`}
+                      onClick={() => handleTabSelect(1)}
+                    >
+                      Friends
                     </div>
+                    <div
+                      className={`groups-tab-div ${
+                        currentTab === 2 ? "activeTab" : ""
+                      }`}
+                      onClick={() => handleTabSelect(2)}
+                    >
+                      Groups
+                    </div>
+                  </div>
 
                   <div className="contact-list">
                     {currentTab === 1 && (
                       <div>
-                         <div className="search-friends">
-                    <div className="search-input">
-                      <input
-                        type="text"
-                        placeholder="Search Friends"
-                        onChange={handleFriendsSearch}
-                      />
-                      <button className="search-button">
-                        <Search style={{ color: "2e3b4e" }} />
-                      </button>
-                    </div>
+                        <div className="search-friends">
+                          <div className="search-input">
+                            <input
+                              type="text"
+                              placeholder="Search Friends"
+                              onChange={handleFriendsSearch}
+                            />
+                            <button className="search-button">
+                              <Search style={{ color: "2e3b4e" }} />
+                            </button>
+                          </div>
+                        </div>
 
-                    
-                  </div>
-                        
                         {friends?.map(
                           (friend, index) =>
                             friend?.username && (
@@ -1083,15 +1221,15 @@ function ChatComponent(props) {
                     {currentTab === 2 && (
                       <div>
                         <div className="search-input">
-                      <input
-                        type="text"
-                        placeholder="Search Groups"
-                        onChange={handleFriendsSearch}
-                      />
-                      <button className="search-button">
-                        <Search style={{ color: "2e3b4e" }} />
-                      </button>
-                    </div>
+                          <input
+                            type="text"
+                            placeholder="Search Groups"
+                            onChange={handleFriendsSearch}
+                          />
+                          <button className="search-button">
+                            <Search style={{ color: "2e3b4e" }} />
+                          </button>
+                        </div>
                         {friends?.map(
                           (friend, index) =>
                             friend?.groupName && (
@@ -1139,7 +1277,7 @@ function ChatComponent(props) {
 
                     {friends?.length === 0 && (
                       <div className="no-friends">
-                        <h4>{currentTab === 1 ? "No Friends" : "No Groups" }</h4>
+                        <h4>{currentTab === 1 ? "No Friends" : "No Groups"}</h4>
                       </div>
                     )}
                   </div>
@@ -1575,33 +1713,81 @@ function ChatComponent(props) {
                     disabled={!chatInfo?.userId && !chatInfo?.groupName}
                   />
                   <button className="send-button">
-                    {/* <AudioRecorder
-                      onRecordingComplete={handleRecordingComplete}
-                      audioTrackConstraints={{
-                        noiseSuppression: true,
-                        echoCancellation: true,
-                        // autoGainControl,
-                        // channelCount,
-                        // deviceId,
-                        // groupId,
-                        // sampleRate,
-                        // sampleSize,
-                      }}
-                      onNotAllowedOrFound={(err) => console.table(err)}
-                      downloadOnSavePress={false}
-                      downloadFileExtension="webm"
-                      mediaRecorderOptions={{
-                        audioBitsPerSecond: 128000,
-                      }}
-                      showVisualizer={true}
-                      showSaveButton={false}
-                    /> */}
-                    {/* <MdOutlineKeyboardVoice style={{width:"25px", height:"25px"}} /> */}
-                    <FaPaperPlane
+                    {ShowCanvas ? (
+                      <>
+                        <MdDelete
+                          style={{ width: "25px", height: "25px" }}
+                          onClick={handleDeleteRecording}
+                        />
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            maxWidth: "300px",
+                            height: "40px",
+                          }}
+                        >
+                          <canvas
+                            // ref={audioMessage}
+                            width="250"
+                            height="35"
+                            style={{
+                              backgroundColor: "#E6E5EA",
+                              borderRadius: "20px",
+                              position: "relative",
+                            }}
+                          ></canvas>
+                          <div
+                            style={{
+                              position: "absolute",
+                              left: 40,
+                              top: 10,
+                              display: "flex",
+                            }}
+                          >
+                            <p>{formatTime(secondsElapsed)}</p>
+                            <p style={{ paddingLeft: "10px" }}>Recording...</p>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      audioMessage &&
+                      audioMessage !== null && (
+                        <div
+                          style={{
+                            height: "35px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <MdDelete style={{ width: "25px", height: "25px" }} onClick={handleDeleteRecording} />
+                          <audio
+                            controls
+                            src={audioMessage}
+                            style={{ height: "35px" }}
+                          />
+                        </div>
+                      )
+                    )}
+
+                    {startRecord ? (
+                      <MdPauseCircleOutline
+                        style={{ width: "30px", height: "30px", color: "red" }}
+                        onClick={stopRecording}
+                      />
+                    ) : (
+                      <MdOutlineKeyboardVoice
+                        style={{ width: "25px", height: "25px" }}
+                        onClick={startRecording}
+                      />
+                    )}
+                    <RiSendPlane2Fill
                       style={{
-                        color: "2e3b4e",
+                        color: audioMessage !== null ? "green" : "2e3b4e",
                         cursor: "pointer",
                         marginLeft: "10px",
+                        fontSize:"24px"
                       }}
                       onClick={(event) => handleSendMessage(event, "fromIcon")}
                     />

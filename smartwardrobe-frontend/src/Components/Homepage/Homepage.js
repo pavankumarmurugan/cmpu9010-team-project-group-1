@@ -6,7 +6,7 @@ import HomeShoppingCollection from "../HomeShoppingCollection/HomeShoppingCollec
 import Footer from "../Footer/Footer";
 import { useLocation } from "react-router-dom";
 import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
@@ -31,23 +31,23 @@ function Homepage() {
     if(firstlogin === null){
       localStorage.setItem("firstlogin", JSON.stringify(true));
     }
-    getHomeData();
+    // getHomeData();
   }, []);
 
   const getHomeData = async () => {
     debugger;
-    setOpenLoader(true);
-    const response = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/product/get-all/1/20",
-      null,
-      token?.token
-    );
-    setOpenLoader(false);
-    if (response) {
-      setHomeData(response?.data);
-      dispatch(homeDataSuccess({ homeData: response?.data }));
-    }
+    // setOpenLoader(true);
+    // const response = await apiCall(
+    //   "GET",
+    //   `${baseUrl}/product/get-all/1/20`,
+    //   null,
+    //   token?.token
+    // );
+    // setOpenLoader(false);
+    // if (response) {
+    //   setHomeData(response?.data);
+    //   dispatch(homeDataSuccess({ homeData: response?.data }));
+    // }
     if (firstlogin) {
       setShowBanner(true);
     }
@@ -75,7 +75,7 @@ function Homepage() {
       {/** loader code */}
       <Headermenu />
       <ImageWithTextOverlay />
-      <HomeShoppingCollection data={homeData} />
+      <HomeShoppingCollection />
       <RecentlyViewed />
       <Footer />
     </>

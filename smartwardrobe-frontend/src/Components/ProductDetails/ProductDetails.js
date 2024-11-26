@@ -31,7 +31,7 @@ import AccordionDetails from "@mui/joy/AccordionDetails";
 import AccordionSummary from "@mui/joy/AccordionSummary";
 import { Input } from "antd";
 import { useLocation, useParams } from "react-router-dom";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import {
   addToCartValueSuccess,
@@ -125,7 +125,7 @@ const ProductDetails = () => {
       setOpenLoader(true);
       let addWishlist = await apiCall(
         "POST",
-        "https://smartwardrobe-backend.azurewebsites.net/likes/create",
+       `${baseUrl}/likes/create`,
         data,
         token?.token
       );
@@ -136,7 +136,7 @@ const ProductDetails = () => {
       setOpenLoader(true);
       let addWishlist = await apiCall(
         "DELETE",
-        `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${productimages?.id}`,
+       `${baseUrl}/likes/delete/${productimages?.id}`,
         data,
         token?.token
       );
@@ -147,7 +147,7 @@ const ProductDetails = () => {
     if (token?.token) {
       const getLikeProducts = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        `${baseUrl}/likes/get-all`,
         null,
         token?.token
       );
@@ -170,7 +170,7 @@ const ProductDetails = () => {
 
     const getAllCartValues = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/cart-item/get-all",
+      `${baseUrl}/cart-item/get-all`,
       null,
       token?.token
     );
@@ -186,7 +186,7 @@ const ProductDetails = () => {
         setOpenLoader(true);
         const addToCart = await apiCall(
           "PATCH",
-          "https://smartwardrobe-backend.azurewebsites.net/cart-item/update",
+          `${baseUrl}/cart-item/update`,
           data,
           token?.token
         );
@@ -206,7 +206,7 @@ const ProductDetails = () => {
     setOpenLoader(true);
     const addToCart = await apiCall(
       "POST",
-      "https://smartwardrobe-backend.azurewebsites.net/cart-item/create",
+      `${baseUrl}/cart-item/create`,
       data,
       token?.token
     );
@@ -218,6 +218,7 @@ const ProductDetails = () => {
 
   useEffect(() => {
     debugger;
+    console.log('reload')
     callApiForModels();
   }, []);
 
@@ -229,7 +230,7 @@ const ProductDetails = () => {
     setOpenLoader(true);
     const getModels = await apiCall(
       "GET",
-      `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`,
+      `${baseUrl}/product/get-one/${numberString}`,
       null
     );
     setOpenLoader(false);
@@ -241,7 +242,7 @@ const ProductDetails = () => {
       setOpenLoader(true);
       const getLikeProducts = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        `${baseUrl}/likes/get-all`,
         null,
         token?.token
       );
@@ -257,21 +258,22 @@ const ProductDetails = () => {
           setShowHideWishlist(false);
         }
       }
-
-      setOpenLoader(true);
-      let similarProductsHeaders = {
-        topN: 10,
-        imageName: getModels?.data?.imageName,
-      };
-      const getSimilarProducts = await apiCall(
-        "POST",
-        "https://smartwardrobe-backend.azurewebsites.net/recommend/similar-products",
-        similarProductsHeaders
-      );
       setOpenLoader(false);
-      if (getSimilarProducts) {
-        setSimilarProductsData(getSimilarProducts?.data);
-      }
+
+      // setOpenLoader(true);
+      // let similarProductsHeaders = {
+      //   topN: 10,
+      //   imageName: getModels?.data?.imageName,
+      // };
+      // const getSimilarProducts = await apiCall(
+      //   "POST",
+      //   `${baseUrl}/recommend/similar-products`,
+      //   similarProductsHeaders
+      // );
+      // setOpenLoader(false);
+      // if (getSimilarProducts) {
+      //   setSimilarProductsData(getSimilarProducts?.data);
+      // }
     }
   };
 
@@ -290,26 +292,28 @@ const ProductDetails = () => {
       return;
     }
 
-    setOpenLoader(true);
-    const getGroupsList = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
-      null,
-      token?.token
-    );
+    // setOpenLoader(true);
+    // const getGroupsList = await apiCall(
+    //   "GET",
+    //   `${baseUrl}/group/get-my-groups`,
+    //   null,
+    //   token?.token
+    // );
 
-    const getFriendsList = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
-      null,
-      token?.token
-    );
-    setOpenLoader(false);
-    setFriendsListForShare([...getGroupsList?.data, ...getFriendsList?.data]);
-    console.log(
-      [...getGroupsList?.data, ...getFriendsList?.data],
-      "friendsListForShare"
-    );
+    // const getFriendsList = await apiCall(
+    //   "GET",
+    //   `${baseUrl}/friends/get-all-my-friends`,
+    //   null,
+    //   token?.token
+    // );
+    // setOpenLoader(false);
+    let friends = localStorage.getItem("friendIds")
+  ? JSON.parse(localStorage.getItem("friendIds"))
+  : null;
+  let groups = localStorage.getItem("groupIds")
+  ? JSON.parse(localStorage.getItem("groupIds"))
+  : null;
+    setFriendsListForShare([...friends, ...groups]);
     setShowFriendsForShare(true);
   };
 
@@ -333,7 +337,7 @@ const ProductDetails = () => {
     let productId = item?.id;
     const getModels = await apiCall(
       "GET",
-      `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${productId}`,
+      `${baseUrl}/product/get-one/${productId}`,
       null
     );
     setOpenLoader(false);
@@ -345,7 +349,7 @@ const ProductDetails = () => {
       setOpenLoader(true);
       const getLikeProducts = await apiCall(
         "GET",
-        "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+        `${baseUrl}/likes/get-all`,
         null,
         token?.token
       );
