@@ -5,7 +5,7 @@ import { Input } from "antd";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoMdAdd } from "react-icons/io";
 import { Button } from "@mui/joy";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { addToCartValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
@@ -94,7 +94,7 @@ const CartComponent = (props) => {
 debugger
     const id = data?.id;
     setOpenLoader(true);
-    const deleteCartItem = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/cart-item/delete/${id}`, null, token?.token);
+    const deleteCartItem = await apiCall("DELETE", `${baseUrl}/cart-item/delete/${id}` , null, token?.token);
     setOpenLoader(false);
     if (deleteCartItem.statusCode.text === "Success") {
       getAllCartValues();
@@ -109,7 +109,7 @@ debugger
     setOpenLoader(true);
     const getAllCartValues = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/cart/get-my-cart",
+      `${baseUrl}/cart/get-my-cart` ,
       null,
       token?.token
     );

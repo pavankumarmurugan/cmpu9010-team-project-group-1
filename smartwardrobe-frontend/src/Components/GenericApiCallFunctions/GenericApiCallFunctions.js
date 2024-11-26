@@ -1,5 +1,8 @@
 import { showToastError, showToastSuccess } from "../GenericToasters/GenericToasters";
 
+export const baseUrl = "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
+
+
 const reFreshToken = async () => {
   debugger
   let token = localStorage.getItem("user")
@@ -10,7 +13,7 @@ const reFreshToken = async () => {
     return null;
   }
 
-  const response = await fetch("https://smartwardrobe-backend.azurewebsites.net/auth/refresh", {
+  const response = await fetch(`${baseUrl}/auth/refresh`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token?.refreshToken}`,

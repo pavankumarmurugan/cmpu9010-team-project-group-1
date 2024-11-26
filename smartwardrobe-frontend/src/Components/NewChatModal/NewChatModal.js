@@ -4,7 +4,7 @@ import Draggable from "react-draggable";
 import { FcGoogle } from "react-icons/fc";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import {
   Backdrop,
   Button,
@@ -134,7 +134,7 @@ function NewChatModal(props) {
           };
           return apiCall(
             "POST",
-            "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-friend",
+            `${baseUrl}/chat/create/send-message-to-friend`,
             message,
             token?.token
           );
@@ -157,7 +157,7 @@ function NewChatModal(props) {
 
           return apiCall(
             "POST",
-            "https://smartwardrobe-backend.azurewebsites.net/chat/create/send-message-to-group",
+            `${baseUrl}/chat/create/send-message-to-group`,
             message,
             token?.token
           );
@@ -198,7 +198,7 @@ function NewChatModal(props) {
         };
         return apiCall(
           "POST",
-          "https://smartwardrobe-backend.azurewebsites.net/group-members/create",
+          `${baseUrl}/group-members/create`,
           data,
           token?.token
         );
@@ -235,7 +235,7 @@ function NewChatModal(props) {
     try {
       const response = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/users/search/${trimmedQuery}`,
+        `${baseUrl}/users/search/${trimmedQuery}`,
         null,
         token?.token
       );
@@ -332,7 +332,7 @@ function NewChatModal(props) {
         setOpenLoader(true);
         const response = await apiCall(
           "POST",
-          `https://smartwardrobe-backend.azurewebsites.net/friend-requests/create`,
+          `${baseUrl}/friend-requests/create`,
           sendObj,
           token?.token
         );
@@ -362,7 +362,7 @@ function NewChatModal(props) {
       setOpenLoader(true);
       const acceptApi = await apiCall(
         "PATCH",
-        `https://smartwardrobe-backend.azurewebsites.net/friend-requests/update`,
+        `${baseUrl}/friend-requests/update`,
         data,
         token?.token
       );
@@ -379,7 +379,7 @@ function NewChatModal(props) {
       setOpenLoader(true);
       const rejectApi = await apiCall(
         "DELETE",
-        `https://smartwardrobe-backend.azurewebsites.net/friend-requests/delete/${item?.requestId}`,
+        `${baseUrl}/friend-requests/delete/${item?.requestId}`,
         null,
         token?.token
       );
@@ -423,7 +423,7 @@ function NewChatModal(props) {
     setOpenLoader(true);
     const response = await apiCall(
       "POST",
-      "https://smartwardrobe-backend.azurewebsites.net/group/create",
+      `${baseUrl}/group/create`,
       sendObj,
       token?.token
     );
@@ -447,7 +447,7 @@ function NewChatModal(props) {
           setOpenLoader(true);
           const response = await apiCall(
             "POST",
-            "https://smartwardrobe-backend.azurewebsites.net/group-members/create",
+            `${baseUrl}/group-members/create`,
             sendObj,
             token?.token
           );
@@ -471,7 +471,7 @@ function NewChatModal(props) {
           setOpenLoader(true);
           const getGroupsList = await apiCall(
             "GET",
-            "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
+            `${baseUrl}/group/get-my-groups`,
             null,
             token?.token
           );

@@ -4,7 +4,7 @@ import Draggable from "react-draggable";
 import { FcGoogle } from "react-icons/fc";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { json, useNavigate } from "react-router-dom";
 import { showToastError, showToastSuccess } from "../GenericToasters/GenericToasters";
@@ -122,7 +122,7 @@ function Profile(props) {
     setOpenLoader(true);
     const response = await apiCall(
       "PATCH",
-      "https://smartwardrobe-backend.azurewebsites.net/users/update",
+      `${baseUrl}/users/update`,
       data,
       token?.token
     );
@@ -157,7 +157,7 @@ function Profile(props) {
     setOpenLoader(true);
     const response = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/users/get-my-profile",
+      `${baseUrl}/users/get-my-profile`,
       null,
       token?.token
     );
@@ -183,7 +183,7 @@ function Profile(props) {
         try {
             setOpenLoader(true);
             const response = await fetch(
-              `https://smartwardrobe-backend.azurewebsites.net/users/upload-profile-picture`,
+              `${baseUrl}/users/upload-profile-picture`,
               {
                 method: "POST",
                 headers: {
