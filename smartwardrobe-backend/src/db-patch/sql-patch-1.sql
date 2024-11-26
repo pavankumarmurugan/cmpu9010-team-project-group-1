@@ -412,4 +412,9 @@ CREATE INDEX idx_group_members_user_id ON group_members (user_id);
 
 CREATE INDEX idx_group_members_group_id ON group_members (group_id);
 
-
+CREATE TABLE  image_clusters (
+    image_id SERIAL PRIMARY KEY,
+    image_name TEXT UNIQUE NOT NULL,
+    cluster_id INTEGER NOT NULL,
+    clip_embedding FLOAT8[] NOT NULL
+);

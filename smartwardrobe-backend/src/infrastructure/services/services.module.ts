@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { SearchProductsService } from './search/search-products.service';
 import { UploadProfilePictureService } from './uploadProfilePicture/upload-profile-picture';
-import { FaissService } from './faiss/faiss.service';
+// import { FaissService } from './faiss/faiss.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageClusterModel } from '../frameworks/data-services/model/image-clusters.model';
 import { DataServicesModule } from './data-services/data-service.module';
@@ -15,6 +15,8 @@ import { UploadAudioService } from './uploadProfilePicture/upload-audio-chat';
 import { EmailService } from './sendgrid/sendgrid.service';
 import { ConfigModule } from '@nestjs/config';
 import { EmailTemplateService } from './sendgrid/email-template.service';
+import { RedisCacheService } from './redis/redis-cache.service';
+import { TestService } from './redis/test-redis';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { EmailTemplateService } from './sendgrid/email-template.service';
   providers: [
     SearchProductsService,
     UploadProfilePictureService,
-    FaissService,
+    // FaissService,
     UploadSearchPictureService,
     CacheService,
     FirebaseService,
@@ -36,11 +38,13 @@ import { EmailTemplateService } from './sendgrid/email-template.service';
     EmailService,
 
     EmailTemplateService,
+    RedisCacheService,
+    TestService,
   ],
   exports: [
     SearchProductsService,
     UploadProfilePictureService,
-    FaissService,
+    // FaissService,
     UploadSearchPictureService,
     UploadAudioService,
     CacheService,
@@ -48,6 +52,8 @@ import { EmailTemplateService } from './sendgrid/email-template.service';
     WebSocketService,
     WebSocketGatewayService,
     EmailService,
+    RedisCacheService,
+    TestService,
   ],
 })
 export class ServicesModule {}

@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+
 // import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 // import { APP_GUARD } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
@@ -33,6 +34,8 @@ import { OriginMiddleware } from '../middleware/origin.middleware';
 import { ConfigController } from './config/config.controller';
 import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
 import { InviteController } from './invite/invite.controller';
+import { FaissModule } from '../services/faiss/faiss.module';
+import { TestController } from './test-redis/test-redis-controller';
 
 @Module({
   imports: [
@@ -53,8 +56,9 @@ import { InviteController } from './invite/invite.controller';
     ConvertorsModule,
     UseCasesModule,
     ServicesModule,
+    FaissModule,
     CacheModule.register({
-      ttl: 300000,
+      ttl: 3000000,
       max: 100,
       isGlobal: true,
     }),
@@ -81,6 +85,7 @@ import { InviteController } from './invite/invite.controller';
     ConfigController,
     UserLikedModelController,
     InviteController,
+    TestController,
   ],
   providers: [
     // {

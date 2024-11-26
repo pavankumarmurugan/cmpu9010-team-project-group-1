@@ -19,6 +19,7 @@ import { GroupMembersModel } from './model/group-members.model';
 import { VtoImageSearchModel } from './model/vto.model';
 import { UserLikedModels } from './model/user-liked-models';
 import { ProductSubcategoryModel } from './model/product-subcategory.model';
+import { ImageClustersMVModel } from './model/image-clusters-mv.model';
 
 @Module({
   imports: [
@@ -46,9 +47,10 @@ import { ProductSubcategoryModel } from './model/product-subcategory.model';
         VtoImageSearchModel,
         UserLikedModels,
         ProductSubcategoryModel,
+        ImageClustersMVModel,
       ],
       password: process.env.DATABASE_PASSWORD,
-      // logging: ['query', 'error'],
+      logging: ['query', 'error'],
       ssl: true,
       extra: {
         ssl: {
@@ -73,6 +75,7 @@ import { ProductSubcategoryModel } from './model/product-subcategory.model';
       VtoImageSearchModel,
       UserLikedModels,
       ProductSubcategoryModel,
+      ImageClustersMVModel,
     ]),
   ],
   providers: [
