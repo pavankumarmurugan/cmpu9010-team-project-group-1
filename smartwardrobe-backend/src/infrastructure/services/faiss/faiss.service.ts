@@ -30,16 +30,29 @@ export class FaissService {
   }
 
   async onModuleInit() {
+    // Ensure the temporary directory exists
     await this.ensureTempDirectory();
-    const needsInitialization = await this.checkS3Files();
 
-    if (needsInitialization) {
-      await this.exportDataToS3();
-    } else {
-      await this.downloadFromS3();
-    }
+    // Delay execution by 10 minutes (600,000 milliseconds)
+    setTimeout(async () => {
+      console.log(
+        'Starting post-deployment initialization after 10 minutes...',
+      );
 
-    await this.loadFromFiles();
+      const needsInitialization = await this.checkS3Files();
+
+      if (needsInitialization) {
+        console.log('Exporting data to S3...');
+        await this.exportDataToS3();
+      } else {
+        console.log('Downloading data from S3...');
+        await this.downloadFromS3();
+      }
+
+      console.log('Loading data from files...');
+      await this.loadFromFiles();
+      console.log('Initialization completed!');
+    }, 600000); // 10 minutes in milliseconds
   }
 
   private async ensureTempDirectory(): Promise<void> {
