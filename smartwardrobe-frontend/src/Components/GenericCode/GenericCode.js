@@ -9,7 +9,7 @@ import { FaArrowUp } from "react-icons/fa6";
 import imageCompression from "browser-image-compression";
 import { IoMdChatboxes } from "react-icons/io";
 import ChatComponent from "../ChatComponent/ChatComponent";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../../Styles/ChatComponent.css";
 import { useSelector } from "react-redux";
 import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
@@ -579,3 +579,60 @@ const WhatsAppStylePreview = ({ message }) => {
 };
 
 export default WhatsAppStylePreview;
+
+export const BackButtonHandler = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const previousPathRef = useRef(location.pathname);
+  let categoryPaths = localStorage.getItem("categoryPaths")
+    ? JSON.parse(localStorage.getItem("categoryPaths"))
+    : null;
+  let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
+    ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
+    : null;
+
+  useEffect(() => {
+    debugger
+    const handleBackButton = (event) => {
+      // Custom function when the back button is clicked
+      console.log('Back button clicked!');
+      // if (previousPathRef.current.includes("products/")) {
+      //   categoryPaths.pop()
+      //   localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
+      // }
+      // if(previousPathRef.current === "http://localhost:3000/products"){
+      //   headerSearchValueLocal.pop()
+      //   localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
+      // }
+      customFunction();
+
+      // Prevent default navigation if needed
+      // event.preventDefault();
+    };
+
+    // Track navigation changes
+    const unlisten = () => {
+      debugger
+      const currentPath = location.pathname;
+      if (previousPathRef.current !== currentPath) {
+        previousPathRef.current = currentPath;
+      } else {
+        // Browser back button detected
+        handleBackButton();
+      }
+    };
+
+    // Listen for changes in history
+    window.addEventListener('popstate', unlisten);
+    window.onpopstate = handleBackButton();
+
+    return () => {
+      window.removeEventListener('popstate', unlisten);
+    };
+  }, [location]);
+
+  const customFunction = () => {
+    // alert('Custom function triggered on back click!');
+    // Add your logic here
+  };
+};

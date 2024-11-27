@@ -106,11 +106,11 @@ const VirtualTryOn = (props) => {
       modelImageUrl:
         "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
     },
-    {
-      modelImageName: "06206_00",
-      modelImageUrl:
-        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
-    },
+    // {
+    //   modelImageName: "06206_00",
+    //   modelImageUrl:
+    //     "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+    // },
   ]);
   const [customModels, setcustomModels] = useState([
     {
@@ -355,11 +355,11 @@ const VirtualTryOn = (props) => {
   const handleSelectCustomModelCheckbox = async (e, item) => {
     debugger;
 
-    if (selectedCustomModels?.length >= 6 && e.target.checked) {
-      showToastInfo("You can select only 6 custom models");
-      e.target.checked = false;
-      return;
-    }
+    // if (selectedCustomModels?.length >= 6 && e.target.checked) {
+    //   showToastInfo("You can select only 6 custom models");
+    //   e.target.checked = false;
+    //   return;
+    // }
 
     if (e.target.checked) {
       setSelectedCustomModels([...selectedCustomModels, item]);
@@ -412,12 +412,15 @@ const VirtualTryOn = (props) => {
     }
   };
 
-  const handleCustomModels = async (e,fromImage) => {
+  const handleCustomModels = async (e, fromImage) => {
     debugger;
     if (deleteButtonText === "Done") {
       return;
     }
-    if (e?.target?.innerHTML === "Custom Demo Models" || fromImage === "Custom Demo Models") {
+    if (
+      e?.target?.innerHTML === "Custom Demo Models" ||
+      fromImage === "Custom Demo Models"
+    ) {
       if (!token) {
         showToastInfo("Please login to add custom models");
         return;
@@ -425,7 +428,6 @@ const VirtualTryOn = (props) => {
       setPersonalizeModels(true);
     } else {
       if (selectedCustomModels?.length > 0) {
-
         if (selectedCustomModels?.length === 0) {
           setPersonalizeModels(false);
           return;
@@ -654,11 +656,28 @@ const VirtualTryOn = (props) => {
       >
         <div className="modal-container">
           {/* <h1> </h1> */}
-          <h1 className="vto-heading">
-            {!personalizeModels
-              ? "Find your fit: choose a model and let the virtual magic begin!"
-              : "You can select upto 6 custom models"}
-          </h1>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              justifyContent: "space-between",
+              marginTop: "15px",
+            }}
+          >
+            <h1 className="vto-heading">
+              {!personalizeModels
+                ? "Find your fit: choose a model and let the virtual magic begin!"
+                : "You can select custom models"}
+            </h1>
+
+            {/* <button
+                className="asd"
+                onClick={handleCustomModels}
+              >
+                {personalizeModels ? "Done" : "Custom Demo Models"}
+          </button> */}
+          </div>
           <div className="Models-separation-div">
             <div className="model-result">
               {/* {showHideWishlist ? (
@@ -696,25 +715,22 @@ const VirtualTryOn = (props) => {
                   onClick={() => handleWishlist("remove")}
                 />
               )} */}
-              <button
+              {/* <button
                 className="Select-Custom-Model-button"
                 onClick={handleCustomModels}
               >
                 {personalizeModels ? "Done" : "Custom Demo Models"}
-              </button>
-              {/* {deletePersonalizeModels && (
-                <button
-                  className="Delete-Custom-Model-button"
-                  onClick={handleCustomModelsDelete}
-                >
-                  {deleteButtonText}
-                </button>
-              )} */}
+              </button> */}
               <img
                 className="Result-Image"
                 loading="lazy"
                 src={resultImage}
                 alt="result_image"
+              />
+              <img
+                src={DataClicked?.imageUrl}
+                className="result-iamge-product"
+                alt="product-selected-iamge"
               />
             </div>
             <div className="predefined-models">
@@ -745,9 +761,43 @@ const VirtualTryOn = (props) => {
                         </div>
                       </div>
                     ))}
+                    <button className="asd" onClick={handleCustomModels}>
+                      {personalizeModels ? "Finish" : "Custom Demo Models"}
+                    </button>
                   </>
                 ) : (
                   <>
+                    {Array.from({
+                      length: Math.max(0, 1),
+                    }).map((item, index) => (
+                      <>
+                        <div className="VTO-card" onClick={(e) =>
+                                handleCustomModels(e, "Custom Demo Models")
+                              }>
+                          <div className="VTO-image-container">
+                            <img
+                              className="VTO-model--image"
+                              loading="lazy"
+                              src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/white_image.png"
+                              alt="models_images"
+                              // style={{ visibility: "hidden"}}
+                              // onClick={() => changeModalOnModelClick(index)}
+                            />
+                            <div
+                              className="add-icon-div"
+                              // onClick={(e) =>
+                              //   handleCustomModels(e, "Custom Demo Models")
+                              // }
+                            >
+                              <MdAddPhotoAlternate
+                                style={{ width: "35px", height: "35px" }}
+                              />
+                              <p>Add More Models</p>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ))}
                     {dummyData?.map((item, index) => (
                       <div className="VTO-card">
                         <div className="VTO-image-container">
@@ -770,30 +820,28 @@ const VirtualTryOn = (props) => {
                         </div>
                       </div>
                     ))}
-                    {Array.from({
-                      length: Math.max(0, 6 - dummyData?.length),
-                    }).map((item, index) => (
-                      <>
-                        <div className="VTO-card">
-                          <div className="VTO-image-container">
-                            <img
-                              className="VTO-model--image"
-                              loading="lazy"
-                              src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/white_image.png"
-                              alt="models_images"
-                              // style={{ visibility: "hidden"}}
-                              // onClick={() => changeModalOnModelClick(index)}
-                            />
-                            <div className="add-icon-div" onClick={(e) => handleCustomModels(e,"Custom Demo Models")}>
-                              <MdAddPhotoAlternate
-                                style={{ width: "35px", height: "35px" }}
+                    {dummyData?.length < 3 &&
+                      Array.from({
+                        length: Math.max(
+                          2,
+                          Math.min(3, dummyData?.length || 0)
+                        ),
+                      }).map((item, index) => (
+                        <>
+                          <div className="VTO-card">
+                            <div className="VTO-image-container">
+                              <img
+                                className="VTO-model--image"
+                                loading="lazy"
+                                src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/white_image.png"
+                                alt="models_images"
+                                style={{ visibility: "hidden" }}
+                                // onClick={() => changeModalOnModelClick(index)}
                               />
-                              <p>Add More Models</p>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    ))}
+                        </>
+                      ))}
                   </>
                 )}
               </div>
