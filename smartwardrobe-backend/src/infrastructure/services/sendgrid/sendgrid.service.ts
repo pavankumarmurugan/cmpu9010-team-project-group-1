@@ -56,4 +56,34 @@ export class EmailService implements OnModuleInit {
       );
     }
   }
+
+  async sendInvitationForChat(
+    friendEmail: string,
+    inviterName: string,
+  ): Promise<void> {
+    try {
+      const html = this.emailTemplateService.getEmailTemplateForChat({
+        inviterName,
+        joinUrl: this.joinUrl,
+      });
+
+      const msg = {
+        to: friendEmail,
+        from: this.fromEmail,
+        subject: `${inviterName} wants to chat with you on SmartWardrobe!`,
+        html,
+      };
+
+      await sgMail.send(msg);
+      this.logger.log(`Invitation email sent successfully to ${friendEmail}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send invitation email to ${friendEmail}`,
+        error.response?.body || error,
+      );
+      throw new Error(
+        'Failed to send invitation email. Please try again later.',
+      );
+    }
+  }
 }

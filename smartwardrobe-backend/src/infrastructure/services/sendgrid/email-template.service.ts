@@ -87,4 +87,36 @@ export class EmailTemplateService {
       </html>
     `;
   }
+
+  public getEmailTemplateForChat({
+    inviterName,
+    joinUrl,
+  }: EmailTemplateProps): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 16px; background-color: #fafafa; font-family: 'Helvetica Neue', Arial, sans-serif;">
+          <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <p style="font-size: 16px; color: #1a1a1a; margin-bottom: 20px; line-height: 1.5;">Hi there,</p>
+            
+            <p style="font-size: 16px; color: #1a1a1a; margin-bottom: 24px; line-height: 1.5;">
+              Your friend <strong>${inviterName}</strong> has invited you to join them on <strong>SmartWardrobe</strong>, a clothing fashion website.
+            </p>
+            
+            <div style="text-align: center; margin: 32px 0;">
+              <a 
+                href="${joinUrl}" 
+                style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 24px; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">
+                Join Now
+              </a>
+            </div>           
+          </div>
+        </body>
+      </html>
+    `;
+  }
 }
