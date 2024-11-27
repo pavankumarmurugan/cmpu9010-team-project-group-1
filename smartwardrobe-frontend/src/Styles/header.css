@@ -426,3 +426,9 @@
 .p-menuitem .p-focus{
     background-color: black !important;
 }
+
+.headerbanner-main{
+    display: grid;
+    grid-template-columns: 1.4fr 1.2fr 1.4fr; 
+    height: 40px;
+}

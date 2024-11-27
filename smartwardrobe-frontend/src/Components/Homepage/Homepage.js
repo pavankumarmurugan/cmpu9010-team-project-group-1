@@ -9,7 +9,7 @@ import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
 import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { homeDataSuccess } from "../../redux/slices/HomeDataSlice";
+import { categoryValueSuccess, homeDataSuccess } from "../../redux/slices/HomeDataSlice";
 import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
 
 function Homepage() {
@@ -31,6 +31,10 @@ function Homepage() {
     if(firstlogin === null){
       localStorage.setItem("firstlogin", JSON.stringify(true));
     }
+    dispatch(categoryValueSuccess({ categoryValue: "" }));
+    localStorage.removeItem("categoryPaths");
+    localStorage.removeItem("headerSearchValueLocal");
+    localStorage.removeItem("scrollPosition");
     // getHomeData();
   }, []);
 

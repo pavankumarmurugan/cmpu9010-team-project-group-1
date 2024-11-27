@@ -12,12 +12,18 @@ import {
   Tooltip,
   tooltipClasses,
 } from "@mui/material";
-import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, {
+  baseUrl,
+} from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import RecentlyViewed from "../RecentlyViewed/RecentlyViewed";
 import Carousel from "react-multi-carousel";
-import { showToastInfo, showToastSuccess } from "../GenericToasters/GenericToasters";
+import {
+  showToastInfo,
+  showToastSuccess,
+} from "../GenericToasters/GenericToasters";
 import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
+import { MdAddPhotoAlternate } from "react-icons/md";
 
 const VirtualTryOn = (props) => {
   let token = localStorage.getItem("user")
@@ -35,7 +41,7 @@ const VirtualTryOn = (props) => {
   const [similarProductsData, setSimilarProductsData] = useState([]);
   const [personalizeModels, setPersonalizeModels] = useState(false);
   const [deletePersonalizeModels, setDeletePersonalizeModels] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState("");
   const [deleteButtonText, setDeleteButtonText] =
     useState("Delete Demo Models");
   const [userModels, setUserModels] = useState(0);
@@ -109,75 +115,93 @@ const VirtualTryOn = (props) => {
   const [customModels, setcustomModels] = useState([
     {
       modelImageName: "00279_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00279_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00279_00.jpg",
     },
     {
       modelImageName: "00491_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00491_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00491_00.jpg",
     },
     {
       modelImageName: "00548_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00548_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00548_00.jpg",
     },
     {
       modelImageName: "02732_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/02732_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/02732_00.jpg",
     },
     {
       modelImageName: "00373_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00373_00.jpg",
     },
     {
       modelImageName: "00814_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00814_00.jpg",
     },
     {
       modelImageName: "03085_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/03085_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/03085_00.jpg",
     },
     {
       modelImageName: "00071_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00071_00.jpg",
     },
     {
       modelImageName: "05576_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05576_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05576_00.jpg",
     },
     {
       modelImageName: "05941_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05941_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/05941_00.jpg",
     },
     {
       modelImageName: "06206_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/06206_00.jpg",
     },
     {
       modelImageName: "08137_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08137_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08137_00.jpg",
     },
     {
       modelImageName: "08151_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08151_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/08151_00.jpg",
     },
     {
       modelImageName: "09958_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/09958_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/09958_00.jpg",
     },
     {
       modelImageName: "10228_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/10228_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/10228_00.jpg",
     },
     {
       modelImageName: "01066_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/01066_00.jpg",
     },
     {
       modelImageName: "00035_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/00035_00.jpg",
     },
     {
       modelImageName: "11486_00",
-      modelImageUrl: "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/11486_00.jpg",
+      modelImageUrl:
+        "https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/11486_00.jpg",
     },
   ]);
   const responsive = {
@@ -264,7 +288,7 @@ const VirtualTryOn = (props) => {
       imageName: data,
     };
     setOpenLoader(true);
-    let dataForVTOModels = [ ];
+    let dataForVTOModels = [];
     if (token?.token) {
       const getLikedModels = await apiCall(
         "GET",
@@ -274,7 +298,7 @@ const VirtualTryOn = (props) => {
       );
       dataForVTOModels = dummyData;
       if (getLikedModels?.data?.length > 0) {
-        debugger
+        debugger;
         setApiData(getLikedModels?.data);
         setDummyData(getLikedModels?.data);
         setSelectedCustomModels(getLikedModels?.data);
@@ -288,7 +312,7 @@ const VirtualTryOn = (props) => {
         //   setDeletePersonalizeModels(true);
         // });
       }
-    }else{
+    } else {
       dataForVTOModels = duplicateDummyData;
     }
 
@@ -339,42 +363,61 @@ const VirtualTryOn = (props) => {
 
     if (e.target.checked) {
       setSelectedCustomModels([...selectedCustomModels, item]);
-      setSelectedModelsUpdate([ ...selectedModelsUpdate , item]);
+      setSelectedModelsUpdate([...selectedModelsUpdate, item]);
     } else {
-      console.log(dummyData)
-      console.log(apiData)
-      setSelectedCustomModels(selectedCustomModels.filter((x) => x.modelImageName !== item?.modelImageName));
-      setUserModels(userModels - 1);
-      let dataCorrection = selectedCustomModels?.map(model => {
-        const updatedModel = dummyData?.find(data => data?.modelImageName === model?.modelImageName);
-        return updatedModel ? updatedModel : model;
-    });
-      let createDataForDeleteModel = apiData.filter(x => x.modelImageName === item?.modelImageName);
-      setOpenLoader(true);
-      if(createDataForDeleteModel[0]?.id){
-      const deleteModel = await apiCall(
-        "DELETE",
-        `${baseUrl}/user-liked-models/delete/${createDataForDeleteModel[0]?.id}`,
-        null,
-        token?.token
+      console.log(dummyData);
+      console.log(apiData);
+      setSelectedCustomModels(
+        selectedCustomModels.filter(
+          (x) => x.modelImageName !== item?.modelImageName
+        )
       );
-      if(deleteModel?.message === "SUCCESSFULLY DELETED USER LIKED MODEL"){
-        console.log(deleteModel);
-        debugger
-        setSelectedModelsUpdate(selectedModelsUpdate.filter(x => x.modelImageName !== createDataForDeleteModel[0]?.modelImageName));
-        setDummyData(selectedCustomModels.filter(x => x.modelImageName !== createDataForDeleteModel[0]?.modelImageName));
-      } }
+      setUserModels(userModels - 1);
+      let dataCorrection = selectedCustomModels?.map((model) => {
+        const updatedModel = dummyData?.find(
+          (data) => data?.modelImageName === model?.modelImageName
+        );
+        return updatedModel ? updatedModel : model;
+      });
+      let createDataForDeleteModel = apiData.filter(
+        (x) => x.modelImageName === item?.modelImageName
+      );
+      setOpenLoader(true);
+      if (createDataForDeleteModel[0]?.id) {
+        const deleteModel = await apiCall(
+          "DELETE",
+          `${baseUrl}/user-liked-models/delete/${createDataForDeleteModel[0]?.id}`,
+          null,
+          token?.token
+        );
+        if (deleteModel?.message === "SUCCESSFULLY DELETED USER LIKED MODEL") {
+          console.log(deleteModel);
+          debugger;
+          setSelectedModelsUpdate(
+            selectedModelsUpdate.filter(
+              (x) =>
+                x.modelImageName !== createDataForDeleteModel[0]?.modelImageName
+            )
+          );
+          setDummyData(
+            selectedCustomModels.filter(
+              (x) =>
+                x.modelImageName !== createDataForDeleteModel[0]?.modelImageName
+            )
+          );
+        }
+      }
 
       setOpenLoader(false);
     }
   };
 
-  const handleCustomModels = async (e) => {
+  const handleCustomModels = async (e,fromImage) => {
     debugger;
     if (deleteButtonText === "Done") {
       return;
     }
-    if (e?.target?.innerHTML === "Custom Demo Models") {
+    if (e?.target?.innerHTML === "Custom Demo Models" || fromImage === "Custom Demo Models") {
       if (!token) {
         showToastInfo("Please login to add custom models");
         return;
@@ -382,15 +425,8 @@ const VirtualTryOn = (props) => {
       setPersonalizeModels(true);
     } else {
       if (selectedCustomModels?.length > 0) {
-        // if (userModels >= 6) {
-        //   showToastInfo(
-        //     "You already have selected 6 custom models, Delete some to add new ones"
-        //   );
-        //   setPersonalizeModels(false);
-        //   return;
-        // }
 
-        if(selectedCustomModels?.length === 0){
+        if (selectedCustomModels?.length === 0) {
           setPersonalizeModels(false);
           return;
         }
@@ -415,42 +451,30 @@ const VirtualTryOn = (props) => {
         const addCustomModels = await Promise.all(apiCalls);
         setOpenLoader(false);
         if (addCustomModels) {
-          console.log(apiData)
+          console.log(apiData);
           let dataforApiData = addCustomModels
-          .map(item => item?.data)
-          .filter(data => data !== undefined);
+            .map((item) => item?.data)
+            .filter((data) => data !== undefined);
           setApiData([...apiData, ...dataforApiData]);
           setPersonalizeModels(false);
           showToastSuccess("Custom models added successfully");
           let updatedData = addCustomModels.map((item) => item?.data);
-          // if(updatedData?.length > 0){
-            let dataCorrection = selectedCustomModels?.map(model => {
-              const updatedModel = updatedData?.find(data => data?.modelImageName === model?.modelImageName);
-              return updatedModel ? updatedModel : model;
+          let dataCorrection = selectedCustomModels?.map((model) => {
+            const updatedModel = updatedData?.find(
+              (data) => data?.modelImageName === model?.modelImageName
+            );
+            return updatedModel ? updatedModel : model;
           });
-          debugger
-            setDummyData(dataCorrection);
-            // createDataForVTOModels = dataCorrection;
-          // }
-
-
-
-          // if(selectedCustomModels?.length === 0 && addCustomModels?.length === 0){
-          //   setDummyData(duplicateDummyData);
-          //   setSelectedModelsUpdate([]);
-          // }else{
-          //   setDummyData([...selectedCustomModels, ...updatedData]);
-          //   setSelectedCustomModels([...dummyData, ...updatedData]);
-          //   setSelectedModelsUpdate([]);
-          // }
-          console.log(selectedCustomModels)
-
-          
+          debugger;
+          setDummyData(dataCorrection);
+          console.log(selectedCustomModels);
 
           selectedCustomModels?.map((item) => {
-            createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
+            createDataForVTOModels.modelImageName.push(
+              item?.modelImageName + ".jpg"
+            );
           });
-      
+
           const getModelsAccordingTOImage = await apiCall(
             "POST",
             `${baseUrl}/vto-image-search/get-all-v2`,
@@ -463,7 +487,7 @@ const VirtualTryOn = (props) => {
           }
         }
       } else {
-        debugger
+        debugger;
         setDummyData(duplicateDummyData);
         setPersonalizeModels(false);
         let createDataForVTOModels = {
@@ -471,9 +495,11 @@ const VirtualTryOn = (props) => {
           imageName: selectedProduct,
         };
         duplicateDummyData?.map((item) => {
-          createDataForVTOModels.modelImageName.push(item?.modelImageName + ".jpg");
+          createDataForVTOModels.modelImageName.push(
+            item?.modelImageName + ".jpg"
+          );
         });
-    
+
         const getModelsAccordingTOImage = await apiCall(
           "POST",
           `${baseUrl}/vto-image-search/get-all-v2`,
@@ -521,7 +547,7 @@ const VirtualTryOn = (props) => {
         let filterDummyData = dummyData.filter(
           (item) => !selectedCustomModels.includes(item)
         );
-        debugger
+        debugger;
         setDummyData(filterDummyData);
         setSelectedCustomModels([]);
       }
@@ -538,7 +564,7 @@ const VirtualTryOn = (props) => {
       productId: similarProductsClick?.id
         ? similarProductsClick?.id
         : DataClicked?.id,
-        productSize: "S",
+      productSize: "S",
     };
     if (e === "add") {
       setOpenLoader(true);
@@ -635,7 +661,7 @@ const VirtualTryOn = (props) => {
           </h1>
           <div className="Models-separation-div">
             <div className="model-result">
-              {showHideWishlist ? (
+              {/* {showHideWishlist ? (
                 <FavoriteBorderIcon
                   className="hover-icon"
                   sx={{
@@ -669,7 +695,7 @@ const VirtualTryOn = (props) => {
                   }}
                   onClick={() => handleWishlist("remove")}
                 />
-              )}
+              )} */}
               <button
                 className="Select-Custom-Model-button"
                 onClick={handleCustomModels}
@@ -711,7 +737,10 @@ const VirtualTryOn = (props) => {
                             onClick={(e) =>
                               handleSelectCustomModelCheckbox(e, item)
                             }
-                            defaultChecked={selectedCustomModels?.some(data => data.modelImageName === item.modelImageName)}
+                            defaultChecked={selectedCustomModels?.some(
+                              (data) =>
+                                data.modelImageName === item.modelImageName
+                            )}
                           />
                         </div>
                       </div>
@@ -741,6 +770,30 @@ const VirtualTryOn = (props) => {
                         </div>
                       </div>
                     ))}
+                    {Array.from({
+                      length: Math.max(0, 6 - dummyData?.length),
+                    }).map((item, index) => (
+                      <>
+                        <div className="VTO-card">
+                          <div className="VTO-image-container">
+                            <img
+                              className="VTO-model--image"
+                              loading="lazy"
+                              src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/white_image.png"
+                              alt="models_images"
+                              // style={{ visibility: "hidden"}}
+                              // onClick={() => changeModalOnModelClick(index)}
+                            />
+                            <div className="add-icon-div" onClick={(e) => handleCustomModels(e,"Custom Demo Models")}>
+                              <MdAddPhotoAlternate
+                                style={{ width: "35px", height: "35px" }}
+                              />
+                              <p>Add More Models</p>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ))}
                   </>
                 )}
               </div>
@@ -760,12 +813,12 @@ const VirtualTryOn = (props) => {
                         />
                         {deleteButtonText === "Done" && (
                           <input
-                          type="checkbox"
-                          className="custom-model-checkbox-mobile"
-                          onClick={(e) =>
-                            handleSelectCustomModelCheckbox(e, item)
-                          }
-                        />
+                            type="checkbox"
+                            className="custom-model-checkbox-mobile"
+                            onClick={(e) =>
+                              handleSelectCustomModelCheckbox(e, item)
+                            }
+                          />
                         )}
                       </div>
                     ))}

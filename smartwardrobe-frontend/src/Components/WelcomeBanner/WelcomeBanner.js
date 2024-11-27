@@ -1,5 +1,5 @@
 import { Button, Modal, Progress } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import "../../Styles/WelcomeBanner.css";
 import video3 from "../../Assets/video3.mp4";
@@ -51,6 +51,23 @@ const WelcomeBanner = (props) => {
       setProgressPercentage(progressPercentage + 25);
     }
   };
+
+  useEffect(() => {
+    debugger;
+
+    if(props?.bannerclickvalue){
+      if(props?.bannerclickvalue === 1){
+        setProgressPercentage(25);
+      }
+      if(props?.bannerclickvalue === 2){
+        setProgressPercentage(50);
+      }
+      if(props?.bannerclickvalue === 3){
+        setProgressPercentage(75);
+      }
+    }
+
+  },[])
 
   return (
     <>

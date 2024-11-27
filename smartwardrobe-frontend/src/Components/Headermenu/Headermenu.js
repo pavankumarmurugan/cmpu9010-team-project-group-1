@@ -44,6 +44,7 @@ import ChatComponent from "../ChatComponent/ChatComponent";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import {
   addToCartValueSuccess,
+  categoryDataRouteSuccess,
   categoryValueSuccess,
   headerSearchValue,
   headerSearchValueSuccess,
@@ -61,6 +62,7 @@ import { FaSearch } from "react-icons/fa";
 import Homelogo2 from "../../Assets/Homelogo2.png";
 import Marquee from "react-fast-marquee";
 import { GoDotFill } from "react-icons/go";
+import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
 
 const backendUrl =
   "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
@@ -79,11 +81,18 @@ function Headermenu() {
   let groups = localStorage.getItem("groupIds")
     ? JSON.parse(localStorage.getItem("groupIds"))
     : null;
+    let categoryPaths = localStorage.getItem("categoryPaths")
+    ? JSON.parse(localStorage.getItem("categoryPaths"))
+    : null;
+    let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
+    ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
+    : null;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [login, setlogin] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
   const [openTrending, setOpenTrending] = useState(false);
   const [openWomen, setOpenWomen] = useState(false);
   const [openMen, setOpenMen] = useState(false);
@@ -120,6 +129,7 @@ function Headermenu() {
   const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
   const wishListValue = useSelector((state) => state.homeData.wishListValue);
   const cartValue = useSelector((state) => state.homeData.cartValue);
+  // const categoryPaths = useSelector((state) => state.homeData.categoryPaths);
   const [file, setFile] = useState(null);
   {
     /*  Use State*/
@@ -384,7 +394,7 @@ function Headermenu() {
     debugger;
     let value = item;
     dispatch(categoryValueSuccess({ categoryValue: value }));
-    setOpen(false)
+    setOpen(false);
     if (location?.pathname !== "/products") {
       navigate("/products");
     }
@@ -479,7 +489,9 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Crop top and skirt")}
+                  onClick={() =>
+                    handleItemClick("Ladieswear//Crop top and skirt")
+                  }
                 >
                   <ListItemText primary="Crop top and skirt" />
                 </ListItem>
@@ -521,7 +533,9 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Outdoor trousers")}
+                  onClick={() =>
+                    handleItemClick("Ladieswear//Outdoor trousers")
+                  }
                 >
                   <ListItemText primary="Outdoor trousers" />
                 </ListItem>
@@ -555,7 +569,7 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-            
+
             <ListItem
               button
               className="submenu-item footwear-submenu"
@@ -576,14 +590,18 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Outdoor Waistcoat")}
+                  onClick={() =>
+                    handleItemClick("Ladieswear//Outdoor Waistcoat")
+                  }
                 >
                   <ListItemText primary="Waistcoat" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Outdoor trousers")}
+                  onClick={() =>
+                    handleItemClick("Ladieswear//Outdoor trousers")
+                  }
                 >
                   <ListItemText primary="Trousers" />
                 </ListItem>
@@ -706,8 +724,6 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-
-
           </List>
         </Collapse>
 
@@ -815,7 +831,7 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-            
+
             <ListItem
               button
               className="submenu-item footwear-submenu"
@@ -959,8 +975,6 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-
-
           </List>
         </Collapse>
 
@@ -1062,7 +1076,9 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Outdoor trousers")}
+                  onClick={() =>
+                    handleItemClick("Baby Children//Outdoor trousers")
+                  }
                 >
                   <ListItemText primary="Outdoor trousers" />
                 </ListItem>
@@ -1075,7 +1091,7 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-            
+
             <ListItem
               button
               className="submenu-item footwear-submenu"
@@ -1185,8 +1201,6 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-
-
           </List>
         </Collapse>
 
@@ -1287,11 +1301,9 @@ function Headermenu() {
                 </ListItem>
               </List>
             </Collapse>
-
           </List>
         </Collapse>
 
-        
         {/* <div className="menu-item">
           <div className="item" onClick={handlesetAccessories}>
             Accessories {openAccessories ? <MdExpandLess /> : <MdExpandMore />}
@@ -2219,8 +2231,11 @@ function Headermenu() {
       let data = {};
       data.searchValue = searchValue;
       data.file = file;
-      console.log(data)
+      console.log(data);
       dispatch(headerSearchValueSuccess({ headerSearchValue: data }));
+      let headerSearchValueLocalArray = [];
+      headerSearchValueLocalArray.push(data.searchValue);
+      localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
       navigate("/products");
     }
     // if (file !== null) {
@@ -2243,14 +2258,35 @@ function Headermenu() {
     console.log(e);
   };
 
+  function createSlug(str) {
+    return str
+      .toLowerCase()                     // Convert to lowercase
+      .replace(/[^a-z0-9\s-]/g, '')       // Remove special characters
+      .replace(/\s+/g, '-')               // Replace spaces with hyphens
+      .replace(/-+/g, '-');               // Replace multiple hyphens with a single hyphen
+  }
+
   const handleDropdownClick = (e) => {
     debugger;
     console.log("Selected value:", e);
     let value = e?.item?.key;
-    dispatch(categoryValueSuccess({ categoryValue: value }));
-    if (location?.pathname !== "/products") {
-      navigate("/products");
+    const slug = createSlug(value);
+    let catpath = [];
+    if(categoryPaths?.length > 0){
+      catpath = [...categoryPaths, value];
+    }else{
+      catpath = [value];
     }
+    localStorage.setItem("categoryPaths", JSON.stringify(catpath));
+    // dispatch(categoryDataRouteSuccess({ categoryPaths: catpath }));
+    // dispatch(categoryValueSuccess({ categoryValue: value }));
+    // if (!location?.pathname.includes('/products/')) {
+      // navigate("/products");
+      navigate(`/products/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+    // }
   };
 
   const handleChatComponent = () => {
@@ -2385,8 +2421,8 @@ function Headermenu() {
   };
 
   const removeImage = () => {
-    setFile(null)
-  }
+    setFile(null);
+  };
 
   const handleSearchShow = () => {
     debugger;
@@ -2399,6 +2435,7 @@ function Headermenu() {
   };
 
   const inputRefFile = useRef(null);
+  const bannerclickvalue = useRef(0);
 
   const handleButtonClick = () => {
     debugger;
@@ -2406,9 +2443,27 @@ function Headermenu() {
       inputRefFile.current.click(); // Trigger file input click
     }
   };
+  const hanldeBannerClick = (value) => {
+    debugger;
+    bannerclickvalue.current = value;
+    setShowBanner(true);
+  }
+
+  const handleCloseBanner = () => {
+    debugger;
+    setShowBanner(false);
+  }
 
   return (
     <>
+    {showBanner && (
+        <WelcomeBanner
+          isShowModel={showBanner}
+          closeModal={handleCloseBanner}
+          bannerclickvalue={bannerclickvalue.current}
+        />
+      )}
+      
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
@@ -2478,184 +2533,71 @@ function Headermenu() {
           <h3 style={contentStyle}>Customization option</h3>
         </div>
       </Carousel> */}
-
-      <Marquee
-        pauseOnHover
-        gradient={false}
-        style={{ height: "40px", backgroundColor: "black", color: "white" }}
-      >
-        <div style={{ display: "flex", gap: "0px", minWidth: "100%" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Virtual Try-On Using Preset Models & Its Customizations
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Collaborative Chat & Share Products
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Image Search
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Natural Language Search & Predictive Search
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          {/* Duplicate content for seamless transition */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Virtual Try-On Using Preset Models & Its Customizations
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Collaborative Chat & Share Products
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Image Search
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <GoDotFill />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0 40px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Natural Language Search & Predictive Search
-          </div>
+      <div className="headerbanner-main">
+        <div
+          style={{
+            // display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            padding: "5px 40px 0px 40px",
+            whiteSpace: "nowrap",
+            backgroundColor: "black",
+            color: "white",
+            cursor:"pointer"
+          }}
+          onClick={() => hanldeBannerClick(1)}
+        >
+          <p> Virtual Try-On </p>{" "}
+          <p> Using Preset Models & Its Customizations</p>
         </div>
-      </Marquee>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            padding: "0 40px",
+            whiteSpace: "nowrap",
+            backgroundColor: "gray",
+            color: "white",
+            cursor:"pointer"
+          }}
+          onClick={() => hanldeBannerClick(2)}
+        >
+          Collaborative Chat & Share Products
+        </div>
+        <div
+          style={{
+            // display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            padding: "5px 40px 0px 40px",
+            whiteSpace: "nowrap",
+            backgroundColor: "black",
+            color: "white",
+            cursor:"pointer"
+          }}
+          onClick={() => hanldeBannerClick(3)}
+        >
+          <p>Image Search</p>{" "}
+          <p> Natural Language Search & Predictive Search</p>
+        </div>
+        {/* <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              whiteSpace: "nowrap",
+              backgroundColor:"gray",
+              color:"white"
+            }}
+          >
+            Natural Language Search & Predictive Search
+          </div> */}
+      </div>
 
       <div className="header-main">
         <div className="header-conatiner page-width">
@@ -2744,147 +2686,162 @@ function Headermenu() {
             <div className="header-icons">
               {searchShow ? (
                 <>
-                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                  <InputLabel
-                    sx={{
-                      lineHeight: "1rem",
-                      color: "white",
-                      "&.Mui-focused": {
+                  <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                    <InputLabel
+                      sx={{
+                        lineHeight: "1rem",
                         color: "white",
-                        fontSize: "18px",
-                      },
-                    }}
-                    htmlFor="outlined-adornment-password"
-                  >
-                    Search
-                  </InputLabel>
-                  <OutlinedInput
-                    label="outlined-Input"
-                    type={"text"}
-                    style={{ color: "white" }}
-                    placeholder="Search"
-                    value={searchValue}
-                    onChange={onChangeSearchValue}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleSearchOnBlur}
-                    autoComplete="off"
-                    autoFocus={true}
-                    startAdornment={
-                      file && (
-                        <InputAdornment
-                          position="start"
-                          sx={{ mr: 1, display: "flex", alignItems: "center" }}
-                        >
-                          <div
-                            style={{
-                              position: "relative",
+                        "&.Mui-focused": {
+                          color: "white",
+                          fontSize: "18px",
+                        },
+                      }}
+                      htmlFor="outlined-adornment-password"
+                    >
+                      Search
+                    </InputLabel>
+                    <OutlinedInput
+                      label="outlined-Input"
+                      type={"text"}
+                      style={{ color: "white" }}
+                      placeholder="Search"
+                      value={searchValue}
+                      onChange={onChangeSearchValue}
+                      onKeyDown={handleKeyDown}
+                      onBlur={handleSearchOnBlur}
+                      autoComplete="off"
+                      autoFocus={true}
+                      startAdornment={
+                        file && (
+                          <InputAdornment
+                            position="start"
+                            sx={{
+                              mr: 1,
                               display: "flex",
                               alignItems: "center",
-                              cursor: "pointer", // Make sure the entire area is interactive
                             }}
-                            className="thumbnail-container" // Add a class for styling hover
                           >
-                            {/* Thumbnail Image */}
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt="Uploaded preview"
+                            <div
                               style={{
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "5px",
-                                marginRight: "8px",
+                                position: "relative",
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer", // Make sure the entire area is interactive
                               }}
-                              className="thumbnail-image"
-                            />
-  
-                            <IconButton
-                              onClick={removeImage}
-                              size="small"
-                              sx={{
-                                position: "absolute",
-                                top: "-8px",
-                                right: "-8px",
-                                backgroundColor: "white",
-                                boxShadow: 1,
-                                "&:hover": { backgroundColor: "#f0f0f0" },
-                              }}
+                              className="thumbnail-container" // Add a class for styling hover
                             >
-                              <IoCloseCircleOutline fontSize="small" />
-                            </IconButton>
-                          </div>
-                        </InputAdornment>
-                      )
-                    }
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <Button
-                          onClick={handleButtonClick}
-                          variant="outlined"
-                          style={{
-                            border: "none",
-                            borderRadius: "50%",
-                            backgroundColor: "transparent",
-                            color: "white",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <SvgIcon>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                              {/* Thumbnail Image */}
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt="Uploaded preview"
+                                style={{
+                                  width: "30px",
+                                  height: "30px",
+                                  borderRadius: "5px",
+                                  marginRight: "8px",
+                                }}
+                                className="thumbnail-image"
                               />
-                            </svg>
-                          </SvgIcon>
-                          {/* Hidden file input */}
-                          <input
-                            ref={inputRefFile}
-                            type="file"
-                            accept="image/*"
-                            onChange={imageUpload}
-                            style={{ display: "none" }}
-                            aria-label="Upload Image"
-                          />
-                        </Button>
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleSearch}
-                          edge="end"
-                        >
-                          <SearchIcon style={{ color: "white" }} />
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    sx={{
-                      height: 45,
-                      "& label": {
+
+                              <IconButton
+                                onClick={removeImage}
+                                size="small"
+                                sx={{
+                                  position: "absolute",
+                                  top: "-8px",
+                                  right: "-8px",
+                                  backgroundColor: "white",
+                                  boxShadow: 1,
+                                  "&:hover": { backgroundColor: "#f0f0f0" },
+                                }}
+                              >
+                                <IoCloseCircleOutline fontSize="small" />
+                              </IconButton>
+                            </div>
+                          </InputAdornment>
+                        )
+                      }
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <Button
+                            onClick={handleButtonClick}
+                            variant="outlined"
+                            style={{
+                              border: "none",
+                              borderRadius: "50%",
+                              backgroundColor: "transparent",
+                              color: "white",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <SvgIcon>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                                />
+                              </svg>
+                            </SvgIcon>
+                            {/* Hidden file input */}
+                            <input
+                              ref={inputRefFile}
+                              type="file"
+                              accept="image/*"
+                              onChange={imageUpload}
+                              style={{ display: "none" }}
+                              aria-label="Upload Image"
+                            />
+                          </Button>
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleSearch}
+                            edge="end"
+                          >
+                            <SearchIcon style={{ color: "white" }} />
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      sx={{
+                        height: 45,
+                        "& label": {
+                          color: "white",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "white",
+                          borderWidth: 2,
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "white",
+                          borderWidth: 2,
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "white",
+                          borderWidth: 2,
+                        },
+                      }}
+                    />
+                  </FormControl>
+                  <div
+                    onClick={() => setSearchShow(false)}
+                    style={{ display: "flex" }}
+                  >
+                    <IoMdClose
+                      style={{
+                        width: "25px",
+                        height: "25px",
                         color: "white",
-                      },
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
-                        borderWidth: 2,
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
-                        borderWidth: 2,
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
-                        borderWidth: 2,
-                      },
-                    }}
-                  />
-                </FormControl>
-                <div onClick={() => setSearchShow(false)} style={{display:"flex"}}>
-                <IoMdClose style={{width:"25px", height:"25px", color:"white", marginTop:"auto", marginBottom:"auto"}} />
-                </div>
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    />
+                  </div>
                 </>
               ) : (
                 <>
@@ -3031,144 +2988,144 @@ function Headermenu() {
             <></>
           ) : (
             <div className="mobile-search-input search-input-below-900px">
-             <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                  <InputLabel
-                    sx={{
-                      lineHeight: "1rem",
+              <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                <InputLabel
+                  sx={{
+                    lineHeight: "1rem",
+                    color: "white",
+                    "&.Mui-focused": {
                       color: "white",
-                      "&.Mui-focused": {
-                        color: "white",
-                        fontSize: "18px",
-                      },
-                    }}
-                    htmlFor="outlined-adornment-password"
-                  >
-                    Search
-                  </InputLabel>
-                  <OutlinedInput
-                    label="outlined-Input"
-                    type={"text"}
-                    style={{ color: "white" }}
-                    placeholder="Search"
-                    value={searchValue}
-                    onChange={onChangeSearchValue}
-                    onKeyDown={handleKeyDown}
-                    onBlur={handleSearchOnBlur}
-                    autoComplete="off"
-                    autoFocus={true}
-                    startAdornment={
-                      file && (
-                        <InputAdornment
-                          position="start"
-                          sx={{ mr: 1, display: "flex", alignItems: "center" }}
-                        >
-                          <div
-                            style={{
-                              position: "relative",
-                              display: "flex",
-                              alignItems: "center",
-                              cursor: "pointer", // Make sure the entire area is interactive
-                            }}
-                            className="thumbnail-container" // Add a class for styling hover
-                          >
-                            {/* Thumbnail Image */}
-                            <img
-                              src={URL.createObjectURL(file)}
-                              alt="Uploaded preview"
-                              style={{
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "5px",
-                                marginRight: "8px",
-                              }}
-                              className="thumbnail-image"
-                            />
-  
-                            <IconButton
-                              onClick={removeImage}
-                              size="small"
-                              sx={{
-                                position: "absolute",
-                                top: "-8px",
-                                right: "-8px",
-                                backgroundColor: "white",
-                                boxShadow: 1,
-                                "&:hover": { backgroundColor: "#f0f0f0" },
-                              }}
-                            >
-                              <IoCloseCircleOutline fontSize="small" />
-                            </IconButton>
-                          </div>
-                        </InputAdornment>
-                      )
-                    }
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <Button
-                          onClick={handleButtonClick}
-                          variant="outlined"
+                      fontSize: "18px",
+                    },
+                  }}
+                  htmlFor="outlined-adornment-password"
+                >
+                  Search
+                </InputLabel>
+                <OutlinedInput
+                  label="outlined-Input"
+                  type={"text"}
+                  style={{ color: "white" }}
+                  placeholder="Search"
+                  value={searchValue}
+                  onChange={onChangeSearchValue}
+                  onKeyDown={handleKeyDown}
+                  onBlur={handleSearchOnBlur}
+                  autoComplete="off"
+                  autoFocus={true}
+                  startAdornment={
+                    file && (
+                      <InputAdornment
+                        position="start"
+                        sx={{ mr: 1, display: "flex", alignItems: "center" }}
+                      >
+                        <div
                           style={{
-                            border: "none",
-                            borderRadius: "50%",
-                            backgroundColor: "transparent",
-                            color: "white",
-                            cursor: "pointer",
+                            position: "relative",
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer", // Make sure the entire area is interactive
                           }}
+                          className="thumbnail-container" // Add a class for styling hover
                         >
-                          <SvgIcon>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                              />
-                            </svg>
-                          </SvgIcon>
-                          {/* Hidden file input */}
-                          <input
-                            ref={inputRefFile}
-                            type="file"
-                            accept="image/*"
-                            onChange={imageUpload}
-                            style={{ display: "none" }}
-                            aria-label="Upload Image"
+                          {/* Thumbnail Image */}
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt="Uploaded preview"
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              borderRadius: "5px",
+                              marginRight: "8px",
+                            }}
+                            className="thumbnail-image"
                           />
-                        </Button>
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleSearch}
-                          edge="end"
-                        >
-                          <SearchIcon style={{ color: "white" }} />
-                        </IconButton>
+
+                          <IconButton
+                            onClick={removeImage}
+                            size="small"
+                            sx={{
+                              position: "absolute",
+                              top: "-8px",
+                              right: "-8px",
+                              backgroundColor: "white",
+                              boxShadow: 1,
+                              "&:hover": { backgroundColor: "#f0f0f0" },
+                            }}
+                          >
+                            <IoCloseCircleOutline fontSize="small" />
+                          </IconButton>
+                        </div>
                       </InputAdornment>
-                    }
-                    sx={{
-                      height: 45,
-                      "& label": {
-                        color: "white",
-                      },
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
-                        borderWidth: 2,
-                      },
-                      "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
-                        borderWidth: 2,
-                      },
-                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: "white",
-                        borderWidth: 2,
-                      },
-                    }}
-                  />
-                </FormControl>
+                    )
+                  }
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <Button
+                        onClick={handleButtonClick}
+                        variant="outlined"
+                        style={{
+                          border: "none",
+                          borderRadius: "50%",
+                          backgroundColor: "transparent",
+                          color: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <SvgIcon>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                            />
+                          </svg>
+                        </SvgIcon>
+                        {/* Hidden file input */}
+                        <input
+                          ref={inputRefFile}
+                          type="file"
+                          accept="image/*"
+                          onChange={imageUpload}
+                          style={{ display: "none" }}
+                          aria-label="Upload Image"
+                        />
+                      </Button>
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleSearch}
+                        edge="end"
+                      >
+                        <SearchIcon style={{ color: "white" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  sx={{
+                    height: 45,
+                    "& label": {
+                      color: "white",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                  }}
+                />
+              </FormControl>
             </div>
           )}
           {/* Header Dropdowns */}

@@ -252,14 +252,20 @@ function HomeShoppingCollection() {
   const handleSplitter = (item) => {
     debugger;
     console.log("Splitter clicked", item);
-    dispatch(headerSearchValueSuccess({ headerSearchValue: item?.title }));
+    // dispatch(headerSearchValueSuccess({ headerSearchValue: item?.title }));
+    let itemData = [];
+    itemData.push(item?.title);
+    localStorage.setItem("headerSearchValueLocal", JSON.stringify(itemData));
     navigate("/products");
   };
 
   const handleSliderClick = (item) => {
     debugger;
     console.log("Splitter clicked", item);
-    dispatch(headerSearchValueSuccess({ headerSearchValue: item }));
+    // dispatch(headerSearchValueSuccess({ headerSearchValue: item }));
+    let itemData = [];
+    itemData.push(item);
+    localStorage.setItem("headerSearchValueLocal", JSON.stringify(itemData));
     navigate("/products");
   };
 

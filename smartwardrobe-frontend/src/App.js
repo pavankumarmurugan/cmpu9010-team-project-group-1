@@ -9,6 +9,7 @@ import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import WishListComponent from "./Components/WishListComponent/WishListComponent";
+import CategoryComponent from "./Components/CategoryComponent/CategoryComponent";
 // import { io, Socket } from "socket.io-client";
 // import apiCall from "./Components/GenericApiCallFunctions/GenericApiCallFunctions";
 // import { showToastInfo } from "./Components/GenericToasters/GenericToasters";
@@ -135,6 +136,7 @@ function App() {
             {/* <Route path="/" element={<Headermenu />} /> */}
             <Route path="/" element={<Homepage />} />
             <Route path="/products" element={<ProductPage />} />
+            <Route path="/products/:category" element={<CategoryComponent />} />
             <Route path="/productdetails/:id" element={<ProductDetails />} />
             <Route path="/wishlist" element={<WishListComponent />} />
           </Routes>
