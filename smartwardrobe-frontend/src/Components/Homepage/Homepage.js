@@ -35,6 +35,8 @@ function Homepage() {
     localStorage.removeItem("categoryPaths");
     localStorage.removeItem("headerSearchValueLocal");
     localStorage.removeItem("scrollPosition");
+    localStorage.removeItem("route");
+    localStorage.setItem("paginationLocal", JSON.stringify(1));
     // getHomeData();
   }, []);
 

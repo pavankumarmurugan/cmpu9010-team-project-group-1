@@ -21,6 +21,7 @@ import {
 // import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
 // import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import {
+  BackButtonHandler,
   filterDataAccordingToUser,
   handleImageUpload,
   Productfilterdropdowns,
@@ -52,6 +53,9 @@ const ProductPage = () => {
     : null;
     let savedScrollPosition = localStorage.getItem("scrollPosition")
     ? JSON.parse(localStorage.getItem("scrollPosition"))
+    : null;
+    let paginationLocal = localStorage.getItem("paginationLocal")
+    ? JSON.parse(localStorage.getItem("paginationLocal"))
     : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
@@ -297,14 +301,24 @@ const ProductPage = () => {
     if(headerSearchValueLocal?.length > 0){
       header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
     }
-    if (header || headerSearchValue?.file) {
-      if(headerSearchValue?.file){
-        setFile(headerSearchValue?.file)
-        setFormData((prevState) => ({
-          ...prevState,
-          ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
-          searchValue: header,
-        }));
+    if (header || headerSearchValue || headerSearchValue?.file) {
+      if(headerSearchValue?.file || headerSearchValue?.type){
+        if(headerSearchValue?.type){
+          setFile(headerSearchValue)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue),
+            searchValue: header,
+          }));
+        }else{
+          setFile(headerSearchValue?.file)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
+            searchValue: header,
+          }));
+        }
+        
       }else{
         setFormData((prevState) => ({
           ...prevState,
@@ -318,7 +332,7 @@ const ProductPage = () => {
       // setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `${baseUrl}/product/get-all/${pagination?.current}/100`,
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
         null,
         token?.token
       );
@@ -368,10 +382,11 @@ const ProductPage = () => {
     handleSearch(query);
   };
 
-  const handleSearch = async (event) => {
+  const handleSearch = async (event,fromKeyDown) => {
     debugger;
+    console.log(location.pathname)
     let searchValue = event === null ? formData?.searchValue : event;
-    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file) {
+    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type) {
       // event.preventDefault();
       const formData = new FormData();
       if (file) {
@@ -380,17 +395,30 @@ const ProductPage = () => {
       if(headerSearchValue?.file){
         formData.append("file", headerSearchValue?.file);
         formData.append("query", headerSearchValueLocal);
-      }else{
+      }else if(headerSearchValue?.type){
+        formData.append("file", headerSearchValue);
+        formData.append("query", headerSearchValueLocal);
+      } else{
         formData.append("query", searchValue?.searchValue || searchValue);
       }
       try {
-        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue }));
+        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue || file }));
         // let headerSearchValueLocalArray = [...headerSearchValueLocal, searchValue];
         // headerSearchValueLocal.push(searchValue) //osama
         // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
         setOpenLoader(true);
+        // https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search/get-all-similar-products-to-image/1/50
+        let pag = 1;
+        if(fromKeyDown === "fromKeyDown"){
+          pag = 1
+        }else if(paginationLocal > 1){
+          pag = paginationLocal
+        }else{
+          pag = imagePagination?.current;
+        }
+        
         const response = await fetch(
-         `${baseUrl}/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
+         `${baseUrl}/search/get-all-similar-products-to-image/1/${pag * 50}`,
           {
             method: "POST",
             headers: {
@@ -411,25 +439,36 @@ const ProductPage = () => {
         if (result?.data?.expectedQueries?.length > 0) {
           setInputSuggestions(result?.data?.expectedQueries);
         }
-        if (imagePagination?.current === 1) {
+        // if (imagePagination?.current === 1) {
+        // if (fromKeyDown === "fromKeyDown") {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
-        } else {
-          setProducts((prevProducts) => [
-            ...prevProducts,
-            ...result?.data?.products,
-          ]);
-          setProductsDataForFilter((prevProducts) => [
-            ...prevProducts,
-            ...result?.data?.products,
-          ]);
-        }
+        // } 
+        // else {
+        //   setProducts((prevProducts) => [
+        //     ...prevProducts,
+        //     ...result?.data?.products,
+        //   ]);
+        //   setProductsDataForFilter((prevProducts) => [
+        //     ...prevProducts,
+        //     ...result?.data?.products,
+        //   ]);
+        // }
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
         let headerSearchValueLocalArray = [];
-        headerSearchValueLocalArray.push(searchValue);
-        localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
+        if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
+          // headerSearchValueLocalArray = headerSearchValueLocal;
+          headerSearchValueLocalArray.push(searchValue);
+          localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
+        }
+        // else{
+        //   if(headerSearchValueLocal?.length > 1){
+        //     headerSearchValueLocal.pop();
+        //     localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
+        //   }
+        // }
         setTimeout(() => {
           if (savedScrollPosition) {
             window.scrollTo(0, savedScrollPosition); 
@@ -478,6 +517,7 @@ const ProductPage = () => {
     debugger;
     if (file || formData?.searchValue || headerSearchValueLocal) {
       imagePagination.current = imagePagination.current + 1;
+      localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
       handleSearch(null);
     } else {
       pagination.current = pagination.current + 1;
@@ -493,18 +533,20 @@ const ProductPage = () => {
     }));
     dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
     // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
-    localStorage.removeItem("headerSearchValueLocal");
+    
   };
 
   const handleKeyDown = async (e) => {
     debugger
     if (e.key === "Enter") {
+      localStorage.setItem("paginationLocal", JSON.stringify(1));
+      localStorage.removeItem("headerSearchValueLocal");
       if(e?.target?.value === "" && file === null){
         pagination.current = 1;
         setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `${baseUrl}/product/get-all/${pagination?.current}/100`,
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
         null,
         token?.token
       );
@@ -516,7 +558,7 @@ const ProductPage = () => {
         dispatch(homeDataSuccess({ homeData: response?.data }));
       }
       }else{
-        handleSearch(null);
+        handleSearch(null,"fromKeyDown");
       }
     }
   };

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Headermenu from "../Headermenu/Headermenu";
 import "../../Styles/ProductPage.css";
 import SearchIcon from "@mui/icons-material/Search";
@@ -21,6 +21,7 @@ import {
 // import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
 // import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import {
+  BackButtonHandler,
   filterDataAccordingToUser,
   handleImageUpload,
   Productfilterdropdowns,
@@ -37,31 +38,28 @@ import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoa
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    categoryDataRouteSuccess,
-    categoryValueSuccess,
   headerSearchValueSuccess,
   homeDataSuccess,
 } from "../../redux/slices/HomeDataSlice";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
 
-const CategoryComponent = () => {
+const SearchComponent = () => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
-    : null;
-  let categoryPaths = localStorage.getItem("categoryPaths")
-    ? JSON.parse(localStorage.getItem("categoryPaths"))
-    : null;
-  let savedScrollPosition = localStorage.getItem("scrollPosition")
-    ? JSON.parse(localStorage.getItem("scrollPosition"))
     : null;
     let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
     ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
     : null;
+    let savedScrollPosition = localStorage.getItem("scrollPosition")
+    ? JSON.parse(localStorage.getItem("scrollPosition"))
+    : null;
+    let paginationLocal = localStorage.getItem("paginationLocal")
+    ? JSON.parse(localStorage.getItem("paginationLocal"))
+    : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
   const location = useLocation();
-  const navigate = useNavigate();
   let { state } = location;
   // let pagination = 1;
   // let imagePagination = 1;
@@ -69,9 +67,6 @@ const CategoryComponent = () => {
   const imagePagination = useRef(1);
   const homeData = useSelector((state) => state.homeData.homeData);
   const categoryValue = useSelector((state) => state.homeData.categoryValue);
-//   const categoryPaths = useSelector((state) => state.homeData.categoryPaths);
-  console.log(categoryValue)
-  console.log(categoryPaths)
   const headerSearchValue = useSelector(
     (state) => state.homeData.headerSearchValue
   );
@@ -223,6 +218,8 @@ const CategoryComponent = () => {
   }, [categoryValue]);
 
   useEffect(() => {
+    debugger
+    console.log(window.location.pathname);
     return () => {
       // state.searchValue = null;
       pagination.current = 1;
@@ -238,88 +235,104 @@ const CategoryComponent = () => {
         toPrice: "",
         Colour: [],
       });
+      // if(window.location.pathname === "/products"){
+      //   localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
+      // }
     };
   }, []);
 
-  
+  // const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  //   const previousPathRef = useRef(null); // Ref to track the previous path
 
-  useEffect(() => {
-    debugger
-    const handlePopState = () => {
-        categoryPaths.pop()
-        localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
-        setTimeout(() => {
-            window.location.reload();
-          }, 1);
-    };
+  //   useEffect(() => {
+  //       debugger
+  //       const handlePopState = () => {
+  //           const newPath = window.location.pathname;
 
-    window.onpopstate = handlePopState;
+  //           // Log paths
+  //           console.log("Navigated from:", previousPathRef.current);
+  //           console.log("Navigated to:", newPath);
 
-    return () => {
-      // Clean up the event listener when the component unmounts
-      window.onpopstate = null;
-    };
-  }, []);
+  //           if(previousPathRef.current.includes("/products") && !previousPathRef.current.includes("/products/") ){
+  //               localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
+  //           }
+
+  //           // Update previous and current paths
+  //           previousPathRef.current = currentPath;
+  //           setCurrentPath(newPath);
+  //       };
+
+  //       window.addEventListener('popstate', handlePopState);
+
+  //       return () => {
+  //           window.removeEventListener('popstate', handlePopState);
+  //       };
+  //   }, [currentPath]);
+
 
   const getProductsData = async () => {
     debugger;
-console.log(categoryPaths,"categoryPaths");
-let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 1] : "";
-    if(category){
-      let splitValue = category.split("//");
 
-      // setOpenLoader(true);
-      const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
-      // setOpenLoader(false);
-      setLoading(false);
-      if(response?.data?.length > 0){
-        setFormData((prevState) => ({
-          ...prevState,
-          searchValue: "",
-        }))
-        setInputSuggestions([]);
-        if(pagination.current === 1){
-          setProducts(response?.data);
-          setProductsDataForFilter(response?.data);
-        }else{
-          setProducts((prevProducts) => [...prevProducts, ...response?.data]);
-          setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
-        }
-        if (savedScrollPosition) {
-          window.scrollTo(0, savedScrollPosition);  // Restore the scroll position
-        }
-        // return;
-        // let updateCatpath = categoryPaths.slice(0, -1);
-        // let aa = updateCatpath[updateCatpath.length - 1];
-        // let updatedValue = aa && aa;
-        // localStorage.setItem("categoryPaths", JSON.stringify(updateCatpath));
-        // dispatch(categoryValueSuccess({ categoryValue: updatedValue }));
-      }
+    // if(categoryValue){
+    //   let splitValue = categoryValue.split("//");
 
+    //   // setOpenLoader(true);
+    //   const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
+    //   // setOpenLoader(false);
+    //   setLoading(false);
+    //   if(response?.data?.length > 0){
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       searchValue: "",
+    //     }))
+    //     setInputSuggestions([]);
+    //     if(pagination.current === 1){
+    //       setProducts(response?.data);
+    //       setProductsDataForFilter(response?.data);
+    //     }else{
+    //       setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+    //       setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
+    //     }
+    //     // return;
+    //   }
+
+    // }
+    let header = "";
+    if(headerSearchValueLocal?.length > 0){
+      header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
     }
-    
-    else if (headerSearchValue) {
-      if(headerSearchValue?.file){
-        setFile(headerSearchValue?.file)
-        setFormData((prevState) => ({
-          ...prevState,
-          ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
-          searchValue: headerSearchValue?.searchValue,
-        }));
+    if (header || headerSearchValue || headerSearchValue?.file) {
+      if(headerSearchValue?.file || headerSearchValue?.type){
+        if(headerSearchValue?.type){
+          setFile(headerSearchValue)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue),
+            searchValue: header,
+          }));
+        }else{
+          setFile(headerSearchValue?.file)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
+            searchValue: header,
+          }));
+        }
+        
       }else{
         setFormData((prevState) => ({
           ...prevState,
-          searchValue: headerSearchValue?.searchValue || headerSearchValue,
+          searchValue: header?.searchValue || header,
         }));
       }
-      handleSearch(headerSearchValue);
+      handleSearch(header);
       // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
       // state.searchValue = null;
     } else {
       // setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `${baseUrl}/product/get-all/${pagination?.current}/100`,
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
         null,
         token?.token
       );
@@ -369,36 +382,42 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
     handleSearch(query);
   };
 
-  const handleSearch = async (event,fromLoadMore) => {
+  const handleSearch = async (event,fromKeyDown) => {
     debugger;
-
-    if(fromLoadMore === "fromLoadMore"){
-
-        let search = headerSearchValueLocal;
-        search?.push(formData?.searchValue);
-        localStorage.setItem("headerSearchValueLocal", JSON.stringify(search));
-        navigate("/products");
-        return
-    }
-        
     let searchValue = event === null ? formData?.searchValue : event;
-    if ((searchValue !== "" && searchValue !== undefined) || file) {
+    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type || headerSearchValue) {
       // event.preventDefault();
       const formData = new FormData();
       if (file) {
         formData.append("file", file);
       }
-      if(searchValue?.file){
-        formData.append("file", searchValue?.file);
-        formData.append("query", searchValue?.searchValue);
-      }else{
-        formData.append("query", searchValue?.searchValue || searchValue);
+      if(headerSearchValue?.file){
+        formData.append("file", headerSearchValue?.file);
+        formData.append("query", headerSearchValueLocal);
+      }else if(headerSearchValue?.type){
+        formData.append("file", headerSearchValue);
+        formData.append("query", headerSearchValueLocal);
+      } else{
+        formData.append("query", searchValue?.searchValue || searchValue || headerSearchValue);
       }
       try {
-        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue }));
+        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue || file }));
+        // let headerSearchValueLocalArray = [...headerSearchValueLocal, searchValue];
+        // headerSearchValueLocal.push(searchValue) //osama
+        // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
         setOpenLoader(true);
+        // https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search/get-all-similar-products-to-image/1/50
+        let pag = 1;
+        if(fromKeyDown === "fromKeyDown"){
+          pag = 1
+        }else if(paginationLocal > 1){
+          pag = paginationLocal
+        }else{
+          pag = imagePagination?.current;
+        }
+        
         const response = await fetch(
-         `${baseUrl}/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
+         `${baseUrl}/search/get-all-similar-products-to-image/1/${pag * 50}`,
           {
             method: "POST",
             headers: {
@@ -419,22 +438,41 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
         if (result?.data?.expectedQueries?.length > 0) {
           setInputSuggestions(result?.data?.expectedQueries);
         }
-        if (imagePagination?.current === 1) {
+        // if (imagePagination?.current === 1) {
+        // if (fromKeyDown === "fromKeyDown") {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
-        } else {
-          setProducts((prevProducts) => [
-            ...prevProducts,
-            ...result?.data?.products,
-          ]);
-          setProductsDataForFilter((prevProducts) => [
-            ...prevProducts,
-            ...result?.data?.products,
-          ]);
-        }
+        // } 
+        // else {
+        //   setProducts((prevProducts) => [
+        //     ...prevProducts,
+        //     ...result?.data?.products,
+        //   ]);
+        //   setProductsDataForFilter((prevProducts) => [
+        //     ...prevProducts,
+        //     ...result?.data?.products,
+        //   ]);
+        // }
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
+        let headerSearchValueLocalArray = [];
+        if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
+          // headerSearchValueLocalArray = headerSearchValueLocal;
+          headerSearchValueLocalArray.push(searchValue);
+          localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
+        }
+        // else{
+        //   if(headerSearchValueLocal?.length > 1){
+        //     headerSearchValueLocal.pop();
+        //     localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
+        //   }
+        // }
+        setTimeout(() => {
+          if (savedScrollPosition) {
+            window.scrollTo(0, savedScrollPosition); 
+          }
+        }, 1);
       } catch (error) {
         console.error("There was an error uploading the image:", error);
       }
@@ -476,9 +514,10 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
 
   const handleLoadMoreProducts = () => {
     debugger;
-    if (file || formData?.searchValue || headerSearchValue) {
+    if (file || formData?.searchValue || headerSearchValueLocal) {
       imagePagination.current = imagePagination.current + 1;
-      handleSearch(null, "fromLoadMore");
+      localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
+      handleSearch(null);
     } else {
       pagination.current = pagination.current + 1;
       getProductsData();
@@ -491,28 +530,22 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
       ...prevState,
       searchValue: value,
     }));
-    dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+    dispatch(headerSearchValueSuccess({ headerSearchValue: value })); //osama
+    // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
+    
   };
 
   const handleKeyDown = async (e) => {
     debugger
     if (e.key === "Enter") {
-        let search = [];
-        if(headerSearchValueLocal?.length > 0){
-            search = headerSearchValueLocal;
-            search.push(e?.target?.value);
-        }else{
-            search.push(e?.target?.value);
-        }
-        localStorage.setItem("headerSearchValueLocal", JSON.stringify(search));
-        navigate("/products");
-        return;
-      if(e?.target?.value === ""){
+      localStorage.setItem("paginationLocal", JSON.stringify(1));
+      localStorage.removeItem("headerSearchValueLocal");
+      if(e?.target?.value === "" && file === null){
         pagination.current = 1;
         setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `${baseUrl}/product/get-all/${pagination?.current}/100`,
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
         null,
         token?.token
       );
@@ -524,9 +557,7 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
         dispatch(homeDataSuccess({ homeData: response?.data }));
       }
       }else{
-        // handleSearch(null);
-        dispatch(headerSearchValueSuccess({ headerSearchValue: e?.target?.value }));
-      navigate("/products");
+        handleSearch(null,"fromKeyDown");
       }
     }
   };
@@ -623,17 +654,19 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
 
   const removeImage = () => {
     debugger
+    setFile(null)
     setFormData((prevData) => ({ ...prevData, imagePreview: null }));
-    if(headerSearchValue?.searchValue){
-      let removeFileData = headerSearchValue?.searchValue;
-      dispatch(headerSearchValueSuccess({ headerSearchValue: removeFileData}));
+    if(headerSearchValueLocal?.searchValue){
+      let removeFileData = headerSearchValueLocal?.searchValue;
+      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: removeFileData}));
     }else{
-      dispatch(headerSearchValueSuccess({ headerSearchValue: ""}));
+      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: ""}));
     }
   };
 
   return (
     <>
+    <BackButtonHandler />
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
@@ -1002,4 +1035,4 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
   );
 };
 
-export default CategoryComponent;
+export default SearchComponent;
