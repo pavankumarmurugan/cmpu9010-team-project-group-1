@@ -5,7 +5,7 @@ import openai
 import torch
 from transformers import CLIPModel, CLIPProcessor
 
-from vector_search.models.text_search_model import get_db_connection, add_numpy_adapter
+from vector_search.data_connection.text_search_model import get_db_connection, add_numpy_adapter
 
 # Get API Key from environment variable
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
