@@ -11,6 +11,7 @@ import { EmailService } from '../../services/sendgrid/sendgrid.service';
 import { IDataServices } from 'src/core/abstracts';
 import { InviteReqDTO } from 'src/core/dto/invite/invite.req-dto';
 import { capitalize } from 'lodash';
+import { InviteChatReqDTO } from 'src/core/dto/invite/invite.chat.req-dto';
 
 @Controller('invite')
 @ApiTags('Invite')
@@ -54,6 +55,35 @@ export class InviteController {
       return {
         data: null,
         message: 'Invitation email sent successfully',
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('chat')
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN, ROLES.USER)
+  async inviteChat(
+    @Request() request: RequestWithUser,
+    @Body() inviteDto: InviteChatReqDTO,
+  ): Promise<IResponse<void>> {
+    try {
+      const {
+        user: { userId },
+      } = request;
+
+      const { email } = inviteDto;
+      const { firstname, lastname } = await this.databaseService.users.get({
+        userId,
+      });
+      await await this.emailService.sendInvitationForChat(
+        email,
+        `${capitalize(firstname)} ${capitalize(lastname)}`,
+      );
+      return {
+        data: null,
+        message: 'Invitation for chat email sent successfully',
       };
     } catch (error) {
       throw error;

@@ -36,7 +36,6 @@ open-clip-torch
 ftfy
 wcwidth
 timm
-open-clip-torch
-ftfy
-wcwidth
-timm
+opencv-python-headless
+scipy
+scikit-image
