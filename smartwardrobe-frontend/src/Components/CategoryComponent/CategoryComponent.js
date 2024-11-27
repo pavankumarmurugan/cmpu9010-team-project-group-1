@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Headermenu from "../Headermenu/Headermenu";
 import "../../Styles/ProductPage.css";
 import SearchIcon from "@mui/icons-material/Search";
@@ -37,25 +37,28 @@ import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoa
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    categoryDataRouteSuccess,
+    categoryValueSuccess,
   headerSearchValueSuccess,
   homeDataSuccess,
 } from "../../redux/slices/HomeDataSlice";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
 
-const ProductPage = () => {
+const CategoryComponent = () => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-    let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
-    ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
+  let categoryPaths = localStorage.getItem("categoryPaths")
+    ? JSON.parse(localStorage.getItem("categoryPaths"))
     : null;
-    let savedScrollPosition = localStorage.getItem("scrollPosition")
+  let savedScrollPosition = localStorage.getItem("scrollPosition")
     ? JSON.parse(localStorage.getItem("scrollPosition"))
     : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   let { state } = location;
   // let pagination = 1;
   // let imagePagination = 1;
@@ -63,6 +66,9 @@ const ProductPage = () => {
   const imagePagination = useRef(1);
   const homeData = useSelector((state) => state.homeData.homeData);
   const categoryValue = useSelector((state) => state.homeData.categoryValue);
+//   const categoryPaths = useSelector((state) => state.homeData.categoryPaths);
+  console.log(categoryValue)
+  console.log(categoryPaths)
   const headerSearchValue = useSelector(
     (state) => state.homeData.headerSearchValue
   );
@@ -214,8 +220,6 @@ const ProductPage = () => {
   }, [categoryValue]);
 
   useEffect(() => {
-    debugger
-    console.log(window.location.pathname);
     return () => {
       // state.searchValue = null;
       pagination.current = 1;
@@ -231,87 +235,81 @@ const ProductPage = () => {
         toPrice: "",
         Colour: [],
       });
-      // if(window.location.pathname === "/products"){
-      //   localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
-      // }
     };
   }, []);
 
-  // const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  //   const previousPathRef = useRef(null); // Ref to track the previous path
+  
 
-  //   useEffect(() => {
-  //       debugger
-  //       const handlePopState = () => {
-  //           const newPath = window.location.pathname;
+  useEffect(() => {
+    debugger
+    const handlePopState = () => {
+        categoryPaths.pop()
+        localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
+        setTimeout(() => {
+            window.location.reload();
+          }, 1);
+    };
 
-  //           // Log paths
-  //           console.log("Navigated from:", previousPathRef.current);
-  //           console.log("Navigated to:", newPath);
+    window.onpopstate = handlePopState;
 
-  //           if(previousPathRef.current.includes("/products") && !previousPathRef.current.includes("/products/") ){
-  //               localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
-  //           }
-
-  //           // Update previous and current paths
-  //           previousPathRef.current = currentPath;
-  //           setCurrentPath(newPath);
-  //       };
-
-  //       window.addEventListener('popstate', handlePopState);
-
-  //       return () => {
-  //           window.removeEventListener('popstate', handlePopState);
-  //       };
-  //   }, [currentPath]);
-
+    return () => {
+      // Clean up the event listener when the component unmounts
+      window.onpopstate = null;
+    };
+  }, []);
 
   const getProductsData = async () => {
     debugger;
+console.log(categoryPaths,"categoryPaths");
+let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 1] : "";
+    if(category){
+      let splitValue = category.split("//");
 
-    // if(categoryValue){
-    //   let splitValue = categoryValue.split("//");
+      // setOpenLoader(true);
+      const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
+      // setOpenLoader(false);
+      setLoading(false);
+      if(response?.data?.length > 0){
+        setFormData((prevState) => ({
+          ...prevState,
+          searchValue: "",
+        }))
+        setInputSuggestions([]);
+        if(pagination.current === 1){
+          setProducts(response?.data);
+          setProductsDataForFilter(response?.data);
+        }else{
+          setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+          setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
+        }
+        if (savedScrollPosition) {
+          window.scrollTo(0, savedScrollPosition);  // Restore the scroll position
+        }
+        // return;
+        // let updateCatpath = categoryPaths.slice(0, -1);
+        // let aa = updateCatpath[updateCatpath.length - 1];
+        // let updatedValue = aa && aa;
+        // localStorage.setItem("categoryPaths", JSON.stringify(updateCatpath));
+        // dispatch(categoryValueSuccess({ categoryValue: updatedValue }));
+      }
 
-    //   // setOpenLoader(true);
-    //   const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
-    //   // setOpenLoader(false);
-    //   setLoading(false);
-    //   if(response?.data?.length > 0){
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       searchValue: "",
-    //     }))
-    //     setInputSuggestions([]);
-    //     if(pagination.current === 1){
-    //       setProducts(response?.data);
-    //       setProductsDataForFilter(response?.data);
-    //     }else{
-    //       setProducts((prevProducts) => [...prevProducts, ...response?.data]);
-    //       setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
-    //     }
-    //     // return;
-    //   }
-
-    // }
-    let header = "";
-    if(headerSearchValueLocal?.length > 0){
-      header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
     }
-    if (header || headerSearchValue?.file) {
+    
+    else if (headerSearchValue) {
       if(headerSearchValue?.file){
         setFile(headerSearchValue?.file)
         setFormData((prevState) => ({
           ...prevState,
           ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
-          searchValue: header,
+          searchValue: headerSearchValue?.searchValue,
         }));
       }else{
         setFormData((prevState) => ({
           ...prevState,
-          searchValue: header?.searchValue || header,
+          searchValue: headerSearchValue?.searchValue || headerSearchValue,
         }));
       }
-      handleSearch(header);
+      handleSearch(headerSearchValue);
       // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
       // state.searchValue = null;
     } else {
@@ -371,23 +369,20 @@ const ProductPage = () => {
   const handleSearch = async (event) => {
     debugger;
     let searchValue = event === null ? formData?.searchValue : event;
-    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file) {
+    if ((searchValue !== "" && searchValue !== undefined) || file) {
       // event.preventDefault();
       const formData = new FormData();
       if (file) {
         formData.append("file", file);
       }
-      if(headerSearchValue?.file){
-        formData.append("file", headerSearchValue?.file);
-        formData.append("query", headerSearchValueLocal);
+      if(searchValue?.file){
+        formData.append("file", searchValue?.file);
+        formData.append("query", searchValue?.searchValue);
       }else{
         formData.append("query", searchValue?.searchValue || searchValue);
       }
       try {
         dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue }));
-        // let headerSearchValueLocalArray = [...headerSearchValueLocal, searchValue];
-        // headerSearchValueLocal.push(searchValue) //osama
-        // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
         setOpenLoader(true);
         const response = await fetch(
          `${baseUrl}/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
@@ -427,14 +422,6 @@ const ProductPage = () => {
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
-        let headerSearchValueLocalArray = [];
-        headerSearchValueLocalArray.push(searchValue);
-        localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
-        setTimeout(() => {
-          if (savedScrollPosition) {
-            window.scrollTo(0, savedScrollPosition); 
-          }
-        }, 1);
       } catch (error) {
         console.error("There was an error uploading the image:", error);
       }
@@ -476,7 +463,7 @@ const ProductPage = () => {
 
   const handleLoadMoreProducts = () => {
     debugger;
-    if (file || formData?.searchValue || headerSearchValueLocal) {
+    if (file || formData?.searchValue || headerSearchValue) {
       imagePagination.current = imagePagination.current + 1;
       handleSearch(null);
     } else {
@@ -492,14 +479,15 @@ const ProductPage = () => {
       searchValue: value,
     }));
     dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
-    // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
-    localStorage.removeItem("headerSearchValueLocal");
   };
 
   const handleKeyDown = async (e) => {
     debugger
     if (e.key === "Enter") {
-      if(e?.target?.value === "" && file === null){
+        localStorage.setItem("headerSearchValueLocal", JSON.stringify(e?.target?.value));
+        navigate("/products");
+        return;
+      if(e?.target?.value === ""){
         pagination.current = 1;
         setOpenLoader(true);
       const response = await apiCall(
@@ -516,7 +504,9 @@ const ProductPage = () => {
         dispatch(homeDataSuccess({ homeData: response?.data }));
       }
       }else{
-        handleSearch(null);
+        // handleSearch(null);
+        dispatch(headerSearchValueSuccess({ headerSearchValue: e?.target?.value }));
+      navigate("/products");
       }
     }
   };
@@ -613,13 +603,12 @@ const ProductPage = () => {
 
   const removeImage = () => {
     debugger
-    setFile(null)
     setFormData((prevData) => ({ ...prevData, imagePreview: null }));
-    if(headerSearchValueLocal?.searchValue){
-      let removeFileData = headerSearchValueLocal?.searchValue;
-      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: removeFileData}));
+    if(headerSearchValue?.searchValue){
+      let removeFileData = headerSearchValue?.searchValue;
+      dispatch(headerSearchValueSuccess({ headerSearchValue: removeFileData}));
     }else{
-      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: ""}));
+      dispatch(headerSearchValueSuccess({ headerSearchValue: ""}));
     }
   };
 
@@ -993,4 +982,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default CategoryComponent;

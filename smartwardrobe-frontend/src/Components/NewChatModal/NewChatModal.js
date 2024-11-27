@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { json, useLocation, useNavigate } from "react-router-dom";
 import {
+  showToastError,
   showToastInfo,
   showToastSuccess,
 } from "../GenericToasters/GenericToasters";
@@ -37,6 +38,7 @@ function NewChatModal(props) {
   const [addNewGroup, setAddNewGroup] = useState(false);
   const [currentTab, setCurrentTab] = useState(1);
   const [friendEmail, setFriendEmail] = useState("");
+  const [InviteButtonText, setInviteButtonText] = useState("Send Friend Request");
   const [groupNameValue, setGroupNameValue] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -224,6 +226,23 @@ function NewChatModal(props) {
     };
   };
 
+  const handleInputChnageAutocomplete = (value) => {
+    debugger
+    setInputValue(value);
+
+    if(value === ""){
+      setInviteButtonText("Send Friend Request");
+      return;
+    }
+
+    let findData = autocomplteAllData?.filter(x => x?.username === value);
+    if(findData?.length > 0){
+      setInviteButtonText("Send Friend Request");
+    }else{
+      setInviteButtonText("Invite");
+    }
+  }
+
   const fetchSuggestions = async (query) => {
     debugger;
     const trimmedQuery = query.trim();
@@ -320,10 +339,10 @@ function NewChatModal(props) {
     const data = autocomplteAllData.filter(
       (user) => user.username === inputValue
     );
-    if (data?.length === 0) {
-      showToastInfo("User not found");
-    }
-    if (data) {
+    // if (data?.length === 0) {
+    //   showToastInfo("User not found");
+    // }
+    if (data && InviteButtonText === "Send Friend Request") {
       try {
         const sendObj = {
           receiverId: data[0]?.userId,
@@ -348,6 +367,31 @@ function NewChatModal(props) {
         }
       } catch (error) {
         console.error("Error fetching suggestions:", error);
+      }
+    } else if(InviteButtonText === "Invite"){
+      if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(inputValue)){
+         showToastError("Enter a valid email address");
+         return;
+      }
+      let url = location.pathname;
+      let spliturl = url?.split("/");
+      let productId = spliturl?.pop();
+      let appiUrl = `${baseUrl}/invite/user`;
+      const sendObj = {
+        email: inputValue,
+        productId:  Number(productId),
+      };
+      setOpenLoader(true);
+      const response = await apiCall(
+        "POST",
+        appiUrl,
+        sendObj,
+        token?.token
+      );
+      setOpenLoader(false);
+      if(response?.message === "Invitation email sent successfully"){
+        showToastSuccess(response?.message);
+        handleAddFriendFromShareProduct("ShareProductsToFriends");
       }
     }
   };
@@ -611,9 +655,10 @@ function NewChatModal(props) {
                 <AutoComplete
                   style={{ width: "100%", height: "40px" }}
                   value={inputValue}
-                  onChange={(value) => {
-                    setInputValue(value);
-                  }}
+                  onChange={handleInputChnageAutocomplete}
+                  // onChange={(value) => {
+                  //   setInputValue(value);
+                  // }}
                   onSelect={(value) => {
                     fetchSuggestions(value);
                   }}
@@ -636,7 +681,8 @@ function NewChatModal(props) {
                   color="default"
                   onClick={handleAddClick}
                 >
-                  Send Friend Request
+                  {/* Send Friend Request */}
+                  {InviteButtonText}
                 </Button>
               </div>
             </div>

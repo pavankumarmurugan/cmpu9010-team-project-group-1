@@ -24,6 +24,7 @@ import { IoMdAdd, IoMdHeartEmpty, IoMdShare } from "react-icons/io";
 import { RiFontSize, RiSubtractFill } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart, FaShare } from "react-icons/fa6";
+import { WiStars } from "react-icons/wi";
 import Footer from "../Footer/Footer";
 import AccordionGroup from "@mui/joy/AccordionGroup";
 import Accordion from "@mui/joy/Accordion";
@@ -514,10 +515,11 @@ const ProductDetails = () => {
                     <div className="share-details-main-div share-deatils-laptop">
                       {productimages && productimages?.trail && (
                         <div className="details-virtualtryon-buttons" onClick={handleTryOn}>
-                          <IoShirtOutline
+                          {/* <IoShirtOutline
                             style={{ width: "20px", height: "20px" }}
-                          />
-                          Virtual Try on
+                          /> */}
+                          <WiStars style={{ width: "30px", height: "30px" }} />
+                          <b>Virtual Try-on</b>
                         </div>
                       )}
                       <div

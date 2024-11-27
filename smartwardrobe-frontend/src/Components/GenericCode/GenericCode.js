@@ -199,6 +199,7 @@ export const ProductPageCards = ({ data, handleTryon }) => {
   const handleProductDetails = (item) => {
     debugger;
     SaveVisitedProduct(item);
+    localStorage.setItem("scrollPosition", JSON.stringify(window.scrollY));
     navigate(`/productdetails/${item?.id}`, { state: { item } });
   };
 
@@ -409,6 +410,7 @@ export const setTokenToLocalStorage = (data) => {
 };
 
 export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
+  debugger
   let filteredData = data;
   let fromValue = 0;
   let toValue = Infinity;
