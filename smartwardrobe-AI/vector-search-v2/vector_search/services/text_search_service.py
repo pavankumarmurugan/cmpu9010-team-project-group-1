@@ -100,7 +100,7 @@ def if_irrelevant_query(query):
         # Extract the text response
         answer = response.choices[0].message.content
 
-        print("Answer:", answer)
+        print("if_irrelevant_query Answer:", answer)
 
         # Return based on the model's response
         if "not" in answer.lower():
@@ -113,8 +113,43 @@ def if_irrelevant_query(query):
         return 1  # Default to "not relevant" if an error occurs
 
 
+def make_typo_free(query):
+    prompt = f"""
+        This is the search query that the user entered into the search box: {query}
+        Check for spelling errors, if it has spelling errors, only return the modified search query.If it doesn't have spelling errors, only return original query.".
+
+        """
+
+    try:
+        # Call OpenAI GPT model
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            # response_format={"query": "json_object"},
+            max_tokens=10
+
+        )
+
+        print("Response from GPT:", response)
+        # Extract the text response
+        answer = response.choices[0].message.content
+
+        print("make_typo_free Answer:", answer)
+
+        return answer
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return query
+
+
 def perform_search(search_query, top_k=200):
-    query_recog = if_irrelevant_query(search_query)
+
+    typo_free_search_query = make_typo_free(search_query)
+
+    query_recog = if_irrelevant_query(typo_free_search_query)
 
     if query_recog == 1:
         return {
@@ -123,16 +158,16 @@ def perform_search(search_query, top_k=200):
         }
 
     if "shirt" in search_query.lower().split():
-        return perform_shirt_search(search_query, top_k=200)
+        return perform_shirt_search(typo_free_search_query, top_k=200)
 
     # Add numpy type adapter
     add_numpy_adapter()
 
     # Expand search query using GPT
-    expanded_queries = expand_search_query_with_gpt(search_query)
+    expanded_queries = expand_search_query_with_gpt(typo_free_search_query)
 
     # Generate embedding vectors for the search query
-    inputs = processor(text=search_query, return_tensors="pt", padding=True)
+    inputs = processor(text=typo_free_search_query, return_tensors="pt", padding=True)
     with torch.no_grad():
         search_embedding = model.get_text_features(**inputs).numpy().flatten()
 
