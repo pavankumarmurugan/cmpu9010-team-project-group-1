@@ -3,6 +3,7 @@ import os
 
 import openai
 import torch
+from sympy.polys.polyconfig import query
 from transformers import CLIPModel, CLIPProcessor
 
 from vector_search.data_connection.text_search_model import get_db_connection, add_numpy_adapter
@@ -31,7 +32,7 @@ Ensure the responses are in valid JSON format, structured as follows:
 
     try:
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system",
                  "content": "You are a shopping assistant, helping the user find more accurate products."},
@@ -72,7 +73,54 @@ Ensure the responses are in valid JSON format, structured as follows:
 
 
 # Text Search service
+
+
+def if_irrelevant_query(query):
+
+    # Define the task description
+    prompt = f"""
+    Is this a query related to fashion website: {query}?
+    If it is relevant, respond with "relevant". If not, respond with "not relevant".
+    
+    """
+
+    try:
+        # Call OpenAI GPT model
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            # response_format={"query": "json_object"},
+            max_tokens=10
+
+        )
+
+        print("Response from GPT:", response)
+        # Extract the text response
+        answer = response.choices[0].message.content
+
+        print("Answer:", answer)
+
+        # Return based on the model's response
+        if "not" in answer.lower():
+            return 1  # Not relevant
+        else:
+            return 0  # relevant
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return 1  # Default to "not relevant" if an error occurs
+
+
 def perform_search(search_query, top_k=200):
+    query_recog = if_irrelevant_query(search_query)
+
+    if query_recog == 1:
+        return {
+            "search_results": [],
+            "expanded_queries": []
+        }
 
     if "shirt" in search_query.lower().split():
         return perform_shirt_search(search_query, top_k=200)
