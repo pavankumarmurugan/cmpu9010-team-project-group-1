@@ -373,6 +373,8 @@ function NewChatModal(props) {
          showToastError("Enter a valid email address");
          return;
       }
+      console.log(props)
+      if(props?.productUrl){
       let url = location.pathname;
       let spliturl = url?.split("/");
       let productId = spliturl?.pop();
@@ -393,6 +395,25 @@ function NewChatModal(props) {
         showToastSuccess(response?.message);
         handleAddFriendFromShareProduct("ShareProductsToFriends");
       }
+    }else{
+      let sendObj = {
+        email: inputValue,
+      }
+      let appiUrl = `${baseUrl}/invite/chat`;
+      setOpenLoader(true);
+      const response = await apiCall(
+        "POST",
+        appiUrl,
+        sendObj,
+        token?.token
+      );
+      setOpenLoader(false);
+      if(response?.message === "Invitation for chat email sent successfully"){
+        showToastSuccess(response?.message);
+        // handleAddFriendFromShareProduct("ShareProductsToFriends");
+        handleCancel();
+      }
+    }
     }
   };
 

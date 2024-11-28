@@ -487,11 +487,13 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
 
   const handleSearchInput = (e) => {
     let { value } = e.target;
+    if(!/[^\w\s]/gm.test(value)){
     setFormData((prevState) => ({
       ...prevState,
       searchValue: value,
     }));
     dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+  }
   };
 
   const handleKeyDown = async (e) => {

@@ -87,9 +87,6 @@ function Headermenu() {
     let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
     ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
     : null;
-    let route = localStorage.getItem("route")
-    ? JSON.parse(localStorage.getItem("route"))
-    : null;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -273,11 +270,11 @@ function Headermenu() {
   const contentStyle = {
     margin: 0,
     // height: '30px',
-    color: "#fff",
     textAlign: "center",
-    background: "#e8e4e0",
-    color: "black",
+    background: "black",
+    color: "white",
     fontWeight: "500",
+    fontSize:"16px"
   };
 
   const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -396,28 +393,11 @@ function Headermenu() {
   const handleItemClick = (item) => {
     debugger;
     let value = item;
-    // dispatch(categoryValueSuccess({ categoryValue: value }));
-    // setOpen(false);
-    // if (location?.pathname !== "/products") {
-    //   navigate("/products");
-    // }
-
-    const slug = createSlug(value);
-    let catpath = [];
-    if(categoryPaths?.length > 0){
-      catpath = [...categoryPaths, value];
-    }else{
-      catpath = [value];
+    dispatch(categoryValueSuccess({ categoryValue: value }));
+    setOpen(false);
+    if (location?.pathname !== "/products") {
+      navigate("/products");
     }
-    localStorage.setItem("categoryPaths", JSON.stringify(catpath));
-    // dispatch(categoryDataRouteSuccess({ categoryPaths: catpath }));
-    // dispatch(categoryValueSuccess({ categoryValue: value }));
-    // if (!location?.pathname.includes('/products/')) {
-      // navigate("/products");
-      navigate(`/products/${slug}`);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1);
   };
 
   const DrawerList = (
@@ -443,9 +423,8 @@ function Headermenu() {
             Home
           </a>
           <a href="/wishlist" className="item">
-            {/* <CiBookmark className="icons" /> */}
-            <MdFavoriteBorder className="icons" />
-            Wishlist
+            <CiBookmark className="icons" />
+            Collections
           </a>
           <div
             className="item"
@@ -2236,11 +2215,14 @@ function Headermenu() {
   /*  search work*/
 
   const onChangeSearchValue = (e) => {
-    setSearchValue(e.target.value);
+    debugger
+    if(!/[^\w\s]/gm.test(e.target.value)){
+      setSearchValue(e.target.value);
+    }
   };
 
   const handleKeyDown = (e) => {
-    debugger;
+    // debugger;
     if (e.key === "Enter") {
       handleSearch();
     }
@@ -2358,29 +2340,6 @@ function Headermenu() {
     }
     // getCategoryData();
   }, []);
-
-  // useEffect(() => {
-  //   debugger
-  //   let currentRoute = window.location.pathname;
-  //   const handlePopState = () => {
-  //     if(route?.includes('/products/')){
-  //       categoryPaths.pop()
-  //       localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
-  //     }else if(route?.includes('/products')){
-  //       let aa = headerSearchValueLocal;
-  //       aa.pop();
-  //       localStorage.setItem("headerSearchValueLocal", JSON.stringify(aa));
-  //     }
-  //     localStorage.setItem("route", JSON.stringify(currentRoute));
-  //   };
-
-  //   window.onpopstate = handlePopState;
-
-  //   return () => {
-  //     // Clean up the event listener when the component unmounts
-  //     window.onpopstate = null;
-  //   };
-  // }, []);
 
   // const getCategoryData = async () => {
   //   debugger;
@@ -2559,25 +2518,26 @@ function Headermenu() {
       />
       {/*  Signup/Login Modal */}
 
-      {/* <Carousel
-        dotPosition="left"
+<div className="headercarousel">
+      <Carousel
+        // dotPosition="left"
         dots={false}
         infinite={true}
         autoplay={true}
-        autoplaySpeed={2500}
-        style={{ maxHeight: "25px" }}
+        autoplaySpeed={3000}
+        // style={{ height: "40px" }}
       >
-        <div>
-          <h3 style={contentStyle}>Collaborative Chat</h3>
+        <div onClick={() => hanldeBannerClick(1)}>
+          <h3 style={contentStyle}>Virtual Try-On Using Preset Models & Its Customizations</h3>
         </div>
-        <div>
-          <h3 style={contentStyle}>Virtual Try-On</h3>
+        <div onClick={() => hanldeBannerClick(2)}>
+          <h3 style={contentStyle}>Collaborative Chat & Share Products</h3>
         </div>
-        <div>
-          <h3 style={contentStyle}>Customization option</h3>
+        <div onClick={() => hanldeBannerClick(3)}>
+          <h3 style={contentStyle}>Image Search Natural Language Search & Predictive Search</h3>
         </div>
-      </Carousel> */}
-      {/* <div className="headerbanner-main">
+      </Carousel></div>
+      <div className="headerbanner-main">
         <div
           style={{
             // display: "flex",
@@ -2585,14 +2545,14 @@ function Headermenu() {
             justifyContent: "center",
             textAlign: "center",
             padding: "5px 40px 0px 40px",
-            whiteSpace: "nowrap",
+            // whiteSpace: "nowrap",
             backgroundColor: "black",
             color: "white",
             cursor:"pointer"
           }}
           onClick={() => hanldeBannerClick(1)}
         >
-          <p> Virtual Try-On </p>{" "}
+          <p> Virtual Try-On </p>
           <p> Using Preset Models & Its Customizations</p>
         </div>
         <div
@@ -2628,12 +2588,17 @@ function Headermenu() {
           <p>Image Search</p>{" "}
           <p> Natural Language Search & Predictive Search</p>
         </div>
-      </div> */}
+      </div>
 
       <div className="header-main">
         <div className="header-conatiner page-width">
           <div
             className="search-div-laptop search-input-above-900px"
+            // className={
+            //   location?.pathname === "/products"
+            //     ? "search-div-laptop-productspage search-input-above-900px"
+            //     : "search-div-laptop search-input-above-900px"
+            // }
           >
             <>
               <a href="/" className="anchor-tag">
@@ -2650,6 +2615,60 @@ function Headermenu() {
                   SMARTWARDROBE
                 </h2>
               </a>
+              {/* <FormControl sx={{ m: 1 }} variant="outlined">
+                <InputLabel
+                  sx={{
+                    lineHeight: "1rem",
+                    color: "white",
+                    "&.Mui-focused": {
+                      color: "white",
+                      fontSize: "18px",
+                    },
+                  }}
+                  htmlFor="outlined-adornment-password"
+                >
+                  Search11
+                </InputLabel>
+                <OutlinedInput
+                  label="outlined-Input"
+                  type={"text"}
+                  style={{ color: "white" }}
+                  placeholder="Search"
+                  value={searchValue}
+                  onChange={onChangeSearchValue}
+                  onKeyDown={handleKeyDown}
+                  autoComplete="off"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleSearch}
+                        edge="end"
+                      >
+                        <SearchIcon style={{ color: "white" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  sx={{
+                    height: 45,
+                    "& label": {
+                      color: "white",
+                    },
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "white",
+                      borderWidth: 2,
+                    },
+                  }}
+                />
+              </FormControl> */}
               <div className="search-input-above-900px">
                 <MegaMenu model={primeMenu} breakpoint="900px" />
               </div>

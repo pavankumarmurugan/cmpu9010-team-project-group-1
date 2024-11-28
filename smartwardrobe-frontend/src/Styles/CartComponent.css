@@ -125,3 +125,9 @@
       transform: scale(1.05);
     }
   }
+
+  .product-quantity-input-div{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
