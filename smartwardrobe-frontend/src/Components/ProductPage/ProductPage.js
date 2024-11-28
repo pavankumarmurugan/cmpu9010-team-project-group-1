@@ -77,6 +77,7 @@ const ProductPage = () => {
   const [openLoader, setOpenLoader] = useState(false);
   const [hideLoadMoreButton, sethideLoadMoreButton] = useState(false);
   const [productsDataForFilter, setProductsDataForFilter] = useState([]);
+  const [noProductsFound, setNoProductsFound] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -443,6 +444,10 @@ const ProductPage = () => {
         // if (fromKeyDown === "fromKeyDown") {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
+          if(result?.data?.products?.length === 0 && pag === 1){
+             setNoProductsFound(true);
+             setInputSuggestions([])
+          }
         // } 
         // else {
         //   setProducts((prevProducts) => [
@@ -527,11 +532,14 @@ const ProductPage = () => {
 
   const handleSearchInput = (e) => {
     let { value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      searchValue: value,
-    }));
-    dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+    if(!/[^\w\s]/gm.test(value)){
+      setFormData((prevState) => ({
+        ...prevState,
+        searchValue: value,
+      }));
+      dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+    }
+   
     // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
     
   };
@@ -1018,7 +1026,15 @@ const ProductPage = () => {
             </div>
           )}
         </div>
-        {(!hideLoadMoreButton || products?.length === 0) && (
+        {noProductsFound && 
+        (
+          <div style={{ display:"flex", justifyContent:"center" }}>
+            <h2 style={{fontWeight:"normal"}}>
+              No results found for “{formData?.searchValue}”.
+            </h2>
+          </div>
+        )}
+        {(!hideLoadMoreButton || products?.length === 0) && !noProductsFound && (
           <div className="LoadMore-Div">
             <Button
               className="LoadMore-Button"

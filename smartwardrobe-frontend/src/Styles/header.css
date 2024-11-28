@@ -429,6 +429,24 @@
 
 .headerbanner-main{
     display: grid;
-    grid-template-columns: 1.4fr 1.2fr 1.4fr; 
-    height: 40px;
+    grid-template-columns: 1.2fr 1.4fr 1.2fr; 
+    height: auto;
+}
+
+@media screen and (max-width: 1000px){
+    .headerbanner-main{
+        display: none !important;
+    }
+    
+}
+
+@media screen and (min-width: 1001px){
+    .headercarousel{
+        display: none !important;
+    }
+    
+}
+
+.headercarousel{
+    /* display: none !important; */
 }

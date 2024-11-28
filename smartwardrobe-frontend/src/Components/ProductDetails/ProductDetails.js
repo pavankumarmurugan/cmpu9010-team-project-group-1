@@ -261,20 +261,20 @@ const ProductDetails = () => {
       }
       setOpenLoader(false);
 
-      // setOpenLoader(true);
-      // let similarProductsHeaders = {
-      //   topN: 10,
-      //   imageName: getModels?.data?.imageName,
-      // };
-      // const getSimilarProducts = await apiCall(
-      //   "POST",
-      //   `${baseUrl}/recommend/similar-products`,
-      //   similarProductsHeaders
-      // );
-      // setOpenLoader(false);
-      // if (getSimilarProducts) {
-      //   setSimilarProductsData(getSimilarProducts?.data);
-      // }
+      setOpenLoader(true);
+      let similarProductsHeaders = {
+        topN: 10,
+        imageName: getModels?.data?.imageName,
+      };
+      const getSimilarProducts = await apiCall(
+        "POST",
+        `${baseUrl}/recommend/similar-products`,
+        similarProductsHeaders
+      );
+      setOpenLoader(false);
+      if (getSimilarProducts) {
+        setSimilarProductsData(getSimilarProducts?.data);
+      }
     }
   };
 
@@ -511,7 +511,7 @@ const ProductDetails = () => {
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <h1>{productimages?.type}</h1>
+                    <h1>{productimages?.name}</h1>
                     <div className="share-details-main-div share-deatils-laptop">
                       {productimages && productimages?.trail && (
                         <div className="details-virtualtryon-buttons" onClick={handleTryOn}>
