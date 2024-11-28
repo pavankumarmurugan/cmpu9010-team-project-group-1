@@ -44,6 +44,7 @@ import NewChatModal from "../NewChatModal/NewChatModal";
 import { Helmet } from "react-helmet";
 import sizeChartImage from "../../Assets/sizeChartImage.webp";
 import { IoHeart, IoShareOutline, IoShirtOutline } from "react-icons/io5";
+import { HiSparkles } from "react-icons/hi";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -518,7 +519,8 @@ const ProductDetails = () => {
                           {/* <IoShirtOutline
                             style={{ width: "20px", height: "20px" }}
                           /> */}
-                          <WiStars style={{ width: "30px", height: "30px" }} />
+                          {/* <WiStars style={{ width: "30px", height: "30px" }} /> */}
+                          <HiSparkles style={{ width: "20px", height: "20px" }} />
                           <b>Virtual Try-on</b>
                         </div>
                       )}

@@ -63,6 +63,10 @@ import Homelogo2 from "../../Assets/Homelogo2.png";
 import Marquee from "react-fast-marquee";
 import { GoDotFill } from "react-icons/go";
 import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
+import { HiSparkles } from "react-icons/hi";
+import { BsChevronUp } from "react-icons/bs";
+import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import { FaChevronDown } from "react-icons/fa6";
 
 const backendUrl =
   "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
@@ -2457,6 +2461,33 @@ function Headermenu() {
     setShowBanner(false);
   }
 
+  const [isOpen, setIsOpen] = useState(false)
+  const showcaseRef = useRef(null)
+  const features = [
+    "Virtual Try-On Using Preset Models & Its Customizations",
+    "Collaborative Chat & Share Products",
+    "Image Search Natural Language Search & Predictive Search"
+  ]
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showcaseRef.current && !showcaseRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const handleItemClickFeature = (index) => {
+    bannerclickvalue.current = index;
+    setShowBanner(true);
+    setIsOpen(false)
+  }
+
   return (
     <>
     {showBanner && (
@@ -2518,7 +2549,7 @@ function Headermenu() {
       />
       {/*  Signup/Login Modal */}
 
-<div className="headercarousel">
+{/* <div className="headercarousel">
       <Carousel
         // dotPosition="left"
         dots={false}
@@ -2588,6 +2619,30 @@ function Headermenu() {
           <p>Image Search</p>{" "}
           <p> Natural Language Search & Predictive Search</p>
         </div>
+      </div> */}
+
+<div ref={showcaseRef} className="feature-showcase">
+      <input
+        type="checkbox"
+        id="feature-toggle"
+        className="feature-toggle"
+        checked={isOpen}
+        onChange={() => setIsOpen(!isOpen)}
+      />
+      <label htmlFor="feature-toggle" className="feature-button" style={{ display: "flex", justifyContent:"center", alignItems:"center", gap:"10px" }}>
+        <span>Discover Our Amazing Features</span>
+        <FaChevronDown className="chevron-up" style={{ fontWeight:"bold" }} />
+      </label>
+      <div className="feature-content">
+        <ul style={{ display: "flex", justifyContent:"center", flexDirection:"column", alignItems:"center"}}>
+          {features.map((feature, index) => (
+            <li key={index} className="banner-feature-li" onClick={() => handleItemClickFeature(index)}>
+              <HiSparkles className="sparkles" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
       </div>
 
       <div className="header-main">
@@ -2765,7 +2820,8 @@ function Headermenu() {
                               cursor: "pointer",
                             }}
                           >
-                            <SvgIcon>
+                            <ImageSearchIcon />
+                            {/* <SvgIcon>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -2779,7 +2835,7 @@ function Headermenu() {
                                   d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
                                 />
                               </svg>
-                            </SvgIcon>
+                            </SvgIcon> */}
                             {/* Hidden file input */}
                             <input
                               ref={inputRefFile}

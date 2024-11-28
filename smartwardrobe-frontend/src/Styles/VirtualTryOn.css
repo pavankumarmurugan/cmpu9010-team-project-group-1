@@ -306,12 +306,13 @@
 }
 .asd {
   position: fixed;
-  bottom: 6%;
+  bottom: 7%;
   left: 65%;
   height: 40px;
   padding: 8px 12px;
-  background: linear-gradient(to right, #f9ce42, #d49a28);
-  color: black;
+  /* background: linear-gradient(to right, #f9ce42, #d49a28); */
+  background-color: black;
+  color: white;
   font-size: 18px;
   border: none;
   border-radius: 5px;
@@ -324,7 +325,7 @@
  letter-spacing: 0.2rem;
   &:hover {
     transform: scale(1.05);
-    border: 1px solid #cbcbcb !important;
+    /* border: 1px solid #cbcbcb !important; */
   }
 }
 
