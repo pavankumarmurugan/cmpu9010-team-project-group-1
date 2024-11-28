@@ -459,7 +459,7 @@ const VirtualTryOn = (props) => {
             .filter((data) => data !== undefined);
           setApiData([...apiData, ...dataforApiData]);
           setPersonalizeModels(false);
-          showToastSuccess("Custom models added successfully");
+          // showToastSuccess("Custom models added successfully");
           let updatedData = addCustomModels.map((item) => item?.data);
           let dataCorrection = selectedCustomModels?.map((model) => {
             const updatedModel = updatedData?.find(
@@ -636,7 +636,7 @@ const VirtualTryOn = (props) => {
             onBlur={() => {}}
           ></div>
         }
-        style={{ top: 50 }}
+        style={{ top: 20 }}
         classNames="custom-modal"
         width={"80%"}
         open={props.isShowModel}
