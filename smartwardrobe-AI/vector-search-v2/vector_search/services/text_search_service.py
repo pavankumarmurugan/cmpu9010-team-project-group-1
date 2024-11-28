@@ -3,6 +3,7 @@ import os
 
 import openai
 import torch
+from sympy.polys.polyconfig import query
 from transformers import CLIPModel, CLIPProcessor
 
 from vector_search.data_connection.text_search_model import get_db_connection, add_numpy_adapter
@@ -31,7 +32,7 @@ Ensure the responses are in valid JSON format, structured as follows:
 
     try:
         response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system",
                  "content": "You are a shopping assistant, helping the user find more accurate products."},
@@ -72,7 +73,58 @@ Ensure the responses are in valid JSON format, structured as follows:
 
 
 # Text Search service
+
+
+def if_irrelevant_query(query):
+
+    # Define the task description
+    prompt = f"""
+    Is this a query related to fashion website: {query}?
+    If it is relevant, respond with "relevant". If not, respond with "not relevant".
+    
+    """
+
+    try:
+        # Call OpenAI GPT model
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            # response_format={"query": "json_object"},
+            max_tokens=10
+
+        )
+
+        print("Response from GPT:", response)
+        # Extract the text response
+        answer = response.choices[0].message.content
+
+        print("Answer:", answer)
+
+        # Return based on the model's response
+        if "not" in answer.lower():
+            return 1  # Not relevant
+        else:
+            return 0  # relevant
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return 1  # Default to "not relevant" if an error occurs
+
+
 def perform_search(search_query, top_k=200):
+    query_recog = if_irrelevant_query(search_query)
+
+    if query_recog == 1:
+        return {
+            "search_results": [],
+            "expanded_queries": []
+        }
+
+    if "shirt" in search_query.lower().split():
+        return perform_shirt_search(search_query, top_k=200)
+
     # Add numpy type adapter
     add_numpy_adapter()
 
@@ -86,21 +138,6 @@ def perform_search(search_query, top_k=200):
 
     search_embedding_str = ','.join([str(x) for x in search_embedding])
 
-    # sql_query = f"""
-    #     select t1.image_name, t2.id, 1 - (t1.text_vector <=> '[{search_embedding_str}]') AS similarity
-    #     from {table_name} t1, products t2
-    #     where t1.image_name = t2.image_name
-    #     ORDER BY similarity DESC
-    #     LIMIT {top_k};
-    #    """
-
-    # sql_query = f"""
-    #     select t1.image_name, t2.id, t1.text_vector <=> '[{search_embedding_str}]' AS similarity
-    #     from products_des_embedding t1, products t2
-    #     where t1.image_name = t2.image_name
-    #     ORDER BY similarity
-    #     LIMIT {top_k};
-    #    """
 
     sql_query = f"""
         SELECT t1.image_name, t2.id, t1.text_vector <=> '[{search_embedding_str}]' AS similarity
@@ -126,3 +163,61 @@ def perform_search(search_query, top_k=200):
 
     finally:
         conn.close()
+
+def perform_shirt_search(search_query, top_k=200):
+    # Add numpy type adapter
+    add_numpy_adapter()
+
+    # Expand search query using GPT
+    expanded_queries = expand_search_query_with_gpt(search_query)
+
+    # Generate embedding vectors for the search query
+    inputs = processor(text=search_query, return_tensors="pt", padding=True)
+    with torch.no_grad():
+        search_embedding = model.get_text_features(**inputs).numpy().flatten()
+
+    search_embedding_str = ','.join([str(x) for x in search_embedding])
+
+    sql_query = f"""
+            SELECT t1.image_name, t2.id, t1.text_vector <=> '[{search_embedding_str}]' AS similarity
+            FROM products_shirt_embedding t1
+            JOIN products_2_image t2 ON t1.image_name = t2.image_name
+            ORDER BY similarity
+            LIMIT {top_k};
+        """
+
+    # Get database connection
+    conn = get_db_connection()
+
+    # Execute query and return results
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql_query)
+            results = cur.fetchall()
+
+        return {
+            "search_results": [{"image_name": row[0], "product_id": row[1]} for row in results],
+            "expanded_queries": expanded_queries
+        }
+
+    finally:
+        conn.close()
+
+
+
+
+# sql_query = f"""
+    #     select t1.image_name, t2.id, 1 - (t1.text_vector <=> '[{search_embedding_str}]') AS similarity
+    #     from {table_name} t1, products t2
+    #     where t1.image_name = t2.image_name
+    #     ORDER BY similarity DESC
+    #     LIMIT {top_k};
+    #    """
+
+    # sql_query = f"""
+    #     select t1.image_name, t2.id, t1.text_vector <=> '[{search_embedding_str}]' AS similarity
+    #     from products_des_embedding t1, products t2
+    #     where t1.image_name = t2.image_name
+    #     ORDER BY similarity
+    #     LIMIT {top_k};
+    #    """
