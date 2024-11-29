@@ -3,7 +3,10 @@ name: CICD
 on:
   push:
     branches:
-      - d23124670_pavan
+      - develop
+    paths:
+      - "smartwardrobe-frontend/**"
+  workflow_dispatch:
 
 jobs:
   build:
