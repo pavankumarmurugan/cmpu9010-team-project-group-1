@@ -2756,7 +2756,7 @@ function Headermenu() {
                       onChange={onChangeSearchValue}
                       onKeyDown={handleKeyDown}
                       onBlur={handleSearchOnBlur}
-                      autoComplete="off"
+                      // autoComplete="off"
                       autoFocus={true}
                       startAdornment={
                         file && (
@@ -3059,7 +3059,7 @@ function Headermenu() {
                   onChange={onChangeSearchValue}
                   onKeyDown={handleKeyDown}
                   onBlur={handleSearchOnBlur}
-                  autoComplete="off"
+                  // autoComplete="off"
                   autoFocus={true}
                   startAdornment={
                     file && (
