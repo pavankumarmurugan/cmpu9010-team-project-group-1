@@ -95,3 +95,24 @@
 
 - Deploy all features we have developed for demo.
 
+# 🕘 Week 8 08/11/2024 
+
+****
+## Participants: All members
+
+## What worked well
+
+- Chatroom development goes well.Both frontend and backend.
+- Image search functionality fixed the issue in backend.
+- Compared 3 image embedding model,predefine result set, compare their accuracy.
+- Add customization on virtual try on fashion model.
+
+
+## What could be improved
+
+- We need to do systematic test on our website, find errors in every work flow. 
+
+
+## What will we commit to doing in the next Sprint?
+
+- Based on user evaluation result, we will improve our website. Also, one of our team member will work as a tester, go through each work flow and find errors.

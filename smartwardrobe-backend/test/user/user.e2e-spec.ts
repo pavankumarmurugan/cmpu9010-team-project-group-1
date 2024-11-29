@@ -28,6 +28,11 @@ import { LikesModel } from 'src/infrastructure/frameworks/data-services/model/li
 import { v4 as uuid } from 'uuid';
 import * as fs from 'fs';
 import * as path from 'path';
+import { GroupMembersModel } from 'src/infrastructure/frameworks/data-services/model/group-members.model';
+import { GroupModel } from 'src/infrastructure/frameworks/data-services/model/group.model';
+import { ProductSubcategoryModel } from 'src/infrastructure/frameworks/data-services/model/product-subcategory.model';
+import { UserLikedModels } from 'src/infrastructure/frameworks/data-services/model/user-liked-models';
+import { VtoImageSearchModel } from 'src/infrastructure/frameworks/data-services/model/vto.model';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -55,6 +60,11 @@ describe('UserController (e2e)', () => {
             ImageClusterModel,
             FriendsRequestsModel,
             FriendsModel,
+            GroupModel,
+            GroupMembersModel,
+            VtoImageSearchModel,
+            UserLikedModels,
+            ProductSubcategoryModel,
           ],
           password: process.env.DATABASE_PASSWORD,
           ssl: true,
@@ -76,6 +86,11 @@ describe('UserController (e2e)', () => {
           ImageClusterModel,
           FriendsRequestsModel,
           FriendsModel,
+          GroupModel,
+          GroupMembersModel,
+          VtoImageSearchModel,
+          UserLikedModels,
+          ProductSubcategoryModel,
         ]),
         JwtModule.register({}),
         SQLDataServiceModule,

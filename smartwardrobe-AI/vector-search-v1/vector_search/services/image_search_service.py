@@ -33,7 +33,7 @@ def search_similar_images(input_vector, top_k):
     query = """
     SELECT i.image_name, p.id, i.vector <=> %s AS distance
     FROM image_info_image_search i
-    LEFT JOIN products p ON i.image_name = p.image_name
+    LEFT JOIN products_2_image p ON i.image_name = p.image_name
     ORDER BY distance
     LIMIT %s;
     """

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
+import { IsIn, IsNumber, IsString } from 'class-validator';
 import { BaseDto } from '../base-dto/base.dto';
 import { ProductResDto } from '../product/product-res-dto';
 
@@ -23,4 +23,9 @@ export class CartItemResDto extends BaseDto {
   @ApiProperty({ required: true })
   @IsNumber()
   readonly product?: ProductResDto;
+
+  @ApiProperty({ required: true, default: 'M' })
+  @IsString()
+  @IsIn(['S', 'M', 'L', 'XL'])
+  readonly size?: string;
 }

@@ -2,6 +2,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 0 !important;
 }
 
 .Models-separation-div {
@@ -17,7 +18,7 @@
 }
 
 .model-result {
-  flex: 0 0 40%;
+  /* flex: 0 0 40%; */ /** result iamge osama */
   position: relative;
 }
 
@@ -30,22 +31,45 @@
   flex: 1;
   padding-left: 2%;
   padding-right: 2%;
-  max-height: 612px; /* Set the max height here */
+  position: relative;
+  max-height: calc(100vh - 190px);
   overflow-y: auto;
   scrollbar-width: none;
   background-color: white;
   margin-left: 20px;
-  border-radius: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .Result-Image {
   width: 100%;
   height: 100%;
-  max-height: 600px;
+  max-height: calc(100vh - 200px);
   /* height: 500px; */
   object-fit: contain;
   border-radius: 20px;
-  border: 5px solid white;
+  border: 5px solid lightgray;
+  position: relative;
+}
+
+.result-iamge-product{
+  position: absolute;
+  top: 10;
+  left: 0;
+  /* left: 10px; */
+  /* top: 10px; */
+  width: 140px;
+  height: 140px;
+  border-radius: 20px;
+  border: 5px solid lightgray;
+}
+
+@media screen and (max-width: 768px) {
+  .result-iamge-product{
+    width: 90px !important;
+    height: 90px !important;
+  }
 }
 
 .Right-Div-heading {
@@ -59,10 +83,13 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  
   gap: 30px;
   /* justify-content: center; */
   padding-top: 25px;
   padding-bottom: 25px;
+  min-height: calc(100% - 50px); /** osama */
+  
 }
 
 .predefined-Model-Image {
@@ -78,7 +105,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+  /* height: 100%; */ /* osama */
 }
 
 @media (min-width: 1200px) {
@@ -102,6 +129,9 @@
 @media (max-width: 768px) {
   .vto-heading {
     font-size: 20px !important;
+  }
+  .Similar-Products-div .product--image{
+    height: auto;
   }
 }
 
@@ -130,36 +160,62 @@
     margin-top: 10px;
     object-fit: fill;
     margin-right: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
+    position: relative;
+    border: 1px solid lightgray;
   }
   .Mobile-models-div {
     display: block !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
   }
   .mobile-model-image-div {
     display: flex;
     flex-direction: row;
     overflow: auto;
-    max-height: 200px;
+    /* max-height: 200px; */
     max-width: 100%;
     /* margin-left: 10px; */
     scrollbar-width: none;
+    padding: 10px;
+  }
+  .Select-Custom-Model-button{
+    font-size: 10px !important;
+  }
+  .Similar-Products-Images{
+    padding: 0px !important;
+  }
+  .similar-products-heading{
+    font-size: 24px !important;
+    padding-left: 15px !important;
+    padding-bottom: 10px !important;
   }
 }
 
 .VTO-image-container {
   position: relative;
   display: inline-block;
+  height: 100%;
+  /* background-color: #F6F6F6; */
 }
 
 .VTO-model--image {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 20px;
+  border-radius: 10px;
+  border: 1px solid lightgray;
   &:hover {
     cursor: pointer;
   }
+}
+
+.add-icon-div{
+  position: absolute;
+  top: 43%;
+  left: 28%;
+  cursor: pointer;
 }
 
 .custom-modal .ant-modal {
@@ -180,11 +236,18 @@
   width: 100%;
   margin-top: 1%;
   margin-bottom: 10px;
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .similar-products-heading {
   padding-left: 35px;
   margin-top: 15px;
+}
+
+.similar-products-heading-deatils{
+  margin-top: 25px;
+  padding-left: 35px;
 }
 
 .Similar-Products-Images {
@@ -194,7 +257,7 @@
 
 .Similar-Products-div {
   background-color: white;
-  border-radius: 30px;
+  border-radius: 20px;
 }
 
 .Similar-Products-div .react-multi-carousel-item {
@@ -241,10 +304,64 @@
     border: 1px solid #cbcbcb !important;
   }
 }
+.asd {
+  position: fixed;
+  bottom: 7%;
+  left: 65%;
+  height: 40px;
+  padding: 8px 12px;
+  /* background: linear-gradient(to right, #f9ce42, #d49a28); */
+  background-color: black;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px;
+  cursor: pointer;
+  max-height: 40px;
+  z-index: 999;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+ min-width: 150px;
+ letter-spacing: 0.2rem;
+  &:hover {
+    transform: scale(1.05);
+    /* border: 1px solid #cbcbcb !important; */
+  }
+}
+
+.Delete-Custom-Model-button {
+  position: absolute;
+  bottom: 25px;
+  right: 10px;
+  padding: 8px 12px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 2;
+  &:hover{
+    background-color: black;
+    color: white !important;
+    transform: scale(1.05);
+    border: 1px solid #cbcbcb !important;
+  }
+}
 
 .custom-model-checkbox {
   position: absolute;
   top: 10px; /* Adjust the spacing from the top */
   right: 15px; /* Adjust the spacing from the right */
+  z-index: 1; /* Ensure it appears above the image */
+}
+
+.mobile-custom-models-container{
+  position: relative;
+}
+
+.custom-model-checkbox-mobile {
+  position: absolute;
+  top: 20px; /* Adjust the spacing from the top */
+  right: 35px; /* Adjust the spacing from the right */
   z-index: 1; /* Ensure it appears above the image */
 }

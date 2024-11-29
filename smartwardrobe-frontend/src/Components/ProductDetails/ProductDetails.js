@@ -16,13 +16,15 @@ import {
 import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
 import { handleImageUpload } from "../GenericCode/GenericCode";
-import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
-import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
-import { IoMdAdd } from "react-icons/io";
+// import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
+// import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
+// import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+import Carousel from "react-multi-carousel";
+import { IoMdAdd, IoMdHeartEmpty, IoMdShare } from "react-icons/io";
 import { RiFontSize, RiSubtractFill } from "react-icons/ri";
 import { FaRegHeart } from "react-icons/fa";
-import { FaHeart } from "react-icons/fa6";
+import { FaHeart, FaShare } from "react-icons/fa6";
+import { WiStars } from "react-icons/wi";
 import Footer from "../Footer/Footer";
 import AccordionGroup from "@mui/joy/AccordionGroup";
 import Accordion from "@mui/joy/Accordion";
@@ -30,32 +32,64 @@ import AccordionDetails from "@mui/joy/AccordionDetails";
 import AccordionSummary from "@mui/joy/AccordionSummary";
 import { Input } from "antd";
 import { useLocation, useParams } from "react-router-dom";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
-import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
+import {
+  addToCartValueSuccess,
+  wishListValueSuccess,
+} from "../../redux/slices/HomeDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { showToastInfo } from "../GenericToasters/GenericToasters";
 import NewChatModal from "../NewChatModal/NewChatModal";
 import { Helmet } from "react-helmet";
+import sizeChartImage from "../../Assets/sizeChartImage.webp";
+import { IoHeart, IoShareOutline, IoShirtOutline } from "react-icons/io5";
+import { HiSparkles } from "react-icons/hi";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  let {state} = location;
+  let { state } = location;
   const { id } = useParams();
-  let token = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+  let token = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   console.log(state?.item?.imageName, "productData");
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(1);
+  const [selectedSize, setSelectedSize] = useState("S");
   const [productimages, setProductImages] = useState([]);
   const [friendsListForShare, setFriendsListForShare] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [showFriendsForShare, setShowFriendsForShare] = useState(false);
+  const [showSection, setShowSection] = useState("ShareProductsToFriends");
+  const [forAddFriendorCreateGroup, setforAddFriendorCreateGroup] = useState("");
   const imageUrl = productimages[currentImage];
+  const [similarProductsData, setSimilarProductsData] = useState([]);
+  const [likeData, setLikeData] = useState([]);
+  const [cartData, setCartData] = useState([]);
   const cartValue = useSelector((state) => state.homeData.cartValue);
+
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 3000 },
+      items: 5,
+    },
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
 
   const VisuallyHiddenInput = styled("input")`
     clip: rect(0 0 0 0);
@@ -79,56 +113,114 @@ const ProductDetails = () => {
     }
   };
 
-  const handleWishlist = async (e,productimages) => {
+  const handleWishlist = async (e, productimages) => {
     debugger;
-    if(!token){
+    if (!token) {
       showToastInfo("Please login to add to wishlist");
       return;
     }
     let data = {
-      productId: productimages?.id
+      productId: productimages?.id,
+      productSize: selectedSize,
     };
     if (e === "add") {
       setOpenLoader(true);
-      let addWishlist = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/likes/create", data, token?.token);
+      let addWishlist = await apiCall(
+        "POST",
+       `${baseUrl}/likes/create`,
+        data,
+        token?.token
+      );
       if (addWishlist?.statusCode?.text === "Success") {
         setShowHideWishlist(false);
       }
     } else {
       setOpenLoader(true);
-      let addWishlist = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${productimages?.id}`, data, token?.token);
+      let addWishlist = await apiCall(
+        "DELETE",
+       `${baseUrl}/likes/delete/${productimages?.id}`,
+        data,
+        token?.token
+      );
       if (addWishlist?.statusCode?.text === "Success") {
         setShowHideWishlist(true);
       }
     }
-    // if(token?.token){
-      
-    const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
+    if (token?.token) {
+      const getLikeProducts = await apiCall(
+        "GET",
+        `${baseUrl}/likes/get-all`,
+        null,
+        token?.token
+      );
       setOpenLoader(false);
-        if(getLikeProducts.statusCode.text === "Success"){
-          dispatch(wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length }));
+      if (getLikeProducts.statusCode.text === "Success") {
+        dispatch(
+          wishListValueSuccess({ wishListValue: getLikeProducts?.data?.length })
+        );
       }
-
-    // }
+    }
   };
 
   const handleAddToCart = async () => {
     debugger;
+
+    if (!token) {
+      showToastInfo("Please login to add to cart");
+      return;
+    }
+
+    const getAllCartValues = await apiCall(
+      "GET",
+      `${baseUrl}/cart-item/get-all`,
+      null,
+      token?.token
+    );
+    if (getAllCartValues?.data?.length) {
+      let check = getAllCartValues?.data?.find(
+        (item) => item?.productId === productimages?.id
+      );
+      if (check) {
+        const data = {
+          id: check?.id,
+          quantity: check?.quantity + quantityvalue,
+        };
+        setOpenLoader(true);
+        const addToCart = await apiCall(
+          "PATCH",
+          `${baseUrl}/cart-item/update`,
+          data,
+          token?.token
+        );
+        if (addToCart.statusCode.text === "Success") {
+          // dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+          setOpenLoader(false);
+          return;
+        }
+      }
+    }
+
     let data = {
       productId: productimages?.id,
       quantity: quantityvalue,
-    }
+      size: selectedSize
+    };
     setOpenLoader(true);
-    const addToCart = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/cart-item/create", data, token?.token);
+    const addToCart = await apiCall(
+      "POST",
+      `${baseUrl}/cart-item/create`,
+      data,
+      token?.token
+    );
     setOpenLoader(false);
     if (addToCart.statusCode.text === "Success") {
       dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
-      
     }
-  }
-  
+  };
+
   useEffect(() => {
     debugger;
+    console.log('reload')
     callApiForModels();
   }, []);
 
@@ -137,58 +229,99 @@ const ProductDetails = () => {
     let numberString = Number(id);
 
     // let number = parseInt(numberString);
+    setOpenLoader(true);
+    const getModels = await apiCall(
+      "GET",
+      `${baseUrl}/product/get-one/${numberString}`,
+      null
+    );
+    setOpenLoader(false);
+    if (getModels) {
+      console.log(getModels?.data, "details");
+      setProductImages(getModels?.data);
+    }
+    if (token?.token) {
       setOpenLoader(true);
-      const getModels = await apiCall(
+      const getLikeProducts = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/product/get-one/${numberString}`, null
+        `${baseUrl}/likes/get-all`,
+        null,
+        token?.token
       );
-      // setOpenLoader(false);
-      if (getModels) {
-        console.log(getModels?.data, 'details')
-        setProductImages(getModels?.data);
-      }
-
-      const getLikeProducts = await apiCall("GET", "https://smartwardrobe-backend.azurewebsites.net/likes/get-all", null, token?.token);
       setOpenLoader(false);
       if (getLikeProducts) {
-        let check = getLikeProducts?.data?.find((item) => (item?.productId === numberString) || (item?.productId === productimages?.id));
-        if(check){
+        setLikeData(getLikeProducts?.data);
+        let check = getLikeProducts?.data?.find(
+          (item) =>
+            item?.productId === numberString ||
+            item?.productId === productimages?.id
+        );
+        if (check) {
           setShowHideWishlist(false);
         }
       }
+      setOpenLoader(false);
+
+      setOpenLoader(true);
+      let similarProductsHeaders = {
+        topN: 10,
+        imageName: getModels?.data?.imageName,
+      };
+      const getSimilarProducts = await apiCall(
+        "POST",
+        `${baseUrl}/recommend/similar-products`,
+        similarProductsHeaders
+      );
+      setOpenLoader(false);
+      if (getSimilarProducts) {
+        setSimilarProductsData(getSimilarProducts?.data);
+      }
+    }
   };
 
   /** this is to handle tryon modal */
   const handleTryon = (data) => {
     debugger;
-    localStorage.setItem('VTOData', JSON.stringify(data));
+    localStorage.setItem("VTOData", JSON.stringify(data));
     setOpenTryOnModal(true);
-  }
+  };
 
   const handleShare = async (data) => {
     debugger;
-    setOpenLoader(true);
-    const getGroupsList = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/group/get-my-groups",
-      null,
-      token?.token
-    );
 
-    const getFriendsList = await apiCall(
-      "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/friends/get-all-my-friends",
-      null,
-      token?.token
-    );
-    setOpenLoader(false);
-    setFriendsListForShare([...getGroupsList?.data, ...getFriendsList?.data]);
-    console.log([...getGroupsList?.data, ...getFriendsList?.data], "friendsListForShare");
+    if (!token) {
+      showToastInfo("Please login to share products");
+      return;
+    }
+
+    // setOpenLoader(true);
+    // const getGroupsList = await apiCall(
+    //   "GET",
+    //   `${baseUrl}/group/get-my-groups`,
+    //   null,
+    //   token?.token
+    // );
+
+    // const getFriendsList = await apiCall(
+    //   "GET",
+    //   `${baseUrl}/friends/get-all-my-friends`,
+    //   null,
+    //   token?.token
+    // );
+    // setOpenLoader(false);
+    let friends = localStorage.getItem("friendIds")
+  ? JSON.parse(localStorage.getItem("friendIds"))
+  : null;
+  let groups = localStorage.getItem("groupIds")
+  ? JSON.parse(localStorage.getItem("groupIds"))
+  : null;
+    setFriendsListForShare([...friends, ...groups]);
     setShowFriendsForShare(true);
-  }
+  };
 
   const closeNewChat = () => {
     setShowFriendsForShare(false);
+    setShowSection("ShareProductsToFriends");
   };
 
   const closeTryOnModal = () => {
@@ -196,22 +329,102 @@ const ProductDetails = () => {
   };
   /** this is to handle tryon modal */
 
+  const handleButtonClick = (size) => {
+    setSelectedSize(size);
+  };
+
+  const handleSimilarProductsClick = async (item) => {
+    debugger;
+    setOpenLoader(true);
+    let productId = item?.id;
+    const getModels = await apiCall(
+      "GET",
+      `${baseUrl}/product/get-one/${productId}`,
+      null
+    );
+    setOpenLoader(false);
+    if (getModels) {
+      console.log(getModels?.data, "details");
+      setProductImages(getModels?.data);
+    }
+    if (token?.token) {
+      setOpenLoader(true);
+      const getLikeProducts = await apiCall(
+        "GET",
+        `${baseUrl}/likes/get-all`,
+        null,
+        token?.token
+      );
+      setOpenLoader(false);
+      if (getLikeProducts) {
+        let check = getLikeProducts?.data?.find(
+          (item) => item?.productId === productId
+        );
+        if (check) {
+          setShowHideWishlist(false);
+        } else {
+          setShowHideWishlist(true);
+        }
+      }
+    }
+  };
+
+  const handleTryOn = () => {
+    debugger
+    handleTryon(productimages);
+  }
+
+  const handleChangeContent = (value) => {
+    debugger;
+    setShowSection(value);
+    setforAddFriendorCreateGroup(value);
+  }
+
   return (
     <div>
-
-<Helmet>
+      <Helmet>
         <title>{productimages?.type || "Product Details"}</title>
-        <meta name="description" content={productimages?.description || "Product description goes here."} />
+        <meta
+          name="description"
+          content={
+            productimages?.description || "Product description goes here."
+          }
+        />
         {/* OpenGraph Tags */}
-        <meta property="og:title" content={productimages?.type || "Product Title"} />
-        <meta property="og:description" content={productimages?.description || "Product description goes here."} />
-        <meta property="og:image" content={productimages?.imageUrl || "default-image-url.jpg"} />
-        <meta property="og:url" content={`${window.location.origin}${location.pathname}${location.search}`} />
+        <meta
+          property="og:title"
+          content={productimages?.type || "Product Title"}
+        />
+        <meta
+          property="og:description"
+          content={
+            productimages?.description || "Product description goes here."
+          }
+        />
+        <meta
+          property="og:image"
+          content={productimages?.imageUrl || "default-image-url.jpg"}
+        />
+        <meta
+          property="og:url"
+          content={`${window.location.origin}${location.pathname}${location.search}`}
+        />
         <meta property="og:type" content="product" />
         {/* Twitter Cards */}
-        <meta name="twitter:title" content={productimages?.type || "Product Title"} />
-        <meta name="twitter:description" content={productimages?.description || "Product description goes here."} />
-        <meta name="twitter:image" content={productimages?.imageUrl || "default-image-url.jpg"} />
+        <meta
+          name="twitter:title"
+          content={productimages?.type || "Product Title"}
+        />
+        <meta
+          name="twitter:description"
+          content={
+            productimages?.description || "Product description goes here."
+          }
+        />
+        <meta
+          name="twitter:image"
+          content={productimages?.imageUrl || "default-image-url.jpg"}
+        />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
@@ -219,30 +432,33 @@ const ProductDetails = () => {
         <NewChatModal
           isShowModel={showFriendsForShare}
           closeModal={closeNewChat}
-          showSection={'ShareProductsToFriends'}
+          showSection={showSection}
           data={null}
+          changeSection={handleChangeContent}
+          fromProductsDetails={forAddFriendorCreateGroup}
           friendsListForShare={friendsListForShare}
           productUrl={`${window.location.origin}${location.pathname}${location.search}`}
         />
       )}
       {/** Virtual Tryon Component */}
 
-      {openTryOnModal && 
-      <VirtualTryOn
-      isShowModel={openTryOnModal}
-      closeModal={closeTryOnModal}
-      />}
+      {openTryOnModal && (
+        <VirtualTryOn
+          isShowModel={openTryOnModal}
+          closeModal={closeTryOnModal}
+        />
+      )}
 
       {/** Virtual Tryon Component */}
-      
+
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
-        >
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
-        {/** loader code */}
+      {/** loader code */}
       <Headermenu />
       <div className="SearchedContent-div product-details-content">
         <div className="products">
@@ -266,23 +482,100 @@ const ProductDetails = () => {
                 <img
                   src={productimages?.imageUrl}
                   loading="lazy"
-                  alt="Product Image"
+                  alt={
+                    productimages?.description?.length > 70
+                      ? productimages?.description.slice(0, 70) + "..."
+                      : productimages?.description
+                  }
                   className="product-details-main-image"
                 />
-                <button className="product-detailsimage-top-left-button" onClick={() => handleShare(productimages)}>
+                {/* <button
+                  className="product-detailsimage-top-left-button"
+                  onClick={() => handleShare(productimages)}
+                >
                   Share
-                </button>
-                <button className="product-detailsimage-top-right-button" onClick={() => handleTryon(productimages)}>
-                  Try Out
-                </button>
+                </button> */}
+                {/* {productimages?.trail && (
+                  <button
+                    className="product-detailsimage-top-right-button"
+                    onClick={() => handleTryon(productimages)}
+                  >
+                    Try On
+                  </button>
+                )} */}
                 {/* <button className="product-detailsimage-bottom-right-button">
                   Create Your Avatar
                 </button> */}
               </div>
               <div className="Products-Details-div">
                 <div>
-                  <h1>{productimages?.type}</h1>
-                  <h3>&#8364;{ Number(productimages?.price)}</h3>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <h1>{productimages?.name}</h1>
+                    <div className="share-details-main-div share-deatils-laptop">
+                      {productimages && productimages?.trail && (
+                        <div className="details-virtualtryon-buttons" onClick={handleTryOn}>
+                          {/* <IoShirtOutline
+                            style={{ width: "20px", height: "20px" }}
+                          /> */}
+                          {/* <WiStars style={{ width: "30px", height: "30px" }} /> */}
+                          <HiSparkles style={{ width: "20px", height: "20px" }} />
+                          <b>Virtual Try-on</b>
+                        </div>
+                      )}
+                      <div
+                        className="details-share-buttons"
+                        onClick={() => handleShare(productimages)}
+                      >
+                        <IoShareOutline
+                          style={{ width: "25px", height: "25px" }}
+                        />
+                      </div>
+                      <div className="details-heart-buttons">
+                        {showHideWishlist ? (
+                          <>
+                            <IoMdHeartEmpty
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleWishlist("add", productimages)
+                              }
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <FaHeart
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                                color: "red",
+                              }}
+                              onClick={() =>
+                                handleWishlist("remove", productimages)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    {/* <button
+                  className="product-detailsimage-share-button"
+                  onClick={() => handleShare(productimages)}
+                >
+                  <IoMdShare style={{width:"20px", height:"20px", color:"white"}}/>
+                  Share
+                </button> */}
+                    {/* <Button className="share-button" onClick={handleAddToCart}>
+                <IoShareOutline style={{width:"25px", height:"25px", color:"white"}} />
+                      Share
+                </Button> */}
+                  </div>
+                  <h3>&#8364;{Number(productimages?.price)}</h3>
                 </div>
                 <div>
                   <div className="colour-div">
@@ -330,10 +623,17 @@ const ProductDetails = () => {
                 ))}
                 </div> */}
                     <div class="size-container">
-                      <Button className="size-options">S</Button>
-                      <Button className="size-options">M</Button>
-                      <Button className="size-options">L</Button>
-                      <Button className="size-options">XL</Button>
+                      {["S", "M", "L", "XL"].map((size) => (
+                        <button
+                          key={size}
+                          className={`size-options ${
+                            selectedSize === size ? "selected" : ""
+                          }`}
+                          onClick={() => handleButtonClick(size)}
+                        >
+                          {size}
+                        </button>
+                      ))}
                     </div>
                   </div>
                   <div className="quantity-contianer">
@@ -341,6 +641,7 @@ const ProductDetails = () => {
                     <div className="quantity-input-div">
                       <Input
                         className="quantity-button"
+                        aria-label="quantity"
                         prefix={
                           <RiSubtractFill
                             onClick={(e) => handleQuantityChange("sub")}
@@ -356,36 +657,59 @@ const ProductDetails = () => {
                     </div>
                   </div>
                 </div>
+                <div className="share-details-main-div share-deatils-mobile">
+                      {productimages && productimages?.trail && (
+                        <div className="details-virtualtryon-buttons" onClick={handleTryOn}>
+                          <IoShirtOutline
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                          Virtual Try on
+                        </div>
+                      )}
+                      <div
+                        className="details-share-buttons"
+                        onClick={() => handleShare(productimages)}
+                      >
+                        <IoShareOutline
+                          style={{ width: "25px", height: "25px" }}
+                        />
+                      </div>
+                      <div className="details-heart-buttons">
+                        {showHideWishlist ? (
+                          <>
+                            <IoMdHeartEmpty
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                handleWishlist("add", productimages)
+                              }
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <FaHeart
+                              style={{
+                                width: "25px",
+                                height: "25px",
+                                cursor: "pointer",
+                                color: "red",
+                              }}
+                              onClick={() =>
+                                handleWishlist("remove", productimages)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
                 <div className="add-to-cart-buttons-div">
-                  <div className="whishlist-div">
-                    {showHideWishlist ? (
-                      <>
-                        <FaRegHeart
-                          style={{
-                            width: "25px",
-                            height: "25px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleWishlist("add",productimages)}
-                        />
-                        <p className="wishlist-text">Add to Wishlist</p>
-                      </>
-                    ) : (
-                      <>
-                        <FaHeart
-                          style={{
-                            width: "25px",
-                            height: "25px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleWishlist("remove",productimages)}
-                        />
-                        <p className="wishlist-text">Remove from Wishlist</p>
-                      </>
-                    )}
-                  </div>
                   <div className="cart-buttons-div">
-                    <Button className="cart-button" onClick={handleAddToCart}>ADD TO CART</Button>
+                    <Button className="cart-button" onClick={handleAddToCart}>
+                      ADD TO CART
+                    </Button>
                     <Button className="buy-button">BUY NOW</Button>
                   </div>
                 </div>
@@ -400,11 +724,12 @@ const ProductDetails = () => {
                     >
                       <AccordionSummary>DESCRIPTION</AccordionSummary>
                       <AccordionDetails
-                      sx={{
-                        fontSize:"smaller",
-                        textTransform: "capitalize",
-                        letterSpacing:"0.1rem"
-                      }}>
+                        sx={{
+                          fontSize: "smaller",
+                          textTransform: "capitalize",
+                          letterSpacing: "0.1rem",
+                        }}
+                      >
                         {productimages?.description}
                       </AccordionDetails>
                     </Accordion>
@@ -419,11 +744,12 @@ const ProductDetails = () => {
                         FABRIC & HOW TO LOOK AFTER ME
                       </AccordionSummary>
                       <AccordionDetails
-                      sx={{
-                        fontSize:"smaller",
-                        textTransform: "capitalize",
-                        letterSpacing:"0.1rem"
-                      }}>
+                        sx={{
+                          fontSize: "smaller",
+                          textTransform: "capitalize",
+                          letterSpacing: "0.1rem",
+                        }}
+                      >
                         {`${productimages?.material} Wash in cold water, tumble dry low, and iron as needed for best care.`}
                       </AccordionDetails>
                     </Accordion>
@@ -436,14 +762,13 @@ const ProductDetails = () => {
                     >
                       <AccordionSummary>SIZE GUIDE</AccordionSummary>
                       <AccordionDetails
-                      sx={{
-                        fontSize:"smaller",
-                        textTransform: "capitalize",
-                        letterSpacing:"0.1rem"
-                      }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore
-                        magna aliqua.
+                        sx={{
+                          fontSize: "smaller",
+                          textTransform: "capitalize",
+                          letterSpacing: "0.1rem",
+                        }}
+                      >
+                        <img src={sizeChartImage} alt="size chart" />
                       </AccordionDetails>
                     </Accordion>
                   </AccordionGroup>
@@ -452,98 +777,34 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
-        {/* <div className="chat">
-          <div className="chat-content">
-            <ChatSection />
-          </div>
 
-          <div className="search-input-container">
-            <FormControl
-              sx={{ m: 1, width: "100%", maxWidth: "800px" }}
-              variant="outlined"
-            >
-              <InputLabel
-                sx={{
-                  color: "black",
-                  letterSpacing: "normal",
-                  textTransform: "capitalize",
-                  "&.Mui-focused": {
-                    color: "black",
-                    fontSize: "18px",
-                  },
-                }}
-                htmlFor="outlined-adornment-password"
-              >
-                Search
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={"text"}
-                style={{ width: "100%", backgroundColor: "#e9ecef" }}
-                className="productsearch-input"
-                autoComplete="off"
-                endAdornment={
-                  <InputAdornment position="end">
-                    <Button
-                      component="label"
-                      role={undefined}
-                      tabIndex={-1}
-                      variant="outlined"
-                      color="neutral"
-                      style={{
-                        border: "none",
-                        width: "10px",
-                        borderRadius: "50%",
-                      }}
-                      startDecorator={
-                        <SvgIcon>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                            />
-                          </svg>
-                        </SvgIcon>
-                      }
-                    >
-                      <VisuallyHiddenInput
-                        type="file"
-                        onChange={imageUpload}
-                      />
-                    </Button>
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      edge="end"
-                    >
-                      <SearchIcon style={{ color: "black" }} />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                sx={{
-                  height: "50px",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "transparent",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.5)",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "black",
-                    borderWidth: "2px",
-                  },
-                }}
-              />
-            </FormControl>
+        {similarProductsData?.length > 0 && (
+          <div className="Similar-Products-div">
+            <h3 className="similar-products-heading-deatils">
+              SIMILAR PRODUCTS
+            </h3>
+            <div className="Similar-Products-Images">
+              <Carousel responsive={responsive} autoPlaySpeed={1500}>
+                {similarProductsData?.map((items, index) => (
+                  <div className="card">
+                    <img
+                      className="product--image"
+                      loading="lazy"
+                      src={items?.imageUrl}
+                      alt="Similar_productimage"
+                      onClick={() => handleSimilarProductsClick(items)}
+                    />
+                    <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>
+                    <p className="description">{items?.type}</p>
+                    <p className="price" style={{ fontSize: "15px" }}>
+                      {items?.price}
+                    </p>
+                  </div>
+                ))}
+              </Carousel>
+            </div>
           </div>
-        </div> */}
+        )}
       </div>
       <Footer />
     </div>

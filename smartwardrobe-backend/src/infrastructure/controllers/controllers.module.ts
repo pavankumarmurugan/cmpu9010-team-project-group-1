@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+
 // import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 // import { APP_GUARD } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
@@ -10,7 +11,7 @@ import { ConvertorsModule } from '../../core/convertors/convertors.module';
 import { UserController } from './user/user.controller';
 import { AuthController } from './auth/auth.controller';
 import { ConfigModule } from '@nestjs/config';
-// import { ProductCategoryController } from './product-category/product-category.controller';
+import { ProductCategoryController } from './product-category/product-category.controller';
 // import { ProductInventoryController } from './product-inventory/product-inventory.controller';
 import { UseCasesModule } from 'src/use-cases/use-cases.module';
 import { ProductController } from './product/product.controller';
@@ -32,6 +33,9 @@ import { VtoImageSearchController } from './vto/vto.controller';
 import { OriginMiddleware } from '../middleware/origin.middleware';
 import { ConfigController } from './config/config.controller';
 import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
+import { InviteController } from './invite/invite.controller';
+import { FaissModule } from '../services/faiss/faiss.module';
+import { TestController } from './test-redis/test-redis-controller';
 
 @Module({
   imports: [
@@ -52,8 +56,9 @@ import { UserLikedModelController } from './user-liked-models/user-liked-models.
     ConvertorsModule,
     UseCasesModule,
     ServicesModule,
+    FaissModule,
     CacheModule.register({
-      ttl: 300000,
+      ttl: 3000000,
       max: 100,
       isGlobal: true,
     }),
@@ -63,7 +68,7 @@ import { UserLikedModelController } from './user-liked-models/user-liked-models.
     HealthController,
     AuthController,
     ProductController,
-    // ProductCategoryController,
+    ProductCategoryController,
     // ProductInventoryController,
     CartItemController,
     CartController,
@@ -79,6 +84,8 @@ import { UserLikedModelController } from './user-liked-models/user-liked-models.
     VtoImageSearchController,
     ConfigController,
     UserLikedModelController,
+    InviteController,
+    TestController,
   ],
   providers: [
     // {

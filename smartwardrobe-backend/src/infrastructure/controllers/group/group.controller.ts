@@ -13,6 +13,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GroupReqDto } from 'src/core/dto/group/group.req-dto';
 import { UpdateGroupDto } from 'src/core/dto/group/group.req-update-dto';
+import { GroupResDto } from 'src/core/dto/group/group.res-dto';
 import { GroupEntity } from 'src/core/entities/group/group';
 import { RequestWithUser } from 'src/core/interface/request.interface';
 import { IResponse } from 'src/core/interface/response.interface';
@@ -33,7 +34,7 @@ export class GroupController {
   @Roles(ROLES.ADMIN, ROLES.USER)
   async getAll(
     @Request() request: RequestWithUser,
-  ): Promise<IResponse<GroupEntity[]>> {
+  ): Promise<IResponse<GroupResDto[]>> {
     try {
       const {
         user: { userId },

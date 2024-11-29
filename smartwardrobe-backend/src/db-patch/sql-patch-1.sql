@@ -15,15 +15,44 @@ CREATE TABLE "user" (
 );
 
 
-  CREATE TABLE `product_category` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
-  `desc` TEXT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
-  `deleted_at` TIMESTAMP NULL,
-  PRIMARY KEY (`id`)
-  );
+CREATE TABLE product_category (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP
+);
+
+CREATE TABLE product_subcategory (
+  id SERIAL PRIMARY KEY,
+  category_id INT REFERENCES product_category(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP
+);
+
+
+WITH unique_types AS (
+    SELECT DISTINCT type, category
+    FROM products
+    WHERE type IS NOT NULL AND category IS NOT NULL
+),
+type_with_category_id AS (
+    SELECT ut.type, pc.id AS category_id
+    FROM unique_types ut
+    JOIN product_category pc ON ut.category = pc.name
+)
+INSERT INTO product_subcategory (category_id, name)
+SELECT category_id, type
+FROM type_with_category_id
+WHERE (category_id, type) NOT IN (
+    SELECT category_id, name
+    FROM product_subcategory
+);
+
 
 
 CREATE TABLE `product_inventory` (
@@ -36,7 +65,7 @@ CREATE TABLE `product_inventory` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_product_inventory_on_product_id`
     FOREIGN KEY (`product_id`)
-    REFERENCES `smartwardrobe`.`product` (`id`)
+    REFERENCES `public`.`product` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -70,6 +99,7 @@ CREATE TABLE products (
     color_shade VARCHAR(50) NULL,
     material VARCHAR(100) NULL,
     occasion VARCHAR(100) NULL,
+    category VARCHAR(100),
     applicable_season VARCHAR(100) NULL,
     description TEXT NULL,
     price NUMERIC(10, 2) CHECK (price >= 0) NULL,
@@ -78,6 +108,12 @@ CREATE TABLE products (
     "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP NULL
 );
+
+CREATE INDEX idx_products_category_type ON products (category, type);
+
+
+ALTER TABLE products
+ADD COLUMN category VARCHAR(100);
 
 CREATE TABLE public."cart" (
   "id" SERIAL PRIMARY KEY,
@@ -109,21 +145,22 @@ EXECUTE FUNCTION create_cart_after_user_insert();
 
 
 
-CREATE TABLE "smartwardrobe"."cart_item" (
+CREATE TABLE "public"."cart_item" (
   "id" SERIAL PRIMARY KEY,
   "cart_id" INT NULL,
   "product_id" INT NULL,
   "quantity" INT NULL,
+  "size" VARCHAR(100) NULL,
   "created_at" TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" TIMESTAMP NULL,
   CONSTRAINT "fk_product_id"
     FOREIGN KEY ("product_id")
-    REFERENCES "smartwardrobe"."product" ("id")
+    REFERENCES "public"."product" ("id")
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT "fk_cart_item_on_cart_id"
     FOREIGN KEY ("cart_id")
-    REFERENCES "smartwardrobe"."cart" ("id")
+    REFERENCES "public"."cart" ("id")
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
@@ -365,3 +402,19 @@ CREATE TABLE public.user_liked_models (
         UNIQUE (user_id, model_image_name)
 );
 
+CREATE INDEX idx_model_image_name_image_name ON vto_image_search (model_image_name, image_name);
+
+CREATE INDEX idx_image_name ON products (image_name);
+
+CREATE INDEX idx_friends_user1_user2 ON friends (user1_id, user2_id);
+
+CREATE INDEX idx_group_members_user_id ON group_members (user_id);
+
+CREATE INDEX idx_group_members_group_id ON group_members (group_id);
+
+CREATE TABLE  image_clusters (
+    image_id SERIAL PRIMARY KEY,
+    image_name TEXT UNIQUE NOT NULL,
+    cluster_id INTEGER NOT NULL,
+    clip_embedding FLOAT8[] NOT NULL
+);

@@ -1,51 +1,86 @@
 import React from "react";
 import "../../Styles/Footer.css";
+import Homelogo2 from "../../Assets/Homelogo2.png";
+import { useLocation, useNavigate } from "react-router-dom";
+import { categoryValueSuccess } from "../../redux/slices/HomeDataSlice";
+import { useDispatch } from "react-redux";
 
 function Footer() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+  let categoryPaths = localStorage.getItem("categoryPaths")
+    ? JSON.parse(localStorage.getItem("categoryPaths"))
+    : null;
+
+  function createSlug(str) {
+    return str
+      .toLowerCase()                     
+      .replace(/[^a-z0-9\s-]/g, '')      
+      .replace(/\s+/g, '-')              
+      .replace(/-+/g, '-');              
+  }
+
+  const handleLinks = (links) => {
+    debugger;
+
+    let value = links;
+    const slug = createSlug(value);
+    let catpath = [];
+    if(categoryPaths?.length > 0){
+      catpath = [...categoryPaths, value];
+    }else{
+      catpath = [value];
+    }
+    localStorage.setItem("categoryPaths", JSON.stringify(catpath));
+      navigate(`/products/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+
+  }
+
   return (
     <div className="footer">
-      <div className="top">
-        <div>
-          <h1>𝑺𝒎𝒂𝒓𝒕𝑾𝒂𝒓𝒅𝒓𝒐𝒃𝒆</h1>
+      <div className="top" >
+        <div style={{ display:"flex", alignItems:"center" }}>
+        <img
+                    src={Homelogo2}
+                    alt="logo"
+                    style={{
+                      width: "70px",
+                      height: "60px",
+                      objectFit: "contain",
+                    }}
+                  />
+          <h1>SMARTWARDROBE</h1>
         </div>
-        {/* <div>
-          <a href="/" aria-label="Visit our Facebook page">
-            <i className="fab fa-facebook-square"></i>
-            <span class="visually-hidden" style={{color: "#ffffff"}}>Facebook</span>
-          </a>
-          <a href="/" aria-label="Visit our Instagram page">
-            <i className="fab fa-instagram-square"></i>
-            <span class="visually-hidden" style={{color: "#ffffff"}}>Instagram</span>
-          </a>
-          <a href="/" aria-label="Visit our Twitter page">
-            <i className="fab fa-twitter-square"></i>
-            <span class="visually-hidden" style={{color: "#ffffff"}}>Twitter</span>
-          </a>
-        </div> */}
       </div>
       <div className="bottom">
-        <div>
-          <h3>Store</h3>
-          <a href="/">New In</a>
-          <a href="/">Men Clothing</a>
-          <a href="/">Women Clothing</a>
-          <a href="/">Footwear</a>
-          <a href="/">Accessories</a>
+      <div style={{ maxWidth: "500px"}}>
+          <h3>ABout Us</h3>
+          <p style={{textTransform:"capitalize"}}>At Smartwardrobe, 
+            we make shopping smarter and more fun.
+            With features like image search, collaborative chat,
+            and virtual try-ons, finding and trying your perfect 
+            look has never been easier. We're here to bring style 
+            and technology together, giving you a seamless and personalized fashion experience.</p>
         </div>
-        <div>
-          <h3>Information</h3>
-          <a href="/">About us</a>
-          <a href="/">Privacy policy</a>
-          <a href="/">Terms and conditions</a>
-          <a href="/">Careers</a>
+      
+        <div className="footermenu-div">
+          <h3>Store</h3>
+          <a onClick={() => handleLinks("Menswear//Shirt")} className="footerMenu">Men Clothing</a>
+          <a onClick={() => handleLinks("Ladieswear//T-shirt")} className="footerMenu">Women Clothing</a>
+          <a onClick={() => handleLinks("Baby Children//T-shirt")} className="footerMenu">Kids Clothing</a>
+          <a onClick={() => handleLinks("Sport//T-shirt")} className="footerMenu">Sportswear</a>
         </div>
         <div>
           <h3>Get in touch</h3>
-          <a href="/">
-            Whatsapp: <u>+029123416</u>
+          <a className="footerMenu">
+            Whatsapp: +353894447599
           </a>
-          <a href="/">
-            Email: <u>smartwardrobe@gmail.com</u>
+          <a className="footerMenu">
+            Email: smartwardrobe.store@gmail.com
           </a>
         </div>
       </div>

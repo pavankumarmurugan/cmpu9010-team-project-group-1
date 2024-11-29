@@ -4,7 +4,7 @@ import Draggable from "react-draggable";
 import { FcGoogle } from "react-icons/fc";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 import { json, useNavigate } from "react-router-dom";
 import { showToastError, showToastSuccess } from "../GenericToasters/GenericToasters";
@@ -18,6 +18,7 @@ function Profile(props) {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
+  const [formDataUpdate, setFormDataUpdate] = useState(false);
   const [profilePic, setProfilePic] = useState(null);
   const [formData, setFormData] = useState({
     // username: "",
@@ -70,6 +71,7 @@ function Profile(props) {
         ...prev,
         [name]: false,
       }));
+      setFormDataUpdate(true);
     }
   };
 
@@ -108,7 +110,7 @@ function Profile(props) {
     debugger;
 
     const valdiations = handleValidations();
-    if (valdiations) {
+    if (valdiations || formDataUpdate === false) {
       return;
     }
     const data = {
@@ -120,7 +122,7 @@ function Profile(props) {
     setOpenLoader(true);
     const response = await apiCall(
       "PATCH",
-      "https://smartwardrobe-backend.azurewebsites.net/users/update",
+      `${baseUrl}/users/update`,
       data,
       token?.token
     );
@@ -155,7 +157,7 @@ function Profile(props) {
     setOpenLoader(true);
     const response = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/users/get-my-profile",
+      `${baseUrl}/users/get-my-profile`,
       null,
       token?.token
     );
@@ -181,7 +183,7 @@ function Profile(props) {
         try {
             setOpenLoader(true);
             const response = await fetch(
-              `https://smartwardrobe-backend.azurewebsites.net/users/upload-profile-picture`,
+              `${baseUrl}/users/upload-profile-picture`,
               {
                 method: "POST",
                 headers: {

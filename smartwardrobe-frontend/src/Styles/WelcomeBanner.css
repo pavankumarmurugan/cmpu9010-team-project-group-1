@@ -1,0 +1,87 @@
+.banner-main-div{
+   
+}
+
+.banner-heading{
+    padding: 0px 0px 10px 0px; 
+}
+
+.banner-mainheading{
+    font-size: 1.5rem;
+}
+
+.sub-heading{
+    font-size: 14px;
+    text-align: start;
+}
+
+.banner-main-div .video-main-div{
+    max-height: 40vh;
+    position: relative;
+}
+
+.back-forward-buttons{
+    width: fit-content;
+    padding: 7px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-size: 18px;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+    &:hover{
+        transform: scale(1.05);
+      }
+}
+
+.back-forward-buttons-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.featurecount-text{
+    font-size: 16px;
+}
+
+.sub-heading-skip{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.feature-description-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: start;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.progress-main-div{
+    margin-top: 10px;
+}
+
+.progress-bar{
+ margin-top: 10px;
+}
+
+.feature-description{
+    font-size: 18px;
+}
+
+.feature-description i {
+    font-size: 15px;
+}
+
+.ant-progress-text{
+    display: none !important;
+}
+
+.ant-progress-bg.ant-progress-bg-outer{
+    background: linear-gradient(to right, #8a2be2, #ff69b4) !important;
+}

@@ -14,13 +14,14 @@ import {
   SvgIcon,
 } from "@mui/material";
 
-import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
-import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
-import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
-import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
-import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
-import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
+// import Homeproductimage_1 from "../../Assets/Homeproductimage_1.jpg";
+// import Homeproductimage_2 from "../../Assets/Homeproductimage_2.jpg";
+// import Homeproductimage_3 from "../../Assets/Homeproductimage_3.jpg";
+// import Homeproductimage_4 from "../../Assets/Homeproductimage_4.jpg";
+// import Homeproductimage_5 from "../../Assets/Homeproductimage_5.jpg";
+// import Homeproductimage_6 from "../../Assets/Homeproductimage_6.jpg";
 import {
+  BackButtonHandler,
   filterDataAccordingToUser,
   handleImageUpload,
   Productfilterdropdowns,
@@ -32,7 +33,7 @@ import { Divider, Input, Select, Space } from "antd";
 import ChatSection from "../ChatSection/ChatSection";
 import { styled } from "@mui/joy";
 import Button from "@mui/joy/Button";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,11 +43,22 @@ import {
 } from "../../redux/slices/HomeDataSlice";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
+import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 
 const ProductPage = () => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+    let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
+    ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
+    : null;
+    let savedScrollPosition = localStorage.getItem("scrollPosition")
+    ? JSON.parse(localStorage.getItem("scrollPosition"))
+    : null;
+    let paginationLocal = localStorage.getItem("paginationLocal")
+    ? JSON.parse(localStorage.getItem("paginationLocal"))
+    : null;
+    console.log('no of reloads');
   const dispatch = useDispatch();
   const location = useLocation();
   let { state } = location;
@@ -55,6 +67,7 @@ const ProductPage = () => {
   const pagination = useRef(1);
   const imagePagination = useRef(1);
   const homeData = useSelector((state) => state.homeData.homeData);
+  const categoryValue = useSelector((state) => state.homeData.categoryValue);
   const headerSearchValue = useSelector(
     (state) => state.homeData.headerSearchValue
   );
@@ -65,6 +78,7 @@ const ProductPage = () => {
   const [openLoader, setOpenLoader] = useState(false);
   const [hideLoadMoreButton, sethideLoadMoreButton] = useState(false);
   const [productsDataForFilter, setProductsDataForFilter] = useState([]);
+  const [noProductsFound, setNoProductsFound] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,80 +95,80 @@ const ProductPage = () => {
   });
   const [file, setFile] = useState(null);
 
-  const dummyData = [
-    {
-      image: Homeproductimage_1,
-      name: "Zapara",
-      description: "Wedding Suit",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_2,
-      name: "Harper",
-      description: "Long Sleeves T-Shirt",
-      price: "$130",
-    },
-    {
-      image: Homeproductimage_3,
-      name: "Zara",
-      description: "Urban Style Hoodeis",
-      price: "$250",
-    },
-    {
-      image: Homeproductimage_4,
-      name: "H&M",
-      description: "Printed Dress for Summer",
-      price: "$120",
-    },
-    {
-      image: Homeproductimage_5,
-      name: "Next Direct",
-      description: "Leopard Printed Shoes For Women",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_6,
-      name: "Converse",
-      description: "Black Converse Shoes",
-      price: "$230",
-    },
-    {
-      image: Homeproductimage_1,
-      name: "Zapara",
-      description: "Wedding Suit",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_2,
-      name: "Harper",
-      description: "Long Sleeves T-Shirt",
-      price: "$130",
-    },
-    {
-      image: Homeproductimage_3,
-      name: "Zara",
-      description: "Urban Style Hoodeis",
-      price: "$250",
-    },
-    {
-      image: Homeproductimage_4,
-      name: "H&M",
-      description: "Printed Dress for Summer",
-      price: "$120",
-    },
-    {
-      image: Homeproductimage_5,
-      name: "Next Direct",
-      description: "Leopard Printed Shoes For Women",
-      price: "$1200",
-    },
-    {
-      image: Homeproductimage_6,
-      name: "Converse",
-      description: "Black Converse Shoes",
-      price: "$230",
-    },
-  ];
+  // const dummyData = [
+  //   {
+  //     image: Homeproductimage_1,
+  //     name: "Zapara",
+  //     description: "Wedding Suit",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_2,
+  //     name: "Harper",
+  //     description: "Long Sleeves T-Shirt",
+  //     price: "$130",
+  //   },
+  //   {
+  //     image: Homeproductimage_3,
+  //     name: "Zara",
+  //     description: "Urban Style Hoodeis",
+  //     price: "$250",
+  //   },
+  //   {
+  //     image: Homeproductimage_4,
+  //     name: "H&M",
+  //     description: "Printed Dress for Summer",
+  //     price: "$120",
+  //   },
+  //   {
+  //     image: Homeproductimage_5,
+  //     name: "Next Direct",
+  //     description: "Leopard Printed Shoes For Women",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_6,
+  //     name: "Converse",
+  //     description: "Black Converse Shoes",
+  //     price: "$230",
+  //   },
+  //   {
+  //     image: Homeproductimage_1,
+  //     name: "Zapara",
+  //     description: "Wedding Suit",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_2,
+  //     name: "Harper",
+  //     description: "Long Sleeves T-Shirt",
+  //     price: "$130",
+  //   },
+  //   {
+  //     image: Homeproductimage_3,
+  //     name: "Zara",
+  //     description: "Urban Style Hoodeis",
+  //     price: "$250",
+  //   },
+  //   {
+  //     image: Homeproductimage_4,
+  //     name: "H&M",
+  //     description: "Printed Dress for Summer",
+  //     price: "$120",
+  //   },
+  //   {
+  //     image: Homeproductimage_5,
+  //     name: "Next Direct",
+  //     description: "Leopard Printed Shoes For Women",
+  //     price: "$1200",
+  //   },
+  //   {
+  //     image: Homeproductimage_6,
+  //     name: "Converse",
+  //     description: "Black Converse Shoes",
+  //     price: "$230",
+  //   },
+  // ];
 
   const categoryfilter = [
     { label: 1, value: 1 },
@@ -173,13 +187,17 @@ const ProductPage = () => {
     { label: 2, value: 200 },
   ];
   const colourfilter = [
+    { label: "White", value: "White" },
     { label: "Black", value: "Black" },
     { label: "Blue", value: "Blue" },
     { label: "Brown", value: "Brown" },
+    { label: "Grey", value: "Grey" },
     { label: "Green", value: "Green" },
     { label: "Navy", value: "Navy" },
+    { label: "Rose Gold", value: "Rose Gold" },
     { label: "Red", value: "Red" },
     { label: "Orange", value: "Orange" },
+    { label: "Silver", value: "Silver" },
     { label: "Pink", value: "Pink" },
   ];
 
@@ -196,10 +214,14 @@ const ProductPage = () => {
   `;
 
   useEffect(() => {
+    debugger;
+    console.log("state", state);
     getProductsData();
-  }, []);
+  }, [categoryValue]);
 
   useEffect(() => {
+    debugger
+    console.log(window.location.pathname);
     return () => {
       // state.searchValue = null;
       pagination.current = 1;
@@ -215,34 +237,125 @@ const ProductPage = () => {
         toPrice: "",
         Colour: [],
       });
+      // if(window.location.pathname === "/products"){
+      //   localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
+      // }
     };
   }, []);
 
+  // const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  //   const previousPathRef = useRef(null); // Ref to track the previous path
+
+  //   useEffect(() => {
+  //       debugger
+  //       const handlePopState = () => {
+  //           const newPath = window.location.pathname;
+
+  //           // Log paths
+  //           console.log("Navigated from:", previousPathRef.current);
+  //           console.log("Navigated to:", newPath);
+
+  //           if(previousPathRef.current.includes("/products") && !previousPathRef.current.includes("/products/") ){
+  //               localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
+  //           }
+
+  //           // Update previous and current paths
+  //           previousPathRef.current = currentPath;
+  //           setCurrentPath(newPath);
+  //       };
+
+  //       window.addEventListener('popstate', handlePopState);
+
+  //       return () => {
+  //           window.removeEventListener('popstate', handlePopState);
+  //       };
+  //   }, [currentPath]);
+
+
   const getProductsData = async () => {
     debugger;
-    if (headerSearchValue) {
-      setFormData((prevState) => ({
-        ...prevState,
-        searchValue: headerSearchValue,
-      }));
-      handleSearch(headerSearchValue);
-      dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+
+    // if(categoryValue){
+    //   let splitValue = categoryValue.split("//");
+
+    //   // setOpenLoader(true);
+    //   const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
+    //   // setOpenLoader(false);
+    //   setLoading(false);
+    //   if(response?.data?.length > 0){
+    //     setFormData((prevState) => ({
+    //       ...prevState,
+    //       searchValue: "",
+    //     }))
+    //     setInputSuggestions([]);
+    //     if(pagination.current === 1){
+    //       setProducts(response?.data);
+    //       setProductsDataForFilter(response?.data);
+    //     }else{
+    //       setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+    //       setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
+    //     }
+    //     // return;
+    //   }
+
+    // }
+    let header = "";
+    if(headerSearchValueLocal?.length > 0){
+      header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
+    }
+    if (header || headerSearchValue || headerSearchValue?.file) {
+      if(headerSearchValue?.file || headerSearchValue?.type){
+        if(headerSearchValue?.type){
+          setFile(headerSearchValue)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue),
+            searchValue: header,
+          }));
+        }else{
+          setFile(headerSearchValue?.file)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
+            searchValue: header,
+          }));
+        }
+        
+      }else{
+        setFormData((prevState) => ({
+          ...prevState,
+          searchValue: header?.searchValue || header,
+        }));
+      }
+      handleSearch(header);
+      // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
       // state.searchValue = null;
     } else {
       // setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `https://smartwardrobe-backend.azurewebsites.net/product/get-all/${pagination?.current}/100`,
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
         null,
         token?.token
       );
       // setOpenLoader(false)
       setLoading(false);
-      if (response) {
-        setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+      if (response?.data) {
+        let removeEuro = "";
+        if(formData?.Price.includes("€")){
+          removeEuro = formData?.Price.replace("€","");
+        }else{
+          removeEuro = formData?.Price;
+        }
+        let filterData = await filterDataAccordingToUser(
+          response?.data,
+          removeEuro,
+          formData?.Colour
+        );
+        setProducts((prevProducts) => [...prevProducts, ...filterData]);
         setProductsDataForFilter((prevProducts) => [
           ...prevProducts,
-          ...response?.data,
+          ...filterData,
         ]);
         dispatch(homeDataSuccess({ homeData: response?.data }));
       }
@@ -271,20 +384,43 @@ const ProductPage = () => {
     handleSearch(query);
   };
 
-  const handleSearch = async (event) => {
+  const handleSearch = async (event,fromKeyDown) => {
     debugger;
+    console.log(location.pathname)
     let searchValue = event === null ? formData?.searchValue : event;
-    if (searchValue !== "" || file) {
+    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type) {
       // event.preventDefault();
       const formData = new FormData();
       if (file) {
         formData.append("file", file);
       }
-      formData.append("query", searchValue);
+      if(headerSearchValue?.file){
+        formData.append("file", headerSearchValue?.file);
+        formData.append("query", headerSearchValueLocal);
+      }else if(headerSearchValue?.type){
+        formData.append("file", headerSearchValue);
+        formData.append("query", headerSearchValueLocal);
+      } else{
+        formData.append("query", searchValue?.searchValue || searchValue);
+      }
       try {
+        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue || file }));
+        // let headerSearchValueLocalArray = [...headerSearchValueLocal, searchValue];
+        // headerSearchValueLocal.push(searchValue) //osama
+        // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
         setOpenLoader(true);
+        // https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search/get-all-similar-products-to-image/1/50
+        let pag = 1;
+        if(fromKeyDown === "fromKeyDown"){
+          pag = 1
+        }else if(paginationLocal > 1){
+          pag = paginationLocal
+        }else{
+          pag = imagePagination?.current;
+        }
+        
         const response = await fetch(
-          `https://smartwardrobe-backend.azurewebsites.net/search/get-all-similar-products-to-image/${imagePagination?.current}/50`,
+         `${baseUrl}/search/get-all-similar-products-to-image/1/${pag * 50}`,
           {
             method: "POST",
             headers: {
@@ -305,22 +441,45 @@ const ProductPage = () => {
         if (result?.data?.expectedQueries?.length > 0) {
           setInputSuggestions(result?.data?.expectedQueries);
         }
-        if (imagePagination?.current === 1) {
+        // if (imagePagination?.current === 1) {
+        // if (fromKeyDown === "fromKeyDown") {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
-        } else {
-          setProducts((prevProducts) => [
-            ...prevProducts,
-            ...result?.data?.products,
-          ]);
-          setProductsDataForFilter((prevProducts) => [
-            ...prevProducts,
-            ...result?.data?.products,
-          ]);
-        }
+          if(result?.data?.products?.length === 0 && pag === 1){
+             setNoProductsFound(true);
+             setInputSuggestions([])
+          }
+        // } 
+        // else {
+        //   setProducts((prevProducts) => [
+        //     ...prevProducts,
+        //     ...result?.data?.products,
+        //   ]);
+        //   setProductsDataForFilter((prevProducts) => [
+        //     ...prevProducts,
+        //     ...result?.data?.products,
+        //   ]);
+        // }
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
+        let headerSearchValueLocalArray = [];
+        if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
+          // headerSearchValueLocalArray = headerSearchValueLocal;
+          headerSearchValueLocalArray.push(searchValue);
+          localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
+        }
+        // else{
+        //   if(headerSearchValueLocal?.length > 1){
+        //     headerSearchValueLocal.pop();
+        //     localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
+        //   }
+        // }
+        setTimeout(() => {
+          if (savedScrollPosition) {
+            window.scrollTo(0, savedScrollPosition); 
+          }
+        }, 1);
       } catch (error) {
         console.error("There was an error uploading the image:", error);
       }
@@ -362,8 +521,9 @@ const ProductPage = () => {
 
   const handleLoadMoreProducts = () => {
     debugger;
-    if (file || formData?.searchValue || headerSearchValue) {
+    if (file || formData?.searchValue || headerSearchValueLocal) {
       imagePagination.current = imagePagination.current + 1;
+      localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
       handleSearch(null);
     } else {
       pagination.current = pagination.current + 1;
@@ -373,16 +533,42 @@ const ProductPage = () => {
 
   const handleSearchInput = (e) => {
     let { value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      searchValue: value,
-    }));
-    dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+    if(!/[^\w\s]/gm.test(value)){
+      setFormData((prevState) => ({
+        ...prevState,
+        searchValue: value,
+      }));
+      dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+    }
+   
+    // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
+    
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = async (e) => {
+    debugger
     if (e.key === "Enter") {
-      handleSearch(null);
+      localStorage.setItem("paginationLocal", JSON.stringify(1));
+      localStorage.removeItem("headerSearchValueLocal");
+      if(e?.target?.value === "" && file === null){
+        pagination.current = 1;
+        setOpenLoader(true);
+      const response = await apiCall(
+        "GET",
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
+        null,
+        token?.token
+      );
+      setOpenLoader(false)
+      setLoading(false);
+      if (response?.data) {
+        setProducts(response?.data);
+        setProductsDataForFilter(response?.data);
+        dispatch(homeDataSuccess({ homeData: response?.data }));
+      }
+      }else{
+        handleSearch(null,"fromKeyDown");
+      }
     }
   };
 
@@ -477,7 +663,15 @@ const ProductPage = () => {
   /** this is to handle tryon modal */
 
   const removeImage = () => {
+    debugger
+    setFile(null)
     setFormData((prevData) => ({ ...prevData, imagePreview: null }));
+    if(headerSearchValueLocal?.searchValue){
+      let removeFileData = headerSearchValueLocal?.searchValue;
+      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: removeFileData}));
+    }else{
+      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: ""}));
+    }
   };
 
   return (
@@ -516,6 +710,40 @@ const ProductPage = () => {
             </div> */}
             <div className="productsearch-input-div">
               {/* <div className="search-input-container"> */}
+              {formData?.imagePreview && 
+              <div
+              style={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                marginLeft:"10px"
+              }}
+              className="thumbnail-container" // Add a class for styling hover
+            >
+              {/* Thumbnail Image */}
+              <img
+                src={formData?.imagePreview}
+                alt="Uploaded preview"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "5px",
+                  marginRight: "8px",
+                }}
+                className="thumbnail-image"
+              />
+
+              {/* Hover to enlarge the image */}
+              <div className="image-preview-container">
+                <img
+                  src={formData?.imagePreview}
+                  alt="Uploaded preview"
+                  className="hover-image"
+                />
+              </div>
+            </div>
+              }
               <FormControl
                 sx={{ m: 1, width: "100%", maxWidth: "800px" }}
                 variant="outlined"
@@ -571,15 +799,6 @@ const ProductPage = () => {
                             className="thumbnail-image"
                           />
 
-                          {/* Hover to enlarge the image */}
-                          <div className="image-preview-container">
-                            <img
-                              src={formData?.imagePreview}
-                              alt="Uploaded preview"
-                              className="hover-image"
-                            />
-                          </div>
-
                           <IconButton
                             onClick={removeImage}
                             size="small"
@@ -605,8 +824,10 @@ const ProductPage = () => {
                         variant="outlined"
                         color="neutral"
                         style={{ border: "none", borderRadius: "50%" }}
+                        aria-label="Upload Image Button"
                       >
-                        <SvgIcon>
+                        <ImageSearchIcon />
+                        {/* <SvgIcon>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -620,18 +841,20 @@ const ProductPage = () => {
                               d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
                             />
                           </svg>
-                        </SvgIcon>
+                        </SvgIcon> */}
                         <input
                           type="file"
                           accept="image/*"
                           onChange={imageUpload}
                           style={{ display: "none" }}
+                          aria-label="Upload Image"
                         />
                       </Button>
                       <IconButton aria-label="search" edge="end">
                         <SearchIcon
                           style={{ color: "black" }}
                           onClick={() => handleSearch(null)}
+                          aria-label="Search"
                         />
                       </IconButton>
                     </InputAdornment>
@@ -705,9 +928,10 @@ const ProductPage = () => {
                       letterSpacing: "0.1rem",
                       textTransform: "capitalize",
                       borderRadius: "5px",
-                      height: "30px",
+                      height: "40px",
                     }}
                     placeholder="Price"
+                    aria-label="Price"
                     name={formData?.Price}
                     value={formData?.Price}
                     className="filterdropdowns"
@@ -758,6 +982,7 @@ const ProductPage = () => {
                           <Input
                             placeholder="From"
                             name="fromPrice"
+                            aria-label="From Price"
                             value={formData.fromPrice}
                             maxLength={4}
                             onChange={handlePriceFilter}
@@ -765,6 +990,7 @@ const ProductPage = () => {
                           <Input
                             placeholder="To"
                             name="toPrice"
+                            aria-label="To Price"
                             value={formData.toPrice}
                             maxLength={4}
                             onChange={handlePriceFilter}
@@ -802,7 +1028,15 @@ const ProductPage = () => {
             </div>
           )}
         </div>
-        {(!hideLoadMoreButton || products?.length === 0) && (
+        {noProductsFound && 
+        (
+          <div style={{ display:"flex", justifyContent:"center" }}>
+            <h2 style={{fontWeight:"normal"}}>
+              No results found for “{formData?.searchValue}”.
+            </h2>
+          </div>
+        )}
+        {(!hideLoadMoreButton || products?.length === 0) && !noProductsFound && (
           <div className="LoadMore-Div">
             <Button
               className="LoadMore-Button"

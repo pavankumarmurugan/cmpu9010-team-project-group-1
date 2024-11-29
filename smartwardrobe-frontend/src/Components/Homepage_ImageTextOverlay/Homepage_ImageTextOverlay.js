@@ -1,41 +1,60 @@
-import React from "react";
-import brandingimage from "../../Assets/brandingimage.jpg";
-import carousel_image6 from "../../Assets/carousel_image6.jpg";
+import React, { useEffect, useState } from "react";
+import HomePage_FinalImage from "../../Assets/HomePage_FinalImage.jpeg";
 
 function ImageWithTextOverlay() {
-  const styles = getStyles();
+  const [topValue, setTopValue] = useState("27%");
+  const [FontSize, setFontSize] = useState("65px");
+
+  useEffect(() => {
+    // Function to check screen width and update the top value
+    const updateTopValue = () => {
+      if (window.innerWidth > 1200) {
+        setTopValue("27%");
+        setFontSize("65px");
+      } else {
+        setTopValue("79%");
+        setFontSize("40px");
+      }
+    };
+
+    // Initial check when component mounts
+    updateTopValue();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", updateTopValue);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", updateTopValue);
+    };
+  }, [window.innerWidth]);
+
+  const styles = getStyles(topValue,FontSize);
   return (
     <div style={styles.container}>
       <img
-        src={carousel_image6}
+        src={HomePage_FinalImage}
         loading="lazy"
-        alt="Sample"
+        alt="homepage_branding"
         style={styles.image}
       />
       <div style={styles.textOverlay}>
-        <h1 style={styles.text}>
-          Don’t just shop, shop smarter! Explore our enhanced platform now
-        </h1>
+        <h1 style={styles.text}>Smart Choices, Smarter Wardrobe</h1>
       </div>
+      {/* <p style={styles.paratext} className="text-lg text-muted-foreground">
+        Explore our enhanced platform with personalized recommendations,
+        sustainable fashion options, and a seamless shopping experience.
+      </p> */}
     </div>
   );
 }
 
-const getStyles = () => {
-  const screenwidth = window.innerWidth;
-
-  // const fontSize =
-  //   screenwidth < 600
-  //     ? "30px" // Small screens
-  //     : screenwidth < 1024
-  //     ? "36px" // Medium screens
-  //     : "44px"; // Large screens
-
+const getStyles = (topValue,FontSize) => {
   return {
     container: {
       position: "relative",
       width: "100%",
-      height: "calc(100vh - 220px)",
+      height: "calc(100vh - 200px)",
       overflow: "hidden",
       margin: 0,
       padding: 0,
@@ -48,18 +67,39 @@ const getStyles = () => {
     },
     textOverlay: {
       position: "absolute",
-      top: "50%",
+      // top: window.innerWidth < 500 ? "70%" : window.innerWidth < 681 ? "74%" : topValue,
+      // left: topValue === "79%" ? "50%" : "13%",
+      top: "85%",
       left: "50%",
       transform: "translate(-50%, -50%)",
       color: "#014D4E",
       padding: "10px 20px",
       borderRadius: "5px",
+      // width: topValue === "79%" ? "100%" : "20%",
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      // textAlign: FontSize === "40px" && "center",
       textAlign: "center",
     },
     text: {
       margin: 0,
-      fontSize: "30px",
+      // fontSize: FontSize,
+      fontSize: "60px",
       color: "white",
+      borderRadius: "5px",
+    },
+    paratext: {
+      margin: 0,
+      position: "absolute",
+      bottom: window.innerWidth < 768 ? "5%" : "8%",
+      left: topValue === "79%" ? "1%" : "76%",
+      fontSize: "24px",
+      color: "white",
+      borderRadius: "5px",
+      display: "flex",
+      justifyContent: "center",
+      textAlign: "center",
     },
   };
 };

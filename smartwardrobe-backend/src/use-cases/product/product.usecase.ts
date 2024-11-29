@@ -54,7 +54,13 @@ export class ProductUsecase {
       }
 
       const { data: entities }: { data: ProductEntity[]; total: number } =
-        await this.databaseService.product.getAllPaginated(page, limit);
+        await this.databaseService.product.getAllPaginatedWithWhere(
+          page,
+          limit,
+          {
+            trail: true,
+          },
+        );
 
       const data: ProductResDto[] =
         this.productConvertor.toProductResDtoFromEntities(entities);
@@ -105,6 +111,48 @@ export class ProductUsecase {
   async getOne(id: number): Promise<IResponse<ProductResDto>> {
     try {
       const data = await this.databaseService.product.get({ id });
+      return {
+        data,
+        message: MESSAGES.PRODUCT.GET.SUCCESS,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllProductCategoryAndSubCategory(
+    page: number,
+    limit: number,
+    category: string,
+    subcategory: string,
+  ): Promise<IResponse<ProductResDto[]>> {
+    try {
+      const cacheKey = `products:${page}:${limit}:${category}:${subcategory}`;
+
+      const cachedData =
+        await this.cacheService.getFromCache<ProductResDto[]>(cacheKey);
+      if (cachedData) {
+        return {
+          data: cachedData,
+          message: MESSAGES.PRODUCT.GET.SUCCESS + ' (from cache)',
+        };
+      }
+
+      const { data: entities }: { data: ProductEntity[]; total: number } =
+        await this.databaseService.product.getAllPaginatedWithWhere(
+          page,
+          limit,
+          {
+            category,
+            type: subcategory,
+          },
+        );
+
+      const data: ProductResDto[] =
+        this.productConvertor.toProductResDtoFromEntities(entities);
+
+      await this.cacheService.setToCache<ProductResDto[]>(cacheKey, data);
+
       return {
         data,
         message: MESSAGES.PRODUCT.GET.SUCCESS,

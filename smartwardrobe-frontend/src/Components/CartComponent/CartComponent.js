@@ -5,11 +5,12 @@ import { Input } from "antd";
 import { RiSubtractFill } from "react-icons/ri";
 import { IoMdAdd } from "react-icons/io";
 import { Button } from "@mui/joy";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { addToCartValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
 
 const CartComponent = (props) => {
   let token = localStorage.getItem("user")
@@ -46,7 +47,7 @@ const CartComponent = (props) => {
                     <p className="product-text">{item?.product?.name}</p>
                     <p className="product-text">€{Number(item?.product?.price)}</p>
                     <p className="product-text">Colour: {item?.product?.color}</p>
-                    <p className="product-text">Size: {item?.product?.size || "N/A"}</p>
+                    <p className="product-text">Size: {item?.size || "N/A"}</p>
                     <div className="product-quantity-input-div">
                       <Input
                         className="cart-quantity-button"
@@ -58,8 +59,9 @@ const CartComponent = (props) => {
                         }
                         value={item?.quantity}
                       />
-                      <RiDeleteBinLine style={{paddingLeft:"20px"}} onClick={() => handleDeleteItem(item)}/>
+                      <MdDelete style={{ width: "25px", height:"25px", cursor:"pointer"}} onClick={() => handleDeleteItem(item)}/>
                     </div>
+                      {/* <RiDeleteBinLine /> */}
                   </div>
                   <div className="product-price">
                     <h5>€{Number(item?.product?.price * item?.quantity)}</h5>
@@ -92,7 +94,7 @@ const CartComponent = (props) => {
 debugger
     const id = data?.id;
     setOpenLoader(true);
-    const deleteCartItem = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/cart-item/delete/${id}`, null, token?.token);
+    const deleteCartItem = await apiCall("DELETE", `${baseUrl}/cart-item/delete/${id}` , null, token?.token);
     setOpenLoader(false);
     if (deleteCartItem.statusCode.text === "Success") {
       getAllCartValues();
@@ -107,7 +109,7 @@ debugger
     setOpenLoader(true);
     const getAllCartValues = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/cart/get-my-cart",
+      `${baseUrl}/cart/get-my-cart` ,
       null,
       token?.token
     );

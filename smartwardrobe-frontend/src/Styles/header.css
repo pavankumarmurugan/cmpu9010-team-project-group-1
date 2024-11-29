@@ -10,6 +10,10 @@
     height: '100vh';
     margin: 0;
     /* background-color: #FAD0C4; */
+    position: -webkit-sticky; /* For Safari */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .header-conatiner{
@@ -23,11 +27,22 @@
 
 .search-div-laptop{
     display: grid;
-    grid-template-columns: 1.2fr 1.8fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
-    padding-top: 15px;
-    padding-bottom: 10px;
+    /* padding-top: 15px;
+    padding-bottom: 10px; */
 }
+
+@media (min-width: 901px) and (max-width: 1000px) {
+    .header-logo{
+        letter-spacing: 0rem !important;
+        font-size: 23px !important;
+    }
+    .search-div-laptop{
+        grid-template-columns: 0.7fr 2.6fr 0.7fr !important;
+        
+    }
+  }
 
 .search-div-laptop-productspage{
     display: flex;
@@ -47,12 +62,19 @@
 
 .header-logo{
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     color: #fff;
     font-weight: lighter;
     letter-spacing: 0.2rem;
 }
+
+
+@media (max-width: 900px) {
+    .header-logo{
+        justify-content: center;
+    }
+  }
 
 @media (min-width: 300px) and (max-width: 500px) {
     .header-logo{
@@ -68,7 +90,7 @@
     justify-content: end;
     gap: 1rem;
     cursor: pointer;
-       
+    margin-right: 20px;
 }
 
 /* .header-icons .css-2kk4p4-MuiBadge-badge{
@@ -77,12 +99,12 @@
 } */
 
 .page-width {
-    max-width: 160rem;
+    width: 100%;
     margin: 0 auto;
-    padding: 0 15% 0 10%;
+    padding: 0;
 }
 
-@media screen and (max-width: 1300px){
+/* @media screen and (max-width: 1300px){
     .page-width {
         max-width: 160rem;
         margin: 0 auto;
@@ -104,7 +126,7 @@
         padding: 0 !important;
     }
     
-}
+} */
 
 @media screen and (max-width: 900px){
     .search-input-above-900px{
@@ -178,8 +200,9 @@
 }
 
 .HomeShoppingCollection-heading{
-    margin-top: 30px;
-    margin-bottom: 50px;
+    /* margin-top: 40px; */
+    margin: 45px 0px 10px 0px;
+    /* margin-bottom: 50px; */
     font-size: 24px;
     letter-spacing: 0.3rem;
 }
@@ -195,7 +218,7 @@
 .HomeShoppingCollectioncollection-buttons {
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: 1rem;
     justify-content: center; 
     margin-bottom: 50px;
 }
@@ -315,18 +338,18 @@
         margin-bottom: 0px; */
     }
     .homeproductsection-main{
-        margin-top: 5rem !important;
+        /* margin-top: 2rem !important; */
     }
 }
 
 .splitter-div{
-    margin-top: 30px;
+    margin-top: 10px;
     width: 100%;
     height: 100%;
 }
 
 .homeproductsection-main{
-    margin-top: 10rem;
+    /* margin-top: 2rem; */
 }
 
 .anchor-tag{
@@ -338,7 +361,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .menu-item .item{
@@ -362,4 +385,161 @@
     width: 20px;
     height: 20px;
     color: #5E5546;
+}
+
+.p-megamenu{
+    background-color: black !important;
+    border: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    /* margin-left: 6% !important; */
+}
+
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text{
+    color: white !important;
+    font-size: 20px !important;
+}
+
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem > .p-menuitem-content .p-menuitem-link .p-submenu-icon{
+    color: white !important;
+}
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover{
+    background-color: black !important;
+}
+
+.p-megamenu.p-megamenu-horizontal .p-megamenu-root-list > .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:active{
+    background-color: black !important;
+}
+
+.p-megamenu .p-menuitem.p-highlight > .p-menuitem-content{
+    background-color: black !important;
+}
+
+.p-megamenu-panel {
+    left: -200px !important;
+}
+
+.p-megamenu .p-menuitem.p-highlight > .p-menuitem-content{
+    background-color: black !important;
+}
+
+.p-menuitem .p-focus{
+    background-color: black !important;
+}
+
+.headerbanner-main{
+    display: grid;
+    grid-template-columns: 1.2fr 1.4fr 1.2fr; 
+    height: auto;
+}
+
+@media screen and (max-width: 1000px){
+    .headerbanner-main{
+        display: none !important;
+    }
+    
+}
+
+@media screen and (min-width: 1001px){
+    .headercarousel{
+        display: none !important;
+    }
+    
+}
+
+.headercarousel{
+    /* display: none !important; */
+}
+
+
+
+
+.feature-showcase {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to right, #8a2be2, #ff69b4);
+    color: white;
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.feature-toggle {
+    display: none;
+}
+
+.feature-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.feature-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.chevron-up {
+    transition: transform 0.3s ease;
+}
+
+.feature-toggle:checked + .feature-button .chevron-up {
+    transform: rotate(180deg);
+}
+
+.feature-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.feature-toggle:checked ~ .feature-content {
+    max-height: 300px;
+}
+
+.feature-content ul {
+    list-style-type: none;
+    padding: 0 20px 20px;
+    margin: 0;
+}
+
+.feature-content li {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    opacity: 0;
+    cursor: pointer;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    &:hover{
+        text-decoration: underline;
+    }
+}
+
+.feature-toggle:checked ~ .feature-content li {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-content li:nth-child(1) { transition-delay: 0.1s; }
+.feature-content li:nth-child(2) { transition-delay: 0.2s; }
+.feature-content li:nth-child(3) { transition-delay: 0.3s; }
+
+.feature-content .sparkles {
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .feature-content li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .feature-content .sparkles {
+        margin-bottom: 5px;
+    }
 }

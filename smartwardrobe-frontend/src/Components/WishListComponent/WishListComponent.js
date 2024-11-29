@@ -3,10 +3,10 @@ import Headermenu from "../Headermenu/Headermenu";
 import Footer from "../Footer/Footer";
 import "../../Styles/WishListComponent.css";
 import { Button } from "@mui/joy";
-import image from "../../Assets/Homeproductimage_3.jpg";
+// import image from "../../Assets/Homeproductimage_3.jpg";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { Backdrop, CircularProgress } from "@mui/material";
-import apiCall from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { addToCartValueSuccess, wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +32,7 @@ function WishListComponent() {
     setOpenLoader(true);
     const getLikeProducts = await apiCall(
       "GET",
-      "https://smartwardrobe-backend.azurewebsites.net/likes/get-all",
+      `${baseUrl}/likes/get-all`,
       null,
       token?.token
     );
@@ -48,7 +48,7 @@ function WishListComponent() {
       setOpenLoader(true);
       let addWishlist = await apiCall(
         "DELETE",
-        `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${id?.id}`,
+       `${baseUrl}/likes/delete/${id?.id}`,
         null,
         token?.token
       );
@@ -71,7 +71,7 @@ function WishListComponent() {
 
   const ClearWishlist = async () => {
     debugger;
-    let clearwishlist = await apiCall("DELETE", "https://smartwardrobe-backend.azurewebsites.net/likes/delete-all-likes", null, token?.token);
+    let clearwishlist = await apiCall("DELETE", `${baseUrl}/likes/delete-all-likes`, null, token?.token);
     if (clearwishlist?.statusCode?.text === "Success") {
         dispatch(wishListValueSuccess({ wishListValue: 0 }));
         navigate("/");
@@ -83,9 +83,10 @@ function WishListComponent() {
       let data = {
         productId: items?.product?.id,
         quantity: 1,
+        size: items?.productSize,
       }
       setOpenLoader(true);
-      const addToCart = await apiCall("POST", "https://smartwardrobe-backend.azurewebsites.net/cart-item/create", data, token?.token);
+      const addToCart = await apiCall("POST", `${baseUrl}/cart-item/create`, data, token?.token);
       setOpenLoader(false);
       if (addToCart.statusCode.text === "Success") {
         dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
@@ -94,7 +95,7 @@ function WishListComponent() {
         );
         setLikeProducts(filterRemainingProducts);
         setOpenLoader(true);
-        const deleteCartItem = await apiCall("DELETE", `https://smartwardrobe-backend.azurewebsites.net/likes/delete/${data?.productId}`, null, token?.token);
+        const deleteCartItem = await apiCall("DELETE", `${baseUrl}/likes/delete/${data?.productId}` , null, token?.token);
         setOpenLoader(false);
         if(deleteCartItem.statusCode.text === "Success"){
           dispatch(
@@ -105,6 +106,11 @@ function WishListComponent() {
           navigate("/");
         }
       }
+    }
+
+    const handleShowProduct = (items) => {
+      debugger
+      navigate(`/productdetails/${items?.product?.id}`, { state: { items } });
     }
 
   return (
@@ -144,11 +150,14 @@ function WishListComponent() {
                       className="product--image"
                       loading="lazy"
                       src={items?.product?.imageUrl}
-                      alt="product image"
-                      // onClick={() => handleSimilarProductsClick(items)}
+                      alt="wishlist_productimage"
+                      onClick={() => handleShowProduct(items)}
                     />
                     {/* <h3 style={{ fontSize: "18px" }}>{items?.product?.imageUrl}</h3> */}
                     <p className="description">{items?.product?.type}</p>
+                    <p className="description">
+                      Size: {items?.productSize}
+                    </p>
                     <p className="price" style={{ fontSize: "15px" }}>
                       ${items?.product?.price}
                     </p>
