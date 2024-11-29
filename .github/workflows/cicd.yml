@@ -31,3 +31,14 @@ jobs:
         run: docker rm -f reactContainer
       - name: Run docker container
         run: docker run -d -p 3000:80 --name reactContainer d23124670/smartwardrobe-frontend:latest
+      - name: Copy container to ec2
+        run: sudo docker cp reactContainer:/usr/share/nginx/html /usr/share/nginx/
+      - name: Update Nginx configuration for HTTPS
+        run: |
+          # Ensure Nginx is reloaded to apply changes
+          sudo systemctl restart nginx
+          # Optional: Reload Nginx to apply changes
+          sudo systemctl reload nginx
+      - name: Verify HTTPS Deployment
+        run: |
+          curl -I https://smartwardrobe.store
