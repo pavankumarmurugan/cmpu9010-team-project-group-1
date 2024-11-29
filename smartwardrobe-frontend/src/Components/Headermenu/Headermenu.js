@@ -2483,7 +2483,8 @@ function Headermenu() {
   }, [])
 
   const handleItemClickFeature = (index) => {
-    bannerclickvalue.current = index;
+    debugger
+    bannerclickvalue.current = index + 1;
     setShowBanner(true);
     setIsOpen(false)
   }

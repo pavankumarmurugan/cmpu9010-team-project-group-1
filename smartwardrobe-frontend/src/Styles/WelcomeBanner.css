@@ -81,3 +81,7 @@
 .ant-progress-text{
     display: none !important;
 }
+
+.ant-progress-bg.ant-progress-bg-outer{
+    background: linear-gradient(to right, #8a2be2, #ff69b4) !important;
+}

@@ -792,7 +792,7 @@ const VirtualTryOn = (props) => {
                               <MdAddPhotoAlternate
                                 style={{ width: "35px", height: "35px" }}
                               />
-                              <p>Add More Models</p>
+                              <p>Add/Edit Models</p>
                             </div>
                           </div>
                         </div>
