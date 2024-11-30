@@ -2542,12 +2542,13 @@ function Headermenu() {
 
       {/* Signup/Login Modal */}
 
+      {OpenLoginModal &&
       <SignupModal
         isShowModel={OpenLoginModal}
         closeModal={CloseLoginForm}
         checkingLoginOrSignup={checkingLoginOrSignup}
         accountCreate={accountCreate}
-      />
+      />}
       {/*  Signup/Login Modal */}
 
 {/* <div className="headercarousel">

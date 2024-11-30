@@ -171,10 +171,11 @@ function NewChatModal(props) {
           // showToastSuccess("Product Shared Successfully");
           console.log(apiCallsGroups);
         }
-        setOpenLoader(false);
-        handleCancel();
-        setOpenLoader(false);
+        // handleCancel();
+        // setOpenLoader(false);
       }
+      setOpenLoader(false);
+      handleCancel();
     }
   };
 
