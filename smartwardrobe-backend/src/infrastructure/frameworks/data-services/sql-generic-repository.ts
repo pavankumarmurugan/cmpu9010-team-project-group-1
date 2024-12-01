@@ -33,6 +33,9 @@ export class SQLGenericRepository<T> implements IGenericRepository<T> {
     const options: any = {
       take: limit,
       where,
+      order: {
+        id: 'ASC',
+      },
     };
     if (page > 1) {
       options.skip = (page - 1) * limit;
