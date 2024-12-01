@@ -60,7 +60,7 @@ export class FiltersController {
     name: 'pattern',
     required: false,
     type: String,
-    example: 'Stripes',
+    example: 'Solid',
   })
   async filterProducts(
     @Query() filterProductsDto: FilterProductsDto,
