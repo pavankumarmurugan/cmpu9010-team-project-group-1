@@ -22,7 +22,7 @@ export class UserDtoConvertor {
     );
   }
   toEntityFromUserReqDTO(dto: UserReqDTO, hashPassword: string): UserEntity {
-    const { firstname, lastname, username, role } = dto;
+    const { firstname, lastname, username, role, email, dob } = dto;
 
     return {
       firstname,
@@ -30,6 +30,8 @@ export class UserDtoConvertor {
       password: hashPassword,
       username: username.toLowerCase(),
       role,
+      email,
+      dob,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
