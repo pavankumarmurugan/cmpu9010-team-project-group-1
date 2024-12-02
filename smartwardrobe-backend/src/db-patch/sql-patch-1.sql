@@ -418,3 +418,13 @@ CREATE TABLE  image_clusters (
     cluster_id INTEGER NOT NULL,
     clip_embedding FLOAT8[] NOT NULL
 );
+
+CREATE TABLE otp (
+    id SERIAL PRIMARY KEY,             
+    email VARCHAR NOT NULL,            
+    otp VARCHAR NOT NULL,              
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT null
+);
+
+CREATE INDEX idx_otp_email_otp ON otp (email, otp);
