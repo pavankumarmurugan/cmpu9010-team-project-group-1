@@ -37,6 +37,8 @@ import { ProductSubcategoryEntity } from 'src/core/entities/product-subcategory/
 import { ProductSubcategoryModel } from './model/product-subcategory.model';
 import { ImageClusterMVEntity } from 'src/core/entities/image-cluster-mv/image-cluster-mv.entity';
 import { ImageClustersMVModel } from './model/image-clusters-mv.model';
+import { OtpEntity } from 'src/core/entities/otp/otp.entity';
+import { OTPModel } from './model/otp.model';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -57,6 +59,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   userLikedModel: IGenericRepository<UserLikedModelsEntity>;
   productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
   imageClusterMV: IGenericRepository<ImageClusterMVEntity>;
+  otp: IGenericRepository<OtpEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -93,6 +96,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private productSubcategoryRepository: Repository<ProductSubcategoryEntity>,
     @InjectRepository(ImageClustersMVModel)
     private imageClusterMVRepository: Repository<ImageClusterMVEntity>,
+    @InjectRepository(OTPModel)
+    private otpRepository: Repository<OtpEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -138,5 +143,6 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     this.imageClusterMV = new SQLGenericRepository<ImageClusterMVEntity>(
       this.imageClusterMVRepository,
     );
+    this.otp = new SQLGenericRepository<OTPModel>(this.otpRepository);
   }
 }

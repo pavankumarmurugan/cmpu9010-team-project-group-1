@@ -22,6 +22,9 @@ import { LoginUsecase } from 'src/use-cases/auth/login.usecase';
 import { LogoutUsecase } from 'src/use-cases/auth/logout.usecase';
 import { RefreshTokenUsecase } from 'src/use-cases/auth/refresh-token.usecase';
 import { FCMReqDto } from 'src/core/dto/auth/fcm-token-dto.class';
+import { ForgotPasswordReqDto } from 'src/core/dto/auth/forgot-password-dto.class';
+import { ForgotPasswordUsecase } from 'src/use-cases/auth/forgot-password.usecase';
+import { ForgotUpdatePasswordReqDto } from 'src/core/dto/auth/forgot-password-update.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -30,6 +33,7 @@ export class AuthController {
     private loginUsecase: LoginUsecase,
     private logoutUsecase: LogoutUsecase,
     private refreshTokenUsecase: RefreshTokenUsecase,
+    private forgotPasswordUsecase: ForgotPasswordUsecase,
   ) {}
 
   @Post('login')
@@ -96,6 +100,28 @@ export class AuthController {
 
       const { token } = fcm;
       return await this.loginUsecase.saveFcmToken(userId, token);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(
+    @Body() forgotPasswordReqDto: ForgotPasswordReqDto,
+  ): Promise<IResponse<null>> {
+    try {
+      return this.forgotPasswordUsecase.sendOtp(forgotPasswordReqDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('update-password')
+  async updatePassword(
+    @Body() dto: ForgotUpdatePasswordReqDto,
+  ): Promise<IResponse<null>> {
+    try {
+      return this.forgotPasswordUsecase.updatePassword(dto);
     } catch (error) {
       throw error;
     }

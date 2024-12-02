@@ -1,4 +1,12 @@
 export const MESSAGES = {
+  OTP: {
+    INVALID: 'INVALID OTP',
+    EXPIRED: 'OTP EXPIRED',
+  },
+  PASSWORD: {
+    FORGOT_SUCCESS: 'OTP has been sent to your email address.',
+    UPDATE_SUCCESS: 'Password updated successfully',
+  },
   TOKEN: {
     SUCCESS: 'Valid Token',
   },
