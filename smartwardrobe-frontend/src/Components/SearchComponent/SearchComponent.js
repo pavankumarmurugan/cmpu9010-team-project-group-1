@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Headermenu from "../Headermenu/Headermenu";
 import "../../Styles/ProductPage.css";
 import SearchIcon from "@mui/icons-material/Search";
@@ -57,9 +57,16 @@ const SearchComponent = () => {
     let paginationLocal = localStorage.getItem("paginationLocal")
     ? JSON.parse(localStorage.getItem("paginationLocal"))
     : null;
+    let SearchPagination = localStorage.getItem("SearchPagination")
+    ? JSON.parse(localStorage.getItem("SearchPagination"))
+    : null;
+    let savedImage = localStorage.getItem("savedImage")
+    ? JSON.parse(localStorage.getItem("savedImage"))
+    : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
   let { state } = location;
   // let pagination = 1;
   // let imagePagination = 1;
@@ -214,7 +221,8 @@ const SearchComponent = () => {
   useEffect(() => {
     debugger;
     console.log("state", state);
-    getProductsData();
+    // getProductsData(); 30 Nov
+    handleSearch()
   }, [categoryValue]);
 
   useEffect(() => {
@@ -270,7 +278,7 @@ const SearchComponent = () => {
   //   }, [currentPath]);
 
 
-  const getProductsData = async () => {
+  const getProductsData = async (loadMore, pagination) => {
     debugger;
 
     // if(categoryValue){
@@ -325,7 +333,11 @@ const SearchComponent = () => {
           searchValue: header?.searchValue || header,
         }));
       }
-      handleSearch(header);
+      if (loadMore === "loadMore"){
+        handleSearch(header, null,loadMore, pagination);
+      }else{
+        handleSearch(header);
+      }
       // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
       // state.searchValue = null;
     } else {
@@ -379,27 +391,66 @@ const SearchComponent = () => {
       ...prevState,
       searchValue: query,
     }));
-    handleSearch(query);
+    // handleSearch(query);
+    let value = query;
+      const slug = createSlug(value);
+      navigate(`/products/search/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      let scroll = window.scrollY;
+      let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
+      if(filterPath !== undefined && filterPath !== -1){
+        SearchPagination[filterPath].scroll = scroll;
+        localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
+      }
+      return
   };
 
-  const handleSearch = async (event,fromKeyDown) => {
+  const handleSearch = async (event,fromKeyDown, loadMore, pag) => {
     debugger;
-    let searchValue = event === null ? formData?.searchValue : event;
-    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type || headerSearchValue) {
+    if(file){
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file : fileObject,
+        id : randomId
+      }
+
+      let data = [];
+      if(savedImage){
+        data = savedImage;
+      }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      return;
+    }
+    console.log(location?.pathname);
+    let searchValue = location?.pathname.split("/")[3];
+    let chnageSearchFormat = searchValue?.split("-").join(" ");
+    setFormData((prevState) => ({
+      ...prevState,
+      searchValue: chnageSearchFormat,
+    }));
+    // let searchValue = event === null ? formData?.searchValue : event;
+    // if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type || headerSearchValue) {
+    if ((searchValue !== "" && searchValue !== undefined)) {
       // event.preventDefault();
       const formData = new FormData();
-      if (file) {
-        formData.append("file", file);
-      }
-      if(headerSearchValue?.file){
-        formData.append("file", headerSearchValue?.file);
-        formData.append("query", headerSearchValueLocal);
-      }else if(headerSearchValue?.type){
-        formData.append("file", headerSearchValue);
-        formData.append("query", headerSearchValueLocal);
-      } else{
-        formData.append("query", searchValue?.searchValue || searchValue || headerSearchValue);
-      }
+      // if (file) {
+      //   formData.append("file", file);
+      // }
+      // if(headerSearchValue?.file){
+      //   formData.append("file", headerSearchValue?.file);
+      //   formData.append("query", headerSearchValueLocal);
+      // }else if(headerSearchValue?.type){
+      //   formData.append("file", headerSearchValue);
+      //   formData.append("query", headerSearchValueLocal);
+      // } else{
+        formData.append("query", searchValue);
+      // }
       try {
         dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue || file }));
         // let headerSearchValueLocalArray = [...headerSearchValueLocal, searchValue];
@@ -407,17 +458,26 @@ const SearchComponent = () => {
         // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
         setOpenLoader(true);
         // https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search/get-all-similar-products-to-image/1/50
-        let pag = 1;
-        if(fromKeyDown === "fromKeyDown"){
-          pag = 1
-        }else if(paginationLocal > 1){
-          pag = paginationLocal
-        }else{
-          pag = imagePagination?.current;
+        // let pag = 1;
+        // if(fromKeyDown === "fromKeyDown"){
+        //   pag = 1
+        // }else if(paginationLocal > 1){
+        //   pag = paginationLocal
+        // }else{
+        //   pag = imagePagination?.current;
+        // }
+        let pagination = 1;
+      if(loadMore === "loadMore"){
+        pagination = pag;
+      }
+      else if(SearchPagination){
+        let filterPagination = SearchPagination.filter((x) => x.path === location.pathname);
+        if(filterPagination.length > 0){
+        pagination = SearchPagination[0].pagination;
         }
-        
+      }
         const response = await fetch(
-         `${baseUrl}/search/get-all-similar-products-to-image/1/${pag * 50}`,
+         `${baseUrl}/search/get-all-similar-products-to-image/1/${pagination * 40}`,
           {
             method: "POST",
             headers: {
@@ -442,6 +502,12 @@ const SearchComponent = () => {
         // if (fromKeyDown === "fromKeyDown") {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
+          let scroll = window.scrollY;
+          let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
+          if(filterPath !== undefined && filterPath !== -1){
+            SearchPagination[filterPath].scroll = scroll;
+            localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
+          }
         // } 
         // else {
         //   setProducts((prevProducts) => [
@@ -456,12 +522,12 @@ const SearchComponent = () => {
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
-        let headerSearchValueLocalArray = [];
-        if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
-          // headerSearchValueLocalArray = headerSearchValueLocal;
-          headerSearchValueLocalArray.push(searchValue);
-          localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
-        }
+        // let headerSearchValueLocalArray = [];
+        // if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
+        //   // headerSearchValueLocalArray = headerSearchValueLocal;
+        //   headerSearchValueLocalArray.push(searchValue);
+        //   localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
+        // }
         // else{
         //   if(headerSearchValueLocal?.length > 1){
         //     headerSearchValueLocal.pop();
@@ -469,8 +535,9 @@ const SearchComponent = () => {
         //   }
         // }
         setTimeout(() => {
-          if (savedScrollPosition) {
-            window.scrollTo(0, savedScrollPosition); 
+          let filterScroll = SearchPagination?.findIndex((x) => x.path === location.pathname);
+          if (filterScroll && filterScroll !== -1) {
+            window.scrollTo(0, filterScroll[0]?.scroll); 
           }
         }, 1);
       } catch (error) {
@@ -514,14 +581,34 @@ const SearchComponent = () => {
 
   const handleLoadMoreProducts = () => {
     debugger;
-    if (file || formData?.searchValue || headerSearchValueLocal) {
-      imagePagination.current = imagePagination.current + 1;
-      localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
-      handleSearch(null);
-    } else {
+    // if (file || formData?.searchValue || headerSearchValueLocal) {
+    //   imagePagination.current = imagePagination.current + 1;
+    //   localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
+    //   handleSearch(null);
+    // }else {
       pagination.current = pagination.current + 1;
-      getProductsData();
-    }
+      if(SearchPagination){
+        let findPagination = SearchPagination.findIndex((x) => x.path === location.pathname);
+        if(findPagination !== -1){
+          SearchPagination[findPagination].pagination = pagination.current;
+          localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
+        }else{
+          let pagObj = [{
+            path: location.pathname,
+            pagination: pagination.current
+          }]
+          let pushObj = [...SearchPagination, ...pagObj]
+          localStorage.setItem("SearchPagination", JSON.stringify(pushObj));
+        }
+      }else{
+        let pagObj = [{
+          path: location.pathname,
+          pagination: pagination.current
+        }]
+        localStorage.setItem("SearchPagination", JSON.stringify(pagObj));
+      }
+      getProductsData("loadMore", pagination.current);
+  // }
   };
 
   const handleSearchInput = (e) => {
@@ -535,30 +622,76 @@ const SearchComponent = () => {
     
   };
 
+  useEffect(() => {
+    debugger
+    const handlePopState = () => {
+        // categoryPaths.pop()
+        // localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
+        setTimeout(() => {
+            window.location.reload();
+          }, 1);
+    };
+
+    window.onpopstate = handlePopState;
+
+    return () => {
+      // Clean up the event listener when the component unmounts
+      window.onpopstate = null;
+    };
+  }, []);
+
+  function createSlug(str) {
+    return str
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // The result is a Base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(file); // Read the file as Base64
+    });
+  };
+
   const handleKeyDown = async (e) => {
     debugger
-    if (e.key === "Enter") {
-      localStorage.setItem("paginationLocal", JSON.stringify(1));
-      localStorage.removeItem("headerSearchValueLocal");
-      if(e?.target?.value === "" && file === null){
-        pagination.current = 1;
-        setOpenLoader(true);
-      const response = await apiCall(
-        "GET",
-        `${baseUrl}/product/get-all/${pagination?.current}/50`,
-        null,
-        token?.token
-      );
-      setOpenLoader(false)
-      setLoading(false);
-      if (response?.data) {
-        setProducts(response?.data);
-        setProductsDataForFilter(response?.data);
-        dispatch(homeDataSuccess({ homeData: response?.data }));
+
+    if(e.key === "Enter" && file){
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file : fileObject,
+        id : randomId
       }
-      }else{
-        handleSearch(null,"fromKeyDown");
+
+      let data = [];
+      if(savedImage){
+        data = savedImage;
       }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      return;
+    }
+
+    if (e.key === "Enter" && e?.target?.value !== "") {
+      let value = e?.target?.value;
+      const slug = createSlug(value);
+      navigate(`/products/search/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      let scroll = window.scrollY;
+      let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
+      if(filterPath !== undefined && filterPath !== -1){
+        SearchPagination[filterPath].scroll = scroll;
+        localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
+      }
+      return
     }
   };
 
@@ -666,7 +799,7 @@ const SearchComponent = () => {
 
   return (
     <>
-    <BackButtonHandler />
+    {/* <BackButtonHandler /> */}
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}

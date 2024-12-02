@@ -43,9 +43,8 @@ import {
 } from "../../redux/slices/HomeDataSlice";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
-import ImageSearchIcon from '@mui/icons-material/ImageSearch';
 
-const ProductPage = () => {
+const ImageSearchComponent = () => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
@@ -58,8 +57,11 @@ const ProductPage = () => {
     let paginationLocal = localStorage.getItem("paginationLocal")
     ? JSON.parse(localStorage.getItem("paginationLocal"))
     : null;
-    let ProductsPagination = localStorage.getItem("ProductsPagination")
-    ? JSON.parse(localStorage.getItem("ProductsPagination"))
+    let SearchPagination = localStorage.getItem("SearchPagination")
+    ? JSON.parse(localStorage.getItem("SearchPagination"))
+    : null;
+    let savedImage = localStorage.getItem("savedImage")
+    ? JSON.parse(localStorage.getItem("savedImage"))
     : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
@@ -82,7 +84,6 @@ const ProductPage = () => {
   const [openLoader, setOpenLoader] = useState(false);
   const [hideLoadMoreButton, sethideLoadMoreButton] = useState(false);
   const [productsDataForFilter, setProductsDataForFilter] = useState([]);
-  const [noProductsFound, setNoProductsFound] = useState(false);
   const [inputSuggestions, setInputSuggestions] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -220,7 +221,8 @@ const ProductPage = () => {
   useEffect(() => {
     debugger;
     console.log("state", state);
-    getProductsData();
+    // getProductsData(); 30 Nov
+    handleSearch()
   }, [categoryValue]);
 
   useEffect(() => {
@@ -276,7 +278,7 @@ const ProductPage = () => {
   //   }, [currentPath]);
 
 
-  const getProductsData = async (loadMore, pag) => {
+  const getProductsData = async (loadMore, pagination) => {
     debugger;
 
     // if(categoryValue){
@@ -303,52 +305,46 @@ const ProductPage = () => {
     //   }
 
     // }
-    // let header = "";
-    // if(headerSearchValueLocal?.length > 0){
-    //   header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
-    // }
-    // if (header || headerSearchValue || headerSearchValue?.file) {
-    //   if(headerSearchValue?.file || headerSearchValue?.type){
-    //     if(headerSearchValue?.type){
-    //       setFile(headerSearchValue)
-    //       setFormData((prevState) => ({
-    //         ...prevState,
-    //         ['imagePreview']: URL.createObjectURL(headerSearchValue),
-    //         searchValue: header,
-    //       }));
-    //     }else{
-    //       setFile(headerSearchValue?.file)
-    //       setFormData((prevState) => ({
-    //         ...prevState,
-    //         ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
-    //         searchValue: header,
-    //       }));
-    //     }
-        
-    //   }else{
-    //     setFormData((prevState) => ({
-    //       ...prevState,
-    //       searchValue: header?.searchValue || header,
-    //     }));
-    //   }
-    //   handleSearch(header);
-    //   // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
-    //   // state.searchValue = null;
-    // } else {
-      // setOpenLoader(true);
-      let pagination = 1;
-      if(loadMore === "loadMore"){
-        pagination = pag;
-      }
-      else if(ProductsPagination){
-        let filterPagination = ProductsPagination?.filter((x) => x.path === location.pathname);
-        if(filterPagination?.length > 0){
-        pagination = ProductsPagination[0]?.pagination;
+    let header = "";
+    if(headerSearchValueLocal?.length > 0){
+      header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
+    }
+    if (header || headerSearchValue || headerSearchValue?.file) {
+      if(headerSearchValue?.file || headerSearchValue?.type){
+        if(headerSearchValue?.type){
+          setFile(headerSearchValue)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue),
+            searchValue: header,
+          }));
+        }else{
+          setFile(headerSearchValue?.file)
+          setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
+            searchValue: header,
+          }));
         }
+        
+      }else{
+        setFormData((prevState) => ({
+          ...prevState,
+          searchValue: header?.searchValue || header,
+        }));
       }
+      if (loadMore === "loadMore"){
+        handleSearch(header, null,loadMore, pagination);
+      }else{
+        handleSearch(header);
+      }
+      // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
+      // state.searchValue = null;
+    } else {
+      // setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `${baseUrl}/product/get-all/1/${pagination * 40}`,
+        `${baseUrl}/product/get-all/${pagination?.current}/50`,
         null,
         token?.token
       );
@@ -366,15 +362,13 @@ const ProductPage = () => {
           removeEuro,
           formData?.Colour
         );
-        setProducts(response?.data);
-        setProductsDataForFilter(response?.data);
+        setProducts((prevProducts) => [...prevProducts, ...filterData]);
+        setProductsDataForFilter((prevProducts) => [
+          ...prevProducts,
+          ...filterData,
+        ]);
         dispatch(homeDataSuccess({ homeData: response?.data }));
-        setTimeout(() => {
-          if (savedScrollPosition) {
-            window.scrollTo(0, savedScrollPosition); 
-          }
-        }, 1);
-      // }
+      }
     }
   };
 
@@ -387,6 +381,7 @@ const ProductPage = () => {
         ...prevData,
         imagePreview: URL.createObjectURL(file),
       }));
+      dispatch(headerSearchValueSuccess({ headerSearchValue: file }));
     }
     // console.log(formData.image);
   };
@@ -400,30 +395,86 @@ const ProductPage = () => {
     handleSearch(query);
   };
 
-  const handleSearch = async (event,fromKeyDown) => {
-    debugger;
-    if(file){
-      dispatch(headerSearchValueSuccess({ headerSearchValue: file }));
-      const randomId = Math.random().toString(36).substring(2, 15); // Generate a random string
-      navigate(`/products/image-search/${randomId}`);
-      return;
+  const convertBase64intoBlob = (base64File) => {
+    if (base64File) {
+      // Extract the data part from the Base64 string
+      const byteCharacters = atob(base64File.split(',')[1]); // Decode Base64
+      const byteArrays = [];
+      
+      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+        const slice = byteCharacters.slice(offset, offset + 1024);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        byteArrays.push(new Uint8Array(byteNumbers));
+      }
+      
+      const byteArray = new Blob(byteArrays, { type: 'image/jpeg' }); // Set the appropriate MIME type here
+      return byteArray;
+    } else {
+      console.error('No file data found in localStorage');
+      return null;
     }
-    console.log(location.pathname)
-    let searchValue = event === null ? formData?.searchValue : event;
-    if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type) {
+  };
+
+  const handleSearch = async (event,fromKeyDown, loadMore, pag) => {
+    debugger;
+
+    if(file){
+        const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file : fileObject,
+        id : randomId
+      }
+
+      let data = [];
+      if(savedImage){
+        data = savedImage;
+      }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      return
+    }
+
+    console.log(savedImage)
+    console.log(location?.pathname);
+    let searchValue = '';
+    if(!location.pathname.includes("image")){
+      searchValue = location?.pathname.split("/")[3];
+      let chnageSearchFormat = searchValue?.split("-").join(" ");
+      setFormData((prevState) => ({
+        ...prevState,
+        searchValue: chnageSearchFormat,
+      }));
+    }else if(location.pathname.includes("image")){
+        let getUrlId = location.pathname.split("/"); 
+        let aa = getUrlId[getUrlId?.length - 1];
+        let findImage = savedImage?.filter((x) => x.id === aa);
+        if(findImage?.length > 0){
+            let blob = convertBase64intoBlob(findImage[0]?.file);
+            searchValue = blob;
+        }
+    }
+
+    if ((searchValue !== "" && searchValue !== undefined)) {
       // event.preventDefault();
       const formData = new FormData();
-      if (file) {
-        formData.append("file", file);
-      }
-      if(headerSearchValue?.file){
-        formData.append("file", headerSearchValue?.file);
-        formData.append("query", headerSearchValueLocal);
-      }else if(headerSearchValue?.type){
-        formData.append("file", headerSearchValue);
-        formData.append("query", headerSearchValueLocal);
-      } else{
-        formData.append("query", searchValue?.searchValue || searchValue);
+      if (searchValue?.type?.includes("image")) {
+        formData.append("file", searchValue);
+        formData.append("query", "");
+        setFormData((prevState) => ({
+            ...prevState,
+            ['imagePreview']: URL.createObjectURL(searchValue),
+        }))
+      }else{
+        formData.append("query", searchValue);
       }
       try {
         dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue || file }));
@@ -432,17 +483,26 @@ const ProductPage = () => {
         // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
         setOpenLoader(true);
         // https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search/get-all-similar-products-to-image/1/50
-        let pag = 1;
-        if(fromKeyDown === "fromKeyDown"){
-          pag = 1
-        }else if(paginationLocal > 1){
-          pag = paginationLocal
-        }else{
-          pag = imagePagination?.current;
+        // let pag = 1;
+        // if(fromKeyDown === "fromKeyDown"){
+        //   pag = 1
+        // }else if(paginationLocal > 1){
+        //   pag = paginationLocal
+        // }else{
+        //   pag = imagePagination?.current;
+        // }
+        let pagination = 1;
+      if(loadMore === "loadMore"){
+        pagination = pag;
+      }
+      else if(SearchPagination){
+        let filterPagination = SearchPagination.filter((x) => x.path === location.pathname);
+        if(filterPagination.length > 0){
+        pagination = SearchPagination[0].pagination;
         }
-        
+      }
         const response = await fetch(
-         `${baseUrl}/search/get-all-similar-products-to-image/1/${pag * 50}`,
+         `${baseUrl}/search/get-all-similar-products-to-image/1/${pagination * 40}`,
           {
             method: "POST",
             headers: {
@@ -467,9 +527,11 @@ const ProductPage = () => {
         // if (fromKeyDown === "fromKeyDown") {
           setProducts(result?.data?.products);
           setProductsDataForFilter(result?.data?.products);
-          if(result?.data?.products?.length === 0 && pag === 1){
-             setNoProductsFound(true);
-             setInputSuggestions([])
+          let scroll = window.scrollY;
+          let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
+          if(filterPath !== undefined && filterPath !== -1){
+            SearchPagination[filterPath].scroll = scroll;
+            localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
           }
         // } 
         // else {
@@ -485,12 +547,12 @@ const ProductPage = () => {
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
-        let headerSearchValueLocalArray = [];
-        if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
-          // headerSearchValueLocalArray = headerSearchValueLocal;
-          headerSearchValueLocalArray.push(searchValue);
-          localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
-        }
+        // let headerSearchValueLocalArray = [];
+        // if(headerSearchValueLocal[headerSearchValueLocal?.length -1] !== searchValue){
+        //   // headerSearchValueLocalArray = headerSearchValueLocal;
+        //   headerSearchValueLocalArray.push(searchValue);
+        //   localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
+        // }
         // else{
         //   if(headerSearchValueLocal?.length > 1){
         //     headerSearchValueLocal.pop();
@@ -543,51 +605,64 @@ const ProductPage = () => {
 
   const handleLoadMoreProducts = () => {
     debugger;
-    pagination.current = pagination.current + 1;
-      if(ProductsPagination){
-        let findPagination = ProductsPagination.findIndex((x) => x.path === location.pathname);
+    // if (file || formData?.searchValue || headerSearchValueLocal) {
+    //   imagePagination.current = imagePagination.current + 1;
+    //   localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
+    //   handleSearch(null);
+    // }else {
+      pagination.current = pagination.current + 1;
+      if(SearchPagination){
+        let findPagination = SearchPagination.findIndex((x) => x.path === location.pathname);
         if(findPagination !== -1){
-          ProductsPagination[findPagination].pagination = pagination.current;
-          localStorage.setItem("ProductsPagination", JSON.stringify(ProductsPagination));
+          SearchPagination[findPagination].pagination = pagination.current;
+          localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
         }else{
           let pagObj = [{
             path: location.pathname,
             pagination: pagination.current
           }]
-          let pushObj = [...ProductsPagination, ...pagObj]
-          localStorage.setItem("ProductsPagination", JSON.stringify(pushObj));
+          let pushObj = [...SearchPagination, ...pagObj]
+          localStorage.setItem("SearchPagination", JSON.stringify(pushObj));
         }
       }else{
         let pagObj = [{
           path: location.pathname,
           pagination: pagination.current
         }]
-        localStorage.setItem("ProductsPagination", JSON.stringify(pagObj));
+        localStorage.setItem("SearchPagination", JSON.stringify(pagObj));
       }
       getProductsData("loadMore", pagination.current);
-    // if (file || formData?.searchValue || headerSearchValueLocal) {
-    //   imagePagination.current = imagePagination.current + 1;
-    //   localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
-    //   handleSearch(null);
-    // } else {
-    //   pagination.current = pagination.current + 1;
-    //   getProductsData();
-    // }
+  // }
   };
 
   const handleSearchInput = (e) => {
     let { value } = e.target;
-    if(!/[^\w\s]/gm.test(value)){
-      setFormData((prevState) => ({
-        ...prevState,
-        searchValue: value,
-      }));
-      dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
-    }
-   
+    setFormData((prevState) => ({
+      ...prevState,
+      searchValue: value,
+    }));
+    dispatch(headerSearchValueSuccess({ headerSearchValue: value })); //osama
     // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
     
   };
+
+  useEffect(() => {
+    debugger
+    const handlePopState = () => {
+        // categoryPaths.pop()
+        // localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
+        setTimeout(() => {
+            window.location.reload();
+          }, 1);
+    };
+
+    window.onpopstate = handlePopState;
+
+    return () => {
+      // Clean up the event listener when the component unmounts
+      window.onpopstate = null;
+    };
+  }, []);
 
   function createSlug(str) {
     return str
@@ -596,22 +671,54 @@ const ProductPage = () => {
       .replace(/-+/g, "-");
   }
 
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // The result is a Base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(file); // Read the file as Base64
+    });
+  };
+
   const handleKeyDown = async (e) => {
     debugger
-    if (e.key === "Enter") {
-      if(file){
-        dispatch(headerSearchValueSuccess({ headerSearchValue: file }));
-        const randomId = Math.random().toString(36).substring(2, 15); // Generate a random string
-        navigate(`/products/image-search/${randomId}`);
-      }else{
-        let value = e?.target?.value;
-        const slug = createSlug(value);
-        navigate(`/products/search/${slug}`);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1);
-        return
+
+    if(e.key === "Enter" && file){
+        const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file : fileObject,
+        id : randomId
       }
+
+      let data = [];
+      if(savedImage){
+        data = savedImage;
+      }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      return;
+    }
+
+    if (e.key === "Enter" && e?.target?.value !== "") {
+      let value = e?.target?.value;
+      const slug = createSlug(value);
+      navigate(`/products/search/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      let scroll = window.scrollY;
+      let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
+      if(filterPath !== undefined && filterPath !== -1){
+        SearchPagination[filterPath].scroll = scroll;
+        localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
+      }
+      return
     }
   };
 
@@ -719,6 +826,7 @@ const ProductPage = () => {
 
   return (
     <>
+    {/* <BackButtonHandler /> */}
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
@@ -869,8 +977,7 @@ const ProductPage = () => {
                         style={{ border: "none", borderRadius: "50%" }}
                         aria-label="Upload Image Button"
                       >
-                        <ImageSearchIcon />
-                        {/* <SvgIcon>
+                        <SvgIcon>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -884,7 +991,7 @@ const ProductPage = () => {
                               d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
                             />
                           </svg>
-                        </SvgIcon> */}
+                        </SvgIcon>
                         <input
                           type="file"
                           accept="image/*"
@@ -1071,15 +1178,7 @@ const ProductPage = () => {
             </div>
           )}
         </div>
-        {noProductsFound && 
-        (
-          <div style={{ display:"flex", justifyContent:"center" }}>
-            <h2 style={{fontWeight:"normal"}}>
-              No results found for “{formData?.searchValue}”.
-            </h2>
-          </div>
-        )}
-        {(!hideLoadMoreButton || products?.length === 0) && !noProductsFound && (
+        {(!hideLoadMoreButton || products?.length === 0) && (
           <div className="LoadMore-Div">
             <Button
               className="LoadMore-Button"
@@ -1096,4 +1195,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default ImageSearchComponent;

@@ -15,6 +15,9 @@ import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
 import { Title } from "@mui/icons-material";
 
 function SignupModal(props) {
+  let userNameForLogin = localStorage.getItem("userNameForLogin")
+  ? JSON.parse(localStorage.getItem("userNameForLogin"))
+  : null;
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
@@ -199,6 +202,7 @@ function SignupModal(props) {
       setOpenLoader(false);
       if (response?.statusCode?.text === "Success") {
         let token = setTokenToLocalStorage(response?.data);
+        localStorage.setItem("userNameForLogin", JSON.stringify(response?.data?.username));
         localStorage.setItem("firstlogin", JSON.stringify(true));
         showToastSuccess(response?.data?.message);
         handleCancel();
@@ -225,6 +229,7 @@ function SignupModal(props) {
       // handleloginOrSignupChange("fromApi")
       if (response?.statusCode?.text === "Success") {
         let token = setTokenToLocalStorage(response?.data);
+        localStorage.setItem("userNameForLogin", JSON.stringify(response?.data?.username));
         showToastSuccess(response?.data?.message);
         handleCancel();
         const data = response?.data;
@@ -313,6 +318,15 @@ function SignupModal(props) {
     setForgetPasswordScreen1(2);
 
   }
+
+  useEffect(() => {
+    if(userNameForLogin){
+      setFormData((prevState) => ({
+        ...prevState,
+        ["username"]: userNameForLogin,
+      }));
+    }
+  },[])
 
   return (
     <>
@@ -522,62 +536,6 @@ function SignupModal(props) {
                   <div className="Signup-Inputs">
                     {props?.checkingLoginOrSignup === "Signup" ? (
                       <>
-                        {/* <Typography.Title
-                      level={5}
-                      className={`${
-                        validationField.username && "Error-FieldName"
-                      }`}
-                    >
-                      User Name
-                    </Typography.Title>
-                    <Input
-                      placeholder="First Name"
-                      name="username"
-                      autoComplete="off"
-                      value={formData.username}
-                      onChange={handleChange}
-                      className={`${
-                        validationField.username
-                          ? "errorSignup-Inputfield"
-                          : "Signup-Inputfield"
-                      }`}
-                    /> */}
-                        {/* <Typography.Title
-                      level={5}
-                      className={`${
-                        validationField.firstname && "Error-FieldName"
-                      }`}
-                    >
-                      First Name
-                    </Typography.Title>
-                    <Input
-                      placeholder="First Name"
-                      name="firstname"
-                      value={formData.firstname}
-                      autoComplete="off"
-                      onChange={handleChange}
-                      className={`${
-                        validationField.firstname
-                          ? "errorSignup-Inputfield"
-                          : "Signup-Inputfield"
-                      }`}
-                    /> */}
-                        {/* <Typography.Title level={5}
-                    className={`${
-                      validationField.lastname && "Error-FieldName"
-                    }`}>Last Name</Typography.Title>
-                    <Input
-                      placeholder="Last Name"
-                      name="lastname"
-                      value={formData.lastname}
-                      autoComplete="off"
-                      onChange={handleChange}
-                      className={`${
-                        validationField.lastname
-                          ? "errorSignup-Inputfield"
-                          : "Signup-Inputfield"
-                      }`}
-                    /> */}
                         <Typography.Title
                           level={5}
                           className={`${
@@ -590,7 +548,7 @@ function SignupModal(props) {
                         <Input
                           placeholder="User Name"
                           name="username"
-                          autoComplete="off"
+                          // autoComplete="off"
                           value={formData.username}
                           onChange={handleChange}
                           className={`${
@@ -622,39 +580,18 @@ function SignupModal(props) {
                       </>
                     ) : (
                       <>
-                        {/* <Typography.Title
-                      level={5}
-                      className={`${
-                        validationField.email && "Error-FieldName"
-                      }`}
-                    >
-                      Email
-                    </Typography.Title>
-                    <Input
-                      placeholder="Email"
-                      name="email"
-                      autoComplete="off"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`${
-                        validationField.email
-                          ? "errorSignup-Inputfield"
-                          : "Signup-Inputfield"
-                      }`}
-                    /> */}
                         <Typography.Title
                           level={5}
                           className={`${
                             validationField.username && "Error-FieldName"
                           }`}
                         >
-                          {/* Email */}
                           User Name
                         </Typography.Title>
                         <Input
                           placeholder="User Name"
                           name="username"
-                          autoComplete="off"
+                          autoComplete="username"
                           value={formData.username}
                           onChange={handleChange}
                           className={`${

@@ -303,7 +303,7 @@ function HomeShoppingCollection() {
       {/** loader code */}
       <div className="HomeShoppingCollection-main">
         <div className="HomeShoppingCollection-heading">
-          <h2>NEWS ARRIVALS </h2>
+          <h2>NEW ARRIVALS </h2>
         </div>
         {/* <div className="HomeShoppingCollectioncollection-buttons">
           <div className="first2buttons">
