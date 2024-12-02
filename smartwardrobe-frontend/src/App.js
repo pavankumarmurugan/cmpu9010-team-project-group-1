@@ -11,6 +11,7 @@ import store from './redux/store';
 import WishListComponent from "./Components/WishListComponent/WishListComponent";
 import CategoryComponent from "./Components/CategoryComponent/CategoryComponent";
 import SearchComponent from "./Components/SearchComponent/SearchComponent";
+import ImageSearchComponent from "./Components/ImageSearchComponent/ImageSearchComponent";
 // import { io, Socket } from "socket.io-client";
 // import apiCall from "./Components/GenericApiCallFunctions/GenericApiCallFunctions";
 // import { showToastInfo } from "./Components/GenericToasters/GenericToasters";
@@ -133,13 +134,12 @@ function App() {
       <Fragment>
         <BrowserRouter>
       <ScrollToTop /> 
-      {/* <FloatingFeatureButton /> */}
-      {/* <BackButtonHandler /> */}
           <Routes>
             {/* <Route path="/" element={<Headermenu />} /> */}
             <Route path="/" element={<Homepage />} />
             <Route path="/products" element={<ProductPage />} />
-            {/* <Route path="/products/:search" element={<SearchComponent />} /> */}
+            <Route path="/products/search/:search" element={<SearchComponent />} />
+            <Route path="/products/image-search/:randomId" element={<ImageSearchComponent />} />
             <Route path="/products/:category" element={<CategoryComponent />} />
             <Route path="/productdetails/:id" element={<ProductDetails />} />
             <Route path="/wishlist" element={<WishListComponent />} />

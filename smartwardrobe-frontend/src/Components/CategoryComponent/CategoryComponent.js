@@ -45,6 +45,7 @@ import {
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { showToastError } from "../GenericToasters/GenericToasters";
 import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import { current } from "@reduxjs/toolkit";
 
 const CategoryComponent = () => {
   let token = localStorage.getItem("user")
@@ -58,6 +59,12 @@ const CategoryComponent = () => {
     : null;
     let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
     ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
+    : null;
+    let CategoryPagination = localStorage.getItem("CategoryPagination")
+    ? JSON.parse(localStorage.getItem("CategoryPagination"))
+    : null;
+    let savedImage = localStorage.getItem("savedImage")
+    ? JSON.parse(localStorage.getItem("savedImage"))
     : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
@@ -239,6 +246,14 @@ const CategoryComponent = () => {
         toPrice: "",
         Colour: [],
       });
+
+      // let scroll = window.scrollY;
+      // let filterPath = CategoryPagination?.findIndex((x) => x.path === location.pathname);
+      // if(filterPath?.length !== -1){
+      //   CategoryPagination[filterPath].scroll = scroll;
+      //   localStorage.setItem("CategoryPagination", JSON.stringify(CategoryPagination));
+      // }
+
     };
   }, []);
 
@@ -247,8 +262,8 @@ const CategoryComponent = () => {
   useEffect(() => {
     debugger
     const handlePopState = () => {
-        categoryPaths.pop()
-        localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
+        // categoryPaths.pop()
+        // localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
         setTimeout(() => {
             window.location.reload();
           }, 1);
@@ -262,15 +277,29 @@ const CategoryComponent = () => {
     };
   }, []);
 
-  const getProductsData = async () => {
+  const getProductsData = async (loadMore, currenPag) => {
     debugger;
-console.log(categoryPaths,"categoryPaths");
-let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 1] : "";
-    if(category){
-      let splitValue = category.split("//");
+    console.log(location.pathname);
+  console.log(categoryPaths,"categoryPaths");
+  let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 1] : "";
+  let splitPath = location.pathname.split('/')[2];
+  let separateCategory = splitPath.split(/-(.*)/s);
+    if(separateCategory){
+      // let splitValue = category.split("//");
+      let filterPagination = [];
+      let pagination = 1;
+      if(loadMore === "loadMore"){
+        pagination = currenPag;
+      }
+      else if(CategoryPagination){
+        filterPagination = CategoryPagination.filter((x) => x.path === location.pathname);
+        if(filterPagination.length > 0){
+        pagination = CategoryPagination[0].pagination;
+        }
+      }
 
       // setOpenLoader(true);
-      const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/${pagination?.current}/40/${splitValue[0]}/${splitValue[1]}`, null, token?.token);
+      const response = await apiCall("GET", `${baseUrl}/product/get-all-v2/1/${pagination * 40}/${separateCategory[0]}/${separateCategory[1]}`, null, token?.token);
       // setOpenLoader(false);
       setLoading(false);
       if(response?.data?.length > 0){
@@ -279,16 +308,22 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
           searchValue: "",
         }))
         setInputSuggestions([]);
-        if(pagination.current === 1){
+        // if(pagination === 1){
           setProducts(response?.data);
           setProductsDataForFilter(response?.data);
-        }else{
-          setProducts((prevProducts) => [...prevProducts, ...response?.data]);
-          setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
-        }
-        if (savedScrollPosition) {
-          window.scrollTo(0, savedScrollPosition);  // Restore the scroll position
-        }
+        // }else{
+        //   setProducts((prevProducts) => [...prevProducts, ...response?.data]);
+        //   setProductsDataForFilter((prevProducts) => [...prevProducts, ...response?.data]);
+        // }
+        // let filterPagination = CategoryPagination?.filter((x) => x.path === location.pathname);
+        // if(filterPagination?.length > 0){
+        setTimeout(() => {
+          
+          if (filterPagination.length > 0) {
+            window.scrollTo(0, filterPagination[0]?.scroll);  // Restore the scroll position
+          }
+        }, 1);
+        // }
         // return;
         // let updateCatpath = categoryPaths.slice(0, -1);
         // let aa = updateCatpath[updateCatpath.length - 1];
@@ -372,6 +407,28 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
 
   const handleSearch = async (event,fromLoadMore) => {
     debugger;
+
+    if(file){
+      const randomId = Math.random().toString(36).substring(2, 15);
+    const fileObject = await fileToBase64(file);
+    let fileObj = {
+      file : fileObject,
+      id : randomId
+    }
+
+    let data = [];
+    if(savedImage){
+      data = savedImage;
+    }
+
+    data.push(fileObj);
+    localStorage.setItem("savedImage", JSON.stringify(data));
+    navigate(`/products/image-search/${randomId}`);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1);
+    return
+  }
 
     if(fromLoadMore === "fromLoadMore"){
 
@@ -482,9 +539,29 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
       handleSearch(null, "fromLoadMore");
     } else {
       pagination.current = pagination.current + 1;
-      getProductsData();
-    }
-  };
+      if(CategoryPagination){
+        let findPagination = CategoryPagination.findIndex((x) => x.path === location.pathname);
+        if(findPagination !== -1){
+          CategoryPagination[findPagination].pagination = pagination.current;
+          localStorage.setItem("CategoryPagination", JSON.stringify(CategoryPagination));
+        }else{
+          let pagObj = [{
+            path: location.pathname,
+            pagination: pagination.current
+          }]
+          let pushObj = [...CategoryPagination, ...pagObj]
+          localStorage.setItem("CategoryPagination", JSON.stringify(pushObj));
+        }
+      }else{
+        let pagObj = [{
+          path: location.pathname,
+          pagination: pagination.current
+        }]
+        localStorage.setItem("CategoryPagination", JSON.stringify(pagObj));
+      }
+      getProductsData("loadMore", pagination.current);
+  }
+}
 
   const handleSearchInput = (e) => {
     let { value } = e.target;
@@ -497,19 +574,63 @@ let category = categoryPaths?.length > 0 ? categoryPaths[categoryPaths.length - 
   }
   };
 
+  function createSlug(str) {
+    return str
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // The result is a Base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(file); // Read the file as Base64
+    });
+  };
+
   const handleKeyDown = async (e) => {
     debugger
-    if (e.key === "Enter") {
-        let search = [];
-        if(headerSearchValueLocal?.length > 0){
-            search = headerSearchValueLocal;
-            search.push(e?.target?.value);
-        }else{
-            search.push(e?.target?.value);
-        }
-        localStorage.setItem("headerSearchValueLocal", JSON.stringify(search));
-        navigate("/products");
-        return;
+    if(e.key === "Enter" && file){
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file : fileObject,
+        id : randomId
+      }
+
+      let data = [];
+      if(savedImage){
+        data = savedImage;
+      }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      return;
+    }
+    if (e.key === "Enter" && e?.target?.value !== "") {
+      let value = e?.target?.value;
+      const slug = createSlug(value);
+      navigate(`/products/search/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+      return
+        // let search = [];
+        // if(headerSearchValueLocal?.length > 0){
+        //     search = headerSearchValueLocal;
+        //     search.push(e?.target?.value);
+        // }else{
+        //     search.push(e?.target?.value);
+        // }
+        // localStorage.setItem("headerSearchValueLocal", JSON.stringify(search));
+        // navigate("/products");
+        // return;
       if(e?.target?.value === ""){
         pagination.current = 1;
         setOpenLoader(true);

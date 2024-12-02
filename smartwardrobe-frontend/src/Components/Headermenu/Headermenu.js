@@ -65,7 +65,7 @@ import { GoDotFill } from "react-icons/go";
 import WelcomeBanner from "../WelcomeBanner/WelcomeBanner";
 import { HiSparkles } from "react-icons/hi";
 import { BsChevronUp } from "react-icons/bs";
-import ImageSearchIcon from '@mui/icons-material/ImageSearch';
+import ImageSearchIcon from "@mui/icons-material/ImageSearch";
 import { FaChevronDown } from "react-icons/fa6";
 
 const backendUrl =
@@ -85,11 +85,14 @@ function Headermenu() {
   let groups = localStorage.getItem("groupIds")
     ? JSON.parse(localStorage.getItem("groupIds"))
     : null;
-    let categoryPaths = localStorage.getItem("categoryPaths")
+  let categoryPaths = localStorage.getItem("categoryPaths")
     ? JSON.parse(localStorage.getItem("categoryPaths"))
     : null;
-    let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
+  let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
     ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
+    : null;
+    let CategoryPagination = localStorage.getItem("CategoryPagination")
+    ? JSON.parse(localStorage.getItem("CategoryPagination"))
     : null;
   const location = useLocation();
   const navigate = useNavigate();
@@ -278,7 +281,7 @@ function Headermenu() {
     background: "black",
     color: "white",
     fontWeight: "500",
-    fontSize:"16px"
+    fontSize: "16px",
   };
 
   const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -397,11 +400,24 @@ function Headermenu() {
   const handleItemClick = (item) => {
     debugger;
     let value = item;
-    dispatch(categoryValueSuccess({ categoryValue: value }));
-    setOpen(false);
-    if (location?.pathname !== "/products") {
-      navigate("/products");
-    }
+    // const slug = createSlug(value);
+    // let catpath = [];
+    // if (categoryPaths?.length > 0) {
+    //   catpath = [...categoryPaths, value];
+    // } else {
+    //   catpath = [value];
+    // }
+    // localStorage.setItem("categoryPaths", JSON.stringify(catpath));
+    navigate(`/products/${value}`);
+    let scroll = window.scrollY;
+      let filterPath = CategoryPagination?.findIndex((x) => x.path === location.pathname);
+      if(filterPath !== undefined && filterPath !== -1){
+        CategoryPagination[filterPath].scroll = scroll;
+        localStorage.setItem("CategoryPagination", JSON.stringify(CategoryPagination));
+      }
+    setTimeout(() => {
+      window.location.reload();
+    }, 1);
   };
 
   const DrawerList = (
@@ -488,7 +504,7 @@ function Headermenu() {
                   className="submenu-item"
                   onClick={() => handleItemClick("Ladieswear//Long-sleeve top")}
                 >
-                  <ListItemText primary="Long-sleeve top" />
+                  <ListItemText primary="Long sleeve top" />
                 </ListItem>
                 <ListItem
                   button
@@ -1398,32 +1414,32 @@ function Headermenu() {
             items: [
               {
                 label: "T-shirt",
-                key: "Ladieswear//T-shirt",
+                key: "Ladieswear-T-shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Long-sleeve top",
-                key: "Ladieswear//Long-sleeve top",
+                key: "Ladieswear-Long-sleeve top",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Crop top and skirt",
-                key: "Ladieswear//Crop top and skirt",
+                key: "Ladieswear-Crop top and skirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Tank top",
-                key: "Ladieswear//Tank top",
+                key: "Ladieswear-Tank top",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Vest top",
-                key: "Ladieswear//Vest top",
+                key: "Ladieswear-Vest top",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Casual top",
-                key: "Ladieswear//Casual top",
+                key: "Ladieswear-Casual top",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1434,27 +1450,27 @@ function Headermenu() {
             items: [
               {
                 label: "Outdoor trousers",
-                key: "Ladieswear//Outdoor trousers",
+                key: "Ladieswear-Outdoor trousers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Skirt",
-                key: "Ladieswear//Skirt",
+                key: "Ladieswear-Skirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Shorts",
-                key: "Ladieswear//Shorts",
+                key: "Ladieswear-Shorts",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Pyjama bottom",
-                key: "Ladieswear//Pyjama bottom",
+                key: "Ladieswear-Pyjama bottom",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Swimwear bottom",
-                key: "Ladieswear//Swimwear bottom",
+                key: "Ladieswear-Swimwear bottom",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1467,22 +1483,22 @@ function Headermenu() {
             items: [
               {
                 label: "Jacket",
-                key: "Ladieswear//Jacket",
+                key: "Ladieswear-Jacket",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Waistcoat",
-                key: "Ladieswear//Outdoor Waistcoat",
+                key: "Ladieswear-Outdoor Waistcoat",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Trousers",
-                key: "Ladieswear//Outdoor trousers",
+                key: "Ladieswear-Outdoor trousers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Cardigan",
-                key: "Ladieswear//Cardigan",
+                key: "Ladieswear-Cardigan",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1495,27 +1511,27 @@ function Headermenu() {
             items: [
               {
                 label: "Boots",
-                key: "Ladieswear//Boots",
+                key: "Ladieswear-Boots",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Flat shoes",
-                key: "Ladieswear//Flat shoes",
+                key: "Ladieswear-Flat shoes",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Heels",
-                key: "Ladieswear//Heels",
+                key: "Ladieswear-Heels",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Heeled sandals",
-                key: "Ladieswear//Heeled sandals",
+                key: "Ladieswear-Heeled sandals",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Sneakers",
-                key: "Ladieswear//Sneakers",
+                key: "Ladieswear-Sneakers",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1528,37 +1544,37 @@ function Headermenu() {
             items: [
               {
                 label: "Bag",
-                key: "Ladieswear//Bag",
+                key: "Ladieswear-Bag",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Earrings",
-                key: "Ladieswear//Earrings",
+                key: "Ladieswear-Earrings",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Ring",
-                key: "Ladieswear//Ring",
+                key: "Ladieswear-Ring",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Bracelet",
-                key: "Ladieswear//Bracelet",
+                key: "Ladieswear-Bracelet",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Hair clip",
-                key: "Ladieswear//Hair clip",
+                key: "Ladieswear-Hair clip",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Belt",
-                key: "Ladieswear//Belt",
+                key: "Ladieswear-Belt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Sunglasses",
-                key: "Ladieswear//Sunglasses",
+                key: "Ladieswear-Sunglasses",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1578,32 +1594,32 @@ function Headermenu() {
             items: [
               {
                 label: "T-shirt",
-                key: "Menswear//T-shirt",
+                key: "Menswear-T-shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Shirt",
-                key: "Menswear//Shirt",
+                key: "Menswear-Shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Polo Shirt",
-                key: "Menswear//Polo shirt",
+                key: "Menswear-Polo shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Hoodie",
-                key: "Menswear//Hoodie",
+                key: "Menswear-Hoodie",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Sweater",
-                key: "Menswear//Sweater",
+                key: "Menswear-Sweater",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Vest top",
-                key: "Menswear//Vest top",
+                key: "Menswear-Vest top",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1614,22 +1630,22 @@ function Headermenu() {
             items: [
               {
                 label: "Trousers",
-                key: "Menswear//Trousers",
+                key: "Menswear-Trousers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Shorts",
-                key: "Menswear//Shorts",
+                key: "Menswear-Shorts",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Pyjama",
-                key: "Menswear//Pyjama bottom",
+                key: "Menswear-Pyjama bottom",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Swimwear bottom",
-                key: "Menswear//Swimwear bottom",
+                key: "Menswear-Swimwear bottom",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1642,22 +1658,22 @@ function Headermenu() {
             items: [
               {
                 label: "Jacket",
-                key: "Menswear//Jacket",
+                key: "Menswear-Jacket",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Waistcoat",
-                key: "Menswear//Outdoor Waistcoat",
+                key: "Menswear-Outdoor Waistcoat",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Blazer",
-                key: "Menswear//Blazer",
+                key: "Menswear-Blazer",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Cardigan",
-                key: "Menswear//Cardigan",
+                key: "Menswear-Cardigan",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1668,17 +1684,17 @@ function Headermenu() {
             items: [
               {
                 label: "Sneakers",
-                key: "Menswear//Sneakers",
+                key: "Menswear-Sneakers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Boots",
-                key: "Menswear//Boots",
+                key: "Menswear-Boots",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Slippers",
-                key: "Menswear//Slippers",
+                key: "Menswear-Slippers",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1691,42 +1707,42 @@ function Headermenu() {
             items: [
               {
                 label: "Bag",
-                key: "Menswear//Bag",
+                key: "Menswear-Bag",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Cross-body bag",
-                key: "Menswear//Cross-body bag",
+                key: "Menswear-Cross-body bag",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Cap",
-                key: "Menswear//Cap",
+                key: "Menswear-Cap",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Sunglasses",
-                key: "Menswear//Sunglasses",
+                key: "Menswear-Sunglasses",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Watch",
-                key: "Menswear//Watch",
+                key: "Menswear-Watch",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Belt",
-                key: "Menswear//Belt",
+                key: "Menswear-Belt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Wallet",
-                key: "Menswear//Wallet",
+                key: "Menswear-Wallet",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Gloves",
-                key: "Menswear//Gloves",
+                key: "Menswear-Gloves",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1746,37 +1762,37 @@ function Headermenu() {
             items: [
               {
                 label: "T-shirt",
-                key: "Baby Children//T-shirt",
+                key: "Baby Children-T-shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Shirt",
-                key: "Baby Children//Shirt",
+                key: "Baby Children-Shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Trousers",
-                key: "Baby Children//Trousers",
+                key: "Baby Children-Trousers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Cardigan",
-                key: "Baby Children//Cardigan",
+                key: "Baby Children-Cardigan",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Bodysuit",
-                key: "Baby Children//Bodysuit",
+                key: "Baby Children-Bodysuit",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Sweater",
-                key: "Baby Children//Sweater",
+                key: "Baby Children-Sweater",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Swimsuit",
-                key: "Baby Children//Swimsuit",
+                key: "Baby Children-Swimsuit",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1787,22 +1803,22 @@ function Headermenu() {
             items: [
               {
                 label: "Jacket",
-                key: "Baby Children//Jacket",
+                key: "Baby Children-Jacket",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Coat",
-                key: "Baby Children//Coat",
+                key: "Baby Children-Coat",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Outdoor trousers",
-                key: "Baby Children//Outdoor trousers",
+                key: "Baby Children-Outdoor trousers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Jumpsuit",
-                key: "Baby Children//Jumpsuit",
+                key: "Baby Children-Jumpsuit",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1815,22 +1831,22 @@ function Headermenu() {
             items: [
               {
                 label: "Sneakers",
-                key: "Baby Children//Sneakers",
+                key: "Baby Children-Sneakers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Boots",
-                key: "Baby Children//Boots",
+                key: "Baby Children-Boots",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Slippers",
-                key: "Baby Children//Slippers",
+                key: "Baby Children-Slippers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Pre-walkers",
-                key: "Baby Children//Pre-walkers",
+                key: "Baby Children-Pre-walkers",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1843,42 +1859,42 @@ function Headermenu() {
             items: [
               {
                 label: "Hat",
-                key: "Baby Children//Hat",
+                key: "Baby Children-Hat",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Cap",
-                key: "Baby Children//Cap",
+                key: "Baby Children-Cap",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Sunglasses",
-                key: "Baby Children//Sunglasses",
+                key: "Baby Children-Sunglasses",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Hair ties",
-                key: "Baby Children//Hair ties",
+                key: "Baby Children-Hair ties",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Hair clip",
-                key: "Baby Children//Hair clip",
+                key: "Baby Children-Hair clip",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Towel",
-                key: "Baby Children//Towel",
+                key: "Baby Children-Towel",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Toy",
-                key: "Baby Children//Toy",
+                key: "Baby Children-Toy",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Soft Toys",
-                key: "Baby Children//Soft Toys",
+                key: "Baby Children-Soft Toys",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1898,27 +1914,27 @@ function Headermenu() {
             items: [
               {
                 label: "T-shirt",
-                key: "Sport//T-shirt",
+                key: "Sport-T-shirt",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Trousers",
-                key: "Sport//Trousers",
+                key: "Sport-Trousers",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Shorts",
-                key: "Sport//Shorts",
+                key: "Sport-Shorts",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Socks",
-                key: "Sport//Socks",
+                key: "Sport-Socks",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Swimwear bottom",
-                key: "Sport//Swimwear bottom",
+                key: "Sport-Swimwear bottom",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1929,25 +1945,25 @@ function Headermenu() {
             label: "Accessories",
             key: "Sport Accessories submenu",
             items: [
-              // { label: "Cap", key: "Sport//Cap" },
+              - { label: "Cap", key: "Sport-Cap" },
               {
                 label: "Waterbottle",
-                key: "Sport//Waterbottle",
+                key: "Sport-Waterbottle",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Giftbox",
-                key: "Sport//Giftbox",
+                key: "Sport-Giftbox",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Gloves",
-                key: "Sport//Gloves",
+                key: "Sport-Gloves",
                 command: (e) => handleDropdownClick(e),
               },
               {
                 label: "Other accessories",
-                key: "Sport//Other accessories",
+                key: "Sport-Other accessories",
                 command: (e) => handleDropdownClick(e),
               },
             ],
@@ -1962,69 +1978,68 @@ function Headermenu() {
       label: "Women",
       key: "Ladieswear",
       children: [
-        // Define children for the Footwear category
         {
           label: "Dress",
-          key: "Ladieswear//Dress",
+          key: "Ladieswear-Dress",
         },
         {
           label: "Top",
           key: "Ladieswear Tops submenu",
           children: [
-            { label: "T-shirt", key: "Ladieswear//T-shirt" },
-            { label: "Long-sleeve top", key: "Ladieswear//Long-sleeve top" },
+            { label: "T-shirt", key: "Ladieswear-T-shirt" },
+            { label: "Long-sleeve top", key: "Ladieswear-Long-sleeve top" },
             {
               label: "Crop top and skirt",
-              key: "Ladieswear//Crop top and skirt",
+              key: "Ladieswear-Crop top and skirt",
             },
-            { label: "Tank top", key: "Ladieswear//Tank top" },
-            { label: "Vest top", key: "Ladieswear//Vest top" },
-            { label: "Casual top", key: "Ladieswear//Casual top" },
+            { label: "Tank top", key: "Ladieswear-Tank top" },
+            { label: "Vest top", key: "Ladieswear-Vest top" },
+            { label: "Casual top", key: "Ladieswear-Casual top" },
           ],
         },
         {
           label: "Bottoms",
           key: "Ladieswear Bottoms submenu",
           children: [
-            { label: "Outdoor trousers", key: "Ladieswear//Outdoor trousers" },
-            { label: "Skirt", key: "Ladieswear//Skirt" },
-            { label: "Shorts", key: "Ladieswear//Shorts" },
-            { label: "Pyjama bottom", key: "Ladieswear//Pyjama bottom" },
-            { label: "Swimwear bottom", key: "Ladieswear//Swimwear bottom" },
+            { label: "Outdoor trousers", key: "Ladieswear-Outdoor trousers" },
+            { label: "Skirt", key: "Ladieswear-Skirt" },
+            { label: "Shorts", key: "Ladieswear-Shorts" },
+            { label: "Pyjama bottom", key: "Ladieswear-Pyjama bottom" },
+            { label: "Swimwear bottom", key: "Ladieswear-Swimwear bottom" },
           ],
         },
         {
           label: "Outwear",
           key: "Ladieswear Outdoor submenu",
           children: [
-            { label: "Jacket", key: "Ladieswear//Jacket" },
-            { label: "Waistcoat", key: "Ladieswear//Outdoor Waistcoat" },
-            { label: "Trousers", key: "Ladieswear//Outdoor trousers" },
-            { label: "Cardigan", key: "Ladieswear//Cardigan" },
+            { label: "Jacket", key: "Ladieswear-Jacket" },
+            { label: "Waistcoat", key: "Ladieswear-Outdoor Waistcoat" },
+            { label: "Trousers", key: "Ladieswear-Outdoor trousers" },
+            { label: "Cardigan", key: "Ladieswear-Cardigan" },
           ],
         },
         {
           label: "Footwear",
           key: "Ladieswear Footwear submenu",
           children: [
-            { label: "Boots", key: "Ladieswear//Boots" },
-            { label: "Flat shoes", key: "Ladieswear//Flat shoes" },
-            { label: "Heels", key: "Ladieswear//Heels" },
-            { label: "Heeled sandals", key: "Ladieswear//Heeled sandals" },
-            { label: "Sneakers", key: "Ladieswear//Sneakers" },
+            { label: "Boots", key: "Ladieswear-Boots" },
+            { label: "Flat shoes", key: "Ladieswear-Flat shoes" },
+            { label: "Heels", key: "Ladieswear-Heels" },
+            { label: "Heeled sandals", key: "Ladieswear-Heeled sandals" },
+            { label: "Sneakers", key: "Ladieswear-Sneakers" },
           ],
         },
         {
           label: "Accessories",
           key: "Ladieswear Accessories submenu",
           children: [
-            { label: "Bag", key: "Ladieswear//Bag" },
-            { label: "Earrings", key: "Ladieswear//Earrings" },
-            { label: "Ring", key: "Ladieswear//Ring" },
-            { label: "Bracelet", key: "Ladieswear//Bracelet" },
-            { label: "Hair clip", key: "Ladieswear//Hair clip" },
-            { label: "Belt", key: "Ladieswear//Belt" },
-            { label: "Sunglasses", key: "Ladieswear//Sunglasses" },
+            { label: "Bag", key: "Ladieswear-Bag" },
+            { label: "Earrings", key: "Ladieswear-Earrings" },
+            { label: "Ring", key: "Ladieswear-Ring" },
+            { label: "Bracelet", key: "Ladieswear-Bracelet" },
+            { label: "Hair clip", key: "Ladieswear-Hair clip" },
+            { label: "Belt", key: "Ladieswear-Belt" },
+            { label: "Sunglasses", key: "Ladieswear-Sunglasses" },
           ],
         },
       ],
@@ -2037,55 +2052,55 @@ function Headermenu() {
           label: "Top",
           key: "Menswear Tops submenu",
           children: [
-            { label: "T-shirt", key: "Menswear//T-shirt" },
-            { label: "Shirt", key: "Menswear//Shirt" },
-            { label: "Polo Shirt", key: "Menswear//Polo shirt" },
-            { label: "Hoodie", key: "Menswear//Hoodie" },
-            { label: "Sweater", key: "Menswear//Sweater" },
-            { label: "Vest top", key: "Menswear//Vest top" },
+            { label: "T-shirt", key: "Menswear-T-shirt" },
+            { label: "Shirt", key: "Menswear-Shirt" },
+            { label: "Polo Shirt", key: "Menswear-Polo shirt" },
+            { label: "Hoodie", key: "Menswear-Hoodie" },
+            { label: "Sweater", key: "Menswear-Sweater" },
+            { label: "Vest top", key: "Menswear-Vest top" },
           ],
         },
         {
           label: "Bottoms",
           key: "Menswear Bottoms submenu",
           children: [
-            { label: "Trousers", key: "Menswear//Trousers" },
-            { label: "Shorts", key: "Menswear//Shorts" },
-            { label: "Pyjama", key: "Menswear//Pyjama bottom" },
-            { label: "Swimwear bottom", key: "Menswear//Swimwear bottom" },
+            { label: "Trousers", key: "Menswear-Trousers" },
+            { label: "Shorts", key: "Menswear-Shorts" },
+            { label: "Pyjama", key: "Menswear-Pyjama bottom" },
+            { label: "Swimwear bottom", key: "Menswear-Swimwear bottom" },
           ],
         },
         {
           label: "Outwear",
           key: "Menswear Outdoor submenu",
           children: [
-            { label: "Jacket", key: "Menswear//Jacket" },
-            { label: "Waistcoat", key: "Menswear//Outdoor Waistcoat" },
-            { label: "Blazer", key: "Menswear//Blazer" },
-            { label: "Cardigan", key: "Menswear//Cardigan" },
+            { label: "Jacket", key: "Menswear-Jacket" },
+            { label: "Waistcoat", key: "Menswear-Outdoor Waistcoat" },
+            { label: "Blazer", key: "Menswear-Blazer" },
+            { label: "Cardigan", key: "Menswear-Cardigan" },
           ],
         },
         {
           label: "Footwear",
           key: "Menswear Footwear submenu",
           children: [
-            { label: "Sneakers", key: "Menswear//Sneakers" },
-            { label: "Boots", key: "Menswear//Boots" },
-            { label: "Slippers", key: "Menswear//Slippers" },
+            { label: "Sneakers", key: "Menswear-Sneakers" },
+            { label: "Boots", key: "Menswear-Boots" },
+            { label: "Slippers", key: "Menswear-Slippers" },
           ],
         },
         {
           label: "Accessories",
           key: "Menswear Accessories submenu",
           children: [
-            { label: "Bag", key: "Menswear//Bag" },
-            { label: "Cross-body bag", key: "Menswear//Cross-body bag" },
-            { label: "Cap", key: "Menswear//Cap" },
-            { label: "Sunglasses", key: "Menswear//Sunglasses" },
-            { label: "Watch", key: "Menswear//Watch" },
-            { label: "Belt", key: "Menswear//Belt" },
-            { label: "Wallet", key: "Menswear//Wallet" },
-            { label: "Gloves", key: "Menswear//Gloves" },
+            { label: "Bag", key: "Menswear-Bag" },
+            { label: "Cross-body bag", key: "Menswear-Cross-body bag" },
+            { label: "Cap", key: "Menswear-Cap" },
+            { label: "Sunglasses", key: "Menswear-Sunglasses" },
+            { label: "Watch", key: "Menswear-Watch" },
+            { label: "Belt", key: "Menswear-Belt" },
+            { label: "Wallet", key: "Menswear-Wallet" },
+            { label: "Gloves", key: "Menswear-Gloves" },
           ],
         },
       ],
@@ -2098,50 +2113,50 @@ function Headermenu() {
           label: "Clothing",
           key: "Baby Children Tops submenu",
           children: [
-            { label: "T-shirt", key: "Baby Children//T-shirt" },
-            { label: "Shirt", key: "Baby Children//Shirt" },
-            { label: "Trousers", key: "Baby Children//Trousers" },
-            { label: "Cardigan", key: "Baby Children//Cardigan" },
-            { label: "Bodysuit", key: "Baby Children//Bodysuit" },
-            { label: "Sweater", key: "Baby Children//Sweater" },
-            { label: "Swimsuit", key: "Baby Children//Swimsuit" },
+            { label: "T-shirt", key: "Baby Children-T-shirt" },
+            { label: "Shirt", key: "Baby Children-Shirt" },
+            { label: "Trousers", key: "Baby Children-Trousers" },
+            { label: "Cardigan", key: "Baby Children-Cardigan" },
+            { label: "Bodysuit", key: "Baby Children-Bodysuit" },
+            { label: "Sweater", key: "Baby Children-Sweater" },
+            { label: "Swimsuit", key: "Baby Children-Swimsuit" },
           ],
         },
         {
           label: "Outerwear",
           key: "Baby Children Outerwear submenu",
           children: [
-            { label: "Jacket", key: "Baby Children//Jacket" },
-            { label: "Coat", key: "Baby Children//Coat" },
+            { label: "Jacket", key: "Baby Children-Jacket" },
+            { label: "Coat", key: "Baby Children-Coat" },
             {
               label: "Outdoor trousers",
-              key: "Baby Children//Outdoor trousers",
+              key: "Baby Children-Outdoor trousers",
             },
-            { label: "Jumpsuit", key: "Baby Children//Jumpsuit" },
+            { label: "Jumpsuit", key: "Baby Children-Jumpsuit" },
           ],
         },
         {
           label: "Footwear",
           key: "Baby Children Footwear submenu",
           children: [
-            { label: "Sneakers", key: "Baby Children//Sneakers" },
-            { label: "Boots", key: "Baby Children//Boots" },
-            { label: "Slippers", key: "Baby Children//Slippers" },
-            { label: "Pre-walkers", key: "Baby Children//Pre-walkers" },
+            { label: "Sneakers", key: "Baby Children-Sneakers" },
+            { label: "Boots", key: "Baby Children-Boots" },
+            { label: "Slippers", key: "Baby Children-Slippers" },
+            { label: "Pre-walkers", key: "Baby Children-Pre-walkers" },
           ],
         },
         {
           label: "Accessories",
           key: "Baby Children Accessories submenu",
           children: [
-            { label: "Hat", key: "Baby Children//Hat" },
-            { label: "Cap", key: "Baby Children//Cap" },
-            { label: "Sunglasses", key: "Baby Children//Sunglasses" },
-            { label: "Hair ties", key: "Baby Children//Hair ties" },
-            { label: "Hair clip", key: "Baby Children//Hair clip" },
-            { label: "Towel", key: "Baby Children//Towel" },
-            { label: "Toy", key: "Baby Children//Toy" },
-            { label: "Soft Toys", key: "Baby Children//Soft Toys" },
+            { label: "Hat", key: "Baby Children-Hat" },
+            { label: "Cap", key: "Baby Children-Cap" },
+            { label: "Sunglasses", key: "Baby Children-Sunglasses" },
+            { label: "Hair ties", key: "Baby Children-Hair ties" },
+            { label: "Hair clip", key: "Baby Children-Hair clip" },
+            { label: "Towel", key: "Baby Children-Towel" },
+            { label: "Toy", key: "Baby Children-Toy" },
+            { label: "Soft Toys", key: "Baby Children-Soft Toys" },
           ],
         },
       ],
@@ -2154,22 +2169,22 @@ function Headermenu() {
           label: "Clothing",
           key: "Sport Clothing submenu",
           children: [
-            { label: "T-shirt", key: "Sport//T-shirt" },
-            { label: "Trousers", key: "Sport//Trousers" },
-            { label: "Shorts", key: "Sport//Shorts" },
-            { label: "Socks", key: "Sport//Socks" },
-            { label: "Swimwear bottom", key: "Sport//Swimwear bottom" },
+            { label: "T-shirt", key: "Sport-T-shirt" },
+            { label: "Trousers", key: "Sport-Trousers" },
+            { label: "Shorts", key: "Sport-Shorts" },
+            { label: "Socks", key: "Sport-Socks" },
+            { label: "Swimwear bottom", key: "Sport-Swimwear bottom" },
           ],
         },
         {
           label: "Accessories",
           key: "Sport Accessories submenu",
           children: [
-            // { label: "Cap", key: "Sport//Cap" },
-            { label: "Waterbottle", key: "Sport//Waterbottle" },
-            { label: "Giftbox", key: "Sport//Giftbox" },
-            { label: "Gloves", key: "Sport//Gloves" },
-            { label: "Other accessories", key: "Sport//Other accessories" },
+            - { label: "Cap", key: "Sport-Cap" },
+            { label: "Waterbottle", key: "Sport-Waterbottle" },
+            { label: "Giftbox", key: "Sport-Giftbox" },
+            { label: "Gloves", key: "Sport-Gloves" },
+            { label: "Other accessories", key: "Sport-Other accessories" },
           ],
         },
       ],
@@ -2219,22 +2234,56 @@ function Headermenu() {
   /*  search work*/
 
   const onChangeSearchValue = (e) => {
-    debugger
-    if(!/[^\w\s]/gm.test(e.target.value)){
+    debugger;
+    if (!/[^\w\s]/gm.test(e.target.value)) {
       setSearchValue(e.target.value);
     }
   };
 
   const handleKeyDown = (e) => {
-    // debugger;
+     debugger;
     if (e.key === "Enter") {
       handleSearch();
     }
   };
 
-  const handleSearch = () => {
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // The result is a Base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(file); // Read the file as Base64
+    });
+  };
+
+  const handleSearch = async () => {
     debugger;
-    if (searchValue.trim() !== "" || file !== null) {
+
+    if(file){
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file : fileObject,
+        id : randomId
+      }
+
+      let data = [];
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1);
+    }else if (searchValue.trim() !== "") {
+      let value = searchValue;
+      const slug = createSlug(value);
+      navigate(`/products/search/${slug}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+
+      /**  30 Nov
       let data = {};
       data.searchValue = searchValue;
       data.file = file;
@@ -2244,6 +2293,7 @@ function Headermenu() {
       headerSearchValueLocalArray.push(data.searchValue);
       localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocalArray));
       navigate("/products");
+       */
     }
     // if (file !== null) {
     //   dispatch(headerSearchValueSuccess({ headerSearchValue: file }));
@@ -2267,32 +2317,37 @@ function Headermenu() {
 
   function createSlug(str) {
     return str
-      .toLowerCase()                     // Convert to lowercase
-      .replace(/[^a-z0-9\s-]/g, '')       // Remove special characters
-      .replace(/\s+/g, '-')               // Replace spaces with hyphens
-      .replace(/-+/g, '-');               // Replace multiple hyphens with a single hyphen
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
   }
 
   const handleDropdownClick = (e) => {
     debugger;
     console.log("Selected value:", e);
     let value = e?.item?.key;
-    const slug = createSlug(value);
-    let catpath = [];
-    if(categoryPaths?.length > 0){
-      catpath = [...categoryPaths, value];
-    }else{
-      catpath = [value];
-    }
-    localStorage.setItem("categoryPaths", JSON.stringify(catpath));
+    // const slug = createSlug(value);
+    // let catpath = [];
+    // if (categoryPaths?.length > 0) {
+    //   catpath = [...categoryPaths, value];
+    // } else {
+    //   catpath = [value];
+    // }
+    // localStorage.setItem("categoryPaths", JSON.stringify(catpath));
     // dispatch(categoryDataRouteSuccess({ categoryPaths: catpath }));
     // dispatch(categoryValueSuccess({ categoryValue: value }));
     // if (!location?.pathname.includes('/products/')) {
-      // navigate("/products");
-      navigate(`/products/${slug}`);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1);
+    // navigate("/products");
+    let scroll = window.scrollY;
+    let filterPath = CategoryPagination?.findIndex((x) => x.path === location.pathname);
+    if(filterPath !== undefined && filterPath !== -1){
+      CategoryPagination[filterPath].scroll = scroll;
+      localStorage.setItem("CategoryPagination", JSON.stringify(CategoryPagination));
+    }
+    navigate(`/products/${value}`);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1);
     // }
   };
 
@@ -2454,51 +2509,51 @@ function Headermenu() {
     debugger;
     bannerclickvalue.current = value;
     setShowBanner(true);
-  }
+  };
 
   const handleCloseBanner = () => {
     debugger;
     setShowBanner(false);
-  }
+  };
 
-  const [isOpen, setIsOpen] = useState(false)
-  const showcaseRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const showcaseRef = useRef(null);
   const features = [
     "Virtual Try-On Using Preset Models & Its Customizations",
     "Collaborative Chat & Share Products",
-    "Image Search Natural Language Search & Predictive Search"
-  ]
-  
+    "Image Search Natural Language Search & Predictive Search",
+  ];
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showcaseRef.current && !showcaseRef.current.contains(event.target)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleItemClickFeature = (index) => {
-    debugger
+    debugger;
     bannerclickvalue.current = index + 1;
     setShowBanner(true);
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   return (
     <>
-    {showBanner && (
+      {showBanner && (
         <WelcomeBanner
           isShowModel={showBanner}
           closeModal={handleCloseBanner}
           bannerclickvalue={bannerclickvalue.current}
         />
       )}
-      
+
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
@@ -2542,16 +2597,17 @@ function Headermenu() {
 
       {/* Signup/Login Modal */}
 
-      {OpenLoginModal &&
-      <SignupModal
-        isShowModel={OpenLoginModal}
-        closeModal={CloseLoginForm}
-        checkingLoginOrSignup={checkingLoginOrSignup}
-        accountCreate={accountCreate}
-      />}
+      {OpenLoginModal && (
+        <SignupModal
+          isShowModel={OpenLoginModal}
+          closeModal={CloseLoginForm}
+          checkingLoginOrSignup={checkingLoginOrSignup}
+          accountCreate={accountCreate}
+        />
+      )}
       {/*  Signup/Login Modal */}
 
-{/* <div className="headercarousel">
+      {/* <div className="headercarousel">
       <Carousel
         // dotPosition="left"
         dots={false}
@@ -2623,28 +2679,51 @@ function Headermenu() {
         </div>
       </div> */}
 
-<div ref={showcaseRef} className="feature-showcase">
-      <input
-        type="checkbox"
-        id="feature-toggle"
-        className="feature-toggle"
-        checked={isOpen}
-        onChange={() => setIsOpen(!isOpen)}
-      />
-      <label htmlFor="feature-toggle" className="feature-button" style={{ display: "flex", justifyContent:"center", alignItems:"center", gap:"10px" }}>
-        <span>Discover Our Amazing Features</span>
-        <FaChevronDown className="chevron-up" style={{ fontWeight:"bold" }} />
-      </label>
-      <div className="feature-content">
-        <ul style={{ display: "flex", justifyContent:"center", flexDirection:"column", alignItems:"center"}}>
-          {features.map((feature, index) => (
-            <li key={index} className="banner-feature-li" onClick={() => handleItemClickFeature(index)}>
-              <HiSparkles className="sparkles" />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <div ref={showcaseRef} className="feature-showcase">
+        <input
+          type="checkbox"
+          id="feature-toggle"
+          className="feature-toggle"
+          checked={isOpen}
+          onChange={() => setIsOpen(!isOpen)}
+        />
+        <label
+          htmlFor="feature-toggle"
+          className="feature-button"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <span>Discover Our Amazing Features</span>
+          <FaChevronDown
+            className="chevron-up"
+            style={{ fontWeight: "bold" }}
+          />
+        </label>
+        <div className="feature-content">
+          <ul
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {features.map((feature, index) => (
+              <li
+                key={index}
+                className="banner-feature-li"
+                onClick={() => handleItemClickFeature(index)}
+              >
+                <HiSparkles className="sparkles" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div className="header-main">

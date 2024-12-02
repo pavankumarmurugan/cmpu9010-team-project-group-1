@@ -36,6 +36,10 @@ function Homepage() {
     localStorage.removeItem("headerSearchValueLocal");
     localStorage.removeItem("scrollPosition");
     localStorage.removeItem("route");
+    localStorage.removeItem("CategoryPagination");
+    localStorage.removeItem("SearchPagination");
+    localStorage.removeItem("ProductsPagination");
+    localStorage.removeItem("savedImage");
     localStorage.setItem("paginationLocal", JSON.stringify(1));
     // getHomeData();
   }, []);
