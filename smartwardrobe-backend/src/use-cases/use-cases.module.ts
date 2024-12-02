@@ -29,6 +29,7 @@ import { VtoImageSearchUsecase } from './vto/vto.usecase';
 import { ConfigUsecase } from './config/config.usecase';
 import { UserLikedModelUsecase } from './user-liked-models/user-liked-models.usecase';
 import { ProductCategoryUsecase } from './product-category/product-category.usecase';
+import { FiltersUsecase } from './filters/filters.usecase';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { ProductCategoryUsecase } from './product-category/product-category.usec
     VtoImageSearchUsecase,
     ConfigUsecase,
     UserLikedModelUsecase,
+    FiltersUsecase,
   ],
   exports: [
     // ProductInventoryUsecase,
@@ -84,6 +86,7 @@ import { ProductCategoryUsecase } from './product-category/product-category.usec
     VtoImageSearchUsecase,
     ConfigUsecase,
     UserLikedModelUsecase,
+    FiltersUsecase,
   ],
 })
 export class UseCasesModule {}

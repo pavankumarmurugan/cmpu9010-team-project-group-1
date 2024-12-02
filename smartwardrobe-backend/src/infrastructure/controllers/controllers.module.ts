@@ -36,6 +36,7 @@ import { UserLikedModelController } from './user-liked-models/user-liked-models.
 import { InviteController } from './invite/invite.controller';
 import { FaissModule } from '../services/faiss/faiss.module';
 import { TestController } from './test-redis/test-redis-controller';
+import { FiltersController } from './filters/filters.controller';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { TestController } from './test-redis/test-redis-controller';
     UserLikedModelController,
     InviteController,
     TestController,
+    FiltersController,
   ],
   providers: [
     // {

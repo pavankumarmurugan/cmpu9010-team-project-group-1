@@ -1,23 +1,9 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ProductReqDto } from 'src/core/dto/product/product-req-dto';
-import { ProductReqUpdateDto } from 'src/core/dto/product/product-req-update-dto';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ProductResDto } from 'src/core/dto/product/product-res-dto';
 import { IResponse } from 'src/core/interface/response.interface';
 import { ROLES } from 'src/infrastructure/common/enum.ts/roles.enum';
 import { Roles } from 'src/infrastructure/decorators/roles.decorator';
-import { AccessTokenGuard } from 'src/infrastructure/guards/auth/accessToken.guard';
-import { RolesGuard } from 'src/infrastructure/guards/roles/roles.guard';
 import { ProductUsecase } from 'src/use-cases/product/product.usecase';
 
 @Controller('product')
