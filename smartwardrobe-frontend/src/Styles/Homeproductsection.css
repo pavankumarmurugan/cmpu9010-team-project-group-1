@@ -117,6 +117,12 @@
   height: 100%;
 }
 
+@media screen and (max-width: 768px){
+  .video-main-div{
+    height: 50vh !important;
+  }
+}
+
 .card-div-homepage{
   display: flex;
   flex-wrap: wrap;

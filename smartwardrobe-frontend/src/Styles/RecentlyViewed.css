@@ -1,3 +1,17 @@
-.recently-viewed-div{
-    /* padding: 16px; */
+.bestselling-div-home{
+    margin: 45px auto 20px auto;
+    font-size : 24px;
+    font-family: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.3rem;
+    margin-left: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+    .bestselling-div-home{
+        letter-spacing: 0rem !important;
+    }
+    
 }

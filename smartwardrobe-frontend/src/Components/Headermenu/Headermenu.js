@@ -179,6 +179,36 @@ function Headermenu() {
   };
 
   useEffect(() => {
+    checkToken();
+ },[])
+
+ const checkToken = async () => {
+   debugger;
+
+   if(token){
+     const response = await apiCall(
+       "GET",
+       `${baseUrl}/auth/verify-token`,
+       null,
+       token?.token
+     );
+     if(response?.message !== "Valid Token"){
+       const res = await apiCall(
+         "GET",
+         `${baseUrl}/auth/refresh`,
+         null,
+         token?.refreshToken
+       )
+       if(res?.data){
+         token.token = res?.data?.token;
+         token.refreshToken = res?.data?.refreshToken;
+         localStorage.setItem("user", JSON.stringify(token));
+       }
+     }
+   }
+ }
+
+  useEffect(() => {
     // Fetch friend and group IDs when component mounts
     if (token) {
       debugger;
@@ -420,6 +450,14 @@ function Headermenu() {
     }, 1);
   };
 
+  const handleSMobileDrawer = () => {
+    if(token){
+      navigate("/wishlist")
+    }else{
+      showToastInfo("Login to view your wishlist");
+    }
+  }
+
   const DrawerList = (
     <Box
       sx={{ width: 300 }}
@@ -442,9 +480,9 @@ function Headermenu() {
             <IoSearch className="icons" />
             Home
           </a>
-          <a href="/wishlist" className="item">
+          <a onClick={() => handleSMobileDrawer('wishlist')} className="item">
             <CiBookmark className="icons" />
-            Collections
+            Wihslist
           </a>
           <div
             className="item"
@@ -3140,7 +3178,7 @@ function Headermenu() {
                   onKeyDown={handleKeyDown}
                   onBlur={handleSearchOnBlur}
                   // autoComplete="off"
-                  autoFocus={true}
+                  // autoFocus={true}
                   startAdornment={
                     file && (
                       <InputAdornment
@@ -3200,7 +3238,8 @@ function Headermenu() {
                           cursor: "pointer",
                         }}
                       >
-                        <SvgIcon>
+                        <ImageSearchIcon />
+                        {/* <SvgIcon>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -3214,7 +3253,7 @@ function Headermenu() {
                               d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
                             />
                           </svg>
-                        </SvgIcon>
+                        </SvgIcon> */}
                         {/* Hidden file input */}
                         <input
                           ref={inputRefFile}

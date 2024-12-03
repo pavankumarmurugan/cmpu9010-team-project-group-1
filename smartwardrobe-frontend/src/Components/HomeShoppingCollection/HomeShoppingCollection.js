@@ -35,7 +35,7 @@ function HomeShoppingCollection() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [homeData, setHomeData] = useState({});
-  const [carouselImageCount, setCarouselImageCount] = useState(3);
+  const [carouselImageCount, setCarouselImageCount] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
   //   const carouseldata = [
   //     {
@@ -252,29 +252,33 @@ function HomeShoppingCollection() {
   const handleSplitter = (item) => {
     debugger;
     console.log("Splitter clicked", item);
-    // dispatch(headerSearchValueSuccess({ headerSearchValue: item?.title }));
-    let itemData = [];
-    itemData.push(item?.title);
-    localStorage.setItem("headerSearchValueLocal", JSON.stringify(itemData));
-    navigate("/products");
+    let value = item?.title;
+    const slug = createSlug(value);
+    navigate(`/products/search/${slug}`);
   };
+
+  function createSlug(str) {
+    return str
+      .replaceAll(" ", "-")
+  }
 
   const handleSliderClick = (item) => {
     debugger;
     console.log("Splitter clicked", item);
-    // dispatch(headerSearchValueSuccess({ headerSearchValue: item }));
-    let itemData = [];
-    itemData.push(item);
-    localStorage.setItem("headerSearchValueLocal", JSON.stringify(itemData));
-    navigate("/products");
+    let value = item;
+    const slug = createSlug(value);
+    navigate(`/products/search/${slug}`);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1);
   };
 
   useEffect(() => {
     const updateTopValue = () => {
       if (window.innerWidth > 768) {
-        setCarouselImageCount(3);
+        setCarouselImageCount(true);
       } else {
-        setCarouselImageCount(1);
+        setCarouselImageCount(false);
       }
     };
 
@@ -471,6 +475,7 @@ function HomeShoppingCollection() {
               autoPlay
               muted
               loop
+              playsInline
               style={{
                 width: "100%",
                 height: "100%",
@@ -619,10 +624,10 @@ function HomeShoppingCollection() {
               />
             </Splitter.Panel>
           </Splitter> */}
-
+{carouselImageCount ? 
           <ImageList
             sx={{ width: "100%", height: "90vh", cursor: "pointer" }}
-            cols={carouselImageCount}
+            cols={3}
             tabindex="0"
           >
             {itemData.map((item) => (
@@ -637,6 +642,31 @@ function HomeShoppingCollection() {
               </ImageListItem>
             ))}
           </ImageList>
+          :
+          <div
+          className="carousel-container"
+          style={{ width: "100%", height: "100%" }}
+        >
+          <Carousel {...carouselSettings}>
+          {itemData.map((item) => (
+            <div style={contentStyle}>
+              <img
+                src={item?.img}
+                alt={item?.title}
+                loading="lazy"
+                style={{
+                  // height: "300px",
+                  width: "100%",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  border: "15px solid #fff",
+                }}
+                onClick={() => handleSplitter(item)}
+              />
+            </div>
+          ))}
+          </Carousel>
+        </div>}
         </div>
       </div>
     </>

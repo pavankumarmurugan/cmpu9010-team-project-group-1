@@ -40,6 +40,7 @@ function Homepage() {
     localStorage.removeItem("SearchPagination");
     localStorage.removeItem("ProductsPagination");
     localStorage.removeItem("savedImage");
+    localStorage.removeItem("imageSearchFile");
     localStorage.setItem("paginationLocal", JSON.stringify(1));
     // getHomeData();
   }, []);

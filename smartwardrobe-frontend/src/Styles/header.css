@@ -78,10 +78,18 @@
 
 @media (min-width: 300px) and (max-width: 500px) {
     .header-logo{
-        font-size: 20px;
+        font-size: 22px !important;
+        letter-spacing: 0.1rem !important;
     }
     .header-icons{
         gap: 0.3rem !important;
+    }
+  }
+
+@media (min-width: 501px) and (max-width: 768px) {
+    .header-logo{
+        font-size: 24px !important;
+        letter-spacing: 0.1rem;
     }
   }
 
