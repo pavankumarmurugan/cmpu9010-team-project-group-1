@@ -8,10 +8,12 @@ import { GroupEntity } from '../entities/group/group';
 import { ImageClusterMVEntity } from '../entities/image-cluster-mv/image-cluster-mv.entity';
 import { ImageClusterEntity } from '../entities/image-cluster/image-cluster.entity';
 import { LikesEntity } from '../entities/likes/likes.entity';
+import { OtpEntity } from '../entities/otp/otp.entity';
 import { ProductCategoryEntity } from '../entities/product-category/product-category.entity';
 import { ProductInventoryEntity } from '../entities/product-inventory/product-inventory.entity';
 import { ProductSubcategoryEntity } from '../entities/product-subcategory/product-subcategory.entity';
 import { ProductEntity } from '../entities/product/product.entity';
+import { SearchHistoryEntity } from '../entities/search-history/search-history.entity';
 import { UserLikedModelsEntity } from '../entities/user-liked-model/user-liked-model.entity';
 import { UserEntity } from '../entities/user/user.entity';
 import { VtoImageSearchEntity } from '../entities/vto/vto.entity';
@@ -35,4 +37,6 @@ export abstract class IDataServices {
   abstract vtoImageSearch: IGenericRepository<VtoImageSearchEntity>;
   abstract userLikedModel: IGenericRepository<UserLikedModelsEntity>;
   abstract productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
+  abstract otp: IGenericRepository<OtpEntity>;
+  abstract searchHistory: IGenericRepository<SearchHistoryEntity>;
 }

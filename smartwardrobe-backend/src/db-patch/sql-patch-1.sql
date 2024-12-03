@@ -418,3 +418,22 @@ CREATE TABLE  image_clusters (
     cluster_id INTEGER NOT NULL,
     clip_embedding FLOAT8[] NOT NULL
 );
+
+CREATE TABLE otp (
+    id SERIAL PRIMARY KEY,             
+    email VARCHAR NOT NULL,            
+    otp VARCHAR NOT NULL,              
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT null
+);
+
+CREATE INDEX idx_otp_email_otp ON otp (email, otp);
+
+CREATE TABLE search_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    search_query VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATE DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
+);

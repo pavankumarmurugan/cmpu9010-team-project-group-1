@@ -86,4 +86,30 @@ export class EmailService implements OnModuleInit {
       );
     }
   }
+
+  async sendEmail(
+    to: string,
+    subject: string,
+    text: string,
+    html?: string,
+  ): Promise<void> {
+    try {
+      const msg = {
+        to,
+        from: this.fromEmail,
+        subject,
+        text,
+        ...(html && { html }), // Add HTML content if provided
+      };
+
+      await sgMail.send(msg);
+      this.logger.log(`Email sent successfully to ${to}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send email to ${to}`,
+        error.response?.body || error,
+      );
+      throw new Error('Failed to send email. Please try again later.');
+    }
+  }
 }

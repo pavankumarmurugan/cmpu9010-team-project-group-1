@@ -15,6 +15,7 @@ import { GroupConvertor } from './group/group.convertor';
 import { GroupMemberConvertor } from './group-members/group-members.convertor';
 import { VtoImageSearchConvertor } from './vto/vto-dto.convertor';
 import { UserLikedModelConverter } from './user-liked-models/user-liked-models.convertor';
+import { SearchHistoryConvertor } from './search-history/search-history.convertor';
 
 @Module({
   providers: [
@@ -34,6 +35,7 @@ import { UserLikedModelConverter } from './user-liked-models/user-liked-models.c
     GroupMemberConvertor,
     VtoImageSearchConvertor,
     UserLikedModelConverter,
+    SearchHistoryConvertor,
   ],
   exports: [
     UserDtoConvertor,
@@ -52,6 +54,7 @@ import { UserLikedModelConverter } from './user-liked-models/user-liked-models.c
     GroupMemberConvertor,
     VtoImageSearchConvertor,
     UserLikedModelConverter,
+    SearchHistoryConvertor,
   ],
 })
 export class ConvertorsModule {}

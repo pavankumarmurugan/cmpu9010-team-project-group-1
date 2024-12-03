@@ -1,4 +1,24 @@
 export const MESSAGES = {
+  SEARCH_HISTORY: {
+    NOT_FOUND: 'SEARCH HISTORY NOT FOUND',
+    GET_ALL: {
+      SUCCESS: 'SUCCESSFULLY FETCHED SEARCH HISTORY',
+    },
+    ADD: {
+      SUCCESS: 'SUCCESSFULLY ADDED SEARCH HISTORY',
+    },
+    DELETE: {
+      SUCCESS: 'DELETED SEARCH HISTORY',
+    },
+  },
+  OTP: {
+    INVALID: 'INVALID OTP',
+    EXPIRED: 'OTP EXPIRED',
+  },
+  PASSWORD: {
+    FORGOT_SUCCESS: 'OTP has been sent to your email address.',
+    UPDATE_SUCCESS: 'Password updated successfully',
+  },
   TOKEN: {
     SUCCESS: 'Valid Token',
   },
