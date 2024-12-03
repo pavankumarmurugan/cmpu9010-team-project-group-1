@@ -38,7 +38,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { HiUserRemove } from "react-icons/hi";
-import { LuUserCheck2 } from "react-icons/lu";
+import { LuUserCheck, LuUserCheck2 } from "react-icons/lu";
 import {
   IoIosInformationCircleOutline,
   IoMdContacts,
@@ -1042,7 +1042,7 @@ function ChatComponent(props) {
                       aria-hidden="true"
                       onClick={handleFriendRequests}
                     >
-                      <LuUserCheck2
+                      <LuUserCheck
                         style={{
                           width: "20px",
                           height: "20px",
@@ -1110,7 +1110,7 @@ function ChatComponent(props) {
                       aria-hidden="true"
                       onClick={handleFriendRequests}
                     >
-                      <LuUserCheck2
+                      <LuUserCheck
                         style={{
                           width: "20px",
                           height: "20px",
