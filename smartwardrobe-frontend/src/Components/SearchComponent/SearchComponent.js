@@ -82,6 +82,7 @@ const SearchComponent = () => {
   // const [virtualTryOnClickedData, setVirtualTryOnClickedData] = useState({});
   const [openTryOnModal, setOpenTryOnModal] = useState(false);
   const [openLoader, setOpenLoader] = useState(false);
+  const [noProductsFound, setNoProductsFound] = useState(false);
   const [hideLoadMoreButton, sethideLoadMoreButton] = useState(false);
   const [productsDataForFilter, setProductsDataForFilter] = useState([]);
   const [inputSuggestions, setInputSuggestions] = useState([]);
@@ -519,6 +520,10 @@ const SearchComponent = () => {
         //     ...result?.data?.products,
         //   ]);
         // }
+        if(result?.data?.products?.length === 0 && pagination === 1){
+          setNoProductsFound(true);
+          setInputSuggestions([])
+       }
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
@@ -1151,7 +1156,16 @@ const SearchComponent = () => {
             </div>
           )}
         </div>
-        {(!hideLoadMoreButton || products?.length === 0) && (
+        {products?.length === 0 && 
+        (
+          <div style={{ display:"flex", justifyContent:"center" }}>
+            <h2 style={{fontWeight:"normal"}}>
+              No results found for “{formData?.searchValue}”.
+            </h2>
+          </div>
+        )}
+        {/* {(!hideLoadMoreButton || products?.length === 0) && ( */}
+        {(!hideLoadMoreButton || products?.length !== 0) && (
           <div className="LoadMore-Div">
             <Button
               className="LoadMore-Button"

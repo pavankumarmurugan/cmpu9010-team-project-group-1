@@ -473,8 +473,8 @@ const WhatsAppStylePreview = ({ message }) => {
     const processMessage = async () => {
       // Check if the message contains a URL (http or https)
       if (
-        message.includes("http://3.251.4.90:3000/productdetails/") ||
-        message.includes("http://3.251.4.90:3000/productdetails/")
+        message.includes("https://smartwardrobe.store/productdetails/") ||
+        message.includes("http://smartwardrobe.store/productdetails/")
       ) {
         try {
           const metadata = await fetchImageMetadata(message); // Fetch metadata for the URL

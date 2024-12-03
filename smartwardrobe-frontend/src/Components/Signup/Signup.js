@@ -24,6 +24,8 @@ function SignupModal(props) {
   const [forgetPassword, setForgetPassword] = useState(false);
   const [forgetPasswordScreen1, setForgetPasswordScreen1] = useState(0);
   const [incorrectEmailPass, setIncorrectEmailPass] = useState("");
+  const [resetPasswordFieldError, setResetPasswordFieldError] = useState("");
+  const [otpValue, setOtpValue] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     firstname: "ewfdscx",
@@ -85,6 +87,7 @@ function SignupModal(props) {
         [name]: false,
       }));
       setIncorrectEmailPass("");
+      setResetPasswordFieldError("");
     }
   };
 
@@ -277,15 +280,39 @@ function SignupModal(props) {
   /** OTP WORK */
 
   const onChangeOTP = (text) => {
+    debugger
     console.log("onChange:", text);
+    if(text.length === 6){
+      setOtpValue(text);
+    }
   };
-  const onInputOTP = (value) => {
-    console.log("onInput:", value);
+  const onInputOTP = (event) => {
+    debugger
+    console.log("onInput:", event);
+    setOtpValue(event);
   };
+  // const onInput = (value) => {
+  //   debugger
+  //   console.log('onInput:', value);
+  //   setOtpValue(prevValue => prevValue.slice(0, -1));
+  // };
+
+const handleOTPValueChange = (e) => {
+  debugger
+  // console.log(e)
+}
+
+const handleKeyDownOTP = (e) => {
+  debugger
+  console.log(e)
+  if(e.key === "Backspace"){
+    setOtpValue(prevValue => prevValue.slice(0, -1));
+  }
+}
 
   const sharedProps = {
-    onChangeOTP,
-    onInputOTP,
+    onChange: onChangeOTP,
+    // onInput,
   };
 
   /** OTP WORK */
@@ -314,8 +341,14 @@ function SignupModal(props) {
       }));
       return;
     }
+    let obj = {
+      email: formData?.email,
+    }
+    const response = await apiCall("POST", `${baseUrl}/auth/forgot-password`, obj);
 
-    setForgetPasswordScreen1(2);
+    if(response?.statusCode?.text === "Success"){
+      setForgetPasswordScreen1(2);
+    }
 
   }
 
@@ -327,6 +360,51 @@ function SignupModal(props) {
       }));
     }
   },[])
+
+  const handleResetPassButton = async () => {
+    debugger;
+    
+    if(otpValue?.length !== 6){
+      setResetPasswordFieldError("Incorrect OTP");
+      return;
+    }
+
+    if (formData?.password?.trim().length < 5) {
+      setValidationField((prev) => ({
+        ...prev,
+        ["password"]: true,
+      }));
+      setResetPasswordFieldError("Password must be at least 5 characters long.");
+      return;
+    }
+    if(formData?.password !== formData?.confirmpassword){
+      setValidationField((prev) => ({
+        ...prev,
+        ["confirmpassword"]: true,
+      }));
+      setResetPasswordFieldError("Password and Confirm Password must be same");
+      return;
+    }
+
+    const updatePasswordObj = {
+        password: formData?.password,
+        email: formData?.email,
+        otp: otpValue,
+    }
+
+    const updatePassword = await apiCall("POST", `${baseUrl}/auth/update-password`, updatePasswordObj);
+    if(updatePassword?.statusCode?.text === "Success"){
+      showToastSuccess(updatePassword?.message);
+      setResetPasswordFieldError("");
+      setOtpValue("")
+      setForgetPassword(false);
+      setFormData((prevState) => ({
+        ...prevState,
+        ["password"]: "",
+        ["confirmpassword"]: "",
+      }))
+    }
+  }
 
   return (
     <>
@@ -441,6 +519,8 @@ function SignupModal(props) {
                       <h3>Enter OTP</h3>
                       <Input.OTP
                         formatter={(str) => str.toUpperCase()}
+                        onChange={handleOTPValueChange}
+                        onKeyDown={handleKeyDownOTP}
                         {...sharedProps}
                       />
                     </Flex>
@@ -492,10 +572,13 @@ function SignupModal(props) {
                           }`}
                           style={{ gap: 0 }}
                         />
-                        
+                        {resetPasswordFieldError !== "" &&
+                        <div className="password-error-reset">
+                          {resetPasswordFieldError}
+                        </div>}
                     </div>
                   </div>
-                  <button className="Signup-button" style={{ marginTop:"30px" }}>
+                  <button className="Signup-button" style={{ marginTop:"30px" }} onClick={handleResetPassButton}>
                           Reset Password
                   </button>
                   <button className="back-button" onClick={() => handlebackButton(2)}>
@@ -668,7 +751,7 @@ function SignupModal(props) {
                     {validationField.password &&
                       incorrectEmailPass !==
                         "INCORRECT USERNAME AND PASSWORD" && (
-                        <div class="password-error">
+                        <div className="password-error">
                           Password must be at least 5 characters long.
                         </div>
                       )}

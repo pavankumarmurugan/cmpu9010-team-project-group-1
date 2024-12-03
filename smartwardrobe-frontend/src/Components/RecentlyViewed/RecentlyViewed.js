@@ -9,7 +9,7 @@ function RecentlyViewed() {
       {visitedProductsData && visitedProductsData?.length > 0 && (
         <div className="recently-viewed-main">
           <div
-            className="bestselling-div"
+            className="bestselling-div-home"
             style={{
               margin: "45px auto 20px auto",
               fontSize: "24px",

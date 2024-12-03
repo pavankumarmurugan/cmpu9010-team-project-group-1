@@ -260,9 +260,8 @@ const ProductDetails = () => {
           setShowHideWishlist(false);
         }
       }
-      setOpenLoader(false);
-
-      setOpenLoader(true);
+    }
+    // setOpenLoader(true);
       let similarProductsHeaders = {
         topN: 10,
         imageName: getModels?.data?.imageName,
@@ -272,11 +271,12 @@ const ProductDetails = () => {
         `${baseUrl}/recommend/similar-products`,
         similarProductsHeaders
       );
-      setOpenLoader(false);
+      // setOpenLoader(false);
       if (getSimilarProducts) {
         setSimilarProductsData(getSimilarProducts?.data);
       }
-    }
+      // setOpenLoader(false);
+   
   };
 
   /** this is to handle tryon modal */
