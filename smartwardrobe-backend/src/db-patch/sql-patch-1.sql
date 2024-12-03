@@ -428,3 +428,12 @@ CREATE TABLE otp (
 );
 
 CREATE INDEX idx_otp_email_otp ON otp (email, otp);
+
+CREATE TABLE search_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    search_query VARCHAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATE DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
+);

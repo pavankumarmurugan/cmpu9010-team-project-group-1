@@ -13,6 +13,7 @@ import { ProductCategoryEntity } from '../entities/product-category/product-cate
 import { ProductInventoryEntity } from '../entities/product-inventory/product-inventory.entity';
 import { ProductSubcategoryEntity } from '../entities/product-subcategory/product-subcategory.entity';
 import { ProductEntity } from '../entities/product/product.entity';
+import { SearchHistoryEntity } from '../entities/search-history/search-history.entity';
 import { UserLikedModelsEntity } from '../entities/user-liked-model/user-liked-model.entity';
 import { UserEntity } from '../entities/user/user.entity';
 import { VtoImageSearchEntity } from '../entities/vto/vto.entity';
@@ -37,4 +38,5 @@ export abstract class IDataServices {
   abstract userLikedModel: IGenericRepository<UserLikedModelsEntity>;
   abstract productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
   abstract otp: IGenericRepository<OtpEntity>;
+  abstract searchHistory: IGenericRepository<SearchHistoryEntity>;
 }

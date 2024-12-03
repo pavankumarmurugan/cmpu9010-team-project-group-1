@@ -21,6 +21,7 @@ import { UserLikedModels } from './model/user-liked-models';
 import { ProductSubcategoryModel } from './model/product-subcategory.model';
 import { ImageClustersMVModel } from './model/image-clusters-mv.model';
 import { OTPModel } from './model/otp.model';
+import { SearchHistoryModel } from './model/search-history';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { OTPModel } from './model/otp.model';
         ProductSubcategoryModel,
         ImageClustersMVModel,
         OTPModel,
+        SearchHistoryModel,
       ],
       password: process.env.DATABASE_PASSWORD,
       logging: ['query', 'error'],
@@ -79,6 +81,7 @@ import { OTPModel } from './model/otp.model';
       ProductSubcategoryModel,
       ImageClustersMVModel,
       OTPModel,
+      SearchHistoryModel,
     ]),
   ],
   providers: [
