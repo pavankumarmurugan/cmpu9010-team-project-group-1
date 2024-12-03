@@ -39,6 +39,8 @@ import { ImageClusterMVEntity } from 'src/core/entities/image-cluster-mv/image-c
 import { ImageClustersMVModel } from './model/image-clusters-mv.model';
 import { OtpEntity } from 'src/core/entities/otp/otp.entity';
 import { OTPModel } from './model/otp.model';
+import { SearchHistoryEntity } from 'src/core/entities/search-history/search-history.entity';
+import { SearchHistoryModel } from './model/search-history';
 
 @Injectable()
 export class SQLDataService implements IDataServices, OnApplicationBootstrap {
@@ -60,6 +62,7 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
   productSubcategory: IGenericRepository<ProductSubcategoryEntity>;
   imageClusterMV: IGenericRepository<ImageClusterMVEntity>;
   otp: IGenericRepository<OtpEntity>;
+  searchHistory: IGenericRepository<SearchHistoryEntity>;
 
   constructor(
     @InjectRepository(UserModel)
@@ -98,6 +101,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
     private imageClusterMVRepository: Repository<ImageClusterMVEntity>,
     @InjectRepository(OTPModel)
     private otpRepository: Repository<OtpEntity>,
+    @InjectRepository(SearchHistoryModel)
+    private searchHistoryRepository: Repository<SearchHistoryEntity>,
   ) {}
 
   onApplicationBootstrap() {
@@ -144,5 +149,8 @@ export class SQLDataService implements IDataServices, OnApplicationBootstrap {
       this.imageClusterMVRepository,
     );
     this.otp = new SQLGenericRepository<OTPModel>(this.otpRepository);
+    this.searchHistory = new SQLGenericRepository<SearchHistoryModel>(
+      this.searchHistoryRepository,
+    );
   }
 }

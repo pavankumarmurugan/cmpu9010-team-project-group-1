@@ -37,6 +37,7 @@ import { InviteController } from './invite/invite.controller';
 import { FaissModule } from '../services/faiss/faiss.module';
 import { TestController } from './test-redis/test-redis-controller';
 import { FiltersController } from './filters/filters.controller';
+import { SearchHistoryController } from './search-history/search-history.controller';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { FiltersController } from './filters/filters.controller';
     InviteController,
     TestController,
     FiltersController,
+    SearchHistoryController,
   ],
   providers: [
     // {

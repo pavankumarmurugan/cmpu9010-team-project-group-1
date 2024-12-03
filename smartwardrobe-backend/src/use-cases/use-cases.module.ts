@@ -31,6 +31,7 @@ import { UserLikedModelUsecase } from './user-liked-models/user-liked-models.use
 import { ProductCategoryUsecase } from './product-category/product-category.usecase';
 import { FiltersUsecase } from './filters/filters.usecase';
 import { ForgotPasswordUsecase } from './auth/forgot-password.usecase';
+import { SearchHistoryUsecase } from './search-history/search-history.usecase';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { ForgotPasswordUsecase } from './auth/forgot-password.usecase';
     UserLikedModelUsecase,
     FiltersUsecase,
     ForgotPasswordUsecase,
+    SearchHistoryUsecase,
   ],
   exports: [
     // ProductInventoryUsecase,
@@ -90,6 +92,7 @@ import { ForgotPasswordUsecase } from './auth/forgot-password.usecase';
     UserLikedModelUsecase,
     FiltersUsecase,
     ForgotPasswordUsecase,
+    SearchHistoryUsecase,
   ],
 })
 export class UseCasesModule {}
