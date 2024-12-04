@@ -8,37 +8,52 @@ on:
       - "smartwardrobe-frontend/**"
   workflow_dispatch:
 
+env:
+  DOCKER_IMAGE: d23124670/smartwardrobe-frontend
+  DOCKER_TAG: latest
+
 jobs:
   build:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-      - name: Login to docker hub
-        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        working-directory: ./smartwardrobe-frontend
+        run: npm install
+
       - name: Build Docker Image
         working-directory: ./smartwardrobe-frontend
-        run: docker build -t d23124670/smartwardrobe-frontend .
-      - name: Publish image to docker hub
-        run: docker push d23124670/smartwardrobe-frontend:latest
+        run: docker build -t ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }} .
+
+      - name: Login to Docker Hub
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Publish Image to Docker Hub
+        run: docker push ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+
   deploy:
     needs: build
-    runs-on: [aws-ec2]
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Pull image from docker hub
-        run: docker pull d23124670/smartwardrobe-frontend:latest
-      - name: Delete Old Container
-        run: docker rm -f reactContainer
-      - name: Run docker container
-        run: docker run -d -p 3000:80 --name reactContainer d23124670/smartwardrobe-frontend:latest
-      - name: Copy container to ec2
-        run: sudo docker cp reactContainer:/usr/share/nginx/html /usr/share/nginx/
-      - name: Update Nginx configuration for HTTPS
+      - name: Pull Docker Image from Docker Hub
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+
+      - name: Stop Old Container (Ignore if not exists)
         run: |
-          # Ensure Nginx is reloaded to apply changes
-          sudo systemctl restart nginx
-          # Optional: Reload Nginx to apply changes
-          sudo systemctl reload nginx
-      - name: Verify HTTPS Deployment
-        run: |
-          curl -I https://smartwardrobe.store
+          docker rm -f reactContainer || echo "No existing container to delete"
+
+      - name: Run Docker Container
+        run: docker run -d -p 3000:80 --name reactContainer ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+
+      - name: Verify Deployment
+        run: curl -f http://localhost:3000 || echo "Deployment failed or application not responding"
