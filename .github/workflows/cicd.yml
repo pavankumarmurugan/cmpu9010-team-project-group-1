@@ -14,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
 
     steps:
       - name: Checkout source
@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
@@ -42,18 +42,23 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: [aws-ec2]
 
     steps:
-      - name: Pull Docker Image from Docker Hub
-        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-
-      - name: Stop Old Container (Ignore if not exists)
+      - name: Pull image from docker hub
+        run: docker pull d23124670/smartwardrobe-frontend:latest
+      - name: Delete Old Container
+        run: docker rm -f reactContainer
+      - name: Run docker container
+        run: docker run -d -p 3000:80 --name reactContainer d23124670/smartwardrobe-frontend:latest
+      - name: Copy container to ec2
+        run: sudo docker cp reactContainer:/usr/share/nginx/html /usr/share/nginx/
+      - name: Update Nginx configuration for HTTPS
         run: |
-          docker rm -f reactContainer || echo "No existing container to delete"
-
-      - name: Run Docker Container
-        run: docker run -d -p 3000:80 --name reactContainer ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
-
-      - name: Verify Deployment
-        run: curl -f http://localhost:3000 || echo "Deployment failed or application not responding"
+          # Ensure Nginx is reloaded to apply changes
+          sudo systemctl restart nginx
+          # Optional: Reload Nginx to apply changes
+          sudo systemctl reload nginx
+      - name: Verify HTTPS Deployment
+        run: |
+          curl -I https://smartwardrobe.store
