@@ -1,5 +1,5 @@
 # Step 1: Build React App
-FROM node:alpine3.18 as build
+FROM node:20-alpine3.18 as build
 WORKDIR /app
 
 # Install dependencies and build
