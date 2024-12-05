@@ -998,6 +998,12 @@
   object-fit: contain;
 }
 
+.preview-model-image{
+  /* width: 250px; */
+  height: 250px;
+  object-fit: contain;
+}
+
 /* Padding for text */
 .preview-content {
   padding: 1rem; /* p-4 */

@@ -24,12 +24,16 @@ import {
 import { wishListValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
 import { MdAddPhotoAlternate } from "react-icons/md";
+import { IoShareOutline } from "react-icons/io5";
+import NewChatModal from "../NewChatModal/NewChatModal";
+import { useLocation } from "react-router-dom";
 
 const VirtualTryOn = (props) => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   const dispatch = useDispatch();
+  const location = useLocation();
   let DataClicked = JSON.parse(localStorage.getItem("VTOData")) || {};
   const [disabled, setDisabled] = useState(true);
   // const [currentImage, setCurrentImage] = useState(-1);
@@ -39,8 +43,12 @@ const VirtualTryOn = (props) => {
   const [similarProductsClick, setSimilarProductsClick] = useState({});
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [similarProductsData, setSimilarProductsData] = useState([]);
+  const [friendsListForShare, setFriendsListForShare] = useState([]);
   const [personalizeModels, setPersonalizeModels] = useState(false);
+  const [showFriendsForShare, setShowFriendsForShare] = useState(false);
+  const [showSection, setShowSection] = useState("ShareProductsToFriends");
   const [deletePersonalizeModels, setDeletePersonalizeModels] = useState(false);
+  const [forAddFriendorCreateGroup, setforAddFriendorCreateGroup] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [deleteButtonText, setDeleteButtonText] =
     useState("Delete Demo Models");
@@ -609,8 +617,51 @@ const VirtualTryOn = (props) => {
     // }
   };
 
+  const handleShare = async (data) => {
+    debugger;
+
+    if (!token) {
+      showToastInfo("Please login to share products");
+      return;
+    }
+    let friends = localStorage.getItem("friendIds")
+  ? JSON.parse(localStorage.getItem("friendIds"))
+  : null;
+  let groups = localStorage.getItem("groupIds")
+  ? JSON.parse(localStorage.getItem("groupIds"))
+  : null;
+    setFriendsListForShare([...friends, ...groups]);
+    setShowFriendsForShare(true);
+  };
+
+  const closeNewChat = () => {
+    setShowFriendsForShare(false);
+    setShowSection("ShareProductsToFriends");
+  };
+
+  const handleChangeContent = (value) => {
+    debugger;
+    setShowSection(value);
+    setforAddFriendorCreateGroup(value);
+  }
+
   return (
     <div>
+      
+      {showFriendsForShare && (
+        <NewChatModal
+          isShowModel={showFriendsForShare}
+          closeModal={closeNewChat}
+          showSection={showSection}
+          data={null}
+          changeSection={handleChangeContent}
+          fromProductsDetails={forAddFriendorCreateGroup}
+          friendsListForShare={friendsListForShare}
+          productUrl={resultImage}
+          productIdFromVirtualTryOn={DataClicked?.id}
+        />
+      )}
+
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={openLoader}
@@ -721,6 +772,14 @@ const VirtualTryOn = (props) => {
               >
                 {personalizeModels ? "Done" : "Custom Demo Models"}
               </button> */}
+              <div
+                        className="Select-Custom-Model-button"
+                        onClick={() => handleShare()}
+                      >
+                        <IoShareOutline
+                          style={{ width: "25px", height: "25px" }}
+                        />
+                      </div>
               <img
                 className="Result-Image"
                 loading="lazy"

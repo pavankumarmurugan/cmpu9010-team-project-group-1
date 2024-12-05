@@ -8,7 +8,7 @@ import { Button } from "@mui/joy";
 import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { addToCartValueSuccess } from "../../redux/slices/HomeDataSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 
@@ -20,6 +20,7 @@ const CartComponent = (props) => {
     const dispatch = useDispatch();
   const [cartData, setCartData] = useState([]);
   const [openLoader, setOpenLoader] = useState(false);
+  const cartValue = useSelector((state) => state.homeData.cartValue);
 
   const handleContinueShopping = () => {
     navigate("/products");
@@ -93,19 +94,46 @@ const CartComponent = (props) => {
   const handleDeleteItem = async (data) => {
 debugger
     const id = data?.id;
+    const matchingItems = cartData?.filter(item => item?.id === id);
+    const apiCalls = matchingItems?.flatMap(item => 
+      Array(item?.quantity)
+          .fill(null)
+          .map(() => apiCall("DELETE", `${baseUrl}/cart-item/delete/${item?.id}`, null, token?.token))
+  );
     setOpenLoader(true);
-    const deleteCartItem = await apiCall("DELETE", `${baseUrl}/cart-item/delete/${id}` , null, token?.token);
+    const deleteCartItem =  await Promise.all(apiCalls);
     setOpenLoader(false);
-    if (deleteCartItem.statusCode.text === "Success") {
-      getAllCartValues();
+    if (deleteCartItem[0]?.message === 'DELETED ITEMS FROM CART') {
+      // getAllCartValues();
+      setCartData(cartData?.filter(item => item?.id !== id));
+      let quantity = cartValue - matchingItems[0]?.quantity;
       dispatch(
-        addToCartValueSuccess({ cartValue: cartData.length - 1 })
+        addToCartValueSuccess({ cartValue: quantity > 0 ? quantity : 0 })
       );
     }
 
   }
 
+  const mergeProducts = (cartItems) => {
+    debugger
+    const productMap = new Map();
+
+    cartItems.forEach(item => {
+        const { productId, quantity } = item;
+
+        if (productMap.has(productId)) {
+            const existingItem = productMap.get(productId);
+            existingItem.quantity += quantity;
+        } else {
+            productMap.set(productId, { ...item });
+        }
+    });
+
+    return Array.from(productMap.values());
+};
+
   const getAllCartValues = async () => {
+    debugger
     setOpenLoader(true);
     const getAllCartValues = await apiCall(
       "GET",
@@ -115,21 +143,59 @@ debugger
     );
     setOpenLoader(false);
     if (getAllCartValues?.message === "SUCCESSFULLY FETCHED CART") {
-      setCartData(getAllCartValues?.data);
+      let data =  mergeProducts(getAllCartValues?.data);
+      setCartData(data);
       if(getAllCartValues?.data?.length === 0){
         props?.close();
       }
     }
   };
 
-  const handleQuantityChange = (type, index) => {
+  const handleQuantityChange = async (type, index) => {
+    debugger
     const updatedCartData = [...cartData];
+    let quantity = {};
+    let localStorageQuantityArray = [];
     if (type === "add") {
       updatedCartData[index].quantity += 1;
+      const data = {
+        id: updatedCartData[index]?.id,
+        quantity: updatedCartData[index].quantity,
+        size: updatedCartData[index]?.size
+      };
+      setOpenLoader(true);
+      const addToCart = await apiCall(
+        "PATCH",
+        `${baseUrl}/cart-item/update`,
+        data,
+        token?.token
+      );
+        if (addToCart.message === "SUCCESSFULLY UPDATED ITEMS TO CART") {
+          dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+          setOpenLoader(false);
+          return;
+        }
     } else if (type === "sub" && updatedCartData[index].quantity > 1) {
       updatedCartData[index].quantity -= 1;
+      const data = {
+        id: updatedCartData[index]?.id,
+        quantity: updatedCartData[index].quantity,
+        size: updatedCartData[index]?.size
+      };
+      setOpenLoader(true);
+      const addToCart = await apiCall(
+        "PATCH",
+        `${baseUrl}/cart-item/update`,
+        data,
+        token?.token
+      );
+        if (addToCart.message === "SUCCESSFULLY UPDATED ITEMS TO CART") {
+          dispatch(addToCartValueSuccess({ cartValue: cartValue - 1 }));
+          setOpenLoader(false);
+          return;
+        }
     }
-    setCartData(updatedCartData);
+    // setCartData(updatedCartData);
   };
 
   return (
