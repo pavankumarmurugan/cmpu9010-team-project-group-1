@@ -10,6 +10,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  ListItemButton,
   OutlinedInput,
   styled,
   SvgIcon,
@@ -67,6 +68,9 @@ import { HiSparkles } from "react-icons/hi";
 import { BsChevronUp } from "react-icons/bs";
 import ImageSearchIcon from "@mui/icons-material/ImageSearch";
 import { FaChevronDown } from "react-icons/fa6";
+import newLogo from "../../Assets/newLogo.jpeg";
+import newLogo1 from "../../Assets/newLogo1.png";
+import newLogo3 from "../../Assets/newLogo3.png";
 
 const backendUrl =
   "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
@@ -91,7 +95,7 @@ function Headermenu() {
   let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
     ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
     : null;
-    let CategoryPagination = localStorage.getItem("CategoryPagination")
+  let CategoryPagination = localStorage.getItem("CategoryPagination")
     ? JSON.parse(localStorage.getItem("CategoryPagination"))
     : null;
   const location = useLocation();
@@ -131,8 +135,10 @@ function Headermenu() {
   const [searchShow, setSearchShow] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [categoryData, setCategoryData] = useState([]);
+  const [searchHistoryData, setSearchHistoryData] = useState([]);
   const [countOfLikeProducts, setCountOfLikeProducts] = useState(0);
   const wishListValue = useSelector((state) => state.homeData.wishListValue);
   const cartValue = useSelector((state) => state.homeData.cartValue);
@@ -180,33 +186,33 @@ function Headermenu() {
 
   useEffect(() => {
     checkToken();
- },[])
+  }, []);
 
- const checkToken = async () => {
-   debugger;
+  const checkToken = async () => {
+    debugger;
 
-   if(token){
-     const response = await apiCall(
-       "GET",
-       `${baseUrl}/auth/verify-token`,
-       null,
-       token?.token
-     );
-     if(response?.message !== "Valid Token"){
-       const res = await apiCall(
-         "GET",
-         `${baseUrl}/auth/refresh`,
-         null,
-         token?.refreshToken
-       )
-       if(res?.data){
-         token.token = res?.data?.token;
-         token.refreshToken = res?.data?.refreshToken;
-         localStorage.setItem("user", JSON.stringify(token));
-       }
-     }
-   }
- }
+    if (token) {
+      const response = await apiCall(
+        "GET",
+        `${baseUrl}/auth/verify-token`,
+        null,
+        token?.token
+      );
+      if (response?.message !== "Valid Token") {
+        const res = await apiCall(
+          "GET",
+          `${baseUrl}/auth/refresh`,
+          null,
+          token?.refreshToken
+        );
+        if (res?.data) {
+          token.token = res?.data?.token;
+          token.refreshToken = res?.data?.refreshToken;
+          localStorage.setItem("user", JSON.stringify(token));
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     // Fetch friend and group IDs when component mounts
@@ -218,6 +224,27 @@ function Headermenu() {
         return;
       }
       fetchFriendAndGroupIds();
+    }
+  }, []);
+
+  const getSearchHistory = async () => {
+    debugger;
+
+    const searchHistory = await apiCall(
+      "GET",
+      "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search-history/get-all?topN=10",
+      null,
+      token?.token
+    );
+
+    if (searchHistory?.data?.length > 0) {
+      setSearchHistoryData(searchHistory?.data);
+    }
+  };
+
+  useEffect(() => {
+    if (token?.token) {
+      getSearchHistory();
     }
   }, []);
 
@@ -430,33 +457,30 @@ function Headermenu() {
   const handleItemClick = (item) => {
     debugger;
     let value = item;
-    // const slug = createSlug(value);
-    // let catpath = [];
-    // if (categoryPaths?.length > 0) {
-    //   catpath = [...categoryPaths, value];
-    // } else {
-    //   catpath = [value];
-    // }
-    // localStorage.setItem("categoryPaths", JSON.stringify(catpath));
     navigate(`/products/${value}`);
     let scroll = window.scrollY;
-      let filterPath = CategoryPagination?.findIndex((x) => x.path === location.pathname);
-      if(filterPath !== undefined && filterPath !== -1){
-        CategoryPagination[filterPath].scroll = scroll;
-        localStorage.setItem("CategoryPagination", JSON.stringify(CategoryPagination));
-      }
+    let filterPath = CategoryPagination?.findIndex(
+      (x) => x.path === location.pathname
+    );
+    if (filterPath !== undefined && filterPath !== -1) {
+      CategoryPagination[filterPath].scroll = scroll;
+      localStorage.setItem(
+        "CategoryPagination",
+        JSON.stringify(CategoryPagination)
+      );
+    }
     setTimeout(() => {
       window.location.reload();
     }, 1);
   };
 
   const handleSMobileDrawer = () => {
-    if(token){
-      navigate("/wishlist")
-    }else{
+    if (token) {
+      navigate("/wishlist");
+    } else {
       showToastInfo("Login to view your wishlist");
     }
-  }
+  };
 
   const DrawerList = (
     <Box
@@ -480,7 +504,7 @@ function Headermenu() {
             <IoSearch className="icons" />
             Home
           </a>
-          <a onClick={() => handleSMobileDrawer('wishlist')} className="item">
+          <a onClick={() => handleSMobileDrawer("wishlist")} className="item">
             <CiBookmark className="icons" />
             Wihslist
           </a>
@@ -533,14 +557,14 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//T-shirt")}
+                  onClick={() => handleItemClick("Ladieswear-T-shirt")}
                 >
                   <ListItemText primary="T-shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Long-sleeve top")}
+                  onClick={() => handleItemClick("Ladieswear-Long-sleeve top")}
                 >
                   <ListItemText primary="Long sleeve top" />
                 </ListItem>
@@ -548,7 +572,7 @@ function Headermenu() {
                   button
                   className="submenu-item"
                   onClick={() =>
-                    handleItemClick("Ladieswear//Crop top and skirt")
+                    handleItemClick("Ladieswear-Crop top and skirt")
                   }
                 >
                   <ListItemText primary="Crop top and skirt" />
@@ -556,21 +580,21 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Tank top")}
+                  onClick={() => handleItemClick("Ladieswear-Tank top")}
                 >
                   <ListItemText primary="Tank top" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Vest top")}
+                  onClick={() => handleItemClick("Ladieswear-Vest top")}
                 >
                   <ListItemText primary="Vest top" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Casual top")}
+                  onClick={() => handleItemClick("Ladieswear-Casual top")}
                 >
                   <ListItemText primary="Casual top" />
                 </ListItem>
@@ -592,7 +616,7 @@ function Headermenu() {
                   button
                   className="submenu-item"
                   onClick={() =>
-                    handleItemClick("Ladieswear//Outdoor trousers")
+                    handleItemClick("Ladieswear-Outdoor trousers")
                   }
                 >
                   <ListItemText primary="Outdoor trousers" />
@@ -600,28 +624,28 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Skirt")}
+                  onClick={() => handleItemClick("Ladieswear-Skirt")}
                 >
                   <ListItemText primary="Skirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Shorts")}
+                  onClick={() => handleItemClick("Ladieswear-Shorts")}
                 >
                   <ListItemText primary="Shorts" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Pyjama bottom")}
+                  onClick={() => handleItemClick("Ladieswear-Pyjama bottom")}
                 >
                   <ListItemText primary="Pyjama bottom" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Swimwear bottom")}
+                  onClick={() => handleItemClick("Ladieswear-Swimwear bottom")}
                 >
                   <ListItemText primary="Swimwear bottom" />
                 </ListItem>
@@ -641,7 +665,7 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Jacket")}
+                  onClick={() => handleItemClick("Ladieswear-Jacket")}
                 >
                   <ListItemText primary="Jacket" />
                 </ListItem>
@@ -649,7 +673,7 @@ function Headermenu() {
                   button
                   className="submenu-item"
                   onClick={() =>
-                    handleItemClick("Ladieswear//Outdoor Waistcoat")
+                    handleItemClick("Ladieswear-Outdoor Waistcoat")
                   }
                 >
                   <ListItemText primary="Waistcoat" />
@@ -658,7 +682,7 @@ function Headermenu() {
                   button
                   className="submenu-item"
                   onClick={() =>
-                    handleItemClick("Ladieswear//Outdoor trousers")
+                    handleItemClick("Ladieswear-Outdoor trousers")
                   }
                 >
                   <ListItemText primary="Trousers" />
@@ -666,7 +690,7 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Cardigan")}
+                  onClick={() => handleItemClick("Ladieswear-Cardigan")}
                 >
                   <ListItemText primary="Cardigan" />
                 </ListItem>
@@ -686,35 +710,35 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Boots")}
+                  onClick={() => handleItemClick("Ladieswear-Boots")}
                 >
                   <ListItemText primary="Boots" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Flat shoes")}
+                  onClick={() => handleItemClick("Ladieswear-Flat shoes")}
                 >
                   <ListItemText primary="Flat shoes" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Heels")}
+                  onClick={() => handleItemClick("Ladieswear-Heels")}
                 >
                   <ListItemText primary="Heels" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Heeled sandals")}
+                  onClick={() => handleItemClick("Ladieswear-Heeled sandals")}
                 >
                   <ListItemText primary="Heeled sandals" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Sneakers")}
+                  onClick={() => handleItemClick("Ladieswear-Sneakers")}
                 >
                   <ListItemText primary="Sneakers" />
                 </ListItem>
@@ -734,49 +758,49 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Bag")}
+                  onClick={() => handleItemClick("Ladieswear-Bag")}
                 >
                   <ListItemText primary="Bag" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Earrings")}
+                  onClick={() => handleItemClick("Ladieswear-Earrings")}
                 >
                   <ListItemText primary="Earrings" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Ring")}
+                  onClick={() => handleItemClick("Ladieswear-Ring")}
                 >
                   <ListItemText primary="Ring" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Bracelet")}
+                  onClick={() => handleItemClick("Ladieswear-Bracelet")}
                 >
                   <ListItemText primary="Bracelet" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Hair clip")}
+                  onClick={() => handleItemClick("Ladieswear-Hair clip")}
                 >
                   <ListItemText primary="Hair clip" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Belt")}
+                  onClick={() => handleItemClick("Ladieswear-Belt")}
                 >
                   <ListItemText primary="Belt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Ladieswear//Sunglasses")}
+                  onClick={() => handleItemClick("Ladieswear-Sunglasses")}
                 >
                   <ListItemText primary="Sunglasses" />
                 </ListItem>
@@ -806,42 +830,42 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//T-shirt")}
+                  onClick={() => handleItemClick("Menswear-T-shirt")}
                 >
                   <ListItemText primary="T-shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Shirt")}
+                  onClick={() => handleItemClick("Menswear-Shirt")}
                 >
                   <ListItemText primary="Shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Polo shirt")}
+                  onClick={() => handleItemClick("Menswear-Polo shirt")}
                 >
                   <ListItemText primary="Polo Shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Hoodie")}
+                  onClick={() => handleItemClick("Menswear-Hoodie")}
                 >
                   <ListItemText primary="Hoodie" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Sweater")}
+                  onClick={() => handleItemClick("Menswear-Sweater")}
                 >
                   <ListItemText primary="Sweater" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Vest top")}
+                  onClick={() => handleItemClick("Menswear-Vest top")}
                 >
                   <ListItemText primary="Vest top" />
                 </ListItem>
@@ -862,28 +886,28 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Trousers")}
+                  onClick={() => handleItemClick("Menswear-Trousers")}
                 >
                   <ListItemText primary="Trousers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Shorts")}
+                  onClick={() => handleItemClick("Menswear-Shorts")}
                 >
                   <ListItemText primary="Shorts" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Pyjama bottom")}
+                  onClick={() => handleItemClick("Menswear-Pyjama bottom")}
                 >
                   <ListItemText primary="Pyjama" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Swimwear bottom")}
+                  onClick={() => handleItemClick("Menswear-Swimwear bottom")}
                 >
                   <ListItemText primary="Swimwear bottom" />
                 </ListItem>
@@ -903,28 +927,28 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Jacket")}
+                  onClick={() => handleItemClick("Menswear-Jacket")}
                 >
                   <ListItemText primary="Jacket" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Outdoor Waistcoat")}
+                  onClick={() => handleItemClick("Menswear-Outdoor Waistcoat")}
                 >
                   <ListItemText primary="Waistcoat" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Blazer")}
+                  onClick={() => handleItemClick("Menswear-Blazer")}
                 >
                   <ListItemText primary="Blazer" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Cardigan")}
+                  onClick={() => handleItemClick("Menswear-Cardigan")}
                 >
                   <ListItemText primary="Cardigan" />
                 </ListItem>
@@ -944,21 +968,21 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Sneakers")}
+                  onClick={() => handleItemClick("Menswear-Sneakers")}
                 >
                   <ListItemText primary="Sneakers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Boots")}
+                  onClick={() => handleItemClick("Menswear-Boots")}
                 >
                   <ListItemText primary="Boots" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Slippers")}
+                  onClick={() => handleItemClick("Menswear-Slippers")}
                 >
                   <ListItemText primary="Slippers" />
                 </ListItem>
@@ -978,56 +1002,56 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Bag")}
+                  onClick={() => handleItemClick("Menswear-Bag")}
                 >
                   <ListItemText primary="Bag" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Cross-body bag")}
+                  onClick={() => handleItemClick("Menswear-Cross-body bag")}
                 >
                   <ListItemText primary="Cross-body bag" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Cap")}
+                  onClick={() => handleItemClick("Menswear-Cap")}
                 >
                   <ListItemText primary="Cap" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Sunglasses")}
+                  onClick={() => handleItemClick("Menswear-Sunglasses")}
                 >
                   <ListItemText primary="Sunglasses" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Watch")}
+                  onClick={() => handleItemClick("Menswear-Watch")}
                 >
                   <ListItemText primary="Watch" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Belt")}
+                  onClick={() => handleItemClick("Menswear-Belt")}
                 >
                   <ListItemText primary="Belt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Wallet")}
+                  onClick={() => handleItemClick("Menswear-Wallet")}
                 >
                   <ListItemText primary="Wallet" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Menswear//Wallet")}
+                  onClick={() => handleItemClick("Menswear-Gloves")}
                 >
                   <ListItemText primary="Gloves" />
                 </ListItem>
@@ -1057,35 +1081,35 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//T-shirt")}
+                  onClick={() => handleItemClick("Baby Children-T-shirt")}
                 >
                   <ListItemText primary="T-shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Shirt")}
+                  onClick={() => handleItemClick("Baby Children-Shirt")}
                 >
                   <ListItemText primary="Shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Trousers")}
+                  onClick={() => handleItemClick("Baby Children-Trousers")}
                 >
                   <ListItemText primary="Trousers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Cardigan")}
+                  onClick={() => handleItemClick("Baby Children-Cardigan")}
                 >
                   <ListItemText primary="Cardigan" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Bodysuit")}
+                  onClick={() => handleItemClick("Baby Children-Bodysuit")}
                 >
                   <ListItemText primary="Bodysuit" />
                 </ListItem>
@@ -1099,7 +1123,7 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Swimsuit")}
+                  onClick={() => handleItemClick("Baby Children-Swimsuit")}
                 >
                   <ListItemText primary="Swimsuit" />
                 </ListItem>
@@ -1120,14 +1144,14 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Jacket")}
+                  onClick={() => handleItemClick("Baby Children-Jacket")}
                 >
                   <ListItemText primary="Jacket" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Coat")}
+                  onClick={() => handleItemClick("Baby Children-Coat")}
                 >
                   <ListItemText primary="Coat" />
                 </ListItem>
@@ -1135,7 +1159,7 @@ function Headermenu() {
                   button
                   className="submenu-item"
                   onClick={() =>
-                    handleItemClick("Baby Children//Outdoor trousers")
+                    handleItemClick("Baby Children-Outdoor trousers")
                   }
                 >
                   <ListItemText primary="Outdoor trousers" />
@@ -1143,7 +1167,7 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Jumpsuit")}
+                  onClick={() => handleItemClick("Baby Children-Jumpsuit")}
                 >
                   <ListItemText primary="Jumpsuit" />
                 </ListItem>
@@ -1163,28 +1187,28 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Sneakers")}
+                  onClick={() => handleItemClick("Baby Children-Sneakers")}
                 >
                   <ListItemText primary="Sneakers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Boots")}
+                  onClick={() => handleItemClick("Baby Children-Boots")}
                 >
                   <ListItemText primary="Boots" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Slippers")}
+                  onClick={() => handleItemClick("Baby Children-Slippers")}
                 >
                   <ListItemText primary="Slippers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Pre-walkers")}
+                  onClick={() => handleItemClick("Baby Children-Pre-walkers")}
                 >
                   <ListItemText primary="Pre-walkers" />
                 </ListItem>
@@ -1204,56 +1228,56 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Hat")}
+                  onClick={() => handleItemClick("Baby Children-Hat")}
                 >
                   <ListItemText primary="Hat" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Cap")}
+                  onClick={() => handleItemClick("Baby Children-Cap")}
                 >
                   <ListItemText primary="Cap" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Sunglasses")}
+                  onClick={() => handleItemClick("Baby Children-Sunglasses")}
                 >
                   <ListItemText primary="Sunglasses" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Hair ties")}
+                  onClick={() => handleItemClick("Baby Children-Hair ties")}
                 >
                   <ListItemText primary="Hair ties" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Hair clip")}
+                  onClick={() => handleItemClick("Baby Children-Hair clip")}
                 >
                   <ListItemText primary="Hair clip" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Towel")}
+                  onClick={() => handleItemClick("Baby Children-Towel")}
                 >
                   <ListItemText primary="Towel" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Toy")}
+                  onClick={() => handleItemClick("Baby Children-Toy")}
                 >
                   <ListItemText primary="Toy" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Baby Children//Soft Toys")}
+                  onClick={() => handleItemClick("Baby Children-Soft Toys")}
                 >
                   <ListItemText primary="Soft Toys" />
                 </ListItem>
@@ -1283,35 +1307,35 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//T-shirt")}
+                  onClick={() => handleItemClick("Sport-T-shirt")}
                 >
                   <ListItemText primary="T-shirt" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Trousers")}
+                  onClick={() => handleItemClick("Sport-Trousers")}
                 >
                   <ListItemText primary="Trousers" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Shorts")}
+                  onClick={() => handleItemClick("Sport-Shorts")}
                 >
                   <ListItemText primary="Shorts" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Socks")}
+                  onClick={() => handleItemClick("Sport-Socks")}
                 >
                   <ListItemText primary="Socks" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Swimwear bottom")}
+                  onClick={() => handleItemClick("Sport-Swimwear bottom")}
                 >
                   <ListItemText primary="Swimwear bottom" />
                 </ListItem>
@@ -1332,28 +1356,28 @@ function Headermenu() {
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Waterbottle")}
+                  onClick={() => handleItemClick("Sport-Waterbottle")}
                 >
                   <ListItemText primary="Waterbottle" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Giftbox")}
+                  onClick={() => handleItemClick("Sport-Giftbox")}
                 >
                   <ListItemText primary="Giftbox" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Gloves")}
+                  onClick={() => handleItemClick("Sport-Gloves")}
                 >
                   <ListItemText primary="Gloves" />
                 </ListItem>
                 <ListItem
                   button
                   className="submenu-item"
-                  onClick={() => handleItemClick("Sport//Other accessories")}
+                  onClick={() => handleItemClick("Sport-Other accessories")}
                 >
                   <ListItemText primary="Other accessories" />
                 </ListItem>
@@ -1983,7 +2007,7 @@ function Headermenu() {
             label: "Accessories",
             key: "Sport Accessories submenu",
             items: [
-              - { label: "Cap", key: "Sport-Cap" },
+              -{ label: "Cap", key: "Sport-Cap" },
               {
                 label: "Waterbottle",
                 key: "Sport-Waterbottle",
@@ -2218,7 +2242,7 @@ function Headermenu() {
           label: "Accessories",
           key: "Sport Accessories submenu",
           children: [
-            - { label: "Cap", key: "Sport-Cap" },
+            -{ label: "Cap", key: "Sport-Cap" },
             { label: "Waterbottle", key: "Sport-Waterbottle" },
             { label: "Giftbox", key: "Sport-Giftbox" },
             { label: "Gloves", key: "Sport-Gloves" },
@@ -2239,6 +2263,8 @@ function Headermenu() {
       localStorage.removeItem("user");
       localStorage.removeItem("friends");
       localStorage.removeItem("groups");
+      localStorage.removeItem("friendIds");
+      localStorage.removeItem("groupIds");
       navigate("/");
       window.location.reload();
     } else if (e.key === "2") {
@@ -2279,7 +2305,7 @@ function Headermenu() {
   };
 
   const handleKeyDown = (e) => {
-     debugger;
+    debugger;
     if (e.key === "Enter") {
       handleSearch();
     }
@@ -2294,16 +2320,16 @@ function Headermenu() {
     });
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (query) => {
     debugger;
 
-    if(file){
+    if (file) {
       const randomId = Math.random().toString(36).substring(2, 15);
       const fileObject = await fileToBase64(file);
       let fileObj = {
-        file : fileObject,
-        id : randomId
-      }
+        file: fileObject,
+        id: randomId,
+      };
 
       let data = [];
 
@@ -2313,9 +2339,22 @@ function Headermenu() {
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1);
-    }else if (searchValue.trim() !== "") {
-      let value = searchValue;
+    } else if (searchValue.trim() !== "" || query) {
+      let value = searchValue || query;
       const slug = createSlug(value);
+
+      if (searchValue?.trim() !== "") {
+        const createHistory = await apiCall(
+          "POST",
+          `${baseUrl}/search-history/create`,
+          { searchQuery: value },
+          token?.token
+        );
+        if (createHistory?.message === "SUCCESSFULLY ADDED SEARCH HISTORY") {
+          console.log("Search history");
+        }
+      }
+
       navigate(`/products/search/${slug}`);
       setTimeout(() => {
         window.location.reload();
@@ -2364,23 +2403,16 @@ function Headermenu() {
     debugger;
     console.log("Selected value:", e);
     let value = e?.item?.key;
-    // const slug = createSlug(value);
-    // let catpath = [];
-    // if (categoryPaths?.length > 0) {
-    //   catpath = [...categoryPaths, value];
-    // } else {
-    //   catpath = [value];
-    // }
-    // localStorage.setItem("categoryPaths", JSON.stringify(catpath));
-    // dispatch(categoryDataRouteSuccess({ categoryPaths: catpath }));
-    // dispatch(categoryValueSuccess({ categoryValue: value }));
-    // if (!location?.pathname.includes('/products/')) {
-    // navigate("/products");
     let scroll = window.scrollY;
-    let filterPath = CategoryPagination?.findIndex((x) => x.path === location.pathname);
-    if(filterPath !== undefined && filterPath !== -1){
+    let filterPath = CategoryPagination?.findIndex(
+      (x) => x.path === location.pathname
+    );
+    if (filterPath !== undefined && filterPath !== -1) {
       CategoryPagination[filterPath].scroll = scroll;
-      localStorage.setItem("CategoryPagination", JSON.stringify(CategoryPagination));
+      localStorage.setItem(
+        "CategoryPagination",
+        JSON.stringify(CategoryPagination)
+      );
     }
     navigate(`/products/${value}`);
     setTimeout(() => {
@@ -2475,8 +2507,9 @@ function Headermenu() {
       );
       setOpenLoader(false);
       if (getAllCartValues?.data?.length) {
+        let cartquantity = getAllCartValues?.data?.reduce((total, item) => total + item.quantity, 0);
         dispatch(
-          addToCartValueSuccess({ cartValue: getAllCartValues?.data?.length })
+          addToCartValueSuccess({ cartValue: cartquantity })
         );
       }
     }
@@ -2580,6 +2613,19 @@ function Headermenu() {
     bannerclickvalue.current = index + 1;
     setShowBanner(true);
     setIsOpen(false);
+  };
+
+  const handleSelectHistory = (value) => {
+    debugger;
+    console.log(value);
+    // setSearchValue(value);
+    handleSearch(value);
+    setShowSearchDropdown(false);
+  };
+
+  const handleSearchFocus = () => {
+    debugger;
+    setShowSearchDropdown(true);
   };
 
   return (
@@ -2743,12 +2789,13 @@ function Headermenu() {
         </label>
         <div className="feature-content">
           <ul
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
+            className="feature-content-ul"
+            // style={{
+            //   display: "flex",
+            //   justifyContent: "center",
+            //   flexDirection: "column",
+            //   alignItems: "center",
+            // }}
           >
             {features.map((feature, index) => (
               <li
@@ -2778,12 +2825,14 @@ function Headermenu() {
               <a href="/" className="anchor-tag">
                 <h2 className="header-logo">
                   <img
-                    src={Homelogo2}
+                    src={newLogo1}
+                    // src={newLogo3}
+                    // src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/Logo_home.png"
                     alt="logo"
                     style={{
-                      width: "60px",
-                      height: "50px",
-                      objectFit: "contain",
+                      // width: "50%",
+                      height: "60px",
+                      objectFit: "cover",
                     }}
                   />
                   SMARTWARDROBE
@@ -2851,96 +2900,101 @@ function Headermenu() {
             <div className="header-icons">
               {searchShow ? (
                 <>
-                  <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                    <InputLabel
-                      sx={{
-                        lineHeight: "1rem",
-                        color: "white",
-                        "&.Mui-focused": {
-                          color: "white",
-                          fontSize: "18px",
-                        },
-                      }}
-                      htmlFor="outlined-adornment-password"
+                  <Box sx={{ width: "100%", position: "relative" }}>
+                    <FormControl
+                      sx={{ m: 1, width: "100%" }}
+                      variant="outlined"
                     >
-                      Search
-                    </InputLabel>
-                    <OutlinedInput
-                      label="outlined-Input"
-                      type={"text"}
-                      style={{ color: "white" }}
-                      placeholder="Search"
-                      value={searchValue}
-                      onChange={onChangeSearchValue}
-                      onKeyDown={handleKeyDown}
-                      onBlur={handleSearchOnBlur}
-                      // autoComplete="off"
-                      autoFocus={true}
-                      startAdornment={
-                        file && (
-                          <InputAdornment
-                            position="start"
-                            sx={{
-                              mr: 1,
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                position: "relative",
+                      <InputLabel
+                        sx={{
+                          lineHeight: "1rem",
+                          color: "white",
+                          "&.Mui-focused": {
+                            color: "white",
+                            fontSize: "18px",
+                          },
+                        }}
+                        htmlFor="outlined-adornment-password"
+                      >
+                        Search
+                      </InputLabel>
+                      <OutlinedInput
+                        label="outlined-Input"
+                        type={"text"}
+                        style={{ color: "white" }}
+                        placeholder="Search"
+                        value={searchValue}
+                        onFocus={handleSearchFocus}
+                        onChange={onChangeSearchValue}
+                        onKeyDown={handleKeyDown}
+                        onBlur={handleSearchOnBlur}
+                        // autoComplete="off"
+                        autoFocus={true}
+                        startAdornment={
+                          file && (
+                            <InputAdornment
+                              position="start"
+                              sx={{
+                                mr: 1,
                                 display: "flex",
                                 alignItems: "center",
-                                cursor: "pointer", // Make sure the entire area is interactive
                               }}
-                              className="thumbnail-container" // Add a class for styling hover
                             >
-                              {/* Thumbnail Image */}
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt="Uploaded preview"
+                              <div
                                 style={{
-                                  width: "30px",
-                                  height: "30px",
-                                  borderRadius: "5px",
-                                  marginRight: "8px",
+                                  position: "relative",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  cursor: "pointer", // Make sure the entire area is interactive
                                 }}
-                                className="thumbnail-image"
-                              />
-
-                              <IconButton
-                                onClick={removeImage}
-                                size="small"
-                                sx={{
-                                  position: "absolute",
-                                  top: "-8px",
-                                  right: "-8px",
-                                  backgroundColor: "white",
-                                  boxShadow: 1,
-                                  "&:hover": { backgroundColor: "#f0f0f0" },
-                                }}
+                                className="thumbnail-container" // Add a class for styling hover
                               >
-                                <IoCloseCircleOutline fontSize="small" />
-                              </IconButton>
-                            </div>
-                          </InputAdornment>
-                        )
-                      }
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <Button
-                            onClick={handleButtonClick}
-                            variant="outlined"
-                            style={{
-                              border: "none",
-                              borderRadius: "50%",
-                              backgroundColor: "transparent",
-                              color: "white",
-                              cursor: "pointer",
-                            }}
-                          >
-                            <ImageSearchIcon />
-                            {/* <SvgIcon>
+                                {/* Thumbnail Image */}
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt="Uploaded preview"
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    borderRadius: "5px",
+                                    marginRight: "8px",
+                                  }}
+                                  className="thumbnail-image"
+                                />
+
+                                <IconButton
+                                  onClick={removeImage}
+                                  size="small"
+                                  sx={{
+                                    position: "absolute",
+                                    top: "-8px",
+                                    right: "-8px",
+                                    backgroundColor: "white",
+                                    boxShadow: 1,
+                                    "&:hover": { backgroundColor: "#f0f0f0" },
+                                  }}
+                                >
+                                  <IoCloseCircleOutline fontSize="small" />
+                                </IconButton>
+                              </div>
+                            </InputAdornment>
+                          )
+                        }
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <Button
+                              onClick={handleButtonClick}
+                              variant="outlined"
+                              style={{
+                                border: "none",
+                                borderRadius: "50%",
+                                backgroundColor: "transparent",
+                                color: "white",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <ImageSearchIcon />
+                              {/* <SvgIcon>
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -2955,45 +3009,81 @@ function Headermenu() {
                                 />
                               </svg>
                             </SvgIcon> */}
-                            {/* Hidden file input */}
-                            <input
-                              ref={inputRefFile}
-                              type="file"
-                              accept="image/*"
-                              onChange={imageUpload}
-                              style={{ display: "none" }}
-                              aria-label="Upload Image"
-                            />
-                          </Button>
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleSearch}
-                            edge="end"
-                          >
-                            <SearchIcon style={{ color: "white" }} />
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      sx={{
-                        height: 45,
-                        "& label": {
-                          color: "white",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white",
-                          borderWidth: 2,
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white",
-                          borderWidth: 2,
-                        },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white",
-                          borderWidth: 2,
-                        },
-                      }}
-                    />
-                  </FormControl>
+                              {/* Hidden file input */}
+                              <input
+                                ref={inputRefFile}
+                                type="file"
+                                accept="image/*"
+                                onChange={imageUpload}
+                                style={{ display: "none" }}
+                                aria-label="Upload Image"
+                              />
+                            </Button>
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleSearch}
+                              edge="end"
+                            >
+                              <SearchIcon style={{ color: "white" }} />
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                        sx={{
+                          height: 45,
+                          "& label": {
+                            color: "white",
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "white",
+                            borderWidth: 2,
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "white",
+                            borderWidth: 2,
+                          },
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "white",
+                            borderWidth: 2,
+                          },
+                        }}
+                      />
+                    </FormControl>
+
+                    {showSearchDropdown && (
+                      <List
+                        sx={{
+                          position: "absolute",
+                          top: 50,
+                          left: 0,
+                          width: "100%",
+                          bgcolor: "white",
+                          zIndex: 10,
+                          border: "1px solid #ddd",
+                          borderRadius: 1,
+                          maxHeight: 200,
+                          overflowY: "auto",
+                          marginLeft: "8px",
+                          marginTop: "8px",
+                        }}
+                      >
+                        {searchHistoryData &&
+                          searchHistoryData?.map((item, index) => (
+                            <ListItem
+                              key={index}
+                              disablePadding
+                              onClick={() =>
+                                handleSelectHistory(item?.searchQuery)
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <ListItemButton>
+                                <ListItemText primary={item?.searchQuery} />
+                              </ListItemButton>
+                            </ListItem>
+                          ))}
+                      </List>
+                    )}
+                  </Box>
                   <div
                     onClick={() => setSearchShow(false)}
                     style={{ display: "flex" }}
@@ -3087,18 +3177,18 @@ function Headermenu() {
               sx={{ color: "white", fontSize: "30px" }}
             />
             <a href="/" className="anchor-tag">
-              <h1 className="header-logo">
+              <h2 className="header-logo">
                 <img
-                  src={Homelogo2}
+                  src={newLogo1}
                   alt="logo"
                   style={{
                     width: "60px",
                     height: "50px",
-                    objectFit: "contain",
+                    objectFit: "cover",
                   }}
                 />
-                SMARTWARDROBE
-              </h1>
+                {/* SMARTWARDROBE */}
+              </h2>
             </a>
             <div className="header-icons">
               {/* <Badge
@@ -3154,145 +3244,121 @@ function Headermenu() {
             <></>
           ) : (
             <div className="mobile-search-input search-input-below-900px">
-              <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                <InputLabel
-                  sx={{
-                    lineHeight: "1rem",
-                    color: "white",
-                    "&.Mui-focused": {
+              <Box sx={{ width: "100%", position: "relative" }}>
+                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
+                  <InputLabel
+                    sx={{
+                      lineHeight: "1rem",
                       color: "white",
-                      fontSize: "18px",
-                    },
-                  }}
-                  htmlFor="outlined-adornment-password"
-                >
-                  Search
-                </InputLabel>
-                <OutlinedInput
-                  label="outlined-Input"
-                  type={"text"}
-                  style={{ color: "white" }}
-                  placeholder="Search"
-                  value={searchValue}
-                  onChange={onChangeSearchValue}
-                  onKeyDown={handleKeyDown}
-                  onBlur={handleSearchOnBlur}
-                  // autoComplete="off"
-                  // autoFocus={true}
-                  startAdornment={
-                    file && (
-                      <InputAdornment
-                        position="start"
-                        sx={{ mr: 1, display: "flex", alignItems: "center" }}
-                      >
-                        <div
+                      "&.Mui-focused": {
+                        color: "white",
+                        fontSize: "18px",
+                      },
+                    }}
+                    htmlFor="outlined-adornment-password"
+                  >
+                    Search
+                  </InputLabel>
+                  <OutlinedInput
+                    label="Search"
+                    type={"text"}
+                    style={{ color: "white" }}
+                    placeholder="Search"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSearch();
+                    }}
+                    // autoFocus={true}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <Button
+                          onClick={handleButtonClick}
+                          variant="outlined"
                           style={{
-                            position: "relative",
-                            display: "flex",
-                            alignItems: "center",
-                            cursor: "pointer", // Make sure the entire area is interactive
+                            border: "none",
+                            borderRadius: "50%",
+                            backgroundColor: "transparent",
+                            color: "white",
+                            cursor: "pointer",
                           }}
-                          className="thumbnail-container" // Add a class for styling hover
                         >
-                          {/* Thumbnail Image */}
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt="Uploaded preview"
-                            style={{
-                              width: "30px",
-                              height: "30px",
-                              borderRadius: "5px",
-                              marginRight: "8px",
-                            }}
-                            className="thumbnail-image"
+                          <ImageSearchIcon />
+                          <input
+                            ref={inputRefFile}
+                            type="file"
+                            accept="image/*"
+                            onChange={imageUpload}
+                            style={{ display: "none" }}
+                            aria-label="Upload Image"
                           />
-
-                          <IconButton
-                            onClick={removeImage}
-                            size="small"
-                            sx={{
-                              position: "absolute",
-                              top: "-8px",
-                              right: "-8px",
-                              backgroundColor: "white",
-                              boxShadow: 1,
-                              "&:hover": { backgroundColor: "#f0f0f0" },
-                            }}
-                          >
-                            <IoCloseCircleOutline fontSize="small" />
-                          </IconButton>
-                        </div>
+                        </Button>
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleSearch}
+                          edge="end"
+                        >
+                          <SearchIcon style={{ color: "white" }} />
+                        </IconButton>
                       </InputAdornment>
-                    )
-                  }
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <Button
-                        onClick={handleButtonClick}
-                        variant="outlined"
-                        style={{
-                          border: "none",
-                          borderRadius: "50%",
-                          backgroundColor: "transparent",
-                          color: "white",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <ImageSearchIcon />
-                        {/* <SvgIcon>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                            />
-                          </svg>
-                        </SvgIcon> */}
-                        {/* Hidden file input */}
-                        <input
-                          ref={inputRefFile}
-                          type="file"
-                          accept="image/*"
-                          onChange={imageUpload}
-                          style={{ display: "none" }}
-                          aria-label="Upload Image"
-                        />
-                      </Button>
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleSearch}
-                        edge="end"
-                      >
-                        <SearchIcon style={{ color: "white" }} />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  sx={{
-                    height: 45,
-                    "& label": {
-                      color: "white",
-                    },
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 2,
-                    },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 2,
-                    },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "white",
-                      borderWidth: 2,
-                    },
-                  }}
-                />
-              </FormControl>
+                    }
+                    sx={{
+                      height: 45,
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                        borderWidth: 2,
+                      },
+                    }}
+                  />
+                </FormControl>
+
+                {/* Autocomplete Dropdown */}
+                {searchValue && (
+                  <List
+                    sx={{
+                      position: "absolute",
+                      top: 50,
+                      left: 0,
+                      width: "100%",
+                      bgcolor: "white",
+                      zIndex: 10,
+                      border: "1px solid #ddd",
+                      borderRadius: 1,
+                      maxHeight: 200,
+                      overflowY: "auto",
+                    }}
+                  >
+                    {searchHistoryData
+                      ?.filter((item) =>
+                        item?.searchQuery
+                          ?.toLowerCase()
+                          .includes(searchValue.toLowerCase())
+                      )
+                      .map((item, index) => (
+                        <ListItem
+                          key={index}
+                          disablePadding
+                          onClick={() => handleSelectHistory(item?.searchQuery)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <ListItemButton>
+                            <ListItemText primary={item?.searchQuery
+
+                            } />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                  </List>
+                )}
+              </Box>
             </div>
           )}
           {/* Header Dropdowns */}

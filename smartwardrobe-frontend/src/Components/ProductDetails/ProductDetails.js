@@ -31,7 +31,7 @@ import Accordion from "@mui/joy/Accordion";
 import AccordionDetails from "@mui/joy/AccordionDetails";
 import AccordionSummary from "@mui/joy/AccordionSummary";
 import { Input } from "antd";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import {
@@ -55,6 +55,7 @@ const ProductDetails = () => {
     ? JSON.parse(localStorage.getItem("user"))
     : null;
   console.log(state?.item?.imageName, "productData");
+  const navigate = useNavigate();
   const [quantityvalue, setQuantityValue] = useState(1);
   const [showHideWishlist, setShowHideWishlist] = useState(true);
   const [openLoader, setOpenLoader] = useState(false);
@@ -176,45 +177,49 @@ const ProductDetails = () => {
       null,
       token?.token
     );
+    let check = null;
     if (getAllCartValues?.data?.length) {
-      let check = getAllCartValues?.data?.find(
+      check = getAllCartValues?.data?.find(
         (item) => item?.productId === productimages?.id
       );
-      if (check) {
-        const data = {
-          id: check?.id,
-          quantity: check?.quantity + quantityvalue,
-        };
-        setOpenLoader(true);
-        const addToCart = await apiCall(
-          "PATCH",
-          `${baseUrl}/cart-item/update`,
-          data,
-          token?.token
-        );
-        if (addToCart.statusCode.text === "Success") {
-          // dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
-          setOpenLoader(false);
-          return;
-        }
-      }
+      
     }
 
-    let data = {
-      productId: productimages?.id,
-      quantity: quantityvalue,
-      size: selectedSize
-    };
-    setOpenLoader(true);
-    const addToCart = await apiCall(
-      "POST",
-      `${baseUrl}/cart-item/create`,
-      data,
-      token?.token
-    );
-    setOpenLoader(false);
-    if (addToCart.statusCode.text === "Success") {
-      dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+    if (check !== undefined && check !== null) {
+      const data = {
+        id: check?.id,
+        quantity: check?.quantity + quantityvalue,
+        size: selectedSize,
+      };
+      setOpenLoader(true);
+      const addToCart = await apiCall(
+        "PATCH",
+        `${baseUrl}/cart-item/update`,
+        data,
+        token?.token
+      );
+      if (addToCart.statusCode.text === "Success") {
+        dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+        setOpenLoader(false);
+        return;
+      }
+    }else{
+      let data = {
+        productId: productimages?.id,
+        quantity: quantityvalue,
+        size: selectedSize
+      };
+      setOpenLoader(true);
+      const addToCart = await apiCall(
+        "POST",
+        `${baseUrl}/cart-item/create`,
+        data,
+        token?.token
+      );
+      setOpenLoader(false);
+      if (addToCart.statusCode.text === "Success") {
+        dispatch(addToCartValueSuccess({ cartValue: cartValue + 1 }));
+      }
     }
   };
 
@@ -222,11 +227,14 @@ const ProductDetails = () => {
     debugger;
     console.log('reload')
     callApiForModels();
-  }, []);
+  }, [id]);
 
   const callApiForModels = async () => {
     debugger;
-    let numberString = Number(id);
+    console.log(location.pathname)
+    let getIdFromUrl = location.pathname.split("/");
+    let idd = getIdFromUrl[getIdFromUrl?.length - 1];
+    let numberString = Number(idd);
 
     // let number = parseInt(numberString);
     setOpenLoader(true);
@@ -315,7 +323,13 @@ const ProductDetails = () => {
   let groups = localStorage.getItem("groupIds")
   ? JSON.parse(localStorage.getItem("groupIds"))
   : null;
-    setFriendsListForShare([...friends, ...groups]);
+    if(friends && groups){
+      setFriendsListForShare([...friends, ...groups]);
+    }else if (friends && !groups) {
+      setFriendsListForShare(friends);
+    }else if (!friends && groups) {
+      setFriendsListForShare(groups);
+    }
     setShowFriendsForShare(true);
   };
 
@@ -335,38 +349,43 @@ const ProductDetails = () => {
 
   const handleSimilarProductsClick = async (item) => {
     debugger;
-    setOpenLoader(true);
-    let productId = item?.id;
-    const getModels = await apiCall(
-      "GET",
-      `${baseUrl}/product/get-one/${productId}`,
-      null
-    );
-    setOpenLoader(false);
-    if (getModels) {
-      console.log(getModels?.data, "details");
-      setProductImages(getModels?.data);
-    }
-    if (token?.token) {
-      setOpenLoader(true);
-      const getLikeProducts = await apiCall(
-        "GET",
-        `${baseUrl}/likes/get-all`,
-        null,
-        token?.token
-      );
-      setOpenLoader(false);
-      if (getLikeProducts) {
-        let check = getLikeProducts?.data?.find(
-          (item) => item?.productId === productId
-        );
-        if (check) {
-          setShowHideWishlist(false);
-        } else {
-          setShowHideWishlist(true);
-        }
-      }
-    }
+    
+    navigate(`/productdetails/${item?.id}`, { state: { item } });
+    setTimeout(() => {
+      window.location.reload();
+    }, 1);
+    // setOpenLoader(true);
+    // let productId = item?.id;
+    // const getModels = await apiCall(
+    //   "GET",
+    //   `${baseUrl}/product/get-one/${productId}`,
+    //   null
+    // );
+    // setOpenLoader(false);
+    // if (getModels) {
+    //   console.log(getModels?.data, "details");
+    //   setProductImages(getModels?.data);
+    // }
+    // if (token?.token) {
+    //   setOpenLoader(true);
+    //   const getLikeProducts = await apiCall(
+    //     "GET",
+    //     `${baseUrl}/likes/get-all`,
+    //     null,
+    //     token?.token
+    //   );
+    //   setOpenLoader(false);
+    //   if (getLikeProducts) {
+    //     let check = getLikeProducts?.data?.find(
+    //       (item) => item?.productId === productId
+    //     );
+    //     if (check) {
+    //       setShowHideWishlist(false);
+    //     } else {
+    //       setShowHideWishlist(true);
+    //     }
+    //   }
+    // }
   };
 
   const handleTryOn = () => {

@@ -378,7 +378,12 @@ function NewChatModal(props) {
       if(props?.productUrl){
       let url = location.pathname;
       let spliturl = url?.split("/");
-      let productId = spliturl?.pop();
+      let productId = "";
+      if(props?.productIdFromVirtualTryOn){
+       productId = props?.productIdFromVirtualTryOn;
+      }else{
+        productId = spliturl?.pop();
+      }
       let appiUrl = `${baseUrl}/invite/user`;
       const sendObj = {
         email: inputValue,

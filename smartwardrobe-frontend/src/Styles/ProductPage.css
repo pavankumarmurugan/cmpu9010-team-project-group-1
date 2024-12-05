@@ -197,6 +197,12 @@
   }
 }
 
+@media (max-width: 500px) {
+  .productspage-product--image {
+    height: 265px !important;
+  }
+}
+
 /* Make the search input sticky at the bottom of the chat section */
 .chat .search-input-container {
   width: 100%;

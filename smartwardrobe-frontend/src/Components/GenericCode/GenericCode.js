@@ -12,7 +12,9 @@ import ChatComponent from "../ChatComponent/ChatComponent";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../../Styles/ChatComponent.css";
 import { useSelector } from "react-redux";
-import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, {
+  baseUrl,
+} from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import { Backdrop, CircularProgress } from "@mui/material";
 
 const renderMenuItems = (items) => {
@@ -107,7 +109,11 @@ export const HomeProductSection = (props) => {
             <p className="description">{item?.description}</p>
             <p className="price">{item?.price}</p>
             <p className="button-container">
-              <Button className="View-Product-Button" color="default" aria-hidden="true">
+              <Button
+                className="View-Product-Button"
+                color="default"
+                aria-hidden="true"
+              >
                 More Like this
               </Button>
             </p>
@@ -209,37 +215,46 @@ export const ProductPageCards = ({ data, handleTryon }) => {
     <div className="productpagecards">
       {data?.map((item, index) => (
         <div className="card" key={index}>
-        <div className="image-container" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-          {item?.trail && (
-            <button
-              className="try-on-button"
-              onClick={() => clickOnTryOn(item)}
-            >
-              Try On
-            </button>
-          )}
-          {hovered && <div className="hover-button-container">
-            <Button
-              className="View-ProductPage-Button"
-              color="default"
+          <div
+            className="image-container"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+          >
+            {item?.trail && (
+              <button
+                className="try-on-button"
+                onClick={() => clickOnTryOn(item)}
+              >
+                Try On
+              </button>
+            )}
+            {hovered && (
+              <div className="hover-button-container">
+                <Button
+                  className="View-ProductPage-Button"
+                  color="default"
+                  onClick={() => handleProductDetails(item)}
+                >
+                  View
+                </Button>
+              </div>
+            )}
+            <img
+              className="productspage-product--image"
+              loading="lazy"
+              src={item?.imageUrl}
+              alt={
+                item?.description.length > 70
+                  ? item?.description.slice(0, 70) + "..."
+                  : item?.description
+              }
               onClick={() => handleProductDetails(item)}
-            >
-              View
-            </Button>
-          </div>}
-          <img
-            className="productspage-product--image"
-            loading="lazy"
-            src={item?.imageUrl}
-            alt={item?.description.length > 70 ? item?.description.slice(0, 70) + "..." : item?.description}
-            onClick={() => handleProductDetails(item)}
-          />
+            />
+          </div>
+          <h3>{item?.name}</h3>
+          <p className="description">{item?.type}</p>
+          <p className="price">&euro;{Number(item?.price)}.00</p>
         </div>
-        <h3>{item?.name}</h3>
-        <p className="description">{item?.type}</p>
-        <p className="price">&euro;{Number(item?.price)}.00</p>
-      </div>
-      
       ))}
     </div>
   );
@@ -410,7 +425,7 @@ export const setTokenToLocalStorage = (data) => {
 };
 
 export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
-  debugger
+  debugger;
   let filteredData = data;
   let fromValue = 0;
   let toValue = Infinity;
@@ -434,7 +449,17 @@ export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
 };
 
 const WhatsAppStylePreview = ({ message }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleImageClick = () => {
+    setIsModalOpen(true); // Open the modal when the image is clicked
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal when clicking outside or pressing close
+  };
   const [preview, setPreview] = useState(null);
+  const [modelImages, setModelImages] = useState(null);
   const [error, setError] = useState(null);
   const [openLoader, setOpenLoader] = useState(false);
   const homeData = useSelector((state) => state.homeData.homeData);
@@ -446,9 +471,7 @@ const WhatsAppStylePreview = ({ message }) => {
       setOpenLoader(true);
       const response = await apiCall(
         "GET",
-        `${baseUrl}/product/get-one/${Number(
-          id
-        )}`,
+        `${baseUrl}/product/get-one/${Number(id)}`,
         null
       );
       console.log(response?.data);
@@ -487,6 +510,11 @@ const WhatsAppStylePreview = ({ message }) => {
           setError("Error fetching metadata");
         } finally {
         }
+      } else if (
+        message?.includes("https://sw-uploads") &&
+        !message?.includes("blob")
+      ) {
+        setModelImages(message);
       } else {
         // If it's not a URL, set the preview to null and stop loading
         setPreview(null);
@@ -511,6 +539,58 @@ const WhatsAppStylePreview = ({ message }) => {
   }
   return (
     <>
+    {isModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          {/* Full-Screen Image */}
+          <img
+            src={message}
+            alt="Full Screen"
+            style={{
+              maxWidth: '90%',
+              maxHeight: '90%',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
+              borderRadius: '10px',
+            }}
+          />
+
+          {/* Close Icon */}
+          <span
+            onClick={closeModal}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              fontSize: '30px',
+              fontWeight: 'bold',
+              color: 'black',
+              cursor: 'pointer',
+              backgroundColor: '#fff',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            &times; {/* This is the 'X' symbol */}
+          </span>
+        </div>
+      )}
       <Backdrop
         sx={{
           color: "#fff",
@@ -521,58 +601,65 @@ const WhatsAppStylePreview = ({ message }) => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      {preview ? (
-        <a
-          href={preview?.siteName}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="preview-container"
-        >
-          {preview?.image && (
-            <div class="preview-image">
-              <img
-                src={preview.image}
-                alt="{preview.title || 'Website preview'}"
-                class="preview-image-class"
-              />
-            </div>
-          )}
+      {
+        preview ? (
+          <a
+            href={preview?.siteName}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="preview-container"
+          >
+            {preview?.image && (
+              <div class="preview-image">
+                <img
+                  src={preview.image}
+                  alt="{preview.title || 'Website preview'}"
+                  class="preview-image-class"
+                />
+              </div>
+            )}
 
-          <div class="preview-content">
-            {/* {preview?.siteName && (
+            <div class="preview-content">
+              {/* {preview?.siteName && (
             <p class="preview-site-name">
               {preview.siteName}
             </p>
           )} */}
 
-            {preview?.title && <h3 class="preview-title">{preview.title}</h3>}
+              {preview?.title && <h3 class="preview-title">{preview.title}</h3>}
 
-            {preview?.description && (
-              <span class="preview-description">{preview.description}</span>
-            )}
-          </div>
-        </a>
-      ) : (message.includes("http") && !message.includes("blob")) ? (
-        <a
-          href={message}
-          target="_blank"
-          rel="noopener noreferrer"
-          className=""
-          style={{ display: "contents", fontSize: "10px" }}
-        >
+              {preview?.description && (
+                <span class="preview-description">{preview.description}</span>
+              )}
+            </div>
+          </a>
+        ) : message.includes("http") &&
+          message?.toLowerCase()?.includes(".jpg") ? (
+            <p>
+              <img
+                src={message}
+                alt="model-image"
+                onClick={() => handleImageClick(message)}
+                className="preview-model-image"
+              />
+            </p>
+        ) : message.includes("http") && !message.includes("blob") ? (
+          <a
+            href={message}
+            target="_blank"
+            rel="noopener noreferrer"
+            className=""
+            style={{ display: "contents", fontSize: "10px" }}
+          >
+            <p>{message}</p>
+          </a>
+        ) : message.includes("blob") ? (
+          <p>
+            <audio controls src={message} style={{ display: "flex" }} />
+          </p>
+        ) : (
           <p>{message}</p>
-        </a>
-      ) : message.includes("blob") ?
-      <p>
-      <audio
-      controls
-      src={message}
-      style={{ display:"flex" }}
-    />
-    </p>
-      : (
-        <p>{message}</p>
-      ) // If not a URL, return the exact same message
+        ) // If not a URL, return the exact same message
       }
     </>
   );
@@ -592,10 +679,10 @@ export const BackButtonHandler = () => {
     : null;
 
   useEffect(() => {
-    debugger
+    debugger;
     const handleBackButton = (event) => {
       // Custom function when the back button is clicked
-      console.log('Back button clicked!');
+      console.log("Back button clicked!");
       // if (previousPathRef.current.includes("products/")) {
       //   categoryPaths.pop()
       //   localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
@@ -612,7 +699,7 @@ export const BackButtonHandler = () => {
 
     // Track navigation changes
     const unlisten = () => {
-      debugger
+      debugger;
       const currentPath = location.pathname;
       if (previousPathRef.current !== currentPath) {
         previousPathRef.current = currentPath;
@@ -623,11 +710,11 @@ export const BackButtonHandler = () => {
     };
 
     // Listen for changes in history
-    window.addEventListener('popstate', unlisten);
+    window.addEventListener("popstate", unlisten);
     window.onpopstate = handleBackButton();
 
     return () => {
-      window.removeEventListener('popstate', unlisten);
+      window.removeEventListener("popstate", unlisten);
     };
   }, [location]);
 
