@@ -1,4 +1,4 @@
-# Minutes of the Meeting (MoM) - Week 8 - Day 2
+# Minutes of the Meeting (MoM) - Week 9 - Day 2
 
 **Project Title:** Smartwardrobe
 
@@ -24,7 +24,7 @@
 
 ### **3. Discussion and Taks**
 
-- **Pavan:** Implement Cognitive Walkthrough and interview with test user (College). Worked on user evaluation report. 
+- **Pavan:** Implement Cognitive Walkthrough and interview with test user (College). Worked on user evaluation report.
 
 - **Osama:** Worked on Websocket implementation on friend request received,UI updates according to WCAG Guideliness.
 
