@@ -39,3 +39,4 @@ timm
 opencv-python-headless
 scipy
 scikit-image
+scikit-learn
