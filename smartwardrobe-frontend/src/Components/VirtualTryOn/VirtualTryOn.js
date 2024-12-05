@@ -780,6 +780,7 @@ const VirtualTryOn = (props) => {
                           style={{ width: "25px", height: "25px" }}
                         />
                       </div>
+                      
               <img
                 className="Result-Image"
                 loading="lazy"

@@ -290,19 +290,12 @@
   position: absolute;
   top: 15px;
   right: 10px;
-  padding: 8px 12px;
+  padding: 9px;
+  border-radius: 50% !important;
   background-color: black;
   color: white;
-  border: none;
-  border-radius: 5px;
   cursor: pointer;
   z-index: 2;
-  &:hover{
-    background-color: black;
-    color: white !important;
-    transform: scale(1.05);
-    border: 1px solid #cbcbcb !important;
-  }
 }
 .asd {
   position: fixed;
