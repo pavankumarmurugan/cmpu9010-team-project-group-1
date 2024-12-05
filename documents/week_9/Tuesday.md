@@ -1,4 +1,4 @@
-# Minutes of the Meeting (MoM) - Week 8 - Day 2
+# Minutes of the Meeting (MoM) - Week 9 - Day 2
 
 **Project Title:** Smartwardrobe
 

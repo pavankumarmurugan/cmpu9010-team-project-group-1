@@ -38,7 +38,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { HiUserRemove } from "react-icons/hi";
-import { LuUserCheck, LuUserCheck2 } from "react-icons/lu";
+import { LuUserCheck } from "react-icons/lu";
 import {
   IoIosInformationCircleOutline,
   IoMdContacts,

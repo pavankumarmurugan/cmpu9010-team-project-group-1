@@ -16,9 +16,6 @@ processor = AutoProcessor.from_pretrained('Marqo/marqo-fashionSigLIP', trust_rem
 
 
 def download_image(url):
-    """
-    Downloads an image from a URL and returns it as a PIL image.
-    """
     try:
         # Send a GET request to the URL
         response = requests.get(url)
@@ -50,9 +47,8 @@ def image_processor(image):
 def perform_search(embedding_query, top_k):
     # Connect to the database
     conn = connect_db()
-
     cur = conn.cursor()
-    # print(f"Performing search on column '{column_name}' with top_k = {top_k}")
+
     try:
         cur.execute(f"""
             SELECT i.image_name,i.image_embedding <=> %s::vector AS distance
@@ -65,8 +61,8 @@ def perform_search(embedding_query, top_k):
 
         # image_names = [result[0] for result in similar_items]  # Extract image_name
 
-        # print(f"Found {len(similar_items)} similar items.")
-        # print("similar_items: ", similar_items)
+        print(f"Found {len(similar_items)} similar items.")
+        print("similar_items: ", similar_items)
 
         return similar_items
 
@@ -167,9 +163,8 @@ def reorder_results(top_k_images_dis, query_color_hist, query_texture, query_edg
         color_hist_candidate, texture_candidate, edge_candidate = features
 
         # Convert list to np.array if necessary
-        color_hist_candidate = np.array(color_hist_candidate) if isinstance(color_hist_candidate,
-                                                                            list) else color_hist_candidate
-        texture_candidate = np.array(texture_candidate) if isinstance(texture_candidate, list) else texture_candidate
+        color_hist_candidate = np.array(color_hist_candidate)
+        texture_candidate = np.array(texture_candidate)
         edge_candidate = np.array(edge_candidate)
 
         # print("color_hist_candidate: ", color_hist_candidate)
@@ -182,14 +177,14 @@ def reorder_results(top_k_images_dis, query_color_hist, query_texture, query_edg
         edge_similarity = 1 - abs(query_edge_density - edge_candidate[0])
 
         # Combine scores (weights can be adjusted)
-        combined_score = (0.4 * (1 - distance) +
-                          0.48 * color_similarity +
-                          0.1 * texture_similarity +
+        combined_score = (0.5 * (1 - distance) +
+                          0.46 * color_similarity +
+                          0.02 * texture_similarity +
                           0.02 * edge_similarity)
 
         reordered_results.append((image_name, combined_score))
 
-    # ###################debugging#########################################################
+    ##########################debugging#########################################################
     #     # Append detailed results for debugging
     #     detailed_results.append({
     #         "image_name": image_name,
@@ -212,7 +207,7 @@ def reorder_results(top_k_images_dis, query_color_hist, query_texture, query_edg
     #           f"Combined Score: {result['combined_score']:.8f}")
     #
     # # return detailed_results
-    # ################debugging#########################################################
+    # ################debugging###############################################################
 
     # Sort by combined score
     reordered_results.sort(key=lambda x: x[1], reverse=True)
@@ -223,58 +218,26 @@ def reorder_results(top_k_images_dis, query_color_hist, query_texture, query_edg
     # return [image[0] for image in reordered_results]
 
 
-def fetch_product_ids(reordered_images_with_scores):
-    """
-    Fetch product IDs for reordered images.
-    Returns only image_name and product_id in the order of combined_score.
-    """
-    # Extract image names in the order of combined scores
-    image_names = [image[0] for image in reordered_images_with_scores]
-
-    conn = connect_db()
-    cur = conn.cursor()
-
-    try:
-        # Fetch mapping of image_name to product_id
-        cur.execute("""
-            SELECT image_name, id
-            FROM products_2_image
-            WHERE image_name = ANY(%s);
-        """, (image_names,))
-        results = dict(cur.fetchall())  # Directly map image_name to product_id
-
-        # Return the result in the same order as the reordered images
-        final_results = [{"image_name": name, "product_id": results.get(name)} for name in image_names]
-        # print("final_results: ", final_results)
-        return final_results
-
-    except Exception as e:
-        print(f"Error fetching product IDs: {e}")
-        return []
-    finally:
-        cur.close()
-        conn.close()
-
-#########################################################
-# def format_search_results(search_results):
-#     """
-#     Format the search results into a list of dictionaries.
-#
-#     Parameters:
-#         search_results (list): List of tuples containing article_id, product_code, and distance.
-#
-#     Returns:
-#         dict: JSON-compatible dictionary with the formatted results.
-#     """
-#     # print("original search_results: ", search_results)
-#
-#     # Format the results to match the required JSON structure
-#     formatted_results = [
-#         {"image_name": result[0], "product_id": result[1]}
-#         for result in search_results
-#     ]
-#     # print("formatted json_response: ", formatted_results)
-#
-#     # Return the formatted results
-#     return formatted_results
-#########################################################
+    #########################################################
+    # def format_search_results(search_results):
+    #     """
+    #     Format the search results into a list of dictionaries.
+    #
+    #     Parameters:
+    #         search_results (list): List of tuples containing article_id, product_code, and distance.
+    #
+    #     Returns:
+    #         dict: JSON-compatible dictionary with the formatted results.
+    #     """
+    #     # print("original search_results: ", search_results)
+    #
+    #     # Format the results to match the required JSON structure
+    #     formatted_results = [
+    #         {"image_name": result[0], "product_id": result[1]}
+    #         for result in search_results
+    #     ]
+    #     # print("formatted json_response: ", formatted_results)
+    #
+    #     # Return the formatted results
+    #     return formatted_results
+    #########################################################
