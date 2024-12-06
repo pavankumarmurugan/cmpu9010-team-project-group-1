@@ -437,3 +437,35 @@ CREATE TABLE search_history (
     updated_at DATE DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES "user"(user_id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE public.wishlist (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES public.user (user_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE public.wishlist_products (
+    id SERIAL PRIMARY KEY,
+    wishlist_id INT NOT NULL,
+    product_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_wishlist_id
+        FOREIGN KEY (wishlist_id)
+        REFERENCES public.wishlist (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_product_id
+        FOREIGN KEY (product_id)
+        REFERENCES public.products (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    UNIQUE (wishlist_id, product_id)
+);

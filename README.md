@@ -1,6 +1,6 @@
 # 🛍️ **SmartWardrobe** 🎨
 
-Welcome to the **AI-Driven Fashion Shopping Platform** project! This is an innovative fashion e-commerce site that harnesses the power of Artificial Intelligence (AI) to provide a **personalized, smart, and intuitive** shopping experience.
+Welcome to the **AI-Driven Fashion Shopping Platform** project! This is an innovative fashion e-commerce site that harnesses the power of Artificial Intelligence (AI) to provide a **personalized, smart, and intuitive** shopping experience. Please use this URL to checkout out website https://smartwardrobe.store/
 
 ---
 
