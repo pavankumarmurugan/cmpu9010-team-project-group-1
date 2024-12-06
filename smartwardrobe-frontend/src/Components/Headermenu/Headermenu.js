@@ -2339,9 +2339,10 @@ function Headermenu() {
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1);
-    } else if (searchValue.trim() !== "" || query) {
+    } else if (searchValue?.trim() !== "" || query) {
       let value = searchValue || query;
-      const slug = createSlug(value);
+      // const slug = createSlug(value);
+      const slug = value?.replaceAll(" ", "-");
 
       if (searchValue?.trim() !== "") {
         const createHistory = await apiCall(
