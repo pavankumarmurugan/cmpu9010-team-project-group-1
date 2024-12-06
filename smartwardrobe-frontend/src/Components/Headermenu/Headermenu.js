@@ -2615,6 +2615,12 @@ function Headermenu() {
     setIsOpen(false);
   };
 
+  const handleSearchClose = () => {
+    debugger
+    setSearchShow(false);
+    setSearchValue("");
+  }
+
   const handleSelectHistory = (value) => {
     debugger;
     console.log(value);
@@ -3049,7 +3055,7 @@ function Headermenu() {
                       />
                     </FormControl>
 
-                    {showSearchDropdown && (
+                    {token?.token && showSearchDropdown && (
                       <List
                         sx={{
                           position: "absolute",
@@ -3085,7 +3091,7 @@ function Headermenu() {
                     )}
                   </Box>
                   <div
-                    onClick={() => setSearchShow(false)}
+                    onClick={handleSearchClose}
                     style={{ display: "flex" }}
                   >
                     <IoMdClose
@@ -3321,7 +3327,7 @@ function Headermenu() {
                 </FormControl>
 
                 {/* Autocomplete Dropdown */}
-                {searchValue && (
+                {token?.token && searchValue && (
                   <List
                     sx={{
                       position: "absolute",
