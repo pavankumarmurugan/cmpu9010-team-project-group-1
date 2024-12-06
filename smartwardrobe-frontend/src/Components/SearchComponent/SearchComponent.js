@@ -34,7 +34,9 @@ import ChatSection from "../ChatSection/ChatSection";
 import { styled } from "@mui/joy";
 import ImageSearchIcon from "@mui/icons-material/ImageSearch";
 import Button from "@mui/joy/Button";
-import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, {
+  baseUrl,
+} from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import ProductPageSkeletonLoader from "../SkeletonLoaders/ProductPageSkeletonLoader";
 import VirtualTryOn from "../VirtualTryOn/VirtualTryOn";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,22 +51,22 @@ const SearchComponent = () => {
   let token = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-    let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
+  let headerSearchValueLocal = localStorage.getItem("headerSearchValueLocal")
     ? JSON.parse(localStorage.getItem("headerSearchValueLocal"))
     : null;
-    let savedScrollPosition = localStorage.getItem("scrollPosition")
+  let savedScrollPosition = localStorage.getItem("scrollPosition")
     ? JSON.parse(localStorage.getItem("scrollPosition"))
     : null;
-    let paginationLocal = localStorage.getItem("paginationLocal")
+  let paginationLocal = localStorage.getItem("paginationLocal")
     ? JSON.parse(localStorage.getItem("paginationLocal"))
     : null;
-    let SearchPagination = localStorage.getItem("SearchPagination")
+  let SearchPagination = localStorage.getItem("SearchPagination")
     ? JSON.parse(localStorage.getItem("SearchPagination"))
     : null;
-    let savedImage = localStorage.getItem("savedImage")
+  let savedImage = localStorage.getItem("savedImage")
     ? JSON.parse(localStorage.getItem("savedImage"))
     : null;
-    console.log('no of reloads');
+  console.log("no of reloads");
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -224,11 +226,11 @@ const SearchComponent = () => {
     debugger;
     console.log("state", state);
     // getProductsData(); 30 Nov
-    handleSearch()
+    handleSearch();
   }, [categoryValue]);
 
   useEffect(() => {
-    debugger
+    debugger;
     console.log(window.location.pathname);
     return () => {
       // state.searchValue = null;
@@ -279,7 +281,6 @@ const SearchComponent = () => {
   //       };
   //   }, [currentPath]);
 
-
   const getProductsData = async (loadMore, pagination) => {
     debugger;
 
@@ -308,36 +309,35 @@ const SearchComponent = () => {
 
     // }
     let header = "";
-    if(headerSearchValueLocal?.length > 0){
+    if (headerSearchValueLocal?.length > 0) {
       header = headerSearchValueLocal[headerSearchValueLocal?.length - 1];
     }
     if (header || headerSearchValue || headerSearchValue?.file) {
-      if(headerSearchValue?.file || headerSearchValue?.type){
-        if(headerSearchValue?.type){
-          setFile(headerSearchValue)
+      if (headerSearchValue?.file || headerSearchValue?.type) {
+        if (headerSearchValue?.type) {
+          setFile(headerSearchValue);
           setFormData((prevState) => ({
             ...prevState,
-            ['imagePreview']: URL.createObjectURL(headerSearchValue),
+            ["imagePreview"]: URL.createObjectURL(headerSearchValue),
             searchValue: header,
           }));
-        }else{
-          setFile(headerSearchValue?.file)
+        } else {
+          setFile(headerSearchValue?.file);
           setFormData((prevState) => ({
             ...prevState,
-            ['imagePreview']: URL.createObjectURL(headerSearchValue?.file),
+            ["imagePreview"]: URL.createObjectURL(headerSearchValue?.file),
             searchValue: header,
           }));
         }
-        
-      }else{
+      } else {
         setFormData((prevState) => ({
           ...prevState,
           searchValue: header?.searchValue || header,
         }));
       }
-      if (loadMore === "loadMore"){
-        handleSearch(header, null,loadMore, pagination);
-      }else{
+      if (loadMore === "loadMore") {
+        handleSearch(header, null, loadMore, pagination);
+      } else {
         handleSearch(header);
       }
       // dispatch(headerSearchValueSuccess({ headerSearchValue: "" }));
@@ -354,9 +354,9 @@ const SearchComponent = () => {
       setLoading(false);
       if (response?.data) {
         let removeEuro = "";
-        if(formData?.Price.includes("€")){
-          removeEuro = formData?.Price.replace("€","");
-        }else{
+        if (formData?.Price.includes("€")) {
+          removeEuro = formData?.Price.replace("€", "");
+        } else {
           removeEuro = formData?.Price;
         }
         let filterData = await filterDataAccordingToUser(
@@ -395,6 +395,48 @@ const SearchComponent = () => {
     }));
     // handleSearch(query);
     let value = query;
+    const slug = createSlug(value);
+    navigate(`/products/search/${slug}`);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1);
+    let scroll = window.scrollY;
+    let filterPath = SearchPagination?.findIndex(
+      (x) => x.path === location.pathname
+    );
+    if (filterPath !== undefined && filterPath !== -1) {
+      SearchPagination[filterPath].scroll = scroll;
+      localStorage.setItem(
+        "SearchPagination",
+        JSON.stringify(SearchPagination)
+      );
+    }
+    return;
+  };
+
+  const handleSearch = async (event, fromKeyDown, loadMore, pag) => {
+    debugger;
+    if (file) {
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file: fileObject,
+        id: randomId,
+      };
+
+      let data = [];
+      if (savedImage) {
+        data = savedImage;
+      }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
+      navigate(`/products/image-search/${randomId}`);
+      return;
+    }
+
+    if(formData?.searchValue !== ""){
+      let value = formData?.searchValue;
       const slug = createSlug(value);
       navigate(`/products/search/${slug}`);
       setTimeout(() => {
@@ -407,28 +449,8 @@ const SearchComponent = () => {
         localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
       }
       return
-  };
-
-  const handleSearch = async (event,fromKeyDown, loadMore, pag) => {
-    debugger;
-    if(file){
-      const randomId = Math.random().toString(36).substring(2, 15);
-      const fileObject = await fileToBase64(file);
-      let fileObj = {
-        file : fileObject,
-        id : randomId
-      }
-
-      let data = [];
-      if(savedImage){
-        data = savedImage;
-      }
-
-      data.push(fileObj);
-      localStorage.setItem("savedImage", JSON.stringify(data));
-      navigate(`/products/image-search/${randomId}`);
-      return;
     }
+
     console.log(location?.pathname);
     let searchValue = location?.pathname.split("/")[3];
     let chnageSearchFormat = searchValue?.split("-").join(" ");
@@ -436,50 +458,29 @@ const SearchComponent = () => {
       ...prevState,
       searchValue: chnageSearchFormat,
     }));
-    // let searchValue = event === null ? formData?.searchValue : event;
-    // if ((searchValue !== "" && searchValue !== undefined) || file || headerSearchValue?.file || headerSearchValue?.type || headerSearchValue) {
-    if ((searchValue !== "" && searchValue !== undefined)) {
-      // event.preventDefault();
+    if (searchValue !== "" && searchValue !== undefined) {
       const formData = new FormData();
-      // if (file) {
-      //   formData.append("file", file);
-      // }
-      // if(headerSearchValue?.file){
-      //   formData.append("file", headerSearchValue?.file);
-      //   formData.append("query", headerSearchValueLocal);
-      // }else if(headerSearchValue?.type){
-      //   formData.append("file", headerSearchValue);
-      //   formData.append("query", headerSearchValueLocal);
-      // } else{
-        formData.append("query", searchValue);
-      // }
+      formData.append("query", searchValue);
       try {
-        dispatch(headerSearchValueSuccess({ headerSearchValue: searchValue || file }));
-        // let headerSearchValueLocalArray = [...headerSearchValueLocal, searchValue];
-        // headerSearchValueLocal.push(searchValue) //osama
-        // localStorage.setItem("headerSearchValueLocal", JSON.stringify(headerSearchValueLocal));
+        dispatch(
+          headerSearchValueSuccess({ headerSearchValue: searchValue || file })
+        );
         setOpenLoader(true);
-        // https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net/search/get-all-similar-products-to-image/1/50
-        // let pag = 1;
-        // if(fromKeyDown === "fromKeyDown"){
-        //   pag = 1
-        // }else if(paginationLocal > 1){
-        //   pag = paginationLocal
-        // }else{
-        //   pag = imagePagination?.current;
-        // }
         let pagination = 1;
-      if(loadMore === "loadMore"){
-        pagination = pag;
-      }
-      else if(SearchPagination){
-        let filterPagination = SearchPagination.filter((x) => x.path === location.pathname);
-        if(filterPagination.length > 0){
-        pagination = SearchPagination[0].pagination;
+        if (loadMore === "loadMore") {
+          pagination = pag;
+        } else if (SearchPagination) {
+          let filterPagination = SearchPagination.filter(
+            (x) => x.path === location.pathname
+          );
+          if (filterPagination.length > 0) {
+            pagination = SearchPagination[0].pagination;
+          }
         }
-      }
         const response = await fetch(
-         `${baseUrl}/search/get-all-similar-products-to-image/1/${pagination * 40}`,
+          `${baseUrl}/search/get-all-similar-products-to-image/1/${
+            pagination * 40
+          }`,
           {
             method: "POST",
             headers: {
@@ -502,15 +503,20 @@ const SearchComponent = () => {
         }
         // if (imagePagination?.current === 1) {
         // if (fromKeyDown === "fromKeyDown") {
-          setProducts(result?.data?.products);
-          setProductsDataForFilter(result?.data?.products);
-          let scroll = window.scrollY;
-          let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
-          if(filterPath !== undefined && filterPath !== -1){
-            SearchPagination[filterPath].scroll = scroll;
-            localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
-          }
-        // } 
+        setProducts(result?.data?.products);
+        setProductsDataForFilter(result?.data?.products);
+        let scroll = window.scrollY;
+        let filterPath = SearchPagination?.findIndex(
+          (x) => x.path === location.pathname
+        );
+        if (filterPath !== undefined && filterPath !== -1) {
+          SearchPagination[filterPath].scroll = scroll;
+          localStorage.setItem(
+            "SearchPagination",
+            JSON.stringify(SearchPagination)
+          );
+        }
+        // }
         // else {
         //   setProducts((prevProducts) => [
         //     ...prevProducts,
@@ -521,10 +527,10 @@ const SearchComponent = () => {
         //     ...result?.data?.products,
         //   ]);
         // }
-        if(result?.data?.products?.length === 0 && pagination === 1){
+        if (result?.data?.products?.length === 0 && pagination === 1) {
           setNoProductsFound(true);
-          setInputSuggestions([])
-       }
+          setInputSuggestions([]);
+        }
         if (result?.data?.products?.length === 0) {
           sethideLoadMoreButton(true);
         }
@@ -541,9 +547,11 @@ const SearchComponent = () => {
         //   }
         // }
         setTimeout(() => {
-          let filterScroll = SearchPagination?.findIndex((x) => x.path === location.pathname);
+          let filterScroll = SearchPagination?.findIndex(
+            (x) => x.path === location.pathname
+          );
           if (filterScroll && filterScroll !== -1) {
-            window.scrollTo(0, filterScroll[0]?.scroll); 
+            window.scrollTo(0, filterScroll[0]?.scroll);
           }
         }, 1);
       } catch (error) {
@@ -592,29 +600,38 @@ const SearchComponent = () => {
     //   localStorage.setItem("paginationLocal", JSON.stringify(paginationLocal + 1));
     //   handleSearch(null);
     // }else {
-      pagination.current = pagination.current + 1;
-      if(SearchPagination){
-        let findPagination = SearchPagination.findIndex((x) => x.path === location.pathname);
-        if(findPagination !== -1){
-          SearchPagination[findPagination].pagination = pagination.current;
-          localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
-        }else{
-          let pagObj = [{
+    pagination.current = pagination.current + 1;
+    if (SearchPagination) {
+      let findPagination = SearchPagination.findIndex(
+        (x) => x.path === location.pathname
+      );
+      if (findPagination !== -1) {
+        SearchPagination[findPagination].pagination = pagination.current;
+        localStorage.setItem(
+          "SearchPagination",
+          JSON.stringify(SearchPagination)
+        );
+      } else {
+        let pagObj = [
+          {
             path: location.pathname,
-            pagination: pagination.current
-          }]
-          let pushObj = [...SearchPagination, ...pagObj]
-          localStorage.setItem("SearchPagination", JSON.stringify(pushObj));
-        }
-      }else{
-        let pagObj = [{
-          path: location.pathname,
-          pagination: pagination.current
-        }]
-        localStorage.setItem("SearchPagination", JSON.stringify(pagObj));
+            pagination: pagination.current,
+          },
+        ];
+        let pushObj = [...SearchPagination, ...pagObj];
+        localStorage.setItem("SearchPagination", JSON.stringify(pushObj));
       }
-      getProductsData("loadMore", pagination.current);
-  // }
+    } else {
+      let pagObj = [
+        {
+          path: location.pathname,
+          pagination: pagination.current,
+        },
+      ];
+      localStorage.setItem("SearchPagination", JSON.stringify(pagObj));
+    }
+    getProductsData("loadMore", pagination.current);
+    // }
   };
 
   const handleSearchInput = (e) => {
@@ -625,17 +642,16 @@ const SearchComponent = () => {
     }));
     dispatch(headerSearchValueSuccess({ headerSearchValue: value })); //osama
     // localStorage.setItem("headerSearchValueLocal", JSON.stringify(""));
-    
   };
 
   useEffect(() => {
-    debugger
+    debugger;
     const handlePopState = () => {
-        // categoryPaths.pop()
-        // localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
-        setTimeout(() => {
-            window.location.reload();
-          }, 1);
+      // categoryPaths.pop()
+      // localStorage.setItem("categoryPaths", JSON.stringify(categoryPaths));
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
     };
 
     window.onpopstate = handlePopState;
@@ -663,18 +679,18 @@ const SearchComponent = () => {
   };
 
   const handleKeyDown = async (e) => {
-    debugger
+    debugger;
 
-    if(e.key === "Enter" && file){
+    if (e.key === "Enter" && file) {
       const randomId = Math.random().toString(36).substring(2, 15);
       const fileObject = await fileToBase64(file);
       let fileObj = {
-        file : fileObject,
-        id : randomId
-      }
+        file: fileObject,
+        id: randomId,
+      };
 
       let data = [];
-      if(savedImage){
+      if (savedImage) {
         data = savedImage;
       }
 
@@ -692,12 +708,17 @@ const SearchComponent = () => {
         window.location.reload();
       }, 1);
       let scroll = window.scrollY;
-      let filterPath = SearchPagination?.findIndex((x) => x.path === location.pathname);
-      if(filterPath !== undefined && filterPath !== -1){
+      let filterPath = SearchPagination?.findIndex(
+        (x) => x.path === location.pathname
+      );
+      if (filterPath !== undefined && filterPath !== -1) {
         SearchPagination[filterPath].scroll = scroll;
-        localStorage.setItem("SearchPagination", JSON.stringify(SearchPagination));
+        localStorage.setItem(
+          "SearchPagination",
+          JSON.stringify(SearchPagination)
+        );
       }
-      return
+      return;
     }
   };
 
@@ -792,20 +813,22 @@ const SearchComponent = () => {
   /** this is to handle tryon modal */
 
   const removeImage = () => {
-    debugger
-    setFile(null)
+    debugger;
+    setFile(null);
     setFormData((prevData) => ({ ...prevData, imagePreview: null }));
-    if(headerSearchValueLocal?.searchValue){
+    if (headerSearchValueLocal?.searchValue) {
       let removeFileData = headerSearchValueLocal?.searchValue;
-      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: removeFileData}));
-    }else{
-      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: ""}));
+      dispatch(
+        headerSearchValueSuccess({ headerSearchValueLocal: removeFileData })
+      );
+    } else {
+      dispatch(headerSearchValueSuccess({ headerSearchValueLocal: "" }));
     }
   };
 
   return (
     <>
-    {/* <BackButtonHandler /> */}
+      {/* <BackButtonHandler /> */}
       {/** loader code */}
       <Backdrop
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
@@ -840,40 +863,40 @@ const SearchComponent = () => {
             </div> */}
             <div className="productsearch-input-div">
               {/* <div className="search-input-container"> */}
-              {formData?.imagePreview && 
-              <div
-              style={{
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-                marginLeft:"10px"
-              }}
-              className="thumbnail-container" // Add a class for styling hover
-            >
-              {/* Thumbnail Image */}
-              <img
-                src={formData?.imagePreview}
-                alt="Uploaded preview"
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "5px",
-                  marginRight: "8px",
-                }}
-                className="thumbnail-image"
-              />
+              {formData?.imagePreview && (
+                <div
+                  style={{
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    marginLeft: "10px",
+                  }}
+                  className="thumbnail-container" // Add a class for styling hover
+                >
+                  {/* Thumbnail Image */}
+                  <img
+                    src={formData?.imagePreview}
+                    alt="Uploaded preview"
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "5px",
+                      marginRight: "8px",
+                    }}
+                    className="thumbnail-image"
+                  />
 
-              {/* Hover to enlarge the image */}
-              <div className="image-preview-container">
-                <img
-                  src={formData?.imagePreview}
-                  alt="Uploaded preview"
-                  className="hover-image"
-                />
-              </div>
-            </div>
-              }
+                  {/* Hover to enlarge the image */}
+                  <div className="image-preview-container">
+                    <img
+                      src={formData?.imagePreview}
+                      alt="Uploaded preview"
+                      className="hover-image"
+                    />
+                  </div>
+                </div>
+              )}
               <FormControl
                 sx={{ m: 1, width: "100%", maxWidth: "800px" }}
                 variant="outlined"
@@ -1143,10 +1166,9 @@ const SearchComponent = () => {
             </div>
           )}
         </div>
-        {products?.length === 0 && 
-        (
-          <div style={{ display:"flex", justifyContent:"center" }}>
-            <h2 style={{fontWeight:"normal"}}>
+        {products?.length === 0 && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <h2 style={{ fontWeight: "normal" }}>
               No results found for “{formData?.searchValue}”.
             </h2>
           </div>
