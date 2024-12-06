@@ -132,6 +132,7 @@
   }
   .Similar-Products-div .product--image{
     height: auto;
+    object-fit: contain !important;
   }
 }
 

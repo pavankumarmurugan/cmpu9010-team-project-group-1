@@ -2831,9 +2831,7 @@ function Headermenu() {
               <a href="/" className="anchor-tag">
                 <h2 className="header-logo">
                   <img
-                    src={newLogo1}
-                    // src={newLogo3}
-                    // src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/Logo_home.png"
+                    src={newLogo3}
                     alt="logo"
                     style={{
                       // width: "50%",
@@ -3185,11 +3183,11 @@ function Headermenu() {
             <a href="/" className="anchor-tag">
               <h2 className="header-logo">
                 <img
-                  src={newLogo1}
+                  src={newLogo3}
                   alt="logo"
                   style={{
                     width: "60px",
-                    height: "50px",
+                    height: "57px",
                     objectFit: "cover",
                   }}
                 />
@@ -3246,7 +3244,7 @@ function Headermenu() {
               </Badge> */}
             </div>
           </div>
-          {location?.pathname === "/products" ? (
+          {location?.pathname.includes("/products/") ? (
             <></>
           ) : (
             <div className="mobile-search-input search-input-below-900px">
@@ -3276,6 +3274,56 @@ function Headermenu() {
                       if (e.key === "Enter") handleSearch();
                     }}
                     // autoFocus={true}
+                    startAdornment={
+                      file && (
+                        <InputAdornment
+                          position="start"
+                          sx={{
+                            mr: 1,
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <div
+                            style={{
+                              position: "relative",
+                              display: "flex",
+                              alignItems: "center",
+                              cursor: "pointer", // Make sure the entire area is interactive
+                            }}
+                            className="thumbnail-container" // Add a class for styling hover
+                          >
+                            {/* Thumbnail Image */}
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt="Uploaded preview"
+                              style={{
+                                width: "30px",
+                                height: "30px",
+                                borderRadius: "5px",
+                                marginRight: "8px",
+                              }}
+                              className="thumbnail-image"
+                            />
+
+                            <IconButton
+                              onClick={removeImage}
+                              size="small"
+                              sx={{
+                                position: "absolute",
+                                top: "-8px",
+                                right: "-8px",
+                                backgroundColor: "white",
+                                boxShadow: 1,
+                                "&:hover": { backgroundColor: "#f0f0f0" },
+                              }}
+                            >
+                              <IoCloseCircleOutline fontSize="small" />
+                            </IconButton>
+                          </div>
+                        </InputAdornment>
+                      )
+                    }
                     endAdornment={
                       <InputAdornment position="end">
                         <Button

@@ -4,7 +4,8 @@ import Homelogo2 from "../../Assets/Homelogo2.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { categoryValueSuccess } from "../../redux/slices/HomeDataSlice";
 import { useDispatch } from "react-redux";
-import newLogo1 from "../../Assets/newLogo1.png"
+import newLogo1 from "../../Assets/newLogo1.png";
+import newLogo3 from "../../Assets/newLogo3.png";
 
 function Footer() {
   const navigate = useNavigate();
@@ -45,12 +46,13 @@ function Footer() {
       <div className="top">
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
-            src={newLogo1}
+            src={newLogo3}
             alt="logo"
             style={{
               width: "70px",
               height: "60px",
               objectFit: "contain",
+              marginRight:"10px"
             }}
           />
           <h1>SMARTWARDROBE</h1>

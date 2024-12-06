@@ -503,7 +503,7 @@ const handleKeyDownOTP = (e) => {
                         </div>}
                         <div style={{ marginTop:"30px" }}>
                         <button className="Signup-button" onClick={handleSendOTP}>
-                          Send OTP
+                          Change Password
                         </button>
                         <button className="back-button" onClick={() => handlebackButton(1)}>
                           Back
