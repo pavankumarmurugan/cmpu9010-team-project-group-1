@@ -48,7 +48,8 @@ const VirtualTryOn = (props) => {
   const [showFriendsForShare, setShowFriendsForShare] = useState(false);
   const [showSection, setShowSection] = useState("ShareProductsToFriends");
   const [deletePersonalizeModels, setDeletePersonalizeModels] = useState(false);
-  const [forAddFriendorCreateGroup, setforAddFriendorCreateGroup] = useState("");
+  const [forAddFriendorCreateGroup, setforAddFriendorCreateGroup] =
+    useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [deleteButtonText, setDeleteButtonText] =
     useState("Delete Demo Models");
@@ -625,11 +626,11 @@ const VirtualTryOn = (props) => {
       return;
     }
     let friends = localStorage.getItem("friendIds")
-  ? JSON.parse(localStorage.getItem("friendIds"))
-  : null;
-  let groups = localStorage.getItem("groupIds")
-  ? JSON.parse(localStorage.getItem("groupIds"))
-  : null;
+      ? JSON.parse(localStorage.getItem("friendIds"))
+      : null;
+    let groups = localStorage.getItem("groupIds")
+      ? JSON.parse(localStorage.getItem("groupIds"))
+      : null;
     setFriendsListForShare([...friends, ...groups]);
     setShowFriendsForShare(true);
   };
@@ -643,11 +644,10 @@ const VirtualTryOn = (props) => {
     debugger;
     setShowSection(value);
     setforAddFriendorCreateGroup(value);
-  }
+  };
 
   return (
     <div>
-      
       {showFriendsForShare && (
         <NewChatModal
           isShowModel={showFriendsForShare}
@@ -773,14 +773,12 @@ const VirtualTryOn = (props) => {
                 {personalizeModels ? "Done" : "Custom Demo Models"}
               </button> */}
               <div
-                        className="Select-Custom-Model-button"
-                        onClick={() => handleShare()}
-                      >
-                        <IoShareOutline
-                          style={{ width: "25px", height: "25px" }}
-                        />
-                      </div>
-                      
+                className="Select-Custom-Model-button"
+                onClick={() => handleShare()}
+              >
+                <IoShareOutline style={{ width: "25px", height: "25px" }} />
+              </div>
+
               <img
                 className="Result-Image"
                 loading="lazy"
@@ -831,9 +829,12 @@ const VirtualTryOn = (props) => {
                       length: Math.max(0, 1),
                     }).map((item, index) => (
                       <>
-                        <div className="VTO-card" onClick={(e) =>
-                                handleCustomModels(e, "Custom Demo Models")
-                              }>
+                        <div
+                          className="VTO-card"
+                          onClick={(e) =>
+                            handleCustomModels(e, "Custom Demo Models")
+                          }
+                        >
                           <div className="VTO-image-container">
                             <img
                               className="VTO-model--image"
@@ -910,6 +911,25 @@ const VirtualTryOn = (props) => {
               <div className="mobile-model-image-div">
                 {!personalizeModels ? (
                   <>
+                    <div
+                      className="mobile-custom-models-container"
+                      onClick={(e) =>
+                        handleCustomModels(e, "Custom Demo Models")
+                      }
+                    >
+                      <img
+                        className="mobile-model-images"
+                        loading="lazy"
+                        src="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/models/white_image.png"
+                        alt="models_images"
+                      />
+                      <div className="add-icon-div" style={{ display:"flex", flexDirection:"column", alignItems:"center", left:"22%" }}>
+                        <MdAddPhotoAlternate
+                          style={{ width: "35px", height: "35px" }}
+                        />
+                        <p>Add/Edit Models</p>
+                      </div>
+                    </div>
                     {dummyData?.map((item, index) => (
                       <div className="mobile-custom-models-container">
                         <img
@@ -948,40 +968,21 @@ const VirtualTryOn = (props) => {
                           onClick={(e) =>
                             handleSelectCustomModelCheckbox(e, item)
                           }
+                          defaultChecked={selectedCustomModels?.some(
+                            (data) =>
+                              data.modelImageName === item.modelImageName
+                          )}
                         />
                       </div>
                     ))}
+                    <button className="asd" style={{ left:"28%" }} onClick={handleCustomModels}>
+                      {personalizeModels ? "Finish" : "Custom Demo Models"}
+                    </button>
                   </>
                 )}
               </div>
             </div>
           </div>
-
-          {/* {similarProductsData?.length > 0 && (
-            <div className="Similar-Products-div">
-              <h1 className="similar-products-heading">SIMILAR PRODUCTS</h1>
-              <div className="Similar-Products-Images">
-                <Carousel responsive={responsive} autoPlaySpeed={1500}>
-                  {similarProductsData?.map((items, index) => (
-                    <div className="card">
-                      <img
-                        className="product--image"
-                        loading="lazy"
-                        src={items?.imageUrl}
-                        alt="Similar_productimage"
-                        onClick={() => handleSimilarProductsClick(items)}
-                      />
-                      <h3 style={{ fontSize: "18px" }}>{items?.name}</h3>
-                      <p className="description">{items?.type}</p>
-                      <p className="price" style={{ fontSize: "15px" }}>
-                        {items?.price}
-                      </p>
-                    </div>
-                  ))}
-                </Carousel>
-              </div>
-            </div>
-          )} */}
         </div>
       </Modal>
     </div>

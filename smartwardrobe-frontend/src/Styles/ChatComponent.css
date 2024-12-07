@@ -105,6 +105,10 @@
   padding-top: 10px;
   margin-left: 10px;
   text-transform: capitalize;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .contact-Name {
   display: flex;
@@ -360,7 +364,7 @@
     bottom: 1px;
     width: calc(100%);
     left: 0;
-    padding: 10px 10px 10px 20px;
+    padding: 10px 10px 10px 0px;
     background: #f4f3f8;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
@@ -377,7 +381,16 @@
   }
   .contact-Name-for-OpenChat {
     font-size: 14px;
+    max-width: 120px !important;
   }
+  .audio-message{
+    width: 200px !important;
+  }
+}
+
+.audio-message{
+  width: 250px;
+  height: 35px;
 }
 
 @media (min-width: 769px) and (max-width: 1200px) {

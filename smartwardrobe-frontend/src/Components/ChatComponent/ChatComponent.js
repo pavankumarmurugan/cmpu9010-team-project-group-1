@@ -1729,12 +1729,14 @@ function ChatComponent(props) {
                         >
                           <canvas
                             // ref={audioMessage}
-                            width="250"
+                            // width="200"
+                            className="audio-message"
                             height="35"
                             style={{
                               backgroundColor: "#E6E5EA",
                               borderRadius: "20px",
                               position: "relative",
+                              // width:"200px"
                             }}
                           ></canvas>
                           <div
@@ -1765,7 +1767,7 @@ function ChatComponent(props) {
                           <audio
                             controls
                             src={audioMessage}
-                            style={{ height: "35px" }}
+                            className="audio-message"
                           />
                         </div>
                       )
