@@ -12,6 +12,7 @@ import WishListComponent from "./Components/WishListComponent/WishListComponent"
 import CategoryComponent from "./Components/CategoryComponent/CategoryComponent";
 import SearchComponent from "./Components/SearchComponent/SearchComponent";
 import ImageSearchComponent from "./Components/ImageSearchComponent/ImageSearchComponent";
+import { Helmet } from "react-helmet";
 // import { io, Socket } from "socket.io-client";
 // import apiCall from "./Components/GenericApiCallFunctions/GenericApiCallFunctions";
 // import { showToastInfo } from "./Components/GenericToasters/GenericToasters";
@@ -129,6 +130,13 @@ function App() {
 
   return (
     <Provider store={store}>
+      <Helmet>
+      <title>SMARTWARDROBE</title>
+      <meta name="description" content="A brief description of the page (150–160 characters)."></meta>
+      <meta property="og:image" content="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/Logo_home.png"></meta>
+      <meta property="og:image:alt" content="SMARTWARDROBE"></meta>
+        
+      </Helmet>
     <div className="App" role="main">
       <ScrollButton />
       <Fragment>
