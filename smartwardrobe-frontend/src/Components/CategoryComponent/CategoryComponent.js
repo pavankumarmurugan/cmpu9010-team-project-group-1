@@ -615,7 +615,8 @@ const CategoryComponent = () => {
     }
     if (e.key === "Enter" && e?.target?.value !== "") {
       let value = e?.target?.value;
-      const slug = createSlug(value);
+      // const slug = createSlug(value);
+      const slug = value?.replaceAll(" ", "-");
       navigate(`/products/search/${slug}`);
       setTimeout(() => {
         window.location.reload();

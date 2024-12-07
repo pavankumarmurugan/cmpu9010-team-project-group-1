@@ -71,6 +71,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import newLogo from "../../Assets/newLogo.jpeg";
 import newLogo1 from "../../Assets/newLogo1.png";
 import newLogo3 from "../../Assets/newLogo3.png";
+import { Helmet } from "react-helmet";
 
 const backendUrl =
   "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
@@ -2637,6 +2638,14 @@ function Headermenu() {
 
   return (
     <>
+
+      <Helmet>
+      <title>SMARTWARDROBE</title>
+      <meta name="description" content="A brief description of the page (150–160 characters)."></meta>
+      <meta property="og:image" content="https://sw-uploads-img.s3.eu-north-1.amazonaws.com/Logo_home.png"></meta>
+      <meta property="og:image:alt" content="SMARTWARDROBE"></meta>
+        
+      </Helmet>
       {showBanner && (
         <WelcomeBanner
           isShowModel={showBanner}

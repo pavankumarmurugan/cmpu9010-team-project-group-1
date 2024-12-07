@@ -655,7 +655,7 @@ const WhatsAppStylePreview = ({ message }) => {
           </a>
         ) : message.includes("blob") ? (
           <p>
-            <audio controls src={message} style={{ display: "flex" }} />
+            <audio controls src={message} className="audio-message" style={{ display: "flex" }} />
           </p>
         ) : (
           <p>{message}</p>

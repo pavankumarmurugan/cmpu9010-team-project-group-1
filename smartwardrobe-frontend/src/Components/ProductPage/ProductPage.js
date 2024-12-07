@@ -605,7 +605,8 @@ const ProductPage = () => {
         navigate(`/products/image-search/${randomId}`);
       }else{
         let value = e?.target?.value;
-        const slug = createSlug(value);
+        // const slug = createSlug(value);
+        const slug = value?.replaceAll(" ", "-");
         navigate(`/products/search/${slug}`);
         setTimeout(() => {
           window.location.reload();
