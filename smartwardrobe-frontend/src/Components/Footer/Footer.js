@@ -55,13 +55,13 @@ function Footer() {
               marginRight:"10px"
             }}
           />
-          <h1>SMARTWARDROBE</h1>
+          <h1 style={{ fontSize : "26px" }}>SMARTWARDROBE</h1>
         </div>
       </div>
       <div className="bottom">
         <div style={{ maxWidth: "500px" }}>
           <h3>ABout Us</h3>
-          <p style={{ textTransform: "capitalize" }}>
+          <p style={{ textTransform: "capitalize", textAlign: "justify" }}>
             At Smartwardrobe, we make shopping smarter and more fun. With
             features like image search, collaborative chat, and virtual try-ons,
             finding and trying your perfect look has never been easier. We're
