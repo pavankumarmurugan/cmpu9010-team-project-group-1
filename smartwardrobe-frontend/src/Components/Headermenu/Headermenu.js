@@ -3271,9 +3271,7 @@ function Headermenu() {
                     placeholder="Search"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSearch();
-                    }}
+                    onKeyDown={handleKeyDown}
                     // autoFocus={true}
                     startAdornment={
                       file && (
