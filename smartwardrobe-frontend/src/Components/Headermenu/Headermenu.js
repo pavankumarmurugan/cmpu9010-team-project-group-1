@@ -343,7 +343,7 @@ function Headermenu() {
             localStorage.setItem("friendIds", JSON.stringify(friends?.data));
             let filterforToast = friends?.data.filter(x => x.userId === data.receiverId);
             showToastInfo(
-              `Your friend request status with user ${filterforToast[0]?.username} is now ${data.status}`
+              `Your friend request status with ${filterforToast[0]?.username} is now ${data.status}`
             );
           }
         })

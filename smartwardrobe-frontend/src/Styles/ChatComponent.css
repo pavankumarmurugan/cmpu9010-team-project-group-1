@@ -1053,6 +1053,15 @@
   object-fit: contain;
 }
 
+@media screen and (max-width: 768px) {
+  .preview-model-image{
+    max-width: 150px !important;
+  }
+  .recording-icon{
+    display: none;
+  }
+}
+
 /* Padding for text */
 .preview-content {
   padding: 1rem; /* p-4 */

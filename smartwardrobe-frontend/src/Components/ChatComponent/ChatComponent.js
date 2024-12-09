@@ -1799,11 +1799,13 @@ function ChatComponent(props) {
                       <MdPauseCircleOutline
                         style={{ width: "30px", height: "30px", color: "red" }}
                         onClick={stopRecording}
+                        className="recording-icon"
                       />
                     ) : (
                       <MdOutlineKeyboardVoice
                         style={{ width: "25px", height: "25px" }}
                         onClick={startRecording}
+                        className="recording-icon"
                       />
                     )}
                     <RiSendPlane2Fill

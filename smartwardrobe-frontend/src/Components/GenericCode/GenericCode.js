@@ -449,14 +449,17 @@ export const filterDataAccordingToUser = (data, pricevalue, colourvalue) => {
 };
 
 const WhatsAppStylePreview = ({ message }) => {
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleImageClick = () => {
-    setIsModalOpen(true); // Open the modal when the image is clicked
+    if(window.innerWidth > 768){
+    setIsModalOpen(true);
+    }
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal when clicking outside or pressing close
+    setIsModalOpen(false);
   };
   const [preview, setPreview] = useState(null);
   const [modelImages, setModelImages] = useState(null);
@@ -464,7 +467,6 @@ const WhatsAppStylePreview = ({ message }) => {
   const [openLoader, setOpenLoader] = useState(false);
   const homeData = useSelector((state) => state.homeData.homeData);
 
-  // Function to fetch metadata from a URL
   const fetchImageMetadata = async (url) => {
     try {
       const id = url.split("/").pop();
@@ -477,7 +479,6 @@ const WhatsAppStylePreview = ({ message }) => {
       console.log(response?.data);
       const data = await response?.data;
 
-      // const product = homeData?.find(x => x.id === +id);
       return {
         title: data?.type,
         description: data.description,
@@ -493,7 +494,6 @@ const WhatsAppStylePreview = ({ message }) => {
   };
 
   useEffect(() => {
-    debugger
     const processMessage = async () => {
       // Check if the message contains a URL (http or https)
       if (
