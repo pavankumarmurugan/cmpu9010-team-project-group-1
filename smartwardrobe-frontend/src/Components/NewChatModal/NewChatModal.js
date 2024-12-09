@@ -43,6 +43,7 @@ function NewChatModal(props) {
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [friendReqData, setFriendReqData] = useState([]);
+  const [membersList, setMembersList] = useState([]);
   const [friendsDataForGroup, setFriendsDataForGroup] = useState([]);
   const [autocomplteAllData, setAutocomplteAllData] = useState([]);
   const [addMemberToGroupList, setaddMemberToGroupList] = useState([]);
@@ -262,6 +263,7 @@ function NewChatModal(props) {
 
       if (response?.data?.length > 0) {
         setAutocomplteAllData(response?.data);
+        console.log(props?.friends);
         const options = response.data
           .filter((user) => user?.status !== "accepted")
           .map((user) => ({
@@ -316,6 +318,14 @@ function NewChatModal(props) {
   }, [props?.friends]);
 
   useEffect(() => {
+    debugger
+    let filterFriendsName = props?.memberListForDetails?.map((x) => {
+      return x?.username
+    });
+    if(filterFriendsName?.length > 0){
+      setMembersList(filterFriendsName);
+      console.log(filterFriendsName);
+    }
     if (props?.friendsListForShare?.length > 0) {
       let friends = props?.friendsListForShare.filter((x) => x?.userId);
       // setFriendsData(friends);
@@ -563,17 +573,26 @@ function NewChatModal(props) {
 
   const handleSearchFriendInGroup = (event) => {
     debugger;
+    console.log(props?.friendsListForShare)
+    console.log(props?.fromProductsDetails)
     const searchValue = event?.target?.value;
     if (searchValue?.trim === "") {
       return;
     }
-    const filterData = props?.friends?.filter((x) =>
+    let filterData = [];
+    if(props?.fromProductsDetails === "CreateGroup"){
+      filterData = props?.friendsListForShare.filter((x) =>
       x.username?.toLowerCase().includes(searchValue?.toLowerCase())
     );
+    }else{
+      filterData = props?.friends?.filter((x) =>
+        x.username?.toLowerCase().includes(searchValue?.toLowerCase())
+      );
+    }
     if (filterData && filterData?.length > 0) {
       setFriendsDataForGroup(filterData);
     } else {
-      setFriendsDataForGroup(props?.friends);
+      setFriendsDataForGroup([]);
     }
   };
 
@@ -727,8 +746,7 @@ function NewChatModal(props) {
                   className="group-name-input"
                 />
               </div>
-              <div className="newGroup-main-div">
-                <div className="searchfriendinGroupCreate">
+              <div className="searchfriendinGroupCreate">
                   <label>{friendsDataForGroup?.length > 0 ? "Friends List" : "No Friends" }</label>
                   <input
                     type="text"
@@ -737,6 +755,8 @@ function NewChatModal(props) {
                     className="searchfriendinGroup"
                   />
                 </div>
+              <div className="newGroup-main-div-create-group">
+                
                 {friendsDataForGroup?.map(
                   (item, index) =>
                     item?.username && (
@@ -809,38 +829,47 @@ function NewChatModal(props) {
           {props?.showSection === "InviteFriendsToGroup" && (
             <>
               <div className="newGroup-main-div">
-                {props?.friends?.map(
-                  (item, index) =>
-                    item?.username && (
-                      <div className="newGroup-list">
-                        <div className="newGroup-list-item">
-                          <div className="newGroup-list-item-image">
-                            <img
-                              src={
-                                item?.profilePic
-                                  ? item?.profilePic
-                                  : "https://www.w3schools.com/howto/img_avatar.png"
-                              }
-                              alt=""
-                              className="newGroup-list-item-image-img"
-                            />
-                          </div>
-                          <div className="newGroup-list-item-name">
-                            <div className="newGroup-list-item-name-text">
-                              <p>{item?.username}</p>
-                            </div>
-                            <div className="checkbox-div">
-                              <Checkbox
-                                onChange={(e) =>
-                                  handleCheckboxForAddMemberInGroup(e, item)
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                )}
+              {props?.friends?.map((item, index) => {
+  if (item?.username && !membersList?.includes(item?.username)) {
+    return (
+      <div className="newGroup-list" key={index}>
+        <div className="newGroup-list-item">
+          <div className="newGroup-list-item-image">
+            <img
+              src={
+                item?.profilePic
+                  ? item?.profilePic
+                  : `data:image/svg+xml;base64,${btoa(`
+                    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="100" height="100" fill="gray" />
+                      <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
+                        ${item?.username?.charAt(0).toUpperCase() || ""}
+                      </text>
+                    </svg>
+                  `)}`
+              }
+              alt=""
+              className="newGroup-list-item-image-img"
+            />
+          </div>
+          <div className="newGroup-list-item-name">
+            <div className="newGroup-list-item-name-text">
+              <p>{item?.username}</p>
+            </div>
+            <div className="checkbox-div">
+              <Checkbox
+                onChange={(e) =>
+                  handleCheckboxForAddMemberInGroup(e, item)
+                }
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null; // Ensure that the map returns a value for every iteration
+})}
               </div>
               <div className="create-button-div">
                 <Button

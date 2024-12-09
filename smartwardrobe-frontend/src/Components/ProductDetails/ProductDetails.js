@@ -274,15 +274,28 @@ const ProductDetails = () => {
         topN: 10,
         imageName: getModels?.data?.imageName,
       };
-      const getSimilarProducts = await apiCall(
+      apiCall(
         "POST",
         `${baseUrl}/recommend/similar-products`,
         similarProductsHeaders
-      );
-      // setOpenLoader(false);
-      if (getSimilarProducts) {
-        setSimilarProductsData(getSimilarProducts?.data);
-      }
+      )
+        .then((getSimilarProducts) => {
+          if (getSimilarProducts) {
+            setSimilarProductsData(getSimilarProducts?.data);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching similar products:", error);
+        });
+      // const getSimilarProducts = await apiCall(
+      //   "POST",
+      //   `${baseUrl}/recommend/similar-products`,
+      //   similarProductsHeaders
+      // );
+      // // setOpenLoader(false);
+      // if (getSimilarProducts) {
+      //   setSimilarProductsData(getSimilarProducts?.data);
+      // }
       // setOpenLoader(false);
    
   };

@@ -473,6 +473,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 20px;
 }
 
 .searchfriendinGroup{
@@ -720,6 +721,14 @@
   /* overflow: auto; */
   scrollbar-width: thin;
   max-height: 365px;
+}
+
+.newGroup-main-div-create-group {
+  margin-top: 10px;
+  overflow: auto;
+  scrollbar-width: thin;
+  max-height: 255px;
+  min-height: 255px;
 }
 
 .newfriendReq-main-div {
