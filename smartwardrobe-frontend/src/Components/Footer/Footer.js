@@ -73,25 +73,25 @@ function Footer() {
         <div className="footermenu-div">
           <h3>Store</h3>
           <a
-            onClick={() => handleLinks("Menswear//Shirt")}
+            onClick={() => handleLinks("Menswear-Shirt")}
             className="footerMenu"
           >
             Men Clothing
           </a>
           <a
-            onClick={() => handleLinks("Ladieswear//T-shirt")}
+            onClick={() => handleLinks("Ladieswear-T-shirt")}
             className="footerMenu"
           >
             Women Clothing
           </a>
           <a
-            onClick={() => handleLinks("Baby Children//T-shirt")}
+            onClick={() => handleLinks("Baby Children-T-shirt")}
             className="footerMenu"
           >
             Kids Clothing
           </a>
           <a
-            onClick={() => handleLinks("Sport//T-shirt")}
+            onClick={() => handleLinks("Sport-T-shirt")}
             className="footerMenu"
           >
             Sportswear

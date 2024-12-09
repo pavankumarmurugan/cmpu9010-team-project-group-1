@@ -207,7 +207,7 @@ function SignupModal(props) {
         let token = setTokenToLocalStorage(response?.data);
         localStorage.setItem("userNameForLogin", JSON.stringify(response?.data?.username));
         localStorage.setItem("firstlogin", JSON.stringify(true));
-        showToastSuccess(response?.data?.message);
+        showToastSuccess('Login Successfull');
         handleCancel();
         handleloginOrSignupChange();
         const data = response?.data;
@@ -233,7 +233,7 @@ function SignupModal(props) {
       if (response?.statusCode?.text === "Success") {
         let token = setTokenToLocalStorage(response?.data);
         localStorage.setItem("userNameForLogin", JSON.stringify(response?.data?.username));
-        showToastSuccess(response?.data?.message);
+        showToastSuccess('Login Successfull');
         handleCancel();
         const data = response?.data;
         setTimeout(() => {
@@ -333,7 +333,7 @@ const handleKeyDownOTP = (e) => {
 
   const handleSendOTP = async () => {
     debugger;
-
+    
     if (formData.email.trim() === "" || !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(formData?.email)) {
       setValidationField((prev) => ({
         ...prev,
@@ -344,8 +344,9 @@ const handleKeyDownOTP = (e) => {
     let obj = {
       email: formData?.email,
     }
+    setOpenLoader(true);
     const response = await apiCall("POST", `${baseUrl}/auth/forgot-password`, obj);
-
+    setOpenLoader(false);
     if(response?.statusCode?.text === "Success"){
       setForgetPasswordScreen1(2);
     }
