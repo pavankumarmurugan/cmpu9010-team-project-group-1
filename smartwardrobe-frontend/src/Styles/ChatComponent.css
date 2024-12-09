@@ -1048,7 +1048,7 @@
 
 .preview-model-image{
   /* width: 250px; */
-  width: -webkit-fill-available !important;
+  /* width: -webkit-fill-available !important; */
   height: 250px;
   object-fit: contain;
 }
