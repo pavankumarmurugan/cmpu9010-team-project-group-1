@@ -5,13 +5,20 @@ import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
 import { UserResDTO } from 'src/core/dto/user/user-res.dto';
 import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
 import { FriendsEntity } from 'src/core/entities/friends/friends';
+import { GroupMembersEntity } from 'src/core/entities/group-members/group-members.entity';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 
 @Injectable()
 export class UserDtoConvertor {
-  toUserResDTOFromEntity(entities: UserEntity[]): UserResDTO[] {
+  toUserResDTOFromEntity(
+    entities: UserEntity[],
+    groupMembers: GroupMembersEntity[],
+  ): UserResDTO[] {
     return entities.map(
       ({ firstname, lastname, username, userId, role, profilePic }) => ({
+        membershipId: groupMembers.find(
+          (groupMember) => groupMember.userId === userId,
+        ).membershipId,
         firstname,
         lastname,
         username,
