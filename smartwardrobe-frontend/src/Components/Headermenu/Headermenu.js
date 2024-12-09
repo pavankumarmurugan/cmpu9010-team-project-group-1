@@ -185,6 +185,19 @@ function Headermenu() {
     console.log(groupIds);
   };
 
+  const getFriendsAfterReqAccespt = async () => {
+    debugger;
+    const getFriendsList = await apiCall(
+      "GET",
+      `${baseUrl}/friends/get-all-my-friends`,
+      null,
+      token?.token
+    );
+    if (getFriendsList?.data?.length > 0) {
+      return getFriendsList?.data
+    }
+  }
+
   useEffect(() => {
     checkToken();
   }, []);
@@ -314,11 +327,29 @@ function Headermenu() {
     });
 
     newSocket.on("friendRequestUpdated", (data) => {
+      debugger
       console.log("Friend request updated:", data);
       // Display a notification or update UI with friend request update
-      showToastInfo(
-        `Your friend request status with user ${data.receiverId} is now ${data.status}`
-      );
+      console.log(friendIds);
+      const friends = getFriendsAfterReqAccespt();
+      apiCall(
+        "GET",
+      `${baseUrl}/friends/get-all-my-friends`,
+      null,
+      token?.token
+      )
+        .then((friends) => {
+          if (friends) {
+            localStorage.setItem("friendIds", JSON.stringify(friends?.data));
+            let filterforToast = friends?.data.filter(x => x.userId === data.receiverId);
+            showToastInfo(
+              `Your friend request status with user ${filterforToast[0]?.username} is now ${data.status}`
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching similar products:", error);
+        });
     });
 
     // Handle disconnection

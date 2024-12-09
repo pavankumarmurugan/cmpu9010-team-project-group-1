@@ -493,6 +493,7 @@ const WhatsAppStylePreview = ({ message }) => {
   };
 
   useEffect(() => {
+    debugger
     const processMessage = async () => {
       // Check if the message contains a URL (http or https)
       if (
