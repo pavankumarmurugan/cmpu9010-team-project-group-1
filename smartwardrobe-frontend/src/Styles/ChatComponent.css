@@ -314,7 +314,7 @@
 }
 
 .chat_receiver p {
-  padding: 10px 20px 10px 20px;
+  padding: 10px 5px 10px 5px;
   background-color: #e9ecef !important;
   border-top-right-radius: 15px;
   border-bottom-left-radius: 15px;
@@ -386,6 +386,19 @@
   .audio-message{
     width: 200px !important;
   }
+}
+
+@media screen and (max-width: 768px) {
+  .audio-message {
+    width: 170px !important;
+  }
+  .recordingtext-class{
+    font-size: 14px;
+  }
+}
+
+.recordingtext-class{
+  font-size: 18px;
 }
 
 .audio-message{
@@ -629,6 +642,19 @@
   .chat_receiver p {
     max-width: 80%; 
     font-size: 15px; /* Adjust font size for smaller screens */
+  }
+  .receiver-message {
+   max-width: 95% !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .sender-name {
+    max-width: 13ch;
+    text-transform: capitalize;
+    /* overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; */
   }
 }
 
@@ -1022,6 +1048,7 @@
 
 .preview-model-image{
   /* width: 250px; */
+  width: -webkit-fill-available !important;
   height: 250px;
   object-fit: contain;
 }
