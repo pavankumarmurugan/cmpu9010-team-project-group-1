@@ -148,13 +148,16 @@ export class UserDtoConvertor {
     id: number,
     friendRequestsEntities: FriendRequestsEntity[],
     entities: UserEntity[],
+    friendIds: number[],
   ): UserResDTO[] {
     return entities
       .filter(({ userId }) => userId !== id)
+      .filter(({ userId }) => !friendIds.includes(userId))
       .map(({ firstname, lastname, username, userId, role, profilePic }) => {
         const user = friendRequestsEntities.find(
           (friendRequestsEntity) => friendRequestsEntity.receiverId === userId,
         );
+
         return {
           firstname,
           lastname,
