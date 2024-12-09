@@ -4,7 +4,9 @@ import Draggable from "react-draggable";
 import { FaPlus } from "react-icons/fa";
 import { Flex, Input, Typography } from "antd";
 import "../../Styles/SignUp.css";
-import apiCall, { baseUrl } from "../GenericApiCallFunctions/GenericApiCallFunctions";
+import apiCall, {
+  baseUrl,
+} from "../GenericApiCallFunctions/GenericApiCallFunctions";
 import {
   Backdrop,
   Badge,
@@ -33,7 +35,10 @@ import NewChatModal from "../NewChatModal/NewChatModal";
 import TextArea from "antd/es/input/TextArea";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import { LiaUserFriendsSolid } from "react-icons/lia";
-import { showToastError, showToastInfo } from "../GenericToasters/GenericToasters";
+import {
+  showToastError,
+  showToastInfo,
+} from "../GenericToasters/GenericToasters";
 import { IoMdAddCircle } from "react-icons/io";
 import WhatsAppStylePreview from "../GenericCode/GenericCode";
 import { IoPersonAddSharp } from "react-icons/io5";
@@ -56,6 +61,7 @@ import { BsChat, BsInfoCircleFill } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { RiSendPlane2Fill } from "react-icons/ri";
 import zIndex from "@mui/material/styles/zIndex";
+import { GrUserAdmin } from "react-icons/gr";
 
 function ChatComponent(props) {
   let token = localStorage.getItem("user")
@@ -63,7 +69,8 @@ function ChatComponent(props) {
     : null;
   let userId = token?.userId;
   const inputRef = useRef(null);
-  const backendUrl = "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
+  const backendUrl =
+    "https://smartwardrobe-backend-audvfgbjf6bkadgu.westeurope-01.azurewebsites.net";
   const messagesEndRef = useRef(null);
   const [disabled, setDisabled] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -128,7 +135,6 @@ function ChatComponent(props) {
   };
 
   /** get all friend requests */
-
 
   useEffect(() => {
     getAllFriendandFriendRequests();
@@ -196,7 +202,7 @@ function ChatComponent(props) {
 
   const handleShowChat = async (event) => {
     debugger;
-    setShowContactDetails(false)
+    setShowContactDetails(false);
     setActiveFriend(event);
     setChatInfo(event);
     chatInfoRef.current = event;
@@ -325,7 +331,7 @@ function ChatComponent(props) {
       if (searchValue?.length >= 3) {
         const response = await apiCall(
           "GET",
-          `${baseUrl}/users/search/${searchValue.trim()}` ,
+          `${baseUrl}/users/search/${searchValue.trim()}`,
           null,
           token?.token
         );
@@ -443,18 +449,13 @@ function ChatComponent(props) {
     debugger;
     console.log(chatInfo);
     setOpenLoader(true);
-    let url = '';
-    if(deleteCheck === "friendDelete"){
+    let url = "";
+    if (deleteCheck === "friendDelete") {
       url = `${baseUrl}/friends/delete/${frinedId}`;
-    }else if(deleteCheck === "groupMemberDelete"){
+    } else if (deleteCheck === "groupMemberDelete") {
       url = `${baseUrl}/group-members/delete/${frinedId}`;
     }
-    const delteFriend = await apiCall(
-      "DELETE",
-      url,
-      null,
-      token?.token
-    );
+    const delteFriend = await apiCall("DELETE", url, null, token?.token);
     setOpenLoader(false);
     if (delteFriend?.message === "DELETED FRIEND") {
       setShowContactDetails(false);
@@ -486,9 +487,11 @@ function ChatComponent(props) {
         setFriends(removeDeletedFriend);
       }
     }
-    if(delteFriend?.message === "DELETED GROUP MEMBER"){
-      let filterMembers = memberListForDetails?.filter(x => x?.userId !== frinedId);
-      setMemberListForDetails(filterMembers)
+    if (delteFriend?.message === "DELETED GROUP MEMBER") {
+      let filterMembers = memberListForDetails?.filter(
+        (x) => x?.membershipId !== frinedId
+      );
+      setMemberListForDetails(filterMembers);
     }
   };
 
@@ -498,7 +501,7 @@ function ChatComponent(props) {
     setOpenLoader(true);
     const exitGroup = await apiCall(
       "DELETE",
-      `${baseUrl}/group-members/delete/${chatInfo?.membershipId}` ,
+      `${baseUrl}/group-members/delete/${chatInfo?.membershipId}`,
       null,
       token?.token
     );
@@ -531,7 +534,6 @@ function ChatComponent(props) {
       (event.key === "Enter" && textValue.trim() !== "") ||
       (textValue.trim() !== "" && from === "fromIcon")
     ) {
-
       event.preventDefault();
       if (chatInfo?.userId) {
         let message = {
@@ -592,38 +594,35 @@ function ChatComponent(props) {
       const blob = await response.blob();
       let url = "";
       const formData = new FormData();
-      if(chatInfo?.userId){
+      if (chatInfo?.userId) {
         url = `${baseUrl}/chat/create/send-message-to-friend-v2`;
-        formData.append('receiverId', chatInfo?.userId);
-      }else if (chatInfo?.groupId){
+        formData.append("receiverId", chatInfo?.userId);
+      } else if (chatInfo?.groupId) {
         url = `${baseUrl}/chat/create/send-message-to-group-v2`;
-        formData.append('groupId', chatInfo?.groupId);
+        formData.append("groupId", chatInfo?.groupId);
       }
-      formData.append('message', '');
-      formData.append('messageType', 'audio');
-      formData.append('file', blob);
+      formData.append("message", "");
+      formData.append("messageType", "audio");
+      formData.append("file", blob);
 
       try {
         setOpenLoader(true);
-        const response = await fetch(
-          url,
-          {
-            method: "POST",
-            headers: {
-              accept: "*/*",
-              Authorization: `Bearer ${token?.token}`,
-            },
-            body: formData,
-          }
-        );
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            accept: "*/*",
+            Authorization: `Bearer ${token?.token}`,
+          },
+          body: formData,
+        });
         setOpenLoader(false);
         if (!response.ok) {
           const errorData = await response.json();
           showToastError(errorData?.message || response.statusText);
         }
         const result = await response.json();
-        console.log(result)
-        if(result?.message === "SUCCESSFULLY ADDED CHAT"){
+        console.log(result);
+        if (result?.message === "SUCCESSFULLY ADDED CHAT") {
           handleDeleteRecording();
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -1760,8 +1759,15 @@ function ChatComponent(props) {
                               display: "flex",
                             }}
                           >
-                            <p style={{ paddingLeft: "5px"}}>{formatTime(secondsElapsed)}</p>
-                            <p className="recordingtext-class" style={{ paddingLeft: "5px" }}>Recording...</p>
+                            <p style={{ paddingLeft: "5px" }}>
+                              {formatTime(secondsElapsed)}
+                            </p>
+                            <p
+                              className="recordingtext-class"
+                              style={{ paddingLeft: "5px" }}
+                            >
+                              Recording...
+                            </p>
                           </div>
                         </div>
                       </>
@@ -1776,7 +1782,10 @@ function ChatComponent(props) {
                             alignItems: "center",
                           }}
                         >
-                          <MdDelete style={{ width: "25px", height: "25px" }} onClick={handleDeleteRecording} />
+                          <MdDelete
+                            style={{ width: "25px", height: "25px" }}
+                            onClick={handleDeleteRecording}
+                          />
                           <audio
                             controls
                             src={audioMessage}
@@ -1802,7 +1811,7 @@ function ChatComponent(props) {
                         color: audioMessage !== null ? "green" : "2e3b4e",
                         cursor: "pointer",
                         marginLeft: "10px",
-                        fontSize:"24px"
+                        fontSize: "24px",
                       }}
                       onClick={(event) => handleSendMessage(event, "fromIcon")}
                     />
@@ -1892,19 +1901,17 @@ function ChatComponent(props) {
                             unmountOnExit
                           >
                             <List component="div" disablePadding>
-                              {memberListForDetails?.map(
-                                (member, index) =>
-                                   (
-                                    <ListItemButton
-                                      key={index}
-                                      sx={{ pl: 4 }}
-                                      style={{
-                                        borderBottom: "1px solid lightgray",
-                                        paddingLeft: "10px",
-                                      }}
-                                    >
-                                      <img
-                                        src={`data:image/svg+xml;base64,${btoa(`
+                              {memberListForDetails?.map((member, index) => (
+                                <ListItemButton
+                                  key={index}
+                                  sx={{ pl: 4 }}
+                                  style={{
+                                    borderBottom: "1px solid lightgray",
+                                    paddingLeft: "10px",
+                                  }}
+                                >
+                                  <img
+                                    src={`data:image/svg+xml;base64,${btoa(`
                             <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
                               <rect width="100" height="100" fill="gray" />
                               <text x="50%" y="50%" font-size="50" font-family="Arial" dy=".35em" text-anchor="middle" fill="white">
@@ -1915,36 +1922,48 @@ function ChatComponent(props) {
                               </text>
                             </svg>
                           `)}`}
-                                        alt="contact-details-image"
-                                        style={{
-                                          width: "50px",
-                                          height: "50px",
-                                          borderRadius: "50%",
-                                        }}
-                                      />
-                                      <ListItemText
-                                        primary={member?.username}
-                                        style={{
-                                          textTransform: "capitalize",
-                                          paddingLeft: "15px",
-                                        }}
-                                      />
-                                      {token?.userId ===
-                                        chatInfo?.createdBy && member?.username !== token?.username && (
-                                          <Tooltip title="Remove Member">
-                                        
+                                    alt="contact-details-image"
+                                    style={{
+                                      width: "50px",
+                                      height: "50px",
+                                      borderRadius: "50%",
+                                    }}
+                                  />
+                                  <ListItemText
+                                    primary={member?.username}
+                                    style={{
+                                      textTransform: "capitalize",
+                                      paddingLeft: "15px",
+                                    }}
+                                  />
+                                  {token?.userId === chatInfo?.createdBy &&
+                                    member?.username !== token?.username ? 
+                                     (
+                                      <Tooltip title="Remove Member">
                                         <HiUserRemove
                                           style={{
                                             width: "20px",
                                             height: "20px",
                                           }}
-                                          onClick={() => handleRemoveFriend(member?.userId, "groupMemberDelete")}
+                                          onClick={() =>
+                                            handleRemoveFriend(
+                                              member?.membershipId,
+                                              "groupMemberDelete"
+                                            )
+                                          }
                                         />
-                                        </Tooltip>
-                                      )}
-                                    </ListItemButton>
-                                  )
-                              )}
+                                      </Tooltip>
+                                    )
+                                  :
+                                  <Tooltip title="Group Admin">
+                                    <GrUserAdmin 
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                    }} />
+                                    </Tooltip>}
+                                </ListItemButton>
+                              ))}
                             </List>
                           </Collapse>
                           <ListItemButton>
@@ -1970,7 +1989,12 @@ function ChatComponent(props) {
                             </ListItemIcon>
                             <ListItemText
                               primary="Remove Friend"
-                              onClick={() => handleRemoveFriend(chatInfo?.friendId, "friendDelete")}
+                              onClick={() =>
+                                handleRemoveFriend(
+                                  chatInfo?.friendId,
+                                  "friendDelete"
+                                )
+                              }
                             />
                           </ListItemButton>
                         </>
