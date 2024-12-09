@@ -941,7 +941,7 @@ function ChatComponent(props) {
       mediaRecorder.onstop = () => {
         debugger;
         console.log("MediaRecorder stopped");
-        const audioBlob = new Blob(audioChunk.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunk.current, { type: "audio/mp3" });
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudioMessage(audioUrl); // Use your state setter for audio URL
       };
@@ -1760,8 +1760,8 @@ function ChatComponent(props) {
                               display: "flex",
                             }}
                           >
-                            <p>{formatTime(secondsElapsed)}</p>
-                            <p className="recordingtext-class" style={{ paddingLeft: "10px" }}>Recording...</p>
+                            <p style={{ paddingLeft: "5px"}}>{formatTime(secondsElapsed)}</p>
+                            <p className="recordingtext-class" style={{ paddingLeft: "5px" }}>Recording...</p>
                           </div>
                         </div>
                       </>
