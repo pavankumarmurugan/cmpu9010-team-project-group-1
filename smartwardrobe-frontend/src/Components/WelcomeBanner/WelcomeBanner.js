@@ -4,10 +4,15 @@ import Draggable from "react-draggable";
 import "../../Styles/WelcomeBanner.css";
 import video3 from "../../Assets/video3.mp4";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import Vto from "../../Assets/Vto.mp4";
+import shareProduct from "../../Assets/shareProduct.mp4";
 
 const WelcomeBanner = (props) => {
   const [disabled, setDisabled] = useState(true);
   const [progressPercentage, setProgressPercentage] = useState(25);
+  const currentVideoIndex = useRef(0);
+  const videos = [Vto, shareProduct, video3, video3];
+  const videoRef = useRef(null);
 
   const [bounds, setBounds] = useState({
     left: 0,
@@ -15,16 +20,13 @@ const WelcomeBanner = (props) => {
     bottom: 0,
     right: 0,
   });
+
   const draggleRef = useRef(null);
-  //   const handleCancel = (e) => {
-  //     props?.closeModal();
-  //   };
+
   const onStart = (_event, uiData) => {
     const { clientWidth, clientHeight } = window.document.documentElement;
     const targetRect = draggleRef.current?.getBoundingClientRect();
-    if (!targetRect) {
-      return;
-    }
+    if (!targetRect) return;
     setBounds({
       left: -targetRect.left + uiData.x,
       right: clientWidth - (targetRect.right - uiData.x),
@@ -38,36 +40,46 @@ const WelcomeBanner = (props) => {
     props?.closeModal();
   };
 
-  const handleBankForwardButton = (event) => {
-    debugger;
-    if (event === "back") {
-      if (progressPercentage === 25) return;
-      setProgressPercentage(progressPercentage - 25);
+  const handleBankForwardButton = (direction) => {
+    if (direction === "back") {
+      if (progressPercentage === 25) return; // Prevent going below 25%
+      setProgressPercentage((prev) => prev - 25);
+      currentVideoIndex.current =
+        currentVideoIndex.current === 0
+          ? videos.length - 1
+          : currentVideoIndex.current - 1;
     } else {
-      if (progressPercentage === 100){
+      if (progressPercentage === 100) {
         handleCloseModalBanner();
-       return;
+        return;
       }
-      setProgressPercentage(progressPercentage + 25);
+      setProgressPercentage((prev) => prev + 25);
+      currentVideoIndex.current =
+        currentVideoIndex.current === videos.length - 1
+          ? 0
+          : currentVideoIndex.current + 1;
+    }
+
+    if (videoRef.current) {
+      videoRef.current.src = videos[currentVideoIndex.current];
+      videoRef.current.load();
+      videoRef.current.play();
     }
   };
 
   useEffect(() => {
-    debugger;
+    if (props?.bannerclickvalue) {
+      const newProgress = props.bannerclickvalue * 25;
+      setProgressPercentage(newProgress);
+      currentVideoIndex.current = props.bannerclickvalue - 1;
 
-    if(props?.bannerclickvalue){
-      if(props?.bannerclickvalue === 1){
-        setProgressPercentage(25);
-      }
-      if(props?.bannerclickvalue === 2){
-        setProgressPercentage(50);
-      }
-      if(props?.bannerclickvalue === 3){
-        setProgressPercentage(75);
+      if (videoRef.current) {
+        videoRef.current.src = videos[currentVideoIndex.current];
+        videoRef.current.load();
+        videoRef.current.play();
       }
     }
-
-  },[])
+  }, [props?.bannerclickvalue]);
 
   return (
     <>
@@ -78,29 +90,20 @@ const WelcomeBanner = (props) => {
               width: "100%",
               cursor: "move",
             }}
-            onMouseOver={() => {
-              if (disabled) {
-                setDisabled(false);
-              }
-            }}
-            onMouseOut={() => {
-              setDisabled(true);
-            }}
-            onFocus={() => {}}
-            onBlur={() => {}}
-          ></div>
+            onMouseOver={() => setDisabled(false)}
+            onMouseOut={() => setDisabled(true)}
+          />
         }
         open={props?.isShowModel}
-        // width={"50%"}
         style={{ top: 20 }}
         onCancel={handleCloseModalBanner}
-        footer={[]}
+        footer={null}
         modalRender={(modal) => (
           <Draggable
             disabled={disabled}
             bounds={bounds}
             nodeRef={draggleRef}
-            onStart={(event, uiData) => onStart(event, uiData)}
+            onStart={onStart}
           >
             <div ref={draggleRef}>{modal}</div>
           </Draggable>
@@ -108,9 +111,7 @@ const WelcomeBanner = (props) => {
       >
         <div className="banner-main-div">
           <div className="banner-heading">
-            <h1 className="banner-mainheading">
-              Discover Our Exciting Features
-            </h1>
+            <h1 className="banner-mainheading">Discover Our Exciting Features</h1>
             <div className="sub-heading-skip">
               <p className="sub-heading">
                 Watch these short videos to see how our new tools can elevate
@@ -118,31 +119,24 @@ const WelcomeBanner = (props) => {
               </p>
             </div>
           </div>
-          <div className="feature-description-div">
-            {/* <Button
-                className="Create-Button"
-                color="default"
-                // onClick={handleShareProduct}
-              >
-                Skip Preview
-              </Button> */}
-          </div>
+
           <div className="video-main-div" style={{ marginTop: "0px" }}>
             <video
+              ref={videoRef}
               autoPlay
               muted
               loop
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
+                objectFit: "contain",
                 filter: "none",
                 opacity: 1,
                 transition: "none",
                 position: "relative",
               }}
             >
-              <source src={video3} type="video/mp4" />
+              <source src={videos[currentVideoIndex.current]} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -151,9 +145,7 @@ const WelcomeBanner = (props) => {
             <p className="feature-description">
               {progressPercentage === 25 ? (
                 <>
-                  <b>
-                    Virtual Try-On Using Preset Models & Its Customizations{" "}
-                  </b>
+                  <b>Virtual Try-On Using Preset Models & Its Customizations</b>
                   <p>
                     <i>
                       Visualize outfits on preset models or customize to match
@@ -163,8 +155,7 @@ const WelcomeBanner = (props) => {
                 </>
               ) : progressPercentage === 50 ? (
                 <>
-                  <b>Collaborative Chat & Share Products </b>
-
+                  <b>Collaborative Chat & Share Products</b>
                   <p>
                     <i>
                       Chat with friends and share your favorite fashion finds
@@ -174,14 +165,14 @@ const WelcomeBanner = (props) => {
                 </>
               ) : progressPercentage === 75 ? (
                 <>
-                  <b>Image Search </b>
+                  <b>Image Search</b>
                   <p>
                     <i>Upload a photo to discover similar styles instantly.</i>
                   </p>
                 </>
               ) : (
                 <>
-                  <b>Natural Language Search </b>
+                  <b>Natural Language Search</b>
                   <p>
                     <i>
                       Search for products the way you talk—quick, easy, and
@@ -191,26 +182,36 @@ const WelcomeBanner = (props) => {
                 </>
               )}
             </p>
+
             <div className="progress-bar">
               <Progress percent={progressPercentage} />
             </div>
+
             <div className="back-forward-buttons-div">
               {progressPercentage !== 25 && (
                 <button
                   className="back-forward-buttons"
                   onClick={() => handleBankForwardButton("back")}
                 >
-                  Previous
+                  <IoChevronBack /> Previous
                 </button>
               )}
               <div>
-                <p className="featurecount-text">{progressPercentage === 25 ? "1 of 4" : progressPercentage === 50 ? "2 of 4" : progressPercentage === 75 ? "3 of 4" : "4 of 4"}</p>
+                <p className="featurecount-text">
+                  {progressPercentage === 25
+                    ? "1 of 4"
+                    : progressPercentage === 50
+                    ? "2 of 4"
+                    : progressPercentage === 75
+                    ? "3 of 4"
+                    : "4 of 4"}
+                </p>
               </div>
               <button
                 className="back-forward-buttons"
                 onClick={() => handleBankForwardButton("forward")}
               >
-                {progressPercentage === 100 ? "Done" : "Next"}
+                {progressPercentage === 100 ? "Done" : "Next"} <IoChevronForward />
               </button>
             </div>
           </div>

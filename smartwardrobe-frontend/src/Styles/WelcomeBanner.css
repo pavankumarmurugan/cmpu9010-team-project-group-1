@@ -22,6 +22,8 @@
 
 .back-forward-buttons{
     width: fit-content;
+    display: flex;
+    align-items: center;
     padding: 7px;
     border: 1px solid lightgray;
     border-radius: 5px;
