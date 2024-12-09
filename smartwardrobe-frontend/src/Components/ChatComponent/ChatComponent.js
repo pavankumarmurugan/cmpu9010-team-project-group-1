@@ -941,7 +941,7 @@ function ChatComponent(props) {
       mediaRecorder.onstop = () => {
         debugger;
         console.log("MediaRecorder stopped");
-        const audioBlob = new Blob(audioChunk.current, { type: "audio/wav" });
+        const audioBlob = new Blob(audioChunk.current, { type: "audio/webm" });
         const audioUrl = URL.createObjectURL(audioBlob);
         setAudioMessage(audioUrl); // Use your state setter for audio URL
       };
@@ -1633,7 +1633,7 @@ function ChatComponent(props) {
                                 alt={msg.sender}
                                 className="receiver-image"
                               />
-                              <p>
+                              <p className="sender-name">
                                 <strong>
                                   {chatInfo?.userId
                                     ? chatInfo?.username
@@ -1761,7 +1761,7 @@ function ChatComponent(props) {
                             }}
                           >
                             <p>{formatTime(secondsElapsed)}</p>
-                            <p style={{ paddingLeft: "10px" }}>Recording...</p>
+                            <p className="recordingtext-class" style={{ paddingLeft: "10px" }}>Recording...</p>
                           </div>
                         </div>
                       </>
