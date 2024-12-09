@@ -60,4 +60,15 @@ export class GroupConvertor {
       };
     });
   }
+
+  toGroupResDtoFromMembersAndUsers(groupMembers: GroupMembersEntity[]) {
+    return groupMembers.map((groupMember) => ({
+      membershipId: groupMember.membershipId,
+      groupId: groupMember.group?.groupId,
+      groupName: groupMember.group?.groupName,
+      createdBy: groupMember.group?.createdBy,
+      createdAt: groupMember.group?.createdAt,
+      updatedAt: groupMember.group?.updatedAt,
+    }));
+  }
 }

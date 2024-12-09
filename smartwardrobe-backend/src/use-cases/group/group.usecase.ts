@@ -131,16 +131,22 @@ export class GroupUsecase {
   async getAllMembersInGroup(
     groupId: number,
   ): Promise<IResponse<GroupEntity> | any> {
-    const groupMembersEntity: GroupMembersEntity[] =
-      await this.databaseService.groupMembers.getAllByProperties({ groupId });
+    const groupMembers: GroupMembersEntity[] =
+      await this.databaseService.groupMembers.getAllByPropertiesV2(
+        { groupId },
+        ['group'],
+      );
 
     const userEntity: UserEntity[] = await Promise.all(
-      groupMembersEntity.map(({ userId }) =>
+      groupMembers.map(({ userId }) =>
         this.databaseService.users.get({ userId }),
       ),
     );
 
-    const data = this.userDtoConvertor.toUserResDTOFromEntity(userEntity);
+    const data = this.userDtoConvertor.toUserResDTOFromEntity(
+      userEntity,
+      groupMembers,
+    );
 
     return {
       data,

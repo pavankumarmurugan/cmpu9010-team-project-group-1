@@ -49,4 +49,8 @@ export class UserResDTO {
   @ApiProperty({ required: false })
   @IsString()
   readonly status?: string;
+
+  @ApiProperty({ required: false })
+  @IsNumber()
+  readonly membershipId?: number;
 }
