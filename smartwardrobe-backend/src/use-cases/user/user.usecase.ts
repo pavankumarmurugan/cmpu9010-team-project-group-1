@@ -7,6 +7,7 @@ import { UpdateProfileUserReqDTO } from 'src/core/dto/user/user-req-update-profi
 import { UserReqDTO } from 'src/core/dto/user/user-req.dto';
 import { UserResDTO } from 'src/core/dto/user/user-res.dto';
 import { FriendRequestsEntity } from 'src/core/entities/friend-request/friend-requests.entity';
+import { FriendsEntity } from 'src/core/entities/friends/friends';
 import { UserEntity } from 'src/core/entities/user/user.entity';
 import { IResponse } from 'src/core/interface/response.interface';
 import { MESSAGES } from 'src/infrastructure/common/enum.ts/messages';
@@ -193,6 +194,20 @@ export class UserUsecase {
           senderId: userId,
         });
 
+      const friends: FriendsEntity[] =
+        await this.databaseService.friends.getAllWithOrConditions(
+          [{ user1Id: userId }, { user2Id: userId }],
+          ['user1', 'user2'],
+        );
+
+      const friendIds = [
+        ...new Set(
+          friends.map((friend) =>
+            friend.user1Id === userId ? friend.user2Id : friend.user1Id,
+          ),
+        ),
+      ];
+
       const userEntities: UserEntity[] =
         await this.databaseService.users.search(searchKey);
 
@@ -201,6 +216,7 @@ export class UserUsecase {
           userId,
           entities,
           userEntities,
+          friendIds,
         );
       return {
         data,
