@@ -6,12 +6,14 @@ import video3 from "../../Assets/video3.mp4";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import Vto from "../../Assets/Vto.mp4";
 import shareProduct from "../../Assets/shareProduct.mp4";
+import ImageSearchVideo from "../../Assets/ImageSearchVideo.mp4";
+import NLPSearch from "../../Assets/NLPSearch.mp4";
 
 const WelcomeBanner = (props) => {
   const [disabled, setDisabled] = useState(true);
   const [progressPercentage, setProgressPercentage] = useState(25);
   const currentVideoIndex = useRef(0);
-  const videos = [Vto, shareProduct, video3, video3];
+  const videos = [Vto, shareProduct, ImageSearchVideo, NLPSearch];
   const videoRef = useRef(null);
 
   const [bounds, setBounds] = useState({

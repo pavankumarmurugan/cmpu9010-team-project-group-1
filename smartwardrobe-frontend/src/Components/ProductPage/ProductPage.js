@@ -61,6 +61,9 @@ const ProductPage = () => {
     let ProductsPagination = localStorage.getItem("ProductsPagination")
     ? JSON.parse(localStorage.getItem("ProductsPagination"))
     : null;
+    let savedImage = localStorage.getItem("savedImage")
+    ? JSON.parse(localStorage.getItem("savedImage"))
+    : null;
     console.log('no of reloads');
   const dispatch = useDispatch();
   const location = useLocation();
@@ -400,11 +403,32 @@ const ProductPage = () => {
     handleSearch(query);
   };
 
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // The result is a Base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(file); // Read the file as Base64
+    });
+  };
+
   const handleSearch = async (event,fromKeyDown) => {
     debugger;
     if(file){
-      dispatch(headerSearchValueSuccess({ headerSearchValue: file }));
-      const randomId = Math.random().toString(36).substring(2, 15); // Generate a random string
+      const randomId = Math.random().toString(36).substring(2, 15);
+      const fileObject = await fileToBase64(file);
+      let fileObj = {
+        file: fileObject,
+        id: randomId,
+      };
+
+      let data = [];
+      if (savedImage) {
+        data = savedImage;
+      }
+
+      data.push(fileObj);
+      localStorage.setItem("savedImage", JSON.stringify(data));
       navigate(`/products/image-search/${randomId}`);
       return;
     }

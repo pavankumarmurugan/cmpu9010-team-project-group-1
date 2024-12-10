@@ -224,6 +224,15 @@ function Headermenu() {
           token.refreshToken = res?.data?.refreshToken;
           localStorage.setItem("user", JSON.stringify(token));
         }
+        if(res?.message === "Access Denied"){
+          localStorage.removeItem("user");
+          localStorage.removeItem("friends");
+          localStorage.removeItem("groups");
+          localStorage.removeItem("friendIds");
+          localStorage.removeItem("groupIds");
+          navigate("/");
+          window.location.reload();
+        }
       }
     }
   };
@@ -2625,7 +2634,7 @@ function Headermenu() {
   const features = [
     "Virtual Try-On Using Preset Models & Its Customizations",
     "Collaborative Chat & Share Products",
-    "Image Search Natural Language Search & Predictive Search",
+    "Image Search Natural Language Search & Associative Search",
   ];
 
   useEffect(() => {

@@ -57,7 +57,7 @@ const apiCall = async (method = "GET", url, data = null, token = null) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      if(errorData?.message !== "USER ALREADY LIKED THIS MODEL" && errorData?.message !== "INCORRECT USERNAME AND PASSWORD" && errorData?.message !== "Unauthorized" ){
+      if(errorData?.message !== "USER ALREADY LIKED THIS MODEL" && errorData?.message !== "INCORRECT USERNAME AND PASSWORD" && errorData?.message !== "Unauthorized" && errorData?.message !== "Access Denied"){
         showToastError(errorData?.message || response.statusText);
       }
       return errorData;
