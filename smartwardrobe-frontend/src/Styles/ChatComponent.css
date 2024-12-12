@@ -536,7 +536,7 @@
 .custom-textarea {
   border-color: gray;
   transition: border-color 0.3s;
-  text-transform: capitalize;
+  /* text-transform: capitalize; */
 }
 
 .custom-textarea:hover {
