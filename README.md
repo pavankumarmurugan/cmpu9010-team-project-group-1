@@ -51,24 +51,34 @@ The project focuses on delivering a fast, seamless, and enjoyable experience for
 
 ## Description
 
-Smartwardrobe-backend is an e-commerce backend repository made with clean code Architecture using Nest.js Framework. It uses my AWS RDS MySql as a backend.
+Smartwardrobe-backend is an advanced e-commerce backend repository built with clean code architecture using the Nest.js framework. It is designed to handle a wide range of features for modern e-commerce platforms. The backend leverages AWS RDS PostgreSQL as its database.
 
-To run the repository create a .env filder under src folder and add contents relevant in env/sample.env. Replace the content with your original details.
+To set up the project, create a .env file under the src folder and populate it with relevant configurations from the env/sample.env file. Replace the placeholders with your actual credentials and settings.
 
-It includes the following modules
+Key Features:
 
-1. User Auth using Passport
-2. Bcrypt for password hashing
-3. Product
-4. Product Category
-5. Product Inventory
-6. Cart Item
-7. Collabrative Chat Room
-8. Similar Items api using OPEN AI Clip Model.
+1. User Authentication and Management:
+   - Secure user authentication using Passport.js.
+   - Password hashing implemented with Bcrypt for added security.
+2. Product Management:
+   - CRUD operations for products, categories, and subcategories.
+3. Cart Functionalities:
+   - Add, update, and manage cart items.
+4. Collaborative Chat Room:
+   - Support for user-to-user and group messaging.
+   - Attachment handling and message typing.
+5. AI-Powered Similar Items API:
+   - Integration with OpenAI CLIP Model for finding visually and contextually similar products.
+   - Uses Faiss Search library to recommend similar products.
+6. Friendship and Social Features:
+   - Friend requests, friendship management, and group creation.
+   - Notifications for real-time updates.
 
 ## Database Schema
 
-![alt text](https://sw-uploads-img.s3.eu-north-1.amazonaws.com/diagram.png)
+The database schema supports a variety of e-commerce modules, including users, products, categories, inventory, carts, chats, social features, and more. Below is a high-level depiction:
+
+![alt text](https://sw-uploads-img.s3.eu-north-1.amazonaws.com/db_diagram.png)
 
 ## Installation
 
@@ -88,3 +98,22 @@ $ npm run start:debug
 # production mode
 $ npm run start:prod
 ```
+
+Modules Overview
+
+User Module
+
+- Handles user registration, login, and profile management.
+- Includes password reset and secure token generation.
+  Product Module
+- Supports hierarchical categorization with categories and subcategories.
+- Real-time inventory management through triggers and procedures.
+  Cart
+- Seamless cart operations for adding/removing items and tracking sizes.
+  Chat and Notifications
+- Real-time group and individual chats.
+- In-app and email notifications for friend requests, updates, and more.
+  Advanced Similar Items
+- FAISS-based search implementation in Nest.js for fast similar item recommendations.
+
+This backend is a robust solution for modern e-commerce platforms, blending scalable architecture with innovative features.
