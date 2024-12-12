@@ -475,8 +475,8 @@ const handleKeyDownOTP = (e) => {
             <>
               {forgetPasswordScreen1 === 1 ? (
                 <div className="Signup-form-section">
-                  <div style={{ marginTop:"20px" }}>
-                  <p>We will send you an OTP on email to reset your password</p>
+                  <div style={{ marginTop:"20px", textAlign: "center" }}>
+                  <p>We will send you an email with instructions to reset your password</p>
                   </div>
                  <Typography.Title
                           level={5}
@@ -517,7 +517,7 @@ const handleKeyDownOTP = (e) => {
                   <div style={{ marginTop: "10px" }}>
                     <Flex gap="middle" vertical>
                       {/* <Title></Title> */}
-                      <h3>Enter OTP</h3>
+                      <h3>Enter One Time Password</h3>
                       <Input.OTP
                         formatter={(str) => str.toUpperCase()}
                         onChange={handleOTPValueChange}

@@ -2381,7 +2381,12 @@ function Headermenu() {
       //   window.location.reload();
       // }, 1);
     } else if (searchValue?.trim() !== "" || query) {
-      let value = searchValue || query;
+      let value = "";
+      if(query){
+        value = query
+      }else{
+        value = searchValue;
+      }
       // const slug = createSlug(value);
       const slug = value?.replaceAll(" ", "-");
 
