@@ -3160,6 +3160,8 @@ function Headermenu() {
                 </>
               ) : (
                 <>
+                {location?.pathname.includes("/products/") ? 
+                <></> : 
                   <SearchIcon
                     sx={{
                       color: "white",
@@ -3171,7 +3173,7 @@ function Headermenu() {
                       }`,
                     }}
                     onClick={handleSearchShow}
-                  />
+                  />}
                   <StyledBadge
                     badgeContent={wishListValue}
                     anchorOrigin={{
