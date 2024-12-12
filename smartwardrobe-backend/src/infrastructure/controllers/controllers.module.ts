@@ -35,7 +35,6 @@ import { ConfigController } from './config/config.controller';
 import { UserLikedModelController } from './user-liked-models/user-liked-models.controller';
 import { InviteController } from './invite/invite.controller';
 import { FaissModule } from '../services/faiss/faiss.module';
-import { TestController } from './test-redis/test-redis-controller';
 import { FiltersController } from './filters/filters.controller';
 import { SearchHistoryController } from './search-history/search-history.controller';
 
@@ -87,7 +86,6 @@ import { SearchHistoryController } from './search-history/search-history.control
     ConfigController,
     UserLikedModelController,
     InviteController,
-    TestController,
     FiltersController,
     SearchHistoryController,
   ],
