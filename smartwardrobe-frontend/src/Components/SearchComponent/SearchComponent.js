@@ -387,7 +387,7 @@ const SearchComponent = () => {
     // console.log(formData.image);
   };
 
-  const handleSuggestionQuery = (query) => {
+  const handleSuggestionQuery = async (query) => {
     debugger;
     setFormData((prevState) => ({
       ...prevState,
@@ -396,6 +396,15 @@ const SearchComponent = () => {
     // handleSearch(query);
     let value = query;
     const slug = createSlug(value);
+      const createHistory = await apiCall(
+        "POST",
+        `${baseUrl}/search-history/create`,
+        { searchQuery: value },
+        token?.token
+      );
+      if (createHistory?.message === "SUCCESSFULLY ADDED SEARCH HISTORY") {
+        console.log("Search history");
+      }
     navigate(`/products/search/${slug}`);
     setTimeout(() => {
       window.location.reload();
@@ -438,6 +447,15 @@ const SearchComponent = () => {
     if(formData?.searchValue !== ""){
       let value = formData?.searchValue;
       const slug = createSlug(value);
+        // const createHistory = await apiCall(
+        //   "POST",
+        //   `${baseUrl}/search-history/create`,
+        //   { searchQuery: value },
+        //   token?.token
+        // );
+        // if (createHistory?.message === "SUCCESSFULLY ADDED SEARCH HISTORY") {
+        //   console.log("Search history");
+        // }
       navigate(`/products/search/${slug}`);
       setTimeout(() => {
         window.location.reload();
@@ -460,10 +478,10 @@ const SearchComponent = () => {
     }));
     if (searchValue !== "" && searchValue !== undefined) {
       const formData = new FormData();
-      formData.append("query", searchValue);
+      formData.append("query", chnageSearchFormat);
       try {
         dispatch(
-          headerSearchValueSuccess({ headerSearchValue: searchValue || file })
+          headerSearchValueSuccess({ headerSearchValue: chnageSearchFormat || file })
         );
         setOpenLoader(true);
         let pagination = 1;
@@ -704,6 +722,15 @@ const SearchComponent = () => {
       let value = e?.target?.value;
       // const slug = createSlug(value);
       const slug = value?.replaceAll(" ", "-");
+      const createHistory = await apiCall(
+        "POST",
+        `${baseUrl}/search-history/create`,
+        { searchQuery: value },
+        token?.token
+      );
+      if (createHistory?.message === "SUCCESSFULLY ADDED SEARCH HISTORY") {
+        console.log("Search history");
+      }
       navigate(`/products/search/${slug}`);
       setTimeout(() => {
         window.location.reload();
