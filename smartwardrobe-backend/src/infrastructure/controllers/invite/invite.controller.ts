@@ -49,7 +49,7 @@ export class InviteController {
           name,
           price,
           imageUrl,
-          link: `http://3.251.4.90:3000/productdetails/${productId}`,
+          link: `https://smartwardrobe.store/productdetails/${productId}`,
         },
       );
       return {

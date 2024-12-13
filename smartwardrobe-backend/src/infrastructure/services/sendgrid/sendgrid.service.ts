@@ -8,7 +8,7 @@ import { ProductDetails } from './email.types';
 export class EmailService implements OnModuleInit {
   private readonly logger = new Logger(EmailService.name);
   private readonly fromEmail = 'smartwardrobe.store@gmail.com';
-  private readonly joinUrl = 'http://3.251.4.90:3000/';
+  private readonly joinUrl = 'https://smartwardrobe.store/';
 
   constructor(
     private readonly configService: ConfigService,
