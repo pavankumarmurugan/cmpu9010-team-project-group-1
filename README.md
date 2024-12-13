@@ -110,10 +110,10 @@ User Module
 - Real-time inventory management through triggers and procedures.
   Cart
 - Seamless cart operations for adding/removing items and tracking sizes.
-  Chat and Notifications
+- Chat and Notifications
 - Real-time group and individual chats.
 - In-app and email notifications for friend requests, updates, and more.
-  Advanced Similar Items
+- Advanced Similar Items
 - FAISS-based search implementation in Nest.js for fast similar item recommendations.
 
 This backend is a robust solution for modern e-commerce platforms, blending scalable architecture with innovative features.
